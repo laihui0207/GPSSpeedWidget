@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+    <ImageView android:id="@id/ialtimetro" android:background="@drawable/widget_state"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent" android:layout_marginLeft="4.0dip"
+               android:src="@drawable/base" android:layout_alignParentTop="true"
+               android:layout_alignParentBottom="true"/>
+    <ImageView android:id="@id/ifreccia" android:layout_width="match_parent" android:layout_height="match_parent"
+               android:layout_marginLeft="4.0dip"
+               android:src="@drawable/alt_0" android:scaleType="fitCenter" android:layout_alignParentTop="true"
+    />
+    <TextView android:textSize="10.0dip" android:textColor="#ffffffff" android:id="@id/textView1"
+              android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:text="   OFF"
+              android:layout_alignBottom="@id/ialtimetro"
+              android:layout_centerVertical="false"
+              android:layout_centerInParent="false" android:layout_marginBottom="55.0dip"
+              android:layout_centerHorizontal="true"/>
+    <TextView android:textSize="35.0dip" android:textColor="#ffffffff" android:id="@id/textView1_1"
+              android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:text="" android:layout_alignLeft="@id/textView1"
+              android:layout_alignBottom="@+id/ialtimetro"
+              android:layout_marginBottom="20.0dip" android:layout_centerHorizontal="true"/>
+    <TextView android:textAppearance="?android:textAppearanceSmall" android:textSize="25.0dip"
+              android:textColor="#ffffffff" android:id="@id/textView1Mph" android:layout_width="match_parent"
+              android:layout_height="match_parent" android:text=""
+              android:layout_toRightOf="@id/textView1" android:layout_alignBaseline="@id/textView1"
+              android:layout_alignBottom="@id/textView1" android:layout_marginBottom="1.0dip"
+              android:layout_marginRight="1.0dip" android:visibility="gone"/>
+    <TextView android:textAppearance="?android:textAppearanceSmall" android:textSize="25.0dip"
+              android:textColor="#ffffffff" android:id="@id/textView1Kmh" android:layout_width="wrap_content"
+              android:layout_height="wrap_content" android:text=""
+              android:layout_toRightOf="@+id/textView1_1" android:layout_alignBaseline="@+id/textView1_1"
+              android:layout_alignBottom="@+id/textView1_1" android:layout_marginLeft="2.0dip"
+              android:layout_centerHorizontal="false" android:layout_alignParentTop="false" android:visibility="gone"/>
+</RelativeLayout>
