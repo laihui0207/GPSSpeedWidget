@@ -11,14 +11,32 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        release{
+            storeFile file("../keystore/GPSWidgetSignKey")
+            storePassword "huivip"
+            keyAlias "huivip_GPSWidgetSignKey"
+            keyPassword "huivip"
+        }
+    }
     buildTypes {
         release {
+            signingConfig  signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.each {
+                output -> output.outputFile = new File(output.outputFile.parent, "GPSWidget_"
+                        + buildType.name + "_v" + defaultConfig.versionName + "-${releaseTime()}.apk");
+            }
+    }
 }
-
+def releaseTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {

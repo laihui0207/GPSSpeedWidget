@@ -4,6 +4,7 @@ import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -11,8 +12,11 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import java.text.NumberFormat;
 import java.util.Timer;
@@ -125,16 +129,22 @@ public class GpsSpeedService extends Service {
     }
 
     void checkLocationData() {
-        LocationManager locationManager = (LocationManager) getSystemService("location");
-        if (locationManager.getProvider(this.providerId) == null) {
-            return;
+        boolean bool=false;
+        try {
+            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            if (locationManager.getProvider(this.providerId) == null) {
+                return;
+            }
+            bool = locationManager.isProviderEnabled(this.providerId);
+            Location localLocation = locationManager.getLastKnownLocation("gps");
+            if (localLocation != null) {
+                updateLocationData(localLocation);
+            }
+            locationManager.requestLocationUpdates(this.providerId, 1L, 1.0F, this.myLocationListener);
+        }catch (SecurityException e){
+            Toast.makeText(getApplicationContext(), "GPS widget Need Location Permissions!", Toast.LENGTH_SHORT).show();
         }
-        boolean bool = locationManager.isProviderEnabled(this.providerId);
-        Location localLocation = locationManager.getLastKnownLocation("gps");
-        if (localLocation != null) {
-            updateLocationData(localLocation);
-        }
-        locationManager.requestLocationUpdates(this.providerId, 1L, 1.0F, this.myLocationListener);
+
         if ((this.velocitaString != null) && (bool)) {
             if (!this.velocitaString.equals(this.velocita_prec)) {
                 computeAndShowData();
@@ -151,10 +161,7 @@ public class GpsSpeedService extends Service {
         NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
         localNumberFormat.setMaximumFractionDigits(1);
         int mphNumber = (int)(this.velocitaNumber.intValue() * 3.6D / 1.609344D);
-        int kmhNumber = (int)(this.velocitaNumber.intValue() * 3.6D);
         this.remoteViews.setTextViewText(R.id.textView1, localNumberFormat.format(this.speed.doubleValue() * 3.6D / 1.609344D));
-        //this.remoteViews.setTextViewText(R.id.textView1Mph, "Mph");
-        //this.remoteViews.setTextViewText(R.id.textView1Kmh, "Km/h");
         this.remoteViews.setTextViewText(R.id.textView1_1, localNumberFormat.format(this.speed.doubleValue() * 3.6D));
         switch (mphNumber)
         {
@@ -476,9 +483,7 @@ public class GpsSpeedService extends Service {
         this.timer.cancel();
         stopSelf();
         this.remoteViews.setTextViewText(R.id.textView1, "   OFF");
-        //this.remoteViews.setTextViewText(R.id.textView1Mph, "");
         this.remoteViews.setTextViewText(R.id.textView1_1, "");
-        //this.remoteViews.setTextViewText(R.id.textView1Kmh, "");
         this.remoteViews.setImageViewResource(R.id.ialtimetro,R.drawable.base);
         this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_0);
         this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
