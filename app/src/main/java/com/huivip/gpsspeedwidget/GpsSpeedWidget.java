@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 
@@ -13,16 +14,16 @@ import android.widget.RemoteViews;
  * @author sunlaihui
  */
 public class GpsSpeedWidget extends AppWidgetProvider {
-    public static String ACTION_WIDGET_CONFIGURE = "ConfigureWidget";
-    public static String ACTION_WIDGET_RECEIVER = "ActionReceiverWidget";
     @Override
     public void onReceive(Context context, Intent paramIntent) {
         super.onReceive(context, paramIntent);
-        RemoteViews views =new RemoteViews(context.getPackageName(),R.layout.speedwidget);
-        views.setOnClickPendingIntent(R.id.ialtimetro, PendingIntent.getService(context,0,
-                new Intent(context,GpsSpeedService.class),0));
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.speedwidget);
+        Intent service = new Intent(context, GpsSpeedService.class);
+        views.setOnClickPendingIntent(R.id.ifreccia, PendingIntent.getService(context, 0,
+                service, 0));
+        context.startService(service);
         ComponentName localComponentName = new ComponentName(context, GpsSpeedWidget.class);
-        AppWidgetManager.getInstance(context).updateAppWidget(localComponentName,views);
+        AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
 
     @Override

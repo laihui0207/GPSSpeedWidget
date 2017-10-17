@@ -7,12 +7,12 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import java.text.NumberFormat;
 import java.util.Timer;
@@ -22,33 +22,31 @@ import java.util.TimerTask;
  * @author sunlaihui
  */
 public class GpsSpeedService extends Service {
-    String latitudine;
-    String longitudine;
-    String velocita;
-    Integer velocita2;
+    static final int MAX_VELOCITA_NUMBER=140;
+    private String latitudine;
+    private String velocitaString;
+    private Integer velocitaNumber;
     AppWidgetManager manager;
     LocationListener myLocationListener;
     String providerId = "gps";
     RemoteViews remoteViews;
     TimerTask scanTask;
-    Double speed2;
-    boolean stato = false;
+    Double speed;
+    boolean serviceStarted = true;
     Timer timer = new Timer();
     ComponentName thisWidget;
     final Handler handler = new Handler();
-    Integer velocita2_prec = Integer.valueOf(62536);
-    Integer ris_prec = Integer.valueOf(62536);
     String velocita_prec = "ciao";
     Integer c = Integer.valueOf(0);
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("GPS widget","Service Create .......................");
-        this.stato = false;
+        this.serviceStarted = true;
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
         this.thisWidget = new ComponentName(this, GpsSpeedWidget.class);
         this.manager = AppWidgetManager.getInstance(this);
-        /*this.scanTask = new TimerTask()
+        this.c = Integer.valueOf(0);
+        this.scanTask = new TimerTask()
         {
             @Override
             public void run()
@@ -58,64 +56,48 @@ public class GpsSpeedService extends Service {
                     @Override
                     public void run()
                     {
-                        GpsSpeedService.this.aggiornamento_tot();
+                        GpsSpeedService.this.checkLocationData();
                     }
                 });
             }
         };
-        this.timer.schedule(this.scanTask, 0L, 100L);*/
+        this.timer.schedule(this.scanTask, 0L, 1000L);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("GpsWidget","Service Start--------------------");
-        /*boolean bool;
-        if (!this.stato)
-        {
-            bool = true;
-            this.stato = bool;
-            this.myLocationListener = new LocationListener()
-            {
+
+        if (serviceStarted) {
+            this.myLocationListener = new LocationListener() {
                 @Override
-                public void onLocationChanged(Location paramAnonymousLocation)
-                {
+                public void onLocationChanged(Location paramAnonymousLocation) {
                     GpsSpeedService.this.updateLocationData(paramAnonymousLocation);
-                    if (GpsSpeedService.this.stato) {}
                 }
 
                 @Override
-                public void onProviderDisabled(String paramAnonymousString) {}
-
-                @Override
-                public void onProviderEnabled(String paramAnonymousString) {}
-
-                @Override
-                public void onStatusChanged(String paramAnonymousString, int paramAnonymousInt, Bundle paramAnonymousBundle)
-                {
-                    if (paramAnonymousInt == 2) {}
+                public void onStatusChanged(String s, int status, Bundle bundle) {
+                    if (status == LocationProvider.TEMPORARILY_UNAVAILABLE || status == LocationProvider.OUT_OF_SERVICE) {
+                        GpsSpeedService.this.updateLocationData(null);
+                    }
                 }
+
+                @Override
+                public void onProviderDisabled(String paramAnonymousString) {
+                    GpsSpeedService.this.updateLocationData(null);
+                }
+
+                @Override
+                public void onProviderEnabled(String paramAnonymousString) {
+                }
+
             };
-            if (!this.stato) {
-                spento();
-                return START_REDELIVER_INTENT;
-               // break label43;
-            }
-            aggiornamento_tot();
-        }*/
-        /*for (;;)
-        {
-            return 0;
-            bool = false;
-            break;
-            *//*label43:
-            spento();*//*
-        }*/
-        return super.onStartCommand(intent, flags, startId);
-    }
+            serviceStarted =false;
+        } else {
+            serviceStarted = true;
+            closeAndResetData();
+        }
+        return super.onStartCommand(intent,flags,startId);
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override
@@ -124,83 +106,287 @@ public class GpsSpeedService extends Service {
     }
     private void updateLocationData(Location paramLocation)
     {
-
-        this.latitudine = Double.toString((int)paramLocation.getLatitude());
-        this.velocita = null;
-        Log.d("GPSWidget","Get GPS info......");
-        if (paramLocation.hasSpeed())
-        {
-            Log.d("GPSWidget","GPS Info: have speed");
-            this.velocita2 = Integer.valueOf((int)paramLocation.getSpeed());
-            NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
-            localNumberFormat.setMaximumFractionDigits(1);
-            this.speed2 = Double.valueOf(paramLocation.getSpeed());
-            this.velocita = localNumberFormat.format(this.speed2);
+        if(paramLocation!=null ) {
+            this.latitudine = Double.toString((int) paramLocation.getLatitude());
+            this.velocitaString = null;
+            if (paramLocation.hasSpeed()) {
+                this.velocitaNumber = Integer.valueOf((int) paramLocation.getSpeed());
+                NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
+                localNumberFormat.setMaximumFractionDigits(1);
+                this.speed = Double.valueOf(paramLocation.getSpeed());
+                this.velocitaString = localNumberFormat.format(this.speed);
+            }
+        }
+        else {
+            this.velocitaString=null;
+            this.velocita_prec="ciao";
+            this.latitudine=null;
         }
     }
-    void aggiornamento_tot()
-    {
-        LocationManager locationManager = (LocationManager)getSystemService("location");
+
+    void checkLocationData() {
+        LocationManager locationManager = (LocationManager) getSystemService("location");
         if (locationManager.getProvider(this.providerId) == null) {
-            Log.d("GPS","No location provider");
             return;
         }
         boolean bool = locationManager.isProviderEnabled(this.providerId);
-        for (;;)
-        {
-            Location localLocation = locationManager.getLastKnownLocation("gps");
-            if (localLocation != null) {
-                Log.d("GPS widget","Location have done!");
-                updateLocationData(localLocation);
+        Location localLocation = locationManager.getLastKnownLocation("gps");
+        if (localLocation != null) {
+            updateLocationData(localLocation);
+        }
+        locationManager.requestLocationUpdates(this.providerId, 1L, 1.0F, this.myLocationListener);
+        if ((this.velocitaString != null) && (bool)) {
+            if (!this.velocitaString.equals(this.velocita_prec)) {
+                computeAndShowData();
             }
-            locationManager.requestLocationUpdates(this.providerId, 1L, 1.0F, this.myLocationListener);
-            if ((this.velocita != null) && (bool))
-            {
-                if (!this.velocita.equals(this.velocita_prec)) {
-                    aggiornamento();
-                }
-                this.velocita_prec = this.velocita;
-            }
-            if ((this.latitudine != null) || (!bool)) {
-                break;
-            }
-            int localInt = this.c;
-            this.c = Integer.valueOf(this.c.intValue() + 1);
-            localInt = Integer.valueOf(this.c.intValue() / 50);
-            if (!((Integer)localInt).equals(this.ris_prec)) {
-                Toast.makeText(getApplicationContext(), "...waiting GPS signal...", 0).show();
-            }
-            this.ris_prec = ((Integer)localInt);
+            this.velocita_prec = this.velocitaString;
+        }
+        if ((this.latitudine == null)) {
             this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
+            this.remoteViews.setTextViewText(R.id.textView1_1, "");
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
-            break;
-/*            spento();*/
         }
     }
-    void aggiornamento(){
-        Log.d("GPS","Compute GPS speed");
+    void computeAndShowData(){
         NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
         localNumberFormat.setMaximumFractionDigits(1);
-        int mphNumber = (int)(this.velocita2.intValue() * 3.6D / 1.609344D);
-        int kmhNumber = (int)(this.velocita2.intValue() * 3.6D);
-        this.remoteViews.setTextViewText(R.id.textView1, localNumberFormat.format(mphNumber));
+        int mphNumber = (int)(this.velocitaNumber.intValue() * 3.6D / 1.609344D);
+        int kmhNumber = (int)(this.velocitaNumber.intValue() * 3.6D);
+        this.remoteViews.setTextViewText(R.id.textView1, localNumberFormat.format(this.speed.doubleValue() * 3.6D / 1.609344D));
         this.remoteViews.setTextViewText(R.id.textView1Mph, "Mph");
         this.remoteViews.setTextViewText(R.id.textView1Kmh, "Km/h");
-        this.remoteViews.setTextViewText(R.id.textView1_1, localNumberFormat.format(kmhNumber));
-        Log.d("GPS","Compute GPS speed:"+kmhNumber);
-        /*switch (mphNumber)
+        this.remoteViews.setTextViewText(R.id.textView1_1, localNumberFormat.format(this.speed.doubleValue() * 3.6D));
+        //this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
+        switch (mphNumber)
         {
             default:
-                if (mphNumber > 140) {
+                if (mphNumber > MAX_VELOCITA_NUMBER) {
                     this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_150);
                 }
-                switch (mphNumber)
-                {
-                }
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.base);
+
                 break;
-        }*/
+            case 0:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_0);
+                break;
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_4);
+                break;
+            case 5:
+            case 6:
+            case 7:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_7);
+                break;
+            case 8:
+            case 9:
+            case 10:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_10);
+                break;
+            case 11:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_11);
+                break;
+            case 12:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_12);
+                break;
+            case 13:
+            case 14:
+            case 15:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_15);
+                break;
+            case 16:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_16);
+                break;
+            case 17:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_17);
+                break;
+            case 18:
+            case 19:
+            case 20:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_20);
+                break;
+            case 21:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_21);
+                break;
+            case 22:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_22);
+                break;
+            case 23:
+            case 24:
+            case 25:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_25);
+                break;
+            case 26:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_26);
+                break;
+            case 27:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_27);
+                break;
+            case 28:
+            case 29:
+            case 30:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_30);
+                break;
+            case 31:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_31);
+                break;
+            case 32:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_32);
+                break;
+            case 33:
+            case 34:
+            case 35:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_35);
+                break;
+            case 36:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_36);
+                break;
+            case 37:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_37);
+                break;
+            case 38:
+            case 39:
+            case 40:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_40);
+                break;
+            case 41:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_41);
+                break;
+            case 42:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_42);
+                break;
+            case 43:
+            case 44:
+            case 45:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_45);
+                break;
+            case 46:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_46);
+                break;
+            case 47:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_47);
+                break;
+            case 48:
+            case 49:
+            case 50:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_50);
+                break;
+            case 51:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_51);
+                break;
+            case 52:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_52);
+                break;
+            case 53:
+            case 54:
+            case 55:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_55);
+                break;
+            case 56:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_56);
+                break;
+            case 57:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_57);
+                break;
+            case 58:
+            case 59:
+            case 60:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_60);
+                break;
+            case 61:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_61);
+                break;
+            case 62:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_62);
+                break;
+            case 63:
+            case 64:
+            case 65:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_65);
+                break;
+            case 66:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_66);
+                break;
+            case 67:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_67);
+                break;
+            case 68:
+            case 69:
+            case 70:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_70);
+                break;
+            case 71:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_71);
+                break;
+            case 72:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_72);
+                break;
+            case 73:
+            case 74:
+            case 75:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_75);
+                break;
+            case 76:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_76);
+                break;
+            case 77:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_77);
+                break;
+            case 78:
+            case 79:
+            case 80:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_80);
+                break;
+            case 81:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_81);
+                break;
+            case 82:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_82);
+                break;
+            case 83:
+            case 84:
+            case 85:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_85);
+                break;
+            case 86:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_86);
+                break;
+            case 87:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_87);
+                break;
+            case 88:
+            case 89:
+            case 90:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_90);
+                break;
+            case 91:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_91);
+                break;
+            case 92:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_92);
+                break;
+            case 93:
+            case 94:
+            case 95:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_95);
+                break;
+            case 96:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_96);
+                break;
+            case 97:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_97);
+                break;
+            case 98:
+            case 99:
+            case 100:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_100);
+                break;
+        }
+        this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
     }
-    void spento()
+    void closeAndResetData()
     {
         this.timer.cancel();
         stopSelf();
