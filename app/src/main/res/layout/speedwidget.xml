@@ -21,9 +21,10 @@
               android:layout_centerHorizontal="true"/>
     <TextView android:textSize="35.0dip" android:textColor="#ffffffff" android:id="@id/textView1_1"
               android:layout_width="wrap_content" android:layout_height="wrap_content"
-              android:text="" android:layout_alignLeft="@id/textView1"
+              android:text=""
               android:layout_alignBottom="@+id/ialtimetro"
-              android:layout_marginBottom="20.0dip" android:layout_centerHorizontal="true"/>
+              android:layout_marginBottom="20.0dip" android:layout_centerHorizontal="true"
+              android:layout_alignLeft="@+id/textView1"/>
     <TextView android:textAppearance="?android:textAppearanceSmall" android:textSize="25.0dip"
               android:textColor="#ffffffff" android:id="@id/textView1Mph" android:layout_width="match_parent"
               android:layout_height="match_parent" android:text=""

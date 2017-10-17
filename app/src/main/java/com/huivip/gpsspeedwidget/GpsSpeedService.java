@@ -61,7 +61,7 @@ public class GpsSpeedService extends Service {
                 });
             }
         };
-        this.timer.schedule(this.scanTask, 0L, 1000L);
+        this.timer.schedule(this.scanTask, 0L, 100L);
     }
 
     @Override
@@ -138,8 +138,8 @@ public class GpsSpeedService extends Service {
         if ((this.velocitaString != null) && (bool)) {
             if (!this.velocitaString.equals(this.velocita_prec)) {
                 computeAndShowData();
+                this.velocita_prec = this.velocitaString;
             }
-            this.velocita_prec = this.velocitaString;
         }
         if ((this.latitudine == null)) {
             this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
@@ -153,18 +153,15 @@ public class GpsSpeedService extends Service {
         int mphNumber = (int)(this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         int kmhNumber = (int)(this.velocitaNumber.intValue() * 3.6D);
         this.remoteViews.setTextViewText(R.id.textView1, localNumberFormat.format(this.speed.doubleValue() * 3.6D / 1.609344D));
-        this.remoteViews.setTextViewText(R.id.textView1Mph, "Mph");
-        this.remoteViews.setTextViewText(R.id.textView1Kmh, "Km/h");
+        //this.remoteViews.setTextViewText(R.id.textView1Mph, "Mph");
+        //this.remoteViews.setTextViewText(R.id.textView1Kmh, "Km/h");
         this.remoteViews.setTextViewText(R.id.textView1_1, localNumberFormat.format(this.speed.doubleValue() * 3.6D));
-        //this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         switch (mphNumber)
         {
             default:
                 if (mphNumber > MAX_VELOCITA_NUMBER) {
                     this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_150);
                 }
-                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.base);
-
                 break;
             case 0:
                 this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_0);
@@ -383,6 +380,94 @@ public class GpsSpeedService extends Service {
             case 100:
                 this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_100);
                 break;
+            case 101:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_100);
+                break;
+            case 102:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_102);
+                break;
+            case 103:
+            case 104:
+            case 105:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_105);
+                break;
+            case 106:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_100);
+                break;
+            case 107:
+            case 108:
+            case 109:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_107);
+                break;
+            case 110:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_110);
+                break;
+            case 111:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_111);
+                break;
+            case 112:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_112);
+                break;
+            case 113:
+            case 114:
+            case 115:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_115);
+                break;
+            case 116:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_116);
+                break;
+            case 117:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_117);
+                break;
+            case 118:
+            case 119:
+            case 120:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_120);
+                break;
+            case 121:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_121);
+                break;
+            case 122:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_122);
+                break;
+            case 123:
+            case 124:
+            case 125:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_125);
+                break;
+            case 126:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_126);
+                break;
+            case 127:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_127);
+                break;
+            case 128:
+            case 129:
+            case 130:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_130);
+                break;
+            case 131:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_131);
+                break;
+            case 132:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_132);
+                break;
+            case 133:
+            case 134:
+            case 135:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_135);
+                break;
+            case 136:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_136);
+                break;
+            case 137:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_137);
+                break;
+            case 138:
+            case 139:
+            case 140:
+                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_140);
+                break;
         }
         this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
     }
@@ -391,9 +476,9 @@ public class GpsSpeedService extends Service {
         this.timer.cancel();
         stopSelf();
         this.remoteViews.setTextViewText(R.id.textView1, "   OFF");
-        this.remoteViews.setTextViewText(R.id.textView1Mph, "");
+        //this.remoteViews.setTextViewText(R.id.textView1Mph, "");
         this.remoteViews.setTextViewText(R.id.textView1_1, "");
-        this.remoteViews.setTextViewText(R.id.textView1Kmh, "");
+        //this.remoteViews.setTextViewText(R.id.textView1Kmh, "");
         this.remoteViews.setImageViewResource(R.id.ialtimetro,R.drawable.base);
         this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_0);
         this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
