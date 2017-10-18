@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
 
@@ -13,6 +14,7 @@ import android.widget.RemoteViews;
  * @author sunlaihui
  */
 public class GpsSpeedWidget extends AppWidgetProvider {
+    public static final String PREFS_NAME = "GPSWidgetAutoLaunch";
     @Override
     public void onReceive(Context context, Intent paramIntent) {
         super.onReceive(context, paramIntent);
@@ -20,7 +22,14 @@ public class GpsSpeedWidget extends AppWidgetProvider {
         Intent service = new Intent(context, GpsSpeedService.class);
         views.setOnClickPendingIntent(R.id.ifreccia, PendingIntent.getService(context, 0,
                 service, 0));
-        context.startService(service);
+        if(paramIntent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)){
+            SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
+            boolean start = settings.getBoolean("start", true);
+            if(start) {
+                context.startService(service);
+            }
+        }
+
         ComponentName localComponentName = new ComponentName(context, GpsSpeedWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">GPSSpeedWidget</string>
+    <string name="str_btn_ok">OK</string>
+    <string name="startAfterSystemLaunch">Auto Start After System Launch</string>
 </resources>

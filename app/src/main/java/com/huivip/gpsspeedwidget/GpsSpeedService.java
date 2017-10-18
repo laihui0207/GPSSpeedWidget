@@ -4,7 +4,6 @@ import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,9 +11,6 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -70,7 +66,7 @@ public class GpsSpeedService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        super.onStartCommand(intent,flags,startId);
         if (serviceStarted) {
             this.myLocationListener = new LocationListener() {
                 @Override
@@ -100,8 +96,13 @@ public class GpsSpeedService extends Service {
             serviceStarted = true;
             closeAndResetData();
         }
-        return super.onStartCommand(intent,flags,startId);
+        return Service.START_REDELIVER_INTENT;
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
