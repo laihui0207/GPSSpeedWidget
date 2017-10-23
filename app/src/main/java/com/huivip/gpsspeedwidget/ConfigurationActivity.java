@@ -15,7 +15,6 @@ import android.widget.CompoundButton;
  */
 public class ConfigurationActivity extends Activity {
     private int mAppWidgetId = 0 ;
-    public static final String PREFS_NAME = "GPSWidgetAutoLaunch";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,27 +30,47 @@ public class ConfigurationActivity extends Activity {
 
         }
 
-        CheckBox checkBox=(CheckBox)findViewById(R.id.checkBox);
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        boolean start=settings.getBoolean("start",true);
-        checkBox.setChecked(start);
+        CheckBox autoStartCheckBox=(CheckBox)findViewById(R.id.autoStart);
+        CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
+        SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
+        boolean start=settings.getBoolean(Constant.AUTO_START_PREFS_NAME,true);
+        autoStartCheckBox.setChecked(start);
+        boolean recordGPS=settings.getBoolean(Constant.RECORD_GPS_HISTORY_PREFS_NAME,false);
+        recordGPSCheckBox.setChecked(recordGPS);
         CheckBox.OnCheckedChangeListener checkedChangeListener=new CheckBox.OnCheckedChangeListener(){
 
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
-                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 if(checkBoxButton.isChecked()){
-                    editor.putBoolean("start", true);
+                    editor.putBoolean(Constant.AUTO_START_PREFS_NAME, true);
                 }
                 else {
-                    editor.putBoolean("start", false);
+                    editor.putBoolean(Constant.AUTO_START_PREFS_NAME, false);
                 }
                 editor.commit();
             }
         };
 
-        checkBox.setOnCheckedChangeListener(checkedChangeListener);
+        autoStartCheckBox.setOnCheckedChangeListener(checkedChangeListener);
+
+        CheckBox.OnCheckedChangeListener recordGPSCheckedChangeListener=new CheckBox.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
+                SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                if(checkBoxButton.isChecked()){
+                    editor.putBoolean(Constant.RECORD_GPS_HISTORY_PREFS_NAME, true);
+                }
+                else {
+                    editor.putBoolean(Constant.RECORD_GPS_HISTORY_PREFS_NAME, false);
+                }
+                editor.commit();
+            }
+        };
+        recordGPSCheckBox.setOnCheckedChangeListener(recordGPSCheckedChangeListener);
         Button btnOk= (Button) findViewById(R.id.confirm);
 
         View.OnClickListener confirmListener  = new View.OnClickListener() {

@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_GPS"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
@@ -42,6 +41,12 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/watch_widget_provider"/>
         </receiver>
         <service android:name=".GpsSpeedService"/>
+        <receiver android:name=".MessageReceiver">
+           <intent-filter>
+               <action android:name="android.intent.action.BOOT_COMPLETED"/>
+               <action android:name="com.huivip.recordGpsHistory.start"/>
+           </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

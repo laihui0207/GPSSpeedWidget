@@ -14,7 +14,6 @@ import android.widget.RemoteViews;
  * @author sunlaihui
  */
 public class GpsSpeedWidget extends AppWidgetProvider {
-    public static final String PREFS_NAME = "GPSWidgetAutoLaunch";
     @Override
     public void onReceive(Context context, Intent paramIntent) {
         super.onReceive(context, paramIntent);
@@ -23,8 +22,8 @@ public class GpsSpeedWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.ifreccia, PendingIntent.getService(context, 0,
                 service, 0));
         if(paramIntent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)){
-            SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
-            boolean start = settings.getBoolean("start", true);
+            SharedPreferences settings = context.getSharedPreferences(Constant.PREFS_NAME, 0);
+            boolean start = settings.getBoolean(Constant.AUTO_START_PREFS_NAME, true);
             if(start) {
                 context.startService(service);
             }
