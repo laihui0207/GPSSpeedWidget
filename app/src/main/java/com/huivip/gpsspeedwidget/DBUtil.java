@@ -34,33 +34,46 @@ public class DBUtil extends SQLiteOpenHelper {
 
     }
 
-    public void insert(String lng,String lat,Date date){
-        ContentValues cv=new ContentValues();
-        cv.put("lng",lng);
-        cv.put("lat",lat);
-        cv.put("createTime",date.getTime());
-        getWritableDatabase().insertOrThrow(tableName,null,cv);
+    public void insert(String lng, String lat, Date date) {
+        ContentValues cv = new ContentValues();
+        cv.put("lng", lng);
+        cv.put("lat", lat);
+        cv.put("createTime", date.getTime());
+        SQLiteDatabase db = getWritableDatabase();
+        db.insertOrThrow(tableName, null, cv);
+        db.close();
     }
 
     public void delete(Date fromDate){
         String sql="delete from "+tableName+" where createTime <"+fromDate.getTime();
-        getWritableDatabase().execSQL(sql);
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(sql);
+        db.close();
     }
     public List<LocationVO> getFromDate(Date fromDate){
-        Cursor cursor=getReadableDatabase().query(tableName,new String[]{"lng","lat","createTime"},"createTime<?",
-                new String[]{String.valueOf(fromDate.getTime())},null,null,"createTime");
-        if(cursor.getCount()>0){
-            List<LocationVO> list=new ArrayList<>(cursor.getCount());
-            while(cursor.moveToNext()){
-                LocationVO vo=new LocationVO();
-                vo.setLng(cursor.getString(0));
-                vo.setLat(cursor.getString(1));
-                vo.setCreateTime(cursor.getLong(2));
-                list.add(vo);
+        Cursor cursor=null;
+        SQLiteDatabase db = getReadableDatabase();
+        List<LocationVO> list = new ArrayList<>();
+        try {
+            cursor=db.query(tableName, new String[]{"lng", "lat", "createTime"}, "createTime<?",
+                    new String[]{String.valueOf(fromDate.getTime())}, null, null, "createTime");
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    LocationVO vo = new LocationVO();
+                    vo.setLng(cursor.getString(0));
+                    vo.setLat(cursor.getString(1));
+                    vo.setCreateTime(cursor.getLong(2));
+                    list.add(vo);
+                }
             }
-            return list;
-        }
+        } catch(Exception e){
 
-        return null;
+        } finally {
+            if(null!=cursor){
+                cursor.close();
+            }
+            db.close();
+        }
+        return list;
     }
 }

@@ -7,7 +7,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -22,7 +21,7 @@ import java.util.TimerTask;
  */
 public class GpsSpeedService extends Service {
     static final int MAX_VELOCITA_NUMBER=140;
-    GpsUtil gpsUtil=new GpsUtil();
+    GpsUtil gpsUtil;
     AppWidgetManager manager;
 
     RemoteViews remoteViews;
@@ -39,6 +38,7 @@ public class GpsSpeedService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        gpsUtil=new GpsUtil();
         gpsUtil.setContext(getApplicationContext());
         this.serviceStarted = true;
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
@@ -69,12 +69,15 @@ public class GpsSpeedService extends Service {
         if (serviceStarted) {
             SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
             boolean recordGPS=settings.getBoolean(Constant.RECORD_GPS_HISTORY_PREFS_NAME,false);
+            boolean uploadGPS=settings.getBoolean(Constant.UPLOAD_GPS_HISTORY_PREFS_NAME,false);
             if(recordGPS) {
-                Intent broadcastIntent = new Intent(GpsSpeedService.this, MessageReceiver.class);
-                intent.setAction("com.huivip.recordGpsHistory.start");
-                PendingIntent sender = PendingIntent.getBroadcast(GpsSpeedService.this, 0, broadcastIntent, 0);
-                AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
-                alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60 * 1000, sender);
+                if(uploadGPS) {
+                    Intent broadcastIntent = new Intent(GpsSpeedService.this, MessageReceiver.class);
+                    intent.setAction("com.huivip.recordGpsHistory.start");
+                    PendingIntent sender = PendingIntent.getBroadcast(GpsSpeedService.this, 0, broadcastIntent, 0);
+                    AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+                    alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60 * 1000, sender);
+                }
                 this.recordGPSTask = new TimerTask()
                 {
                     @Override
@@ -85,7 +88,7 @@ public class GpsSpeedService extends Service {
                             @Override
                             public void run()
                             {
-                                if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled()) { //&& gpsUtil.getMphSpeed()>0)
+                                if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled() && gpsUtil.getMphSpeed()>0 ) {
                                     DBUtil dbUtil=new DBUtil(getApplicationContext());
                                     dbUtil.insert(gpsUtil.getLongitude(),gpsUtil.getLatitude(),new Date());
                                 }
@@ -100,12 +103,15 @@ public class GpsSpeedService extends Service {
             serviceStarted = true;
             SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
             boolean recordGPS=settings.getBoolean(Constant.RECORD_GPS_HISTORY_PREFS_NAME,false);
+            boolean uploadGPS=settings.getBoolean(Constant.UPLOAD_GPS_HISTORY_PREFS_NAME,false);
             if(recordGPS) {
-                Intent broadcastIntent = new Intent(GpsSpeedService.this, MessageReceiver.class);
-                intent.setAction("com.huivip.recordGpsHistory.start");
-                PendingIntent sender = PendingIntent.getBroadcast(GpsSpeedService.this, 0, broadcastIntent, 0);
-                AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
-                alarm.cancel(sender);
+                if(uploadGPS) {
+                    Intent broadcastIntent = new Intent(GpsSpeedService.this, MessageReceiver.class);
+                    intent.setAction("com.huivip.recordGpsHistory.start");
+                    PendingIntent sender = PendingIntent.getBroadcast(GpsSpeedService.this, 0, broadcastIntent, 0);
+                    AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+                    alarm.cancel(sender);
+                }
                this.recordGPSTimer.cancel();
             }
 
@@ -139,6 +145,7 @@ public class GpsSpeedService extends Service {
         int mphNumber = gpsUtil.getMphSpeed().intValue();
         this.remoteViews.setTextViewText(R.id.textView1, gpsUtil.getMphSpeedStr());
         this.remoteViews.setTextViewText(R.id.textView1_1, gpsUtil.getKmhSpeedStr());
+        //this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         switch (mphNumber)
         {
             default:

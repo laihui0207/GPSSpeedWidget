@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget;
 import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.text.NumberFormat;

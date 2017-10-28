@@ -40,13 +40,14 @@
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/watch_widget_provider"/>
         </receiver>
-        <service android:name=".GpsSpeedService"/>
         <receiver android:name=".MessageReceiver">
-           <intent-filter>
-               <action android:name="android.intent.action.BOOT_COMPLETED"/>
-               <action android:name="com.huivip.recordGpsHistory.start"/>
-           </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="com.huivip.recordGpsHistory.start"/>
+            </intent-filter>
         </receiver>
+        <service android:name=".GpsSpeedService"/>
+
     </application>
 
 </manifest>

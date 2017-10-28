@@ -22,5 +22,11 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content" android:layout_below="@+id/autoStart"
            android:layout_alignStart="@+id/autoStart" android:id="@+id/recordGPS"/>
+   <CheckBox
+           android:text="@string/uploadGPSHistory"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/uploadGPSData"
+           android:layout_below="@+id/recordGPS" android:layout_alignStart="@+id/recordGPS"/>
 
 </RelativeLayout>

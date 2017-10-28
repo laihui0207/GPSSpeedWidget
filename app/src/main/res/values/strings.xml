@@ -3,4 +3,5 @@
     <string name="str_btn_ok">OK</string>
     <string name="startAfterSystemLaunch">Auto Start After System Launch</string>
     <string name="recordGPSHistory">Record GPS History</string>
+    <string name="uploadGPSHistory">Upload GPS History</string>
 </resources>

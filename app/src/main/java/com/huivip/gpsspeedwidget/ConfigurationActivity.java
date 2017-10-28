@@ -32,11 +32,14 @@ public class ConfigurationActivity extends Activity {
 
         CheckBox autoStartCheckBox=(CheckBox)findViewById(R.id.autoStart);
         CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
+        CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
         boolean start=settings.getBoolean(Constant.AUTO_START_PREFS_NAME,true);
         autoStartCheckBox.setChecked(start);
         boolean recordGPS=settings.getBoolean(Constant.RECORD_GPS_HISTORY_PREFS_NAME,false);
+        boolean uploadGPSData=settings.getBoolean(Constant.UPLOAD_GPS_HISTORY_PREFS_NAME,false);
         recordGPSCheckBox.setChecked(recordGPS);
+        uploadGPSCheckBox.setChecked(uploadGPSData);
         CheckBox.OnCheckedChangeListener checkedChangeListener=new CheckBox.OnCheckedChangeListener(){
 
             @Override
@@ -71,6 +74,23 @@ public class ConfigurationActivity extends Activity {
             }
         };
         recordGPSCheckBox.setOnCheckedChangeListener(recordGPSCheckedChangeListener);
+        CheckBox.OnCheckedChangeListener upLoadGPSCheckedChangeListener=new CheckBox.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
+                SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                if(checkBoxButton.isChecked()){
+                    editor.putBoolean(Constant.UPLOAD_GPS_HISTORY_PREFS_NAME, true);
+                }
+                else {
+                    editor.putBoolean(Constant.UPLOAD_GPS_HISTORY_PREFS_NAME, false);
+                }
+                editor.commit();
+            }
+        };
+        uploadGPSCheckBox.setOnCheckedChangeListener(upLoadGPSCheckedChangeListener);
+
         Button btnOk= (Button) findViewById(R.id.confirm);
 
         View.OnClickListener confirmListener  = new View.OnClickListener() {

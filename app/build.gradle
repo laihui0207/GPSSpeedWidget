@@ -19,6 +19,7 @@ android {
             keyPassword "huivip"
         }
     }
+    useLibrary  'org.apache.http.legacy'
     buildTypes {
         release {
             signingConfig  signingConfigs.release
