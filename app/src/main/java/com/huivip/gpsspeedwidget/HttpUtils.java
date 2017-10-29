@@ -1,7 +1,5 @@
 package com.huivip.gpsspeedwidget;
 
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.json.JSONArray;
 
 import java.io.*;
