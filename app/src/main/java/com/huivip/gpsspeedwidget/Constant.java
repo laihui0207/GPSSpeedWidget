@@ -5,6 +5,7 @@ package com.huivip.gpsspeedwidget;
  */
 public class Constant {
     public static final String PREFS_NAME = "GPSWidgetAutoLaunch";
+    public static final String DEVICE_ID_PREFS_NAME = "deviceID";
     public static final String AUTO_START_PREFS_NAME="AutoStart";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
