@@ -88,7 +88,7 @@ public class GpsSpeedService extends Service {
                             @Override
                             public void run()
                             {
-                                if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled() && gpsUtil.getMphSpeed()>0  ) { //&& gpsUtil.getMphSpeed()>0
+                                if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled() && gpsUtil.getMphSpeed()>0  ) {
                                     DBUtil dbUtil=new DBUtil(getApplicationContext());
                                     dbUtil.insert(gpsUtil.getLongitude(),gpsUtil.getLatitude(),new Date());
                                 }
@@ -139,9 +139,13 @@ public class GpsSpeedService extends Service {
             if(gpsUtil.isGpsLocationChanged()){
                 computeAndShowData();
             }
+            else {
+                this.remoteViews.setTextViewText(R.id.textView1, "0");
+                this.remoteViews.setTextViewText(R.id.textView1_1, "0");
+                this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
+            }
         }
         else {
-            Log.d("GPSWidget","GPS disabled!");
             this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
             this.remoteViews.setTextViewText(R.id.textView1_1, "");
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
@@ -151,7 +155,6 @@ public class GpsSpeedService extends Service {
         int mphNumber = gpsUtil.getMphSpeed().intValue();
         this.remoteViews.setTextViewText(R.id.textView1, gpsUtil.getMphSpeedStr());
         this.remoteViews.setTextViewText(R.id.textView1_1, gpsUtil.getKmhSpeedStr());
-        //this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         switch (mphNumber)
         {
             default:

@@ -26,6 +26,7 @@ public class GpsUtil {
     String providerId = "gps";
     boolean gpsEnabled=false;
     boolean gpsLocationStarted=false;
+    boolean gpsLocationChanged=false;
     LocationListener locationListener=new LocationListener() {
         @Override
         public void onLocationChanged(Location paramAnonymousLocation) {
@@ -89,7 +90,11 @@ public class GpsUtil {
         if ((this.velocitaString != null) && (gpsEnabled)) {
             if (!this.velocitaString.equals(this.velocita_prec)) {
                 computeAndShowData();
+                gpsLocationChanged=true;
                 this.velocita_prec = this.velocitaString;
+            }
+            else{
+                gpsLocationChanged=false;
             }
         }
     }
@@ -125,8 +130,9 @@ public class GpsUtil {
         gpsLocationStarted=this.velocitaString!=null ;
         return gpsLocationStarted;
     }
-    public boolean isGpsLocationChanged(){
-        return !this.velocita_prec.equals(this.velocitaString);
+
+    public boolean isGpsLocationChanged() {
+        return gpsLocationChanged;
     }
 
     public String getLatitude() {
