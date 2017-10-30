@@ -15,7 +15,7 @@ public class GpsUtil {
     Context context;
     private String latitude;
     private String longitude;
-    private String velocitaString;
+    private String velocitaString=null;
     private Integer velocitaNumber;
     Double speed=0D;
     Integer mphSpeed=Integer.valueOf(0);
@@ -122,8 +122,11 @@ public class GpsUtil {
     }
 
     public boolean isGpsLocationStarted() {
-        gpsLocationStarted=this.velocitaString!=null;
+        gpsLocationStarted=this.velocitaString!=null ;
         return gpsLocationStarted;
+    }
+    public boolean isGpsLocationChanged(){
+        return !this.velocita_prec.equals(this.velocitaString);
     }
 
     public String getLatitude() {

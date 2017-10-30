@@ -1,8 +1,6 @@
 package com.huivip.gpsspeedwidget;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.app.Service;
+import android.app.*;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -10,6 +8,8 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.RemoteViews;
 
 import java.util.Date;
@@ -88,7 +88,7 @@ public class GpsSpeedService extends Service {
                             @Override
                             public void run()
                             {
-                                if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled() && gpsUtil.getMphSpeed()>0 ) {
+                                if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled() && gpsUtil.getMphSpeed()>0  ) { //&& gpsUtil.getMphSpeed()>0
                                     DBUtil dbUtil=new DBUtil(getApplicationContext());
                                     dbUtil.insert(gpsUtil.getLongitude(),gpsUtil.getLatitude(),new Date());
                                 }
@@ -99,6 +99,9 @@ public class GpsSpeedService extends Service {
                 this.recordGPSTimer.schedule(this.recordGPSTask, 0L, 3000L);
             }
             serviceStarted =false;
+            this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
+            this.remoteViews.setTextViewText(R.id.textView1_1, "");
+            this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         } else {
             serviceStarted = true;
             SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
@@ -132,10 +135,13 @@ public class GpsSpeedService extends Service {
     }
     void checkLocationData() {
         gpsUtil.checkLocationData();
-        if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
-            computeAndShowData();
+        if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
+            if(gpsUtil.isGpsLocationChanged()){
+                computeAndShowData();
+            }
         }
         else {
+            Log.d("GPSWidget","GPS disabled!");
             this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
             this.remoteViews.setTextViewText(R.id.textView1_1, "");
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
