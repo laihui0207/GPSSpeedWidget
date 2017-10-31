@@ -34,7 +34,28 @@ app.post('/gps',function(req,res){
 });
 app.get("/data",function(req,res){
 	//Search sql: select id,deviceId,lat,lng,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') from GPS;
-	res.end("Build....");
+    var deviceId=req.query.deviceId;
+    var startTime=req.query.startTime;
+    var endTime=req.query.endTime;
+
+    var sql="select deviceId,lng,lat,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId=? ";
+    sql+=" and createTime > ? and createTime < ? ";
+    sql+=" order by createTime";
+
+    db.serialize(function(){
+        db.all(sql,[deviceId,startTime,endTime],function(err,rows){
+            if(err){
+                console.log(err.message);
+            }
+            else {
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.write(JSON.stringify(rows.map(function (row){ return {deviceId: row.deviceId,lng:row.lng,lat: row.lat,createTime:row.createTime}; })));
+                res.end();
+            }
+
+        })
+    })
+
 })
 
 
