@@ -139,11 +139,6 @@ public class GpsSpeedService extends Service {
             if(gpsUtil.isGpsLocationChanged()){
                 computeAndShowData();
             }
-            else {
-                this.remoteViews.setTextViewText(R.id.textView1, "0");
-                this.remoteViews.setTextViewText(R.id.textView1_1, "0");
-                this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
-            }
         }
         else {
             this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");

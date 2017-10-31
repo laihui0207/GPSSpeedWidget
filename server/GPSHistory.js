@@ -33,6 +33,7 @@ app.post('/gps',function(req,res){
 	res.end("Success");
 });
 app.get("/data",function(req,res){
+	//Search sql: select id,deviceId,lat,lng,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') from GPS;
 	res.end("Build....");
 })
 
