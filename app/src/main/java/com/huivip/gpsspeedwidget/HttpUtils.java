@@ -1,5 +1,6 @@
 package com.huivip.gpsspeedwidget;
 
+import android.util.Log;
 import org.json.JSONArray;
 
 import java.io.*;
@@ -7,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 import java.net.URLEncoder;
+import java.util.logging.Handler;
 
 /**
  * @author sunlaihui
@@ -45,7 +47,29 @@ public class HttpUtils {
         }
         return "-1";
     }
+    public static String getData(String strUrlPath){
+        HttpURLConnection httpURLConnection=null;
+        try {
+            URL url = new URL(strUrlPath);
+            Log.d("GPSWidget","URL:"+strUrlPath);
+            httpURLConnection = (HttpURLConnection)url.openConnection();
+            httpURLConnection.setConnectTimeout(10000);
+            httpURLConnection.setRequestMethod("GET");
 
+            int response = httpURLConnection.getResponseCode();
+            if(response == HttpURLConnection.HTTP_OK) {
+                InputStream inputStream = httpURLConnection.getInputStream();
+                return dealResponseResult(inputStream);
+            }
+        } catch (IOException e) {
+            return "err: " + e.getMessage().toString();
+        }finally {
+            if(httpURLConnection!=null) {
+                httpURLConnection.disconnect();
+            }
+        }
+        return "-1";
+    }
     public static StringBuffer getRequestData(Map<String, String> params, String encode) {
         StringBuffer stringBuffer = new StringBuffer();
         try {

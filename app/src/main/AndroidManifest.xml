@@ -6,11 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_GPS"/>
-    <!--允许程序设置内置sd卡的写权限-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--允许程序访问WiFi网络信息-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!--允许程序读写手机状态和身份-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>

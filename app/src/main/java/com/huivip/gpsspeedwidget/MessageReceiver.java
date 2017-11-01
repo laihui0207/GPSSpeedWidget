@@ -34,7 +34,7 @@ public class MessageReceiver extends BroadcastReceiver {
                     params.put("deviceid", deviceId);
                     params.put("t", "gps");
                     params.put("data", jsonStringFromList(locationVOList));
-                    String result = HttpUtils.submitPostData(Constant.LBSPOSTURL, params, "utf-8");
+                    String result = HttpUtils.submitPostData(Constant.LBSURL+Constant.LBSPOSTGPSURL, params, "utf-8");
                     Log.d("GPSWidget","Upload Data Result:"+result);
                     dbUtil.delete(now);
                 }

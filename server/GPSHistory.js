@@ -42,20 +42,56 @@ app.get("/data",function(req,res){
     sql+=" and createTime > ? and createTime < ? ";
     sql+=" order by createTime";
 
-    db.serialize(function(){
-        db.all(sql,[deviceId,startTime,endTime],function(err,rows){
-            if(err){
+    db.serialize(function () {
+        db.all(sql, [deviceId, startTime, endTime], function (err, rows) {
+            if (err) {
                 console.log(err.message);
             }
             else {
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.write(JSON.stringify(rows.map(function (row){ return {deviceId: row.deviceId,lng:row.lng,lat: row.lat,createTime:row.createTime}; })));
+                res.writeHead(200, {'Content-Type': 'application/json'});
+                res.write(JSON.stringify(rows.map(function (row) {
+                    return {deviceId: row.deviceId, lng: row.lng, lat: row.lat, createTime: row.createTime};
+                })));
                 res.end();
             }
 
         })
     })
 
-})
+});
+app.get("/lasted",function(req,res){
+    var deviceId=req.query.deviceId;
+    var sql="select deviceId,lng,lat,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId=? ";
+    sql+=" order by createTime DESC limit 1";
+    db.serialize(function () {
+        db.all(sql, [deviceId], function (err, rows) {
+            if (err) {
+                console.log(err.message);
+            } else {
+                res.writeHead(200, {'Content-Type': 'application/json'});
+                res.write(JSON.stringify(rows.map(function (row){ return {deviceId: row.deviceId,lng:row.lng,lat: row.lat,createTime:row.createTime}; })));
+                res.end();
+            }
+        })
+    })
+});
+
+app.get("/date",function(req,res){
+    var deviceId=req.query.deviceId;
+    var sql="select strftime('%Y-%m-%d', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId=? group by strftime('%Y-%m-%d', createTime / 1000,'unixepoch', 'localtime');";
+    sql+=" order by createTime";
+    db.serialize(function () {
+        db.all(sql, [deviceId], function (err, rows) {
+            if (err) {
+                console.log(err.message);
+            } else {
+                res.writeHead(200, {'Content-Type': 'application/json'});
+                res.write(JSON.stringify(rows.map(function (row){ return {createTime:row.createTime}; })));
+                res.end();
+            }
+        })
+    })
+});
+
 
 
