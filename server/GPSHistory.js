@@ -25,7 +25,7 @@ app.post('/gps',function(req,res){
 		var json=JSON.parse(data);
 		for(var i=0;i<json.length;i++){
 			db.serialize(function(){
-				db.run("insert into GPS(deviceId,lng,lat,speed,createTime) values(?,?,?,?)",[deviceId,json[i].lng,json[i].lat,json[i].speed,json[i].createTime]);
+				db.run("insert into GPS(deviceId,lng,lat,speed,createTime) values(?,?,?,?,?)",[deviceId,json[i].lng,json[i].lat,json[i].speed,json[i].createTime]);
 			})
 		}
 
@@ -38,7 +38,7 @@ app.get("/data",function(req,res){
     var startTime=req.query.startTime;
     var endTime=req.query.endTime;
 
-    var sql="select deviceId,lng,lat,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId=? ";
+    var sql="select deviceId,lng,lat,speed,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId=? ";
     if(startTime!=undefined){
         sql+=" and createTime > ? ";
     }
@@ -55,7 +55,7 @@ app.get("/data",function(req,res){
             else {
                 res.writeHead(200, {'Content-Type': 'application/json'});
                 res.write(JSON.stringify(rows.map(function (row) {
-                    return {deviceId: row.deviceId, lng: row.lng, lat: row.lat, createTime: row.createTime};
+                    return {deviceId: row.deviceId, lng: row.lng, lat: row.lat,speed: row.speed, createTime: row.createTime};
                 })));
                 res.end();
             }
@@ -66,7 +66,7 @@ app.get("/data",function(req,res){
 });
 app.get("/lasted",function(req,res){
     var deviceId=req.query.deviceId;
-    var sql="select deviceId,lng,lat,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId=? ";
+    var sql="select deviceId,lng,lat,speed,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId=? ";
     sql+=" order by createTime DESC limit 1";
     db.serialize(function () {
         db.all(sql, [deviceId], function (err, rows) {
@@ -74,7 +74,7 @@ app.get("/lasted",function(req,res){
                 console.log(err.message);
             } else {
                 res.writeHead(200, {'Content-Type': 'application/json'});
-                res.write(JSON.stringify(rows.map(function (row){ return {deviceId: row.deviceId,lng:row.lng,lat: row.lat,createTime:row.createTime}; })));
+                res.write(JSON.stringify(rows.map(function (row){ return {deviceId: row.deviceId,lng:row.lng,lat: row.lat,speed:row.speed,createTime:row.createTime}; })));
                 res.end();
             }
         })
