@@ -7,9 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.RemoteViews;
 
 import java.util.Date;
@@ -90,7 +87,7 @@ public class GpsSpeedService extends Service {
                             {
                                 if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled() && gpsUtil.getMphSpeed()>0  ) {
                                     DBUtil dbUtil=new DBUtil(getApplicationContext());
-                                    dbUtil.insert(gpsUtil.getLongitude(),gpsUtil.getLatitude(),new Date());
+                                    dbUtil.insert(gpsUtil.getLongitude(),gpsUtil.getLatitude(),gpsUtil.getKmhSpeedStr(),new Date());
                                 }
                             }
                         });

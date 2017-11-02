@@ -6,6 +6,7 @@ import java.util.Date;
 public class LocationVO implements Serializable {
     String lng;
     String lat;
+    String speed;
     Long createTime;
 
     public String getLng() {
@@ -30,6 +31,14 @@ public class LocationVO implements Serializable {
 
     public void setCreateTime(Long createTime) {
         this.createTime = createTime;
+    }
+
+    public String getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(String speed) {
+        this.speed = speed;
     }
 
     @Override

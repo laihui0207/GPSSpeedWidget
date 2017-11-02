@@ -31,7 +31,7 @@ public class MessageReceiver extends BroadcastReceiver {
                 List<LocationVO> locationVOList = dbUtil.getFromDate(now);
                 if (null != locationVOList && locationVOList.size() > 0) {
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("deviceid", deviceId);
+                    params.put("deviceId", deviceId);
                     params.put("t", "gps");
                     params.put("data", jsonStringFromList(locationVOList));
                     String result = HttpUtils.submitPostData(Constant.LBSURL+Constant.LBSPOSTGPSURL, params, "utf-8");
@@ -48,6 +48,7 @@ public class MessageReceiver extends BroadcastReceiver {
             try {
                 jsonVO.put("lng",vo.getLng());
                 jsonVO.put("lat",vo.getLat());
+                jsonVO.put("speed",vo.getSpeed());
                 jsonVO.put("createTime",vo.getCreateTime());
             } catch (JSONException e) {
                 e.printStackTrace();
