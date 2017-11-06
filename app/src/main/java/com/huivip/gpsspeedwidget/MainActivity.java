@@ -1,6 +1,7 @@
 package com.huivip.gpsspeedwidget;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CoordinateConverter;
 import com.amap.api.maps.MapView;
@@ -19,11 +22,37 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * @author sunlaihui
  */
 public class MainActivity extends Activity {
     MapView mMapView = null;
+    Calendar myCalendar = Calendar.getInstance();
+    String selectDateStr="";
+    DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            // TODO Auto-generated method stub
+
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+             String myFormat = "MM/dd/yy"; //In which you need put here
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CHINA);
+
+            //edittext.setText(sdf.format(myCalendar.getTime()));
+            updateLabel(sdf.format(myCalendar.getTime()));
+        }
+
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,40 +60,44 @@ public class MainActivity extends Activity {
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         final AMap aMap = mMapView.getMap();
-       /* MyLocationStyle myLocationStyle;
-        myLocationStyle = new MyLocationStyle();//初始化定位蓝点样式类myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);//连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
-        myLocationStyle.interval(2000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
-        //myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW);
-        aMap.setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style
-        aMap.getUiSettings().setMyLocationButtonEnabled(true);//设置默认定位按钮是否显示，非必需设置。
-        aMap.setMyLocationEnabled(true);// 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。*/
 
-        Button lastedPostion= (Button) findViewById(R.id.lastedBtn);
-        final Handler lastedPostionHandler=new Handler(){
+        MyLocationStyle myLocationStyle = new MyLocationStyle();
+        myLocationStyle.interval(2000);
+        aMap.setMyLocationStyle(myLocationStyle);
+        aMap.getUiSettings().setMyLocationButtonEnabled(true);
+        aMap.setMyLocationEnabled(true);
+
+        Button lastedPosition= (Button) findViewById(R.id.lastedBtn);
+        final Handler lastedPositionHandler=new Handler(){
             @Override
             public void handleMessage(Message msg) {
-                double lat=0;
-                double lng=0;
-                String dataResult= (String) msg.obj;
-                try {
-                    if(dataResult!="-1") {
-                        JSONArray datas=new JSONArray(dataResult);
-                        JSONObject data = datas.getJSONObject(0);
-                        if (null != data) {
-                            lat = data.getDouble("lat");
-                            lng = data.getDouble("lng");
+                if(msg.arg1==Constant.POINT) {
+                    double lat = 0;
+                    double lng = 0;
+                    String dataResult = (String) msg.obj;
+                    try {
+                        if (dataResult != "-1") {
+                            JSONArray datas = new JSONArray(dataResult);
+                            JSONObject data = datas.getJSONObject(0);
+                            if (null != data) {
+                                lat = data.getDouble("lat");
+                                lng = data.getDouble("lng");
+                            }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    if (lat != 0 && lng != 0) {
+                        LatLng latLng = new LatLng(lat, lng);
+                        CoordinateConverter converter = new CoordinateConverter(getApplicationContext());
+                        converter.from(CoordinateConverter.CoordType.GPS);
+                        converter.coord(latLng);
+                        LatLng desLatLng = converter.convert();
+                        final Marker marker = aMap.addMarker(new MarkerOptions().position(desLatLng).title("车辆位置").snippet("车辆最后的位置"));
+                    }
                 }
-                if(lat!=0 && lng!=0) {
-                    LatLng latLng = new LatLng(lat, lng);
-                    CoordinateConverter converter = new CoordinateConverter(getApplicationContext());
-                    converter.from(CoordinateConverter.CoordType.GPS);
-                    converter.coord(latLng);
-                    LatLng desLatLng = converter.convert();
-                    final Marker marker = aMap.addMarker(new MarkerOptions().position(desLatLng).title("车辆位置").snippet("车辆最后的位置"));
+                else if (msg.arg1==Constant.LINE){
+
                 }
             }
         };
@@ -84,13 +117,73 @@ public class MainActivity extends Activity {
 
                         Message message=Message.obtain();
                         message.obj=dataResult;
-                        lastedPostionHandler.handleMessage(message);
+                        message.arg1=Constant.POINT;
+                        lastedPositionHandler.handleMessage(message);
 
                     }
                 }).start();
             }
         };
-        lastedPostion.setOnClickListener(lastedButtonClickLister);
+        lastedPosition.setOnClickListener(lastedButtonClickLister);
+
+
+        EditText edittext= (EditText) findViewById(R.id.selectDate);
+
+        edittext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                        new DatePickerDialog(MainActivity.this, dateListener, myCalendar
+                                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+        });
+
+        Button trackBtn= (Button) findViewById(R.id.TrackBtn);
+        View.OnClickListener trackBtnListener=new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                if(selectDateStr==null || selectDateStr.equalsIgnoreCase("")){
+                    return;
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String myFormat = "MM/dd/yy"; //In which you need put here
+                        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CHINA);
+                        String startTime="";
+                        String endTime="";
+                        try {
+                            Date selectDate=sdf.parse(selectDateStr);
+                            Calendar calendar=Calendar.getInstance();
+                            calendar.setTime(selectDate);
+                            calendar.set(Calendar.MINUTE,0);
+                            calendar.set(Calendar.HOUR,0);
+                            calendar.set(Calendar.SECOND,0);
+                            startTime=Long.toString(calendar.getTimeInMillis());
+                            calendar.add(Calendar.DAY_OF_MONTH,1);
+                            endTime=Long.toString(calendar.getTimeInMillis());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        String dataUrl="";
+                        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
+                        String deviceId=deviceUuidFactory.getDeviceUuid().toString();
+                        dataUrl=Constant.LBSURL+String.format(Constant.LBSGETDATA,deviceId,startTime,endTime);
+                        String dataResult=HttpUtils.getData(dataUrl);
+                        Log.d("GPSWidget","URL:"+dataUrl+",Result:"+dataResult);
+
+                        Message message=Message.obtain();
+                        message.arg1=Constant.LINE;
+                        message.obj=dataResult;
+                        lastedPositionHandler.handleMessage(message);
+                    }
+                }).start();
+            }
+        };
+        trackBtn.setOnClickListener(trackBtnListener);
     }
 
     @Override
@@ -103,5 +196,12 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
+    }
+    private void updateLabel(String dateString) {
+       /* String myFormat = "MM/dd/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CHINA);*/
+        EditText edittext= (EditText) findViewById(R.id.selectDate);
+        selectDateStr=dateString;
+        edittext.setText(dateString);
     }
 }

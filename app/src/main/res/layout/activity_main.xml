@@ -12,13 +12,20 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>-->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="100dp" android:orientation="horizontal">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="50dp" android:orientation="horizontal">
         <Button
                 android:text="Lasted Position"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/lastedBtn" android:layout_marginLeft="2dip"
                 android:layout_marginTop="2dip" android:elevation="0dp" android:layout_weight="1"/>
-        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Track"/>
+
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="50dp" android:weightSum="1">
+        <EditText
+                android:id="@+id/selectDate"
+                android:clickable="true" android:layout_width="100dp"
+                android:hint="@string/SelectDate" android:layout_weight="0.95" android:layout_height="50dp"/>
+        <Button android:layout_width="wrap_content" android:id="@+id/TrackBtn" android:layout_height="wrap_content" android:text="Track"/>
     </LinearLayout>
     <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
         <com.amap.api.maps.MapView

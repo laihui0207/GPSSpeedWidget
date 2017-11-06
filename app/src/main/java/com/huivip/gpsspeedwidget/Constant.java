@@ -15,4 +15,8 @@ public class Constant {
     public static final String LBSGETDATADATEURL="/dates?deviceId=%s";
     public static final String LBSGETDATA="/data?deviceId=%s&startTime=%s&endTime=%s";
 
+
+    public static int LINE=1;
+    public static int POINT=0;
+
 }
