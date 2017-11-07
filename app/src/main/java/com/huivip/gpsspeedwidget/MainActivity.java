@@ -230,8 +230,6 @@ public class MainActivity extends Activity {
         mMapView.onDestroy();
     }
     private void updateLabel(String dateString) {
-       /* String myFormat = "MM/dd/yy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CHINA);*/
         EditText edittext= (EditText) findViewById(R.id.selectDate);
         selectDateStr=dateString;
         edittext.setText(dateString);
