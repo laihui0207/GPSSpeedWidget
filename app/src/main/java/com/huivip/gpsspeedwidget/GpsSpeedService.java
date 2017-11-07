@@ -87,13 +87,14 @@ public class GpsSpeedService extends Service {
                             {
                                 if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled() && gpsUtil.getMphSpeed()>0  ) {
                                     DBUtil dbUtil=new DBUtil(getApplicationContext());
-                                    dbUtil.insert(gpsUtil.getLongitude(),gpsUtil.getLatitude(),gpsUtil.getKmhSpeedStr(),new Date());
+                                    dbUtil.insert(gpsUtil.getLongitude(),gpsUtil.getLatitude(),gpsUtil.getKmhSpeedStr()
+                                            ,gpsUtil.getSpeed(),gpsUtil.getBearing(),new Date());
                                 }
                             }
                         });
                     }
                 };
-                this.recordGPSTimer.schedule(this.recordGPSTask, 0L, 3000L);
+                this.recordGPSTimer.schedule(this.recordGPSTask, 0L, 2000L);
             }
             serviceStarted =false;
             this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");

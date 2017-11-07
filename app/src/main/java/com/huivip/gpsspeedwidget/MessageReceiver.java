@@ -36,7 +36,7 @@ public class MessageReceiver extends BroadcastReceiver {
                     params.put("data", jsonStringFromList(locationVOList));
                     String result = HttpUtils.submitPostData(Constant.LBSURL+Constant.LBSPOSTGPSURL, params, "utf-8");
                     Log.d("GPSWidget","Upload Data Result:"+result);
-                    if(result!=null && result.equalsIgnoreCase("success")) {
+                    if(result!=null && result.equalsIgnoreCase("Success")) {
                         dbUtil.delete(now);
                     }
                 }
@@ -51,6 +51,8 @@ public class MessageReceiver extends BroadcastReceiver {
                 jsonVO.put("lng",vo.getLng());
                 jsonVO.put("lat",vo.getLat());
                 jsonVO.put("speed",vo.getSpeed());
+                jsonVO.put("speedValue",vo.getSpeedValue());
+                jsonVO.put("bearingValue",vo.getBearingValue());
                 jsonVO.put("createTime",vo.getCreateTime());
             } catch (JSONException e) {
                 e.printStackTrace();

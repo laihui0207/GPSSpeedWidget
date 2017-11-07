@@ -1,12 +1,13 @@
 package com.huivip.gpsspeedwidget;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class LocationVO implements Serializable {
     String lng;
     String lat;
     String speed;
+    Double speedValue;
+    Float bearingValue;
     Long createTime;
 
     public String getLng() {
@@ -41,6 +42,22 @@ public class LocationVO implements Serializable {
         this.speed = speed;
     }
 
+    public Double getSpeedValue() {
+        return speedValue;
+    }
+
+    public void setSpeedValue(Double speedValue) {
+        this.speedValue = speedValue;
+    }
+
+    public Float getBearingValue() {
+        return bearingValue;
+    }
+
+    public void setBearingValue(Float bearingValue) {
+        this.bearingValue = bearingValue;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -50,6 +67,9 @@ public class LocationVO implements Serializable {
 
         if (lng != null ? !lng.equals(that.lng) : that.lng != null) return false;
         if (lat != null ? !lat.equals(that.lat) : that.lat != null) return false;
+        if (speed != null ? !speed.equals(that.speed) : that.speed != null) return false;
+        if (speedValue != null ? !speedValue.equals(that.speedValue) : that.speedValue != null) return false;
+        if (bearingValue != null ? !bearingValue.equals(that.bearingValue) : that.bearingValue != null) return false;
         return createTime != null ? createTime.equals(that.createTime) : that.createTime == null;
     }
 
@@ -57,6 +77,9 @@ public class LocationVO implements Serializable {
     public int hashCode() {
         int result = lng != null ? lng.hashCode() : 0;
         result = 31 * result + (lat != null ? lat.hashCode() : 0);
+        result = 31 * result + (speed != null ? speed.hashCode() : 0);
+        result = 31 * result + (speedValue != null ? speedValue.hashCode() : 0);
+        result = 31 * result + (bearingValue != null ? bearingValue.hashCode() : 0);
         result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
         return result;
     }
@@ -66,6 +89,9 @@ public class LocationVO implements Serializable {
         return "LocationVO{" +
                 "lng='" + lng + '\'' +
                 ", lat='" + lat + '\'' +
+                ", speed='" + speed + '\'' +
+                ", speedValue=" + speedValue +
+                ", bearingValue=" + bearingValue +
                 ", createTime=" + createTime +
                 '}';
     }

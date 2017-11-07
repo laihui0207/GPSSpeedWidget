@@ -15,6 +15,7 @@ public class GpsUtil {
     Context context;
     private String latitude;
     private String longitude;
+    private float bearing;
     private String velocitaString=null;
     private Integer velocitaNumber;
     Double speed=0D;
@@ -51,6 +52,14 @@ public class GpsUtil {
 
     };
 
+    public float getBearing() {
+        return bearing;
+    }
+
+    public Double getSpeed() {
+        return speed;
+    }
+
     private void updateLocationData(Location paramLocation)
     {
         if(paramLocation!=null ) {
@@ -63,9 +72,11 @@ public class GpsUtil {
                 localNumberFormat.setMaximumFractionDigits(1);
                 this.speed = Double.valueOf(paramLocation.getSpeed());
                 this.velocitaString = localNumberFormat.format(this.speed);
+                this.bearing=paramLocation.getBearing();
             }
         }
         else {
+
             this.velocitaString=null;
             this.velocita_prec="ciao";
             this.latitude =null;
