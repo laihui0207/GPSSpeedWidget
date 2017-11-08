@@ -142,7 +142,7 @@ public class MainActivity extends Activity {
 
                         String dataUrl="";
                         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
-                        String deviceId=deviceUuidFactory.getDeviceUuid().toString();//"d9990887-4fae-3cb8-a53a-f95293300290";//
+                        String deviceId="d9990887-4fae-3cb8-a53a-f95293300290";//deviceUuidFactory.getDeviceUuid().toString();//"d9990887-4fae-3cb8-a53a-f95293300290";//
                         dataUrl=Constant.LBSURL+String.format(Constant.LBSGETDATA,deviceId,startTime,endTime);
                         String dataResult=HttpUtils.getData(dataUrl);
                         Log.d("GPSWidget","URL:"+dataUrl+",Result:"+dataResult);

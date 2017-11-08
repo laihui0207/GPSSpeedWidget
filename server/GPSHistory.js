@@ -46,24 +46,14 @@ app.get("/data", function (req, res) {
     var queryEnd = moment(endTime * 1);
     var queryDate = queryStart.format("YYYYMMDD");
     var cacheKey = deviceId + "_" + queryDate;
-    var cacheFound = true;
-    if (!moment().isBetween(queryStart, queryEnd)) {
-        console.log("Not Current Day Query");
-        try {
-            var cacheValue = gpsCache.get(cacheKey, true);
-            if (cacheValue != undefined) {
-                console.log("Get Data From Cache!");
-                res.writeHead(200, {'Content-Type': 'application/json'});
-                res.write(cacheValue);
-                res.end();
-            }
-        } catch (err) {
-            console.log("Cache Key can't Found");
-            cacheFound = false;
-        }
-
+    var cacheValue = gpsCache.get(cacheKey, true);
+    if (cacheValue != undefined) {
+        console.log("Get Data From Cache!");
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        res.write(cacheValue);
+        res.end();
     }
-    if (!cacheFound) {
+    else {
         var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId=? ";
         if (startTime != undefined) {
             sql += " and createTime > ? ";
