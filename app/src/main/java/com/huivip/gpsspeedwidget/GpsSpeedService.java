@@ -31,6 +31,7 @@ public class GpsSpeedService extends Service {
     final Handler locationHandler = new Handler();
     final Handler recordGPSHandler=new Handler();
     Integer c = Integer.valueOf(0);
+    Long lineId=0L;
 
     @Override
     public void onCreate() {
@@ -42,6 +43,7 @@ public class GpsSpeedService extends Service {
         this.thisWidget = new ComponentName(this, GpsSpeedWidget.class);
         this.manager = AppWidgetManager.getInstance(this);
         this.c = Integer.valueOf(0);
+        this.lineId=System.currentTimeMillis();
         this.locationScanTask = new TimerTask()
         {
             @Override

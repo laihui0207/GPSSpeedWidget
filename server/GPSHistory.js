@@ -7,7 +7,7 @@ var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('GPSHistory.db');
 db.serialize(function () {
     db.run("CREATE TABLE IF NOT EXISTS  GPS (id integer primary key autoincrement,deviceId varchar(50),lng varchar(20), " +
-        "lat varchar(20),speed varchar(10), speedValue REAL,bearingValue REAL,createTime integer)");
+        "lat varchar(20),speed varchar(10), speedValue REAL,bearingValue REAL,createTime integer,lineId integer)");
 });
 
 var PORT = 8090;
@@ -28,9 +28,13 @@ app.post('/gps', function (req, res) {
         var data = post['data'];
         var json = JSON.parse(data);
         for (var i = 0; i < json.length; i++) {
+            var lineId=1000;
+            if(json[i].lineId!=undefined){
+                lineId=json[i].lineId;
+            }
             db.serialize(function () {
-                db.run("insert into GPS(deviceId,lng,lat,speed,speedValue,bearingValue,createTime) values(?,?,?,?,?,?,?)",
-                    [deviceId, json[i].lng, json[i].lat, json[i].speed, json[i].speedValue, json[i].bearingValue, json[i].createTime]);
+                db.run("insert into GPS(deviceId,lng,lat,speed,speedValue,bearingValue,createTime,lineId) values(?,?,?,?,?,?,?,?)",
+                    [deviceId, json[i].lng, json[i].lat, json[i].speed, json[i].speedValue, json[i].bearingValue, json[i].createTime,lineId]);
             })
         }
 
@@ -54,7 +58,9 @@ app.get("/data", function (req, res) {
         res.end();
     }
     else {
-        var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId=? ";
+        var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue," +
+            "strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime,lineId " +
+            "from GPS where deviceId=? group by lineId";
         if (startTime != undefined) {
             sql += " and createTime > ? ";
         }
@@ -79,7 +85,8 @@ app.get("/data", function (req, res) {
                             speed: row.speed,
                             speedValue: row.speedValue,
                             bearingValue: row.bearingValue,
-                            createTime: row.createTime
+                            createTime: row.createTime,
+                            lineId: row.lineId
                         };
                     }));
                     var cacheTTL=0;
@@ -104,7 +111,7 @@ app.get("/data", function (req, res) {
 });
 app.get("/lasted", function (req, res) {
     var deviceId = req.query.deviceId;
-    var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId=? ";
+    var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime,lineId from GPS where deviceId=? ";
     sql += " order by createTime DESC limit 1";
     db.serialize(function () {
         db.all(sql, [deviceId], function (err, rows) {
@@ -120,7 +127,8 @@ app.get("/lasted", function (req, res) {
                         speed: row.speed,
                         speedValue: row.speedValue,
                         bearingValue: row.bearingValue,
-                        createTime: row.createTime
+                        createTime: row.createTime,
+                        lineId: row.lineId
                     };
                 })));
                 res.end();

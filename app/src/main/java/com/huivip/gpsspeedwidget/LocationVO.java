@@ -9,6 +9,7 @@ public class LocationVO implements Serializable {
     Double speedValue;
     Float bearingValue;
     Long createTime;
+    Long lineId;
 
     public String getLng() {
         return lng;
@@ -58,6 +59,14 @@ public class LocationVO implements Serializable {
         this.bearingValue = bearingValue;
     }
 
+    public Long getLineId() {
+        return lineId;
+    }
+
+    public void setLineId(Long lineId) {
+        this.lineId = lineId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -70,7 +79,8 @@ public class LocationVO implements Serializable {
         if (speed != null ? !speed.equals(that.speed) : that.speed != null) return false;
         if (speedValue != null ? !speedValue.equals(that.speedValue) : that.speedValue != null) return false;
         if (bearingValue != null ? !bearingValue.equals(that.bearingValue) : that.bearingValue != null) return false;
-        return createTime != null ? createTime.equals(that.createTime) : that.createTime == null;
+        if (createTime != null ? !createTime.equals(that.createTime) : that.createTime != null) return false;
+        return lineId != null ? lineId.equals(that.lineId) : that.lineId == null;
     }
 
     @Override
@@ -81,6 +91,7 @@ public class LocationVO implements Serializable {
         result = 31 * result + (speedValue != null ? speedValue.hashCode() : 0);
         result = 31 * result + (bearingValue != null ? bearingValue.hashCode() : 0);
         result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
+        result = 31 * result + (lineId != null ? lineId.hashCode() : 0);
         return result;
     }
 
@@ -93,6 +104,7 @@ public class LocationVO implements Serializable {
                 ", speedValue=" + speedValue +
                 ", bearingValue=" + bearingValue +
                 ", createTime=" + createTime +
+                ", lineId=" + lineId +
                 '}';
     }
 }

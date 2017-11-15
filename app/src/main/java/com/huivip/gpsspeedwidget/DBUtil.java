@@ -26,7 +26,7 @@ public class DBUtil extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS "+tableName+" (id integer primary key autoincrement," +
-                " lng varchar(20), lat varchar(20),speed varchar(10),speedValue REAL,bearingValue REAL, createTime integer)");
+                " lng varchar(20), lat varchar(20),speed varchar(10),speedValue REAL,bearingValue REAL, createTime integer,lineId integer)");
     }
 
     @Override
@@ -34,7 +34,7 @@ public class DBUtil extends SQLiteOpenHelper {
 
     }
 
-    public void insert(String lng, String lat,String speed,double speedValue,double bearingValue, Date date) {
+    public void insert(String lng, String lat,String speed,double speedValue,double bearingValue, Date date,long lineId) {
         ContentValues cv = new ContentValues();
         cv.put("lng", lng);
         cv.put("lat", lat);
@@ -42,6 +42,7 @@ public class DBUtil extends SQLiteOpenHelper {
         cv.put("speedValue",speedValue);
         cv.put("bearingValue",bearingValue);
         cv.put("createTime", date.getTime());
+        cv.put("lineId",lineId);
         SQLiteDatabase db = getWritableDatabase();
         db.insertOrThrow(tableName, null, cv);
         db.close();
@@ -58,7 +59,7 @@ public class DBUtil extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         List<LocationVO> list = new ArrayList<>();
         try {
-            cursor=db.query(tableName, new String[]{"lng", "lat","speed","speedValue","bearingValue","createTime"}, "createTime<?",
+            cursor=db.query(tableName, new String[]{"lng", "lat","speed","speedValue","bearingValue","createTime","lineId"}, "createTime<?",
                     new String[]{String.valueOf(fromDate.getTime())}, null, null, "createTime");
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
@@ -69,6 +70,7 @@ public class DBUtil extends SQLiteOpenHelper {
                     vo.setSpeedValue(cursor.getDouble(3));
                     vo.setBearingValue(cursor.getFloat(4));
                     vo.setCreateTime(cursor.getLong(5));
+                    vo.setLineId(cursor.getLong(6));
                     list.add(vo);
                 }
             }
