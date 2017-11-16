@@ -90,7 +90,7 @@ public class GpsSpeedService extends Service {
                                 if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled() && gpsUtil.getMphSpeed()>0  ) {
                                     DBUtil dbUtil=new DBUtil(getApplicationContext());
                                     dbUtil.insert(gpsUtil.getLongitude(),gpsUtil.getLatitude(),gpsUtil.getKmhSpeedStr()
-                                            ,gpsUtil.getSpeed(),gpsUtil.getBearing(),new Date());
+                                            ,gpsUtil.getSpeed(),gpsUtil.getBearing(),new Date(),lineId);
                                 }
                             }
                         });

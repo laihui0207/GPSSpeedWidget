@@ -54,6 +54,7 @@ public class MessageReceiver extends BroadcastReceiver {
                 jsonVO.put("speedValue",vo.getSpeedValue());
                 jsonVO.put("bearingValue",vo.getBearingValue());
                 jsonVO.put("createTime",vo.getCreateTime());
+                jsonVO.put("lineId",vo.getLineId());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
