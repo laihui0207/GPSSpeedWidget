@@ -69,11 +69,12 @@ public class MainActivity extends Activity implements TraceListener {
         mMapView.onCreate(savedInstanceState);
         aMap = mMapView.getMap();
 
-        /*MyLocationStyle myLocationStyle = new MyLocationStyle();
+        MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.interval(2000);
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_MAP_ROTATE_NO_CENTER);
         aMap.setMyLocationStyle(myLocationStyle);
         aMap.getUiSettings().setMyLocationButtonEnabled(true);
-        aMap.setMyLocationEnabled(true);*/
+        aMap.setMyLocationEnabled(true);
 
         Button lastedPosition= (Button) findViewById(R.id.lastedBtn);
         final Handler lastedPositionHandler=new Handler(){
@@ -208,7 +209,7 @@ public class MainActivity extends Activity implements TraceListener {
         LatLng lastedLatLng = null;
         LatLng firstLatLng = null;
         String dataResult = (String) msg.obj;
-        String format = "yyyy-MM-dd HH:mm:ss"; //In which you need put here
+        String format = "yyyy-MM-dd HH:mm:ss";
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.CHINA);
         String startTime="";
         try {
