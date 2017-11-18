@@ -50,7 +50,7 @@ app.get("/data", function (req, res) {
     var queryEnd = moment(endTime * 1);
     var queryDate = queryStart.format("YYYYMMDD");
     var cacheKey = deviceId + "_" + queryDate;
-    var cacheValue = gpsCache.get(cacheKey, true);
+    var cacheValue = gpsCache.get(cacheKey);
     if (cacheValue != undefined) {
         console.log("Get Data From Cache!");
         res.writeHead(200, {'Content-Type': 'application/json'});
@@ -60,7 +60,7 @@ app.get("/data", function (req, res) {
     else {
         var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue," +
             "strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime,lineId " +
-            "from GPS where deviceId=? group by lineId";
+            "from GPS where deviceId=?";
         if (startTime != undefined) {
             sql += " and createTime > ? ";
         }
