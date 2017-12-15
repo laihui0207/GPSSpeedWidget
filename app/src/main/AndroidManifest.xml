@@ -27,7 +27,7 @@
         <meta-data
                 android:name="com.amap.api.v2.apikey"
                 android:value="6d91e53ca05dee32ec58c9d257224e7b"/>
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
