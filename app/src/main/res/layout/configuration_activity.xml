@@ -8,8 +8,8 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:text="@string/str_btn_ok"
-           android:layout_marginTop="80dp" android:layout_below="@+id/recordGPS"
-           android:layout_alignEnd="@+id/recordGPS"/>
+           android:layout_marginTop="58dp"
+           android:layout_below="@+id/enableOver" android:layout_centerHorizontal="true"/>
    <CheckBox
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
@@ -28,5 +28,33 @@
            android:layout_height="wrap_content"
            android:id="@+id/uploadGPSData"
            android:layout_below="@+id/recordGPS" android:layout_alignStart="@+id/recordGPS"/>
+   <Button
+           android:text="Enable Draw Over"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/EnableFalting"
+           android:layout_below="@+id/button_enable_location" android:layout_alignLeft="@+id/button_enable_location"
+           android:layout_alignStart="@+id/button_enable_location"/>
+   <Button
+           android:text="Enable AccessibilityService"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/enableOver"
+           android:layout_centerVertical="true" android:layout_alignLeft="@+id/EnableFalting"
+           android:layout_alignStart="@+id/EnableFalting"/>
+   <Button
+           android:text="Select maps"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/button_select_app"
+           android:layout_below="@+id/uploadGPSData" android:layout_toRightOf="@+id/button_enable_location"
+           android:layout_toEndOf="@+id/button_enable_location"/>
+   <Button
+           android:text="Enable Location"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/button_enable_location"
+           android:layout_below="@+id/uploadGPSData" android:layout_alignLeft="@+id/uploadGPSData"
+           android:layout_alignStart="@+id/uploadGPSData"/>
 
 </RelativeLayout>

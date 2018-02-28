@@ -1,15 +1,27 @@
 package com.huivip.gpsspeedwidget;
 
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -21,6 +33,9 @@ import com.amap.api.trace.LBSTraceClient;
 import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
+import com.huivip.gpsspeedwidget.limit.FloatingView;
+import com.huivip.gpsspeedwidget.limit.LimitService;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +47,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import butterknife.ButterKnife;
+
 /**
  * @author sunlaihui
  */
@@ -40,12 +57,13 @@ public class MainActivity extends Activity implements TraceListener {
     Calendar myCalendar = Calendar.getInstance();
     String selectDateStr="";
     AMap aMap=null;
+    private View mFloatingView;
     String myFormat = "MM/dd/yyyy";
     SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CHINA);
     private int mSequenceLineID = 1000;
     private List<TraceLocation> mTraceList;
     private ConcurrentMap<Integer, TraceOverlay> mOverlayList = new ConcurrentHashMap<Integer, TraceOverlay>();
-
+    private WindowManager mWindowManager;
 
     DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -176,7 +194,6 @@ public class MainActivity extends Activity implements TraceListener {
         };
         lastedPosition.setOnClickListener(lastedButtonClickLister);
 
-
         EditText edittext= (EditText) findViewById(R.id.selectDate);
 
         edittext.setOnClickListener(new View.OnClickListener() {
@@ -233,6 +250,24 @@ public class MainActivity extends Activity implements TraceListener {
         };
         trackBtn.setOnClickListener(trackBtnListener);
         setSystemUiVisibility(this,true);
+       /* mWindowManager = getWindowManager();
+        LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+        View viewMyLayout = inflater.inflate(R.layout.floating_speedometer_stub,null);
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT);
+        params.gravity = Gravity.TOP | Gravity.START;
+        //params.alpha = PrefUtils.getOpacity(mService) / 100.0F;
+        mWindowManager.addView(viewMyLayout,params);*/
+    }
+
+    private int getWindowType() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                WindowManager.LayoutParams.TYPE_PHONE;
     }
     private void drawLine(Message msg){
         List<LatLng> latLngs = new ArrayList<>();
@@ -266,6 +301,14 @@ public class MainActivity extends Activity implements TraceListener {
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng,13,0,0));
         aMap.moveCamera(mCameraUpdate);
 
+    }
+    private void startLimitService(boolean start) {
+        Intent intent = new Intent(this, LimitService.class);
+        Log.d("GPS~~~~~","start Service=="+start);
+        if (!start) {
+            intent.putExtra(LimitService.EXTRA_CLOSE, true);
+        }
+        startService(intent);
     }
     private void drawLineAndFixPoint(Message msg) {
         List<TraceLocation> locations = new ArrayList<>();
@@ -349,13 +392,16 @@ public class MainActivity extends Activity implements TraceListener {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if(mMapView!=null)
         mMapView.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mMapView.onDestroy();
+        if(mMapView!=null){
+            mMapView.onDestroy();
+        }
     }
     private void updateLabel(String dateString) {
         EditText edittext= (EditText) findViewById(R.id.selectDate);

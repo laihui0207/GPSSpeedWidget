@@ -7,5 +7,24 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <style name="Theme.Velociraptor" parent="Base.Theme.Velociraptor">
+        <item name="toolbarShadow">@drawable/shadow_toolbar</item>
+    </style>
 
+    <style name="Base.Theme.Velociraptor" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="Widget.Button.Colored" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textColor">@color/btn_colored_text_material</item>
+    </style>
+
+    <style name="Widget.Button.Borderless.Colored" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:textColor">@color/btn_colored_borderless_text_material</item>
+    </style>
 </resources>

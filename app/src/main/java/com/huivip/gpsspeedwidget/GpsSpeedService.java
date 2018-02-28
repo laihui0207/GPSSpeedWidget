@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.widget.RemoteViews;
+import android.widget.TextView;
+import butterknife.BindView;
 
 import java.util.Date;
 import java.util.Timer;
@@ -32,7 +34,6 @@ public class GpsSpeedService extends Service {
     final Handler recordGPSHandler=new Handler();
     Integer c = Integer.valueOf(0);
     Long lineId=0L;
-
     @Override
     public void onCreate() {
         super.onCreate();

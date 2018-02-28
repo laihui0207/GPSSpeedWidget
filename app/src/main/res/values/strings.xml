@@ -5,4 +5,12 @@
     <string name="recordGPSHistory">Record GPS History</string>
     <string name="uploadGPSHistory">Upload GPS History</string>
     <string name="SelectDate">Select Date</string>
+    <string name="accessibility_service_summary">Auto-launch in map apps</string>
+    <string name="accessibility_service_description">Allow Velociraptor to detect the foreground app and launch automatically.\n\nVelociraptor does not use any information other than the foreground app info. This service is mainly intended for users with disabilities.</string>
+    <string name="kmph">%s km/h</string>
+    <string name="mph">%s mph</string>
+    <string name="notif_title">Velociraptor is running</string>
+    <!--Notification Channels-->
+    <string name="channel_toggles">Show/hide toggles</string>
+    <string name="channel_warnings">Warnings</string>
 </resources>
