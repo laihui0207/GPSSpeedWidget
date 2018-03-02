@@ -3,7 +3,6 @@ package com.huivip.gpsspeedwidget;
 import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.text.NumberFormat;
@@ -20,6 +19,7 @@ public class GpsUtil {
     private Integer velocitaNumber;
     Double speed=0D;
     Integer mphSpeed=Integer.valueOf(0);
+    Integer kmhSpeed=Integer.valueOf(0);
     String mphSpeedStr="0";
     String kmhSpeedStr="0";
     String velocita_prec = "ciao";
@@ -111,8 +111,9 @@ public class GpsUtil {
     }
     void computeAndShowData() {
         NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
-        localNumberFormat.setMaximumFractionDigits(1);
+        localNumberFormat.setMaximumFractionDigits(0);
         mphSpeed = (int)(this.velocitaNumber.intValue() * 3.6D / 1.609344D);
+        kmhSpeed=(int)(this.speed.doubleValue() * 3.6D);
         mphSpeedStr=localNumberFormat.format(this.speed.doubleValue() * 3.6D / 1.609344D);
         kmhSpeedStr=localNumberFormat.format(this.speed.doubleValue() * 3.6D);
     }
@@ -127,6 +128,10 @@ public class GpsUtil {
 
     public String getKmhSpeedStr() {
         return kmhSpeedStr;
+    }
+
+    public Integer getKmhSpeed() {
+        return kmhSpeed;
     }
 
     public void setContext(Context context) {

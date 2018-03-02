@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 /*import com.crashlytics.android.Crashlytics;*/
+import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.FloatingService;
 import com.huivip.gpsspeedwidget.GpsSpeedService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -75,7 +77,7 @@ public class AppDetectionService extends AccessibilityService {
                 event.getPackageName().toString(),
                 event.getClassName().toString()
         );
-
+        Log.d("GPS","PackageName:"+event.getPackageName()+",ClassName:"+event.getClassName());
         boolean isActivity = componentName.getPackageName().toLowerCase().contains("activity")
                 || tryGetActivity(componentName) != null;
 
@@ -83,46 +85,20 @@ public class AppDetectionService extends AccessibilityService {
             return;
         }
         Intent floatSevice=new Intent(this, FloatingService.class);
-        startService(floatSevice);
-        Intent service = new Intent(this, GpsSpeedService.class);
-        startService(service);
+/*        Intent gpsService = new Intent(this, GpsSpeedService.class);*/
 
-/*        Intent intent = new Intent(this, LimitService.class);*/
-/*
-        boolean shouldStartService = enabledApps.contains(componentName.getPackageName());
+        boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
 
-        if (componentName.getPackageName().equals(GOOGLE_MAPS_PACKAGE)) {
-            if (PrefUtils.isGmapsOnlyInNavigation(this) && !isGmapsNavigating) {
-                enableGoogleMapsMonitoring(false);
-                intent.putExtra(LimitService.EXTRA_HIDE_LIMIT, false);
-
-                shouldStartService = false;
-            } else {
-                enableGoogleMapsMonitoring(true);
-
-                if (searchGmapsSpeedLimitSign(getRootInActiveWindow())) {
-                    intent.putExtra(LimitService.EXTRA_HIDE_LIMIT, true);
-                } else {
-                    intent.putExtra(LimitService.EXTRA_HIDE_LIMIT, false);
-                }
-            }
-        } else {
-            enableGoogleMapsMonitoring(false);
-            intent.putExtra(LimitService.EXTRA_HIDE_LIMIT, false);
-        }
-
-
-        if (!shouldStartService && !componentName.getPackageName().equals(BuildConfig.APPLICATION_ID)) {
-            intent.putExtra(LimitService.EXTRA_CLOSE, true);
+        if (shouldStopService) {
+            floatSevice.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
 
         try {
-            startService(intent);
+            //startService(gpsService);
+            startService(floatSevice);
         } catch (Exception e) {
-            if (!BuildConfig.DEBUG) {
-                Crashlytics.logException(e);
-            }
-        }*/
+
+        }
     }
 
     private void enableGoogleMapsMonitoring(boolean enable) {

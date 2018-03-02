@@ -16,9 +16,13 @@
     <LinearLayout android:layout_width="match_parent" android:layout_height="50dp" android:orientation="horizontal">
         <Button
                 android:text="Lasted Position"
-                android:layout_width="wrap_content"
+                android:layout_width="135dp"
                 android:layout_height="wrap_content" android:id="@+id/lastedBtn" android:layout_marginLeft="2dip"
-                android:layout_marginTop="2dip" android:elevation="0dp" android:layout_weight="1"/>
+                android:layout_marginTop="2dip" android:elevation="0dp" android:layout_weight="0.04"/>
+        <Button
+                android:text="Config"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/button_config" android:layout_weight="0.11"/>
 
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="50dp" android:weightSum="1">
@@ -28,18 +32,6 @@
                 android:hint="@string/SelectDate" android:layout_weight="0.95" android:layout_height="50dp"
         />
         <Button android:layout_width="wrap_content" android:id="@+id/TrackBtn" android:layout_height="wrap_content" android:text="Track"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/startFloating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Start Float" />
     </LinearLayout>
     <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
         <com.amap.api.maps.MapView

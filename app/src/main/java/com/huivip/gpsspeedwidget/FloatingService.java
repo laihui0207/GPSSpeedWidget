@@ -31,6 +31,15 @@ import java.util.TimerTask;
  */
 
 public class FloatingService extends Service{
+    public static final String EXTRA_NOTIF_START = "com.huivip.gpsspeedwidget.EXTRA_NOTIF_START";
+    public static final String EXTRA_NOTIF_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_NOTIF_CLOSE";
+    public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
+    public static final String EXTRA_PREF_CHANGE = "com.huivip.gpsspeedwidget.EXTRA_PREF_CHANGE";
+
+    public static final String EXTRA_VIEW = "com.huivip.gpsspeedwidget.EXTRA_VIEW";
+    public static final int VIEW_FLOATING = 0;
+
+    public static final String EXTRA_HIDE_LIMIT = "com.huivip.gpsspeedwidget.HIDE_LIMIT";
     private WindowManager mWindowManager;
     private View mFloatingView;
     @BindView(R.id.speedometer)
@@ -38,13 +47,12 @@ public class FloatingService extends Service{
     GpsUtil gpsUtil;
     @BindView(R.id.arcview)
     ArcProgressStackView mArcView;
-    /*@BindView(R.id.speedUnits)
-    TextView mSpeedometerUnitsText;*/
     @BindView(R.id.speed)
     TextView mSpeedometerText;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
+    boolean isStartedFromNotification;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -52,7 +60,27 @@ public class FloatingService extends Service{
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if(intent!=null){
+            boolean enableFloatingService=PrefUtils.isEnableFlatingWindow(getApplicationContext());
+            if (!enableFloatingService || intent.getBooleanExtra(EXTRA_CLOSE, false)) {
+                onStop();
+                stopSelf();
+                return super.onStartCommand(intent, flags, startId);
+            }
+        }
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+    private void onStop(){
+        if(mFloatingView!=null && mWindowManager!=null){
+            mWindowManager.removeView(mFloatingView);
+        }
+    }
+
+    @Override
     public void onCreate() {
+
         super.onCreate();
         gpsUtil=new GpsUtil();
         gpsUtil.setContext(getApplicationContext());
@@ -81,7 +109,6 @@ public class FloatingService extends Service{
         mArcView.setInterpolator(new FastOutSlowInInterpolator());
         mArcView.setModels(models);
 
-        //mSpeedometerView.setVisibility( View.VISIBLE);
         this.locationScanTask = new TimerTask()
         {
             @Override
@@ -103,11 +130,21 @@ public class FloatingService extends Service{
         gpsUtil.checkLocationData();
         if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
             if(gpsUtil.isGpsLocationChanged()){
-                mSpeedometerText.setText(gpsUtil.getKmhSpeedStr());
+                double metersPerSeconds=gpsUtil.getSpeed();
+                int kmhSpeed = (int) Math.round((double) metersPerSeconds * 60 * 60 / 1000);
+                int speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
+                setSpeed(gpsUtil.getKmhSpeedStr(),speedometerPercentage);
             }
         }
         else {
            mSpeedometerText.setText("--");
+        }
+    }
+    public void setSpeed(String speed, int percentOfWarning) {
+        if (PrefUtils.getShowSpeedometer(this) && mSpeedometerText != null) {
+            mSpeedometerText.setText(speed);
+            mArcView.getModels().get(0).setProgress(percentOfWarning);
+            mArcView.animateProgress();
         }
     }
 /*    private void updateSpeedometer(Location location) {

@@ -18,15 +18,15 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 public class LimitService extends Service {
     public static final int PENDING_SETTINGS = 5;
 
-    public static final String EXTRA_NOTIF_START = "com.pluscubed.velociraptor.EXTRA_NOTIF_START";
-    public static final String EXTRA_NOTIF_CLOSE = "com.pluscubed.velociraptor.EXTRA_NOTIF_CLOSE";
-    public static final String EXTRA_CLOSE = "com.pluscubed.velociraptor.EXTRA_CLOSE";
-    public static final String EXTRA_PREF_CHANGE = "com.pluscubed.velociraptor.EXTRA_PREF_CHANGE";
+    public static final String EXTRA_NOTIF_START = "com.huivip.gpsspeedwidget.EXTRA_NOTIF_START";
+    public static final String EXTRA_NOTIF_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_NOTIF_CLOSE";
+    public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
+    public static final String EXTRA_PREF_CHANGE = "com.huivip.gpsspeedwidget.EXTRA_PREF_CHANGE";
 
-    public static final String EXTRA_VIEW = "com.pluscubed.velociraptor.EXTRA_VIEW";
+    public static final String EXTRA_VIEW = "com.huivip.gpsspeedwidget.EXTRA_VIEW";
     public static final int VIEW_FLOATING = 0;
 
-    public static final String EXTRA_HIDE_LIMIT = "com.pluscubed.velociraptor.HIDE_LIMIT";
+    public static final String EXTRA_HIDE_LIMIT = "com.huivip.gpsspeedwidget.HIDE_LIMIT";
     private static final int NOTIFICATION_FOREGROUND = 303;
     private int speedLimitViewType = -1;
     private LimitView speedLimitView;
@@ -56,17 +56,16 @@ public class LimitService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-          /*  if (!isStartedFromNotification && intent.getBooleanExtra(EXTRA_CLOSE, false) ||
+            if (!isStartedFromNotification && intent.getBooleanExtra(EXTRA_CLOSE, false) ||
                     intent.getBooleanExtra(EXTRA_NOTIF_CLOSE, false)) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
-            }*/
+            }
 
             int viewType = intent.getIntExtra(EXTRA_VIEW, VIEW_FLOATING);
             if (viewType != speedLimitViewType) {
                 speedLimitViewType = viewType;
-                Log.d("GPS",speedLimitViewType+"");
                 switch (speedLimitViewType) {
                     case VIEW_FLOATING:
                         Log.d("GPS", "Start to init floatView");
@@ -75,7 +74,7 @@ public class LimitService extends Service {
                 }
             }
 
-           /* if (intent.getExtras() != null && intent.getExtras().containsKey(EXTRA_HIDE_LIMIT)) {
+            if (intent.getExtras() != null && intent.getExtras().containsKey(EXTRA_HIDE_LIMIT)) {
                 isLimitHidden = intent.getBooleanExtra(EXTRA_HIDE_LIMIT, false);
                 speedLimitView.hideLimit(isLimitHidden);
                 if (isLimitHidden) {
@@ -90,7 +89,7 @@ public class LimitService extends Service {
 
                 //updateLimitView(false);
                 updateSpeedometer(lastLocationWithSpeed);
-            }*/
+            }
         }
 
 
@@ -99,7 +98,7 @@ public class LimitService extends Service {
 
         //startNotification();
 
-        debuggingRequestInfo = "";
+        //debuggingRequestInfo = "";
 
 
        /* fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);

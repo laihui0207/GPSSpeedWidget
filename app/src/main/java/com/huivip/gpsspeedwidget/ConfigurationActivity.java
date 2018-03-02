@@ -7,17 +7,27 @@ import android.appwidget.AppWidgetManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 import butterknife.BindView;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author sunlaihui
@@ -31,6 +41,8 @@ public class ConfigurationActivity extends Activity {
     @BindView(R.id.enableOver)
     Button enableServiceButton;
     private static final int REQUEST_LOCATION = 105;
+    private static  final int REQUEST_STORAGE=106;
+    private static final int REQUEST_PHONE=107;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,64 +60,51 @@ public class ConfigurationActivity extends Activity {
         CheckBox autoStartCheckBox=(CheckBox)findViewById(R.id.autoStart);
         CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
-        SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
-        boolean start=settings.getBoolean(Constant.AUTO_START_PREFS_NAME,true);
+        CheckBox enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
+        boolean start=PrefUtils.isEnableAutoStart(this);
         autoStartCheckBox.setChecked(start);
-        boolean recordGPS=settings.getBoolean(Constant.RECORD_GPS_HISTORY_PREFS_NAME,false);
-        boolean uploadGPSData=settings.getBoolean(Constant.UPLOAD_GPS_HISTORY_PREFS_NAME,false);
+        if(!Utils.isLocationPermissionGranted(this)) {
+            askForPermission(Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_LOCATION);
+        }
+        boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(this);
+        boolean uploadGPSData=PrefUtils.isEnableUploadGPSHistory(this);
+        boolean enableFloating=PrefUtils.isEnableFlatingWindow(this);
         recordGPSCheckBox.setChecked(recordGPS);
         uploadGPSCheckBox.setChecked(uploadGPSData);
-        CheckBox.OnCheckedChangeListener checkedChangeListener=new CheckBox.OnCheckedChangeListener(){
+        enableFloatingWidnowCheckBox.setChecked(enableFloating);
+
+        autoStartCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
+                PrefUtils.setEnableAutoStart(ConfigurationActivity.this,checkBoxButton.isChecked());
+            }
+        });
+        recordGPSCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
+                if(!Utils.isStoragePermissionGranted(ConfigurationActivity.this)) {
+                    askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_STORAGE);
+                }
+                PrefUtils.setRecordGPSHistory(ConfigurationActivity.this,checkBoxButton.isChecked());
+            }
+        });
+        uploadGPSCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
-                SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
-                SharedPreferences.Editor editor = settings.edit();
-                if(checkBoxButton.isChecked()){
-                    editor.putBoolean(Constant.AUTO_START_PREFS_NAME, true);
+                if(!Utils.isPhonePermissionGranted(ConfigurationActivity.this)) {
+                    askForPermission(Manifest.permission.READ_PHONE_STATE, REQUEST_PHONE);
                 }
-                else {
-                    editor.putBoolean(Constant.AUTO_START_PREFS_NAME, false);
-                }
-                editor.commit();
+                PrefUtils.setUploadGPSHistory(ConfigurationActivity.this,checkBoxButton.isChecked());
             }
-        };
-
-        autoStartCheckBox.setOnCheckedChangeListener(checkedChangeListener);
-
-        CheckBox.OnCheckedChangeListener recordGPSCheckedChangeListener=new CheckBox.OnCheckedChangeListener(){
+        });
+        enableFloatingWidnowCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
-            public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
-                SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
-                SharedPreferences.Editor editor = settings.edit();
-                if(checkBoxButton.isChecked()){
-                    editor.putBoolean(Constant.RECORD_GPS_HISTORY_PREFS_NAME, true);
-                }
-                else {
-                    editor.putBoolean(Constant.RECORD_GPS_HISTORY_PREFS_NAME, false);
-                }
-                editor.commit();
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PrefUtils.setFlatingWindow(ConfigurationActivity.this,compoundButton.isChecked());
             }
-        };
-        recordGPSCheckBox.setOnCheckedChangeListener(recordGPSCheckedChangeListener);
-        CheckBox.OnCheckedChangeListener upLoadGPSCheckedChangeListener=new CheckBox.OnCheckedChangeListener(){
-
-            @Override
-            public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
-                SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
-                SharedPreferences.Editor editor = settings.edit();
-                if(checkBoxButton.isChecked()){
-                    editor.putBoolean(Constant.UPLOAD_GPS_HISTORY_PREFS_NAME, true);
-                }
-                else {
-                    editor.putBoolean(Constant.UPLOAD_GPS_HISTORY_PREFS_NAME, false);
-                }
-                editor.commit();
-            }
-        };
-        uploadGPSCheckBox.setOnCheckedChangeListener(upLoadGPSCheckedChangeListener);
-/*        appSelectionButton.setOnClickListener(v -> startActivity(new Intent(ConfigurationActivity.this, AppSelectionActivity.class)));*/
+        });
         enableServiceButton=findViewById(R.id.enableOver);
         enableServiceButton.setOnClickListener(v -> {
             try {
@@ -114,6 +113,7 @@ public class ConfigurationActivity extends Activity {
                 //Snackbar.make(enableServiceButton, R.string.open_settings_failed_accessibility, Snackbar.LENGTH_LONG).show();
             }
         });
+
         enableFloatingButton=findViewById(R.id.EnableFalting);
         enableFloatingButton.setOnClickListener(v -> {
             try {
@@ -123,8 +123,7 @@ public class ConfigurationActivity extends Activity {
                 //Snackbar.make(enableFloatingButton, R.string.open_settings_failed_overlay, Snackbar.LENGTH_LONG).show();
             }
         });
-        Button enableLocationButton=findViewById(R.id.button_enable_location);
-        enableLocationButton.setOnClickListener(v -> ActivityCompat.requestPermissions(ConfigurationActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION));
+        PrefUtils.setApps(this, getDescktopPackageName());
         Button btnOk= (Button) findViewById(R.id.confirm);
 
         View.OnClickListener confirmListener  = new View.OnClickListener() {
@@ -148,13 +147,47 @@ public class ConfigurationActivity extends Activity {
         }
     }
     private void invalidateStates() {
-        boolean permissionGranted = Utils.isLocationPermissionGranted(this);
-        @SuppressLint({"NewApi", "LocalSuppress"})
-        boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
+        boolean serviceReady=Utils.isServiceReady(this);
+        Button btnOk= (Button) findViewById(R.id.confirm);
+        if(serviceReady){
+            btnOk.setEnabled(true);
+        }
+        else {
+            btnOk.setEnabled(false);
+        }
     }
     private void openSettings(String settingsAction, String packageName) {
         Intent intent = new Intent(settingsAction);
         intent.setData(Uri.parse("package:" + packageName));
         startActivity(intent);
+    }
+    private Set<String> getDescktopPackageName(){
+        Set<String> names =new HashSet<>();
+        PackageManager packageManager = this.getPackageManager();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for(ResolveInfo resolveInfo : list){
+            names.add(resolveInfo.activityInfo.packageName);
+        }
+        return names;
+    }
+    private void askForPermission(String permission, Integer requestCode) {
+        if (ContextCompat.checkSelfPermission(ConfigurationActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(ConfigurationActivity.this, permission)) {
+
+                //This is called if user has denied the permission before
+                //In this case I am just asking the permission again
+                ActivityCompat.requestPermissions(ConfigurationActivity.this, new String[]{permission}, requestCode);
+
+            } else {
+
+                ActivityCompat.requestPermissions(ConfigurationActivity.this, new String[]{permission}, requestCode);
+            }
+        } else {
+            //Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

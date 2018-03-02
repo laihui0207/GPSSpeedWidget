@@ -193,7 +193,8 @@ public class MainActivity extends Activity implements TraceListener {
             }
         };
         lastedPosition.setOnClickListener(lastedButtonClickLister);
-
+        Button configButton=findViewById(R.id.button_config);
+        configButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this,ConfigurationActivity.class)));
         EditText edittext= (EditText) findViewById(R.id.selectDate);
 
         edittext.setOnClickListener(new View.OnClickListener() {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
+import com.huivip.gpsspeedwidget.Constant;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -33,6 +34,12 @@ public abstract class PrefUtils {
     private static final String PREF_SPEEDOMETER_SIZE = "pref_speedometer_size";
     private static final String PREF_GMAPS_ONLY_NAVIGATION = "pref_gmaps_only_nav";
     private static final String PREF_TERMS_ACCEPTED = "pref_terms_accepted";
+    public static final String PREFS_NAME = "GPSWidgetAutoLaunch";
+    public static final String DEVICE_ID_PREFS_NAME = "deviceID";
+    public static final String AUTO_START_PREFS_NAME="AutoStart";
+    public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
+    public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
+    public static final String ENABLE_FLATING_WINDOW="uploadGpsHistory";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -53,7 +60,24 @@ public abstract class PrefUtils {
     public static void setTermsAccepted(Context context, boolean firstRun) {
         edit(context).putBoolean(PREF_TERMS_ACCEPTED, firstRun).apply();
     }
-
+    public static void setEnableAutoStart(Context context,boolean autoStart){
+        edit(context).putBoolean(AUTO_START_PREFS_NAME, autoStart).apply();
+    }
+    public static boolean isEnableAutoStart(Context context){
+        return getSharedPreferences(context).getBoolean(AUTO_START_PREFS_NAME, true);
+    }
+    public static void setRecordGPSHistory(Context context,boolean recordHistory){
+        edit(context).putBoolean(RECORD_GPS_HISTORY_PREFS_NAME, recordHistory).apply();
+    }
+    public static boolean isEnableRecordGPSHistory(Context context){
+        return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, false);
+    }
+    public static void setUploadGPSHistory(Context context,boolean uploadHistory){
+        edit(context).putBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, uploadHistory).apply();
+    }
+    public static boolean isEnableUploadGPSHistory(Context context){
+        return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, false);
+    }
     public static boolean isTermsAccepted(Context context) {
         return getSharedPreferences(context).getBoolean(PREF_TERMS_ACCEPTED, false);
     }
@@ -65,7 +89,12 @@ public abstract class PrefUtils {
     public static int getVersionCode(Context context) {
         return getSharedPreferences(context).getInt(PREF_VERSION_CODE, 0);
     }
-
+    public static void setFlatingWindow(Context context, boolean flattingWindow) {
+        edit(context).putBoolean(ENABLE_FLATING_WINDOW, flattingWindow).apply();
+    }
+    public static boolean isEnableFlatingWindow(Context context){
+        return getSharedPreferences(context).getBoolean(Constant.ENABLE_FLATING_WINDOW, true);
+    }
     public static void setFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_FLOATING_LOCATION, left + "," + screenYRatio).apply();
     }
