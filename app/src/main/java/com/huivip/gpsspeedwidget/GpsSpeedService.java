@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 import butterknife.BindView;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.Date;
 import java.util.Timer;
@@ -37,7 +39,7 @@ public class GpsSpeedService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        gpsUtil=new GpsUtil();
+        gpsUtil=GpsUtil.getInstance();
         gpsUtil.setContext(getApplicationContext());
         this.serviceStarted = true;
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
@@ -66,10 +68,13 @@ public class GpsSpeedService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent,flags,startId);
+        Log.d("GPS","GPS service Start.....");
         if (serviceStarted) {
-            SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
-            boolean recordGPS=settings.getBoolean(Constant.RECORD_GPS_HISTORY_PREFS_NAME,false);
-            boolean uploadGPS=settings.getBoolean(Constant.UPLOAD_GPS_HISTORY_PREFS_NAME,false);
+            gpsUtil.startLocationService();
+
+            boolean recordGPS= PrefUtils.isEnableRecordGPSHistory(this);
+            boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);
+            Log.d("GPS","Values:"+recordGPS+","+uploadGPS);
             if(recordGPS) {
                 if(uploadGPS) {
                     Intent broadcastIntent = new Intent(GpsSpeedService.this, MessageReceiver.class);
@@ -105,9 +110,9 @@ public class GpsSpeedService extends Service {
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         } else {
             serviceStarted = true;
-            SharedPreferences settings = getSharedPreferences(Constant.PREFS_NAME, 0);
-            boolean recordGPS=settings.getBoolean(Constant.RECORD_GPS_HISTORY_PREFS_NAME,false);
-            boolean uploadGPS=settings.getBoolean(Constant.UPLOAD_GPS_HISTORY_PREFS_NAME,false);
+            gpsUtil.stopLocationService();
+            boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(this);
+            boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);
             if(recordGPS) {
                 if(uploadGPS) {
                     Intent broadcastIntent = new Intent(GpsSpeedService.this, MessageReceiver.class);
@@ -135,7 +140,7 @@ public class GpsSpeedService extends Service {
         return null;
     }
     void checkLocationData() {
-        gpsUtil.checkLocationData();
+        //gpsUtil.checkLocationData();
         if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
             if(gpsUtil.isGpsLocationChanged()){
                 computeAndShowData();

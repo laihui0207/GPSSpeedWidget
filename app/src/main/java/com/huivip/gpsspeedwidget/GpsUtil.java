@@ -3,9 +3,13 @@ package com.huivip.gpsspeedwidget;
 import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.text.NumberFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author sunlaihui
@@ -28,6 +32,10 @@ public class GpsUtil {
     boolean gpsEnabled=false;
     boolean gpsLocationStarted=false;
     boolean gpsLocationChanged=false;
+    boolean serviceStarted=false;
+    TimerTask locationScanTask;
+    Timer locationTimer;
+    final Handler locationHandler = new Handler();
     LocationListener locationListener=new LocationListener() {
         @Override
         public void onLocationChanged(Location paramAnonymousLocation) {
@@ -51,7 +59,39 @@ public class GpsUtil {
         }
 
     };
+    private static GpsUtil instance=new GpsUtil();
 
+    public static GpsUtil getInstance(){
+        return instance;
+    }
+    public void startLocationService(){
+        if(serviceStarted) return;
+        this.locationTimer = new Timer();
+        this.locationScanTask = new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                GpsUtil.this.locationHandler.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        checkLocationData();
+                    }
+                });
+            }
+        };
+        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        serviceStarted=true;
+    }
+    public void stopLocationService(){
+        if(serviceStarted) {
+            this.locationTimer.cancel();
+            this.locationTimer.purge();
+            serviceStarted=false;
+        }
+    }
     public float getBearing() {
         return bearing;
     }
@@ -111,11 +151,12 @@ public class GpsUtil {
     }
     void computeAndShowData() {
         NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
-        localNumberFormat.setMaximumFractionDigits(0);
+        localNumberFormat.setMaximumFractionDigits(1);
         mphSpeed = (int)(this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         kmhSpeed=(int)(this.speed.doubleValue() * 3.6D);
         mphSpeedStr=localNumberFormat.format(this.speed.doubleValue() * 3.6D / 1.609344D);
         kmhSpeedStr=localNumberFormat.format(this.speed.doubleValue() * 3.6D);
+        Log.d("GPS",kmhSpeedStr);
     }
 
     public Integer getMphSpeed() {
