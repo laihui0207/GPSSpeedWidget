@@ -372,12 +372,13 @@ public class FloatingService extends Service{
         public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
             for (AMapNaviTrafficFacilityInfo info :
                     aMapNaviTrafficFacilityInfos) {
-                if(info.getLimitSpeed()>0 && FloatingService.this.gpsUtil.getKmhSpeed()>info.getLimitSpeed()){
+                if(info.getLimitSpeed()>0 && FloatingService.this.gpsUtil.getKmhSpeed()>0
+                        && FloatingService.this.gpsUtil.getKmhSpeed()>info.getLimitSpeed()){
                     mLimitText.setText(Integer.toString(info.getLimitSpeed()));
                     FloatingService.this.setSpeeding(true);
                 }
                 else {
-                    mLimitText.setText("--");
+                    //mLimitText.setText("--");
                     FloatingService.this.setSpeeding(false);
                 }
                 /*Toast.makeText(FloatingService.this,
