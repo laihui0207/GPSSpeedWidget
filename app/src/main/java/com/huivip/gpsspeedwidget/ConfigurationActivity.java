@@ -22,6 +22,7 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 import butterknife.BindView;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.TTSUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class ConfigurationActivity extends Activity {
                     AppWidgetManager.INVALID_APPWIDGET_ID);
 
         }
-
+        initPermission();
         CheckBox autoStartCheckBox=(CheckBox)findViewById(R.id.autoStart);
         CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
@@ -125,7 +126,6 @@ public class ConfigurationActivity extends Activity {
         });
         PrefUtils.setApps(this, getDescktopPackageName());
         Button btnOk= (Button) findViewById(R.id.confirm);
-
         View.OnClickListener confirmListener  = new View.OnClickListener() {
 
             @Override
@@ -137,6 +137,7 @@ public class ConfigurationActivity extends Activity {
             }
         };
         btnOk.setOnClickListener(confirmListener);
+
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -171,6 +172,32 @@ public class ConfigurationActivity extends Activity {
             names.add(resolveInfo.activityInfo.packageName);
         }
         return names;
+    }
+    private void initPermission() {
+        String[] permissions = {
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_SETTINGS,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.CHANGE_WIFI_STATE
+        };
+
+        ArrayList<String> toApplyList = new ArrayList<String>();
+
+        for (String perm : permissions) {
+            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, perm)) {
+                toApplyList.add(perm);
+                // 进入到这里代表没有权限.
+            }
+        }
+        String[] tmpList = new String[toApplyList.size()];
+        if (!toApplyList.isEmpty()) {
+            ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
+        }
+
     }
     private void askForPermission(String permission, Integer requestCode) {
         if (ContextCompat.checkSelfPermission(ConfigurationActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {

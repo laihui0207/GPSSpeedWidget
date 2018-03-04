@@ -30,21 +30,21 @@
            android:id="@+id/uploadGPSData"
            android:layout_below="@+id/recordGPS" android:layout_alignStart="@+id/recordGPS"/>
    <CheckBox
-           android:text="Enable Floating Window"
+           android:text="@string/enableFloatingWindow"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableFloatingWindow"
            android:layout_below="@+id/uploadGPSData" android:layout_alignLeft="@+id/EnableFalting"
            android:layout_alignStart="@+id/EnableFalting"/>
    <Button
-           android:text="Enable Draw Over"
+           android:text="Enable Draw Over Feature"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/EnableFalting"
            android:layout_below="@+id/enableFloatingWindow" android:layout_alignLeft="@+id/uploadGPSData"
            android:layout_alignStart="@+id/uploadGPSData"/>
    <Button
-           android:text="Enable AccessibilityService"
+           android:text="Enable Accessibility Service"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableOver"

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;

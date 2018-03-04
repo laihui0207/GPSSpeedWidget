@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.TTSUtil;
 
 
 /**

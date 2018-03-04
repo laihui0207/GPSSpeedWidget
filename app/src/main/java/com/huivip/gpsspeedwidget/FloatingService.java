@@ -27,6 +27,7 @@ import com.amap.api.navi.model.*;
 import com.autonavi.tbt.TrafficFacilityInfo;
 import com.gigamole.library.ArcProgressStackView;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.TTSUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class FloatingService extends Service{
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     AMapNavi aMapNavi;
+    TTSUtil ttsUtil;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -74,6 +76,7 @@ public class FloatingService extends Service{
 
         gpsUtil.startLocationService();
         aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
+        aMapNavi.setUseInnerVoice(true);
         aMapNavi.addAMapNaviListener(new NaviListenerImpl());
         return super.onStartCommand(intent, flags, startId);
     }
@@ -90,12 +93,11 @@ public class FloatingService extends Service{
     public void onCreate() {
 
         super.onCreate();
-        gpsUtil=GpsUtil.getInstance();
-        gpsUtil.setContext(getApplicationContext());
+        gpsUtil=GpsUtil.getInstance(getApplicationContext());
         aMapNavi=AMapNavi.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-
+        ttsUtil=TTSUtil.getInstance(getApplicationContext());
         mFloatingView = inflater.inflate(R.layout.floating_international, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -372,20 +374,22 @@ public class FloatingService extends Service{
         public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
             for (AMapNaviTrafficFacilityInfo info :
                     aMapNaviTrafficFacilityInfos) {
-                if(info.getLimitSpeed()>0 && FloatingService.this.gpsUtil.getKmhSpeed()>0
-                        && FloatingService.this.gpsUtil.getKmhSpeed()>info.getLimitSpeed()){
+                if(info.getBroadcastType() == 102 || info.getBroadcastType() == 4){
                     mLimitText.setText(Integer.toString(info.getLimitSpeed()));
-                    FloatingService.this.setSpeeding(true);
+                    ttsUtil.speak("注意，前方"+info.getDistance()+"米测速,限速"+info.getLimitSpeed()+"公里每小时");
+                    if(info.getLimitSpeed()>0 && FloatingService.this.gpsUtil.getKmhSpeed()>0
+                            && FloatingService.this.gpsUtil.getKmhSpeed()>info.getLimitSpeed()){
+                        FloatingService.this.setSpeeding(true);
+                    }
+                    else {
+                        FloatingService.this.setSpeeding(false);
+                    }
+                } else if(info.getBroadcastType() == 28){
+                    ttsUtil.speak("注意，前方"+info.getDistance()+"米有监控摄像头");
+                } else if (info.getBroadcastType() == 5) {
+                    ttsUtil.speak("注意，前方"+info.getDistance()+"米有违章摄像头");
                 }
-                else {
-                    //mLimitText.setText("--");
-                    FloatingService.this.setSpeeding(false);
-                }
-                /*Toast.makeText(FloatingService.this,
-                        "(trafficFacilityInfo.coor_X+trafficFacilityInfo.coor_Y+trafficFacilityInfo.distance+trafficFacilityInfo.limitSpeed):"
-                                + (info.getCoorX() + info.getCoorY() + info.getDistance() + info.getLimitSpeed()),
-                        Toast.LENGTH_LONG)
-                        .show();*/
+
             }
         }
 

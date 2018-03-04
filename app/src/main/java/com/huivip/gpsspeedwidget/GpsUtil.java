@@ -61,7 +61,8 @@ public class GpsUtil {
     };
     private static GpsUtil instance=new GpsUtil();
 
-    public static GpsUtil getInstance(){
+    public static GpsUtil getInstance(Context context){
+        instance.setContext(context);
         return instance;
     }
     public void startLocationService(){
@@ -175,7 +176,7 @@ public class GpsUtil {
         return kmhSpeed;
     }
 
-    public void setContext(Context context) {
+    private void setContext(Context context) {
         this.context = context;
     }
 

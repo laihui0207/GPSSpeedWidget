@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import com.autonavi.rtbt.GPSDataInfo;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,9 +18,6 @@ import java.util.*;
 public class MessageReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
-        GpsUtil gpsUtil = new GpsUtil();
-        gpsUtil.setContext(context);
-
         new Thread() {
             @Override
             public void run() {

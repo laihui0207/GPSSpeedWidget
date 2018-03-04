@@ -12,6 +12,7 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 import butterknife.BindView;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.TTSUtil;
 
 import java.util.Date;
 import java.util.Timer;
@@ -39,13 +40,13 @@ public class GpsSpeedService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        gpsUtil=GpsUtil.getInstance();
-        gpsUtil.setContext(getApplicationContext());
+        gpsUtil=GpsUtil.getInstance(getApplicationContext());
         this.serviceStarted = true;
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
         this.thisWidget = new ComponentName(this, GpsSpeedWidget.class);
         this.manager = AppWidgetManager.getInstance(this);
         this.c = Integer.valueOf(0);
+        TTSUtil.getInstance(getApplicationContext());
         this.lineId=System.currentTimeMillis();
         this.locationScanTask = new TimerTask()
         {
@@ -71,7 +72,6 @@ public class GpsSpeedService extends Service {
         Log.d("GPS","GPS service Start.....");
         if (serviceStarted) {
             gpsUtil.startLocationService();
-
             boolean recordGPS= PrefUtils.isEnableRecordGPSHistory(this);
             boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);
             Log.d("GPS","Values:"+recordGPS+","+uploadGPS);
