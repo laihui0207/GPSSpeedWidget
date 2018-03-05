@@ -56,7 +56,6 @@ public class FloatingService extends Service{
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
-    TTSUtil ttsUtil;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -90,7 +89,6 @@ public class FloatingService extends Service{
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        ttsUtil=TTSUtil.getInstance(getApplicationContext());
         mFloatingView = inflater.inflate(R.layout.floating_international, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,

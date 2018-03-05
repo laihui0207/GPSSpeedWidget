@@ -4,15 +4,11 @@ import android.app.*;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.TextView;
-import butterknife.BindView;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.TTSUtil;
 
 import java.util.Date;
 import java.util.Timer;
@@ -29,7 +25,7 @@ public class GpsSpeedService extends Service {
     RemoteViews remoteViews;
     TimerTask locationScanTask;
     TimerTask recordGPSTask;
-    boolean serviceStarted = true;
+    boolean serviceStoped = true;
     Timer locationTimer = new Timer();
     Timer recordGPSTimer=new Timer();
     ComponentName thisWidget;
@@ -41,12 +37,11 @@ public class GpsSpeedService extends Service {
     public void onCreate() {
         super.onCreate();
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
-        this.serviceStarted = true;
+        this.serviceStoped = true;
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
         this.thisWidget = new ComponentName(this, GpsSpeedWidget.class);
         this.manager = AppWidgetManager.getInstance(this);
         this.c = Integer.valueOf(0);
-        TTSUtil.getInstance(getApplicationContext());
         this.lineId=System.currentTimeMillis();
         this.locationScanTask = new TimerTask()
         {
@@ -70,7 +65,7 @@ public class GpsSpeedService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent,flags,startId);
         Log.d("GPS","GPS service Start.....");
-        if (serviceStarted) {
+        if (serviceStoped) {
             gpsUtil.startLocationService();
             boolean recordGPS= PrefUtils.isEnableRecordGPSHistory(this);
             boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);
@@ -104,12 +99,12 @@ public class GpsSpeedService extends Service {
                 };
                 this.recordGPSTimer.schedule(this.recordGPSTask, 0L, 2000L);
             }
-            serviceStarted =false;
+            serviceStoped =false;
             this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
             this.remoteViews.setTextViewText(R.id.textView1_1, "");
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         } else {
-            serviceStarted = true;
+            serviceStoped = true;
             gpsUtil.stopLocationService();
             boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(this);
             boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);

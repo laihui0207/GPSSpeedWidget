@@ -41,13 +41,10 @@ public class MainActivity extends Activity implements TraceListener {
     Calendar myCalendar = Calendar.getInstance();
     String selectDateStr="";
     AMap aMap=null;
-    private View mFloatingView;
     String myFormat = "MM/dd/yyyy";
     SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CHINA);
     private int mSequenceLineID = 1000;
-    private List<TraceLocation> mTraceList;
     private ConcurrentMap<Integer, TraceOverlay> mOverlayList = new ConcurrentHashMap<Integer, TraceOverlay>();
-    private WindowManager mWindowManager;
 
     DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -214,7 +211,7 @@ public class MainActivity extends Activity implements TraceListener {
 
                         String dataUrl="";
                         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
-                        String deviceId="d9990887-4fae-3cb8-a53a-f95293300290";//deviceUuidFactory.getDeviceUuid().toString();//"d9990887-4fae-3cb8-a53a-f95293300290";//
+                        String deviceId=deviceUuidFactory.getDeviceUuid().toString();//"d9990887-4fae-3cb8-a53a-f95293300290";//
                         dataUrl=Constant.LBSURL+String.format(Constant.LBSGETDATA,deviceId,startTime,endTime);
                         String dataResult=HttpUtils.getData(dataUrl);
                         Log.d("GPSWidget","URL:"+dataUrl+",Result:"+dataResult);
@@ -228,7 +225,7 @@ public class MainActivity extends Activity implements TraceListener {
             }
         };
         trackBtn.setOnClickListener(trackBtnListener);
-        setSystemUiVisibility(this,true);
+        //setSystemUiVisibility(this,true);
     }
 
     private void drawLine(Message msg){

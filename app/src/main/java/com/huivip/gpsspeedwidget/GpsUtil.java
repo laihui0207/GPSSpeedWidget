@@ -107,7 +107,9 @@ public class GpsUtil {
             if(aMapNavi!=null){
                 aMapNavi.stopAimlessMode();
             }
+            ttsUtil.release();
         }
+
     }
     public float getBearing() {
         return bearing;
@@ -198,10 +200,10 @@ public class GpsUtil {
         this.context = context;
     }
     private void initInstance(){
+        ttsUtil=TTSUtil.getInstance(context);
         aMapNavi=AMapNavi.getInstance(context);
         aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
         aMapNavi.addAMapNaviListener(new NaviListenerImpl());
-        ttsUtil=TTSUtil.getInstance(context);
     }
     public boolean isGpsEnabled() {
         return gpsEnabled;
@@ -224,9 +226,9 @@ public class GpsUtil {
         return longitude;
     }
     private class NaviListenerImpl implements AMapNaviListener {
+        String speakText="";
         @Override
         public void onInitNaviFailure() {
-            Toast.makeText(context,"巡航初始化失败！",Toast.LENGTH_SHORT);
         }
 
         @Override
@@ -236,7 +238,6 @@ public class GpsUtil {
 
         @Override
         public void onStartNavi(int i) {
-            Toast.makeText(context,"智能巡航开始",Toast.LENGTH_SHORT);
         }
 
         @Override
@@ -257,7 +258,10 @@ public class GpsUtil {
         @Override
         public void onGetNavigationText(String s) {
             if(PrefUtils.isEnableAudioService(context)) {
-                ttsUtil.speak(s);
+                if(!speakText.equalsIgnoreCase(s)) {
+                    ttsUtil.speak(s);
+                    speakText=s;
+                }
             }
         }
 
@@ -373,10 +377,9 @@ public class GpsUtil {
 
         @Override
         public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
-            for (AMapNaviTrafficFacilityInfo info :
-                    aMapNaviTrafficFacilityInfos) {
-                if(info.getBroadcastType() == 102 || info.getBroadcastType() == 4){
-                    limitSpeed=info.getLimitSpeed();
+            for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
+                if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4) {
+                    limitSpeed = info.getLimitSpeed();
                 }
 
             }

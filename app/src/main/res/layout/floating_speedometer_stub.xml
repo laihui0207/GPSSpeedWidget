@@ -41,16 +41,6 @@
                 android:text="--"
                 android:textColor="?android:textColorPrimary"
                 app:autoSizeTextType="uniform"/>
-        <!-- <TextView
-                android:id="@+id/speed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:includeFontPadding="false"
-                android:maxLines="1"
-                android:text="&#45;&#45;"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="48sp"/>-->
 
         <TextView
                 android:id="@+id/speedUnits"
