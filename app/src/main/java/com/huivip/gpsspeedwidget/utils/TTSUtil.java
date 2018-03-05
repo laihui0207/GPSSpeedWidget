@@ -74,7 +74,7 @@ public class TTSUtil {
 
         // 如果您集成中出错，请将下面一段代码放在和demo中相同的位置，并复制InitConfig 和 AutoCheck到您的项目中
         // 上线时请删除AutoCheck的调用
-        AutoCheck.getInstance(context).check(initConfig, new Handler() {
+       /* AutoCheck.getInstance(context).check(initConfig, new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == 100) {
@@ -86,7 +86,7 @@ public class TTSUtil {
                 }
             }
 
-        });
+        });*/
         synthesizer = new NonBlockSyntherizer(this.context, initConfig, mainHandler); // 此处可以改为MySyntherizer 了解调用过程
     }
     /**

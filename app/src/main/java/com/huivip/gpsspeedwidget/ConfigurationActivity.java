@@ -62,6 +62,7 @@ public class ConfigurationActivity extends Activity {
         CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         CheckBox enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
+        CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
         boolean start=PrefUtils.isEnableAutoStart(this);
         autoStartCheckBox.setChecked(start);
         if(!Utils.isLocationPermissionGranted(this)) {
@@ -70,10 +71,11 @@ public class ConfigurationActivity extends Activity {
         boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(this);
         boolean uploadGPSData=PrefUtils.isEnableUploadGPSHistory(this);
         boolean enableFloating=PrefUtils.isEnableFlatingWindow(this);
+        boolean enableAudio=PrefUtils.isEnableAudioService(this);
         recordGPSCheckBox.setChecked(recordGPS);
         uploadGPSCheckBox.setChecked(uploadGPSData);
         enableFloatingWidnowCheckBox.setChecked(enableFloating);
-
+        enableAudioCheckBox.setChecked(enableAudio);
         autoStartCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
@@ -106,12 +108,18 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setFlatingWindow(ConfigurationActivity.this,compoundButton.isChecked());
             }
         });
+        enableAudioCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
+                PrefUtils.setEnableAudioService(ConfigurationActivity.this,checkBoxButton.isChecked());
+            }
+        });
         enableServiceButton=findViewById(R.id.enableOver);
         enableServiceButton.setOnClickListener(v -> {
             try {
                 startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
             } catch (ActivityNotFoundException e) {
-                //Snackbar.make(enableServiceButton, R.string.open_settings_failed_accessibility, Snackbar.LENGTH_LONG).show();
             }
         });
 

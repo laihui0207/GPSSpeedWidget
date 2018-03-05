@@ -23,6 +23,7 @@ import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.AmapNaviPage;
 import com.amap.api.navi.enums.AimLessMode;
+import com.amap.api.navi.enums.BroadcastMode;
 import com.amap.api.navi.model.*;
 import com.autonavi.tbt.TrafficFacilityInfo;
 import com.gigamole.library.ArcProgressStackView;
@@ -76,7 +77,8 @@ public class FloatingService extends Service{
 
         gpsUtil.startLocationService();
         aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
-        aMapNavi.setUseInnerVoice(true);
+        //aMapNavi.setUseInnerVoice(true);
+        aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
         aMapNavi.addAMapNaviListener(new NaviListenerImpl());
         return super.onStartCommand(intent, flags, startId);
     }
@@ -224,10 +226,9 @@ public class FloatingService extends Service{
         valueAnimator.start();
     }
     private class NaviListenerImpl implements AMapNaviListener {
-
         @Override
         public void onInitNaviFailure() {
-
+            Toast.makeText(getApplicationContext(),"巡航初始化失败！",Toast.LENGTH_SHORT);
         }
 
         @Override
@@ -247,7 +248,7 @@ public class FloatingService extends Service{
 
         @Override
         public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-
+           // mSpeedometerText.setText(Float.toString(aMapNaviLocation.getSpeed()));
         }
 
         @Override
@@ -257,7 +258,9 @@ public class FloatingService extends Service{
 
         @Override
         public void onGetNavigationText(String s) {
-
+            if(PrefUtils.isEnableAudioService(getApplicationContext())) {
+                ttsUtil.speak(s);
+            }
         }
 
         @Override
@@ -376,7 +379,6 @@ public class FloatingService extends Service{
                     aMapNaviTrafficFacilityInfos) {
                 if(info.getBroadcastType() == 102 || info.getBroadcastType() == 4){
                     mLimitText.setText(Integer.toString(info.getLimitSpeed()));
-                    ttsUtil.speak("注意，前方"+info.getDistance()+"米测速,限速"+info.getLimitSpeed()+"公里每小时");
                     if(info.getLimitSpeed()>0 && FloatingService.this.gpsUtil.getKmhSpeed()>0
                             && FloatingService.this.gpsUtil.getKmhSpeed()>info.getLimitSpeed()){
                         FloatingService.this.setSpeeding(true);
@@ -384,10 +386,6 @@ public class FloatingService extends Service{
                     else {
                         FloatingService.this.setSpeeding(false);
                     }
-                } else if(info.getBroadcastType() == 28){
-                    ttsUtil.speak("注意，前方"+info.getDistance()+"米有监控摄像头");
-                } else if (info.getBroadcastType() == 5) {
-                    ttsUtil.speak("注意，前方"+info.getDistance()+"米有违章摄像头");
                 }
 
             }

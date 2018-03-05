@@ -40,6 +40,7 @@ public abstract class PrefUtils {
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
     public static final String ENABLE_FLATING_WINDOW="uploadGpsHistory";
+    public static final String ENABLE_AUDIO_SERVICE="com.huivip.enableService";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -77,6 +78,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableUploadGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, false);
+    }
+    public static boolean isEnableAudioService(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_AUDIO_SERVICE, false);
+    }
+    public static void setEnableAudioService(Context context,boolean enableService){
+        edit(context).putBoolean(ENABLE_AUDIO_SERVICE, enableService).apply();
     }
     public static boolean isTermsAccepted(Context context) {
         return getSharedPreferences(context).getBoolean(PREF_TERMS_ACCEPTED, false);
