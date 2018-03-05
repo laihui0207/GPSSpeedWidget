@@ -56,7 +56,6 @@ public class FloatingService extends Service{
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
-    AMapNavi aMapNavi;
     TTSUtil ttsUtil;
     @Nullable
     @Override
@@ -76,18 +75,11 @@ public class FloatingService extends Service{
         }
 
         gpsUtil.startLocationService();
-        aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
-        //aMapNavi.setUseInnerVoice(true);
-        aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
-        aMapNavi.addAMapNaviListener(new NaviListenerImpl());
         return super.onStartCommand(intent, flags, startId);
     }
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
             mWindowManager.removeView(mFloatingView);
-        }
-        if(aMapNavi!=null){
-            aMapNavi.stopAimlessMode();
         }
     }
 
@@ -96,7 +88,6 @@ public class FloatingService extends Service{
 
         super.onCreate();
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
-        aMapNavi=AMapNavi.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
         ttsUtil=TTSUtil.getInstance(getApplicationContext());
@@ -147,6 +138,13 @@ public class FloatingService extends Service{
                 int kmhSpeed = (int) Math.round((double) metersPerSeconds * 60 * 60 / 1000);
                 int speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
                 setSpeed(gpsUtil.getKmhSpeedStr(),speedometerPercentage);
+                mLimitText.setText(gpsUtil.getLimitSpeed());
+                if(gpsUtil.getLimitSpeed()>0 && gpsUtil.getKmhSpeed()>gpsUtil.getLimitSpeed()){
+                    setSpeeding(true);
+                }
+                else {
+                    setSpeeding(false);
+                }
             }
         }
         else {
@@ -224,192 +222,6 @@ public class FloatingService extends Service{
         });
 
         valueAnimator.start();
-    }
-    private class NaviListenerImpl implements AMapNaviListener {
-        @Override
-        public void onInitNaviFailure() {
-            Toast.makeText(getApplicationContext(),"巡航初始化失败！",Toast.LENGTH_SHORT);
-        }
-
-        @Override
-        public void onInitNaviSuccess() {
-
-        }
-
-        @Override
-        public void onStartNavi(int i) {
-
-        }
-
-        @Override
-        public void onTrafficStatusUpdate() {
-
-        }
-
-        @Override
-        public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-           // mSpeedometerText.setText(Float.toString(aMapNaviLocation.getSpeed()));
-        }
-
-        @Override
-        public void onGetNavigationText(int i, String s) {
-
-        }
-
-        @Override
-        public void onGetNavigationText(String s) {
-            if(PrefUtils.isEnableAudioService(getApplicationContext())) {
-                ttsUtil.speak(s);
-            }
-        }
-
-        @Override
-        public void onEndEmulatorNavi() {
-
-        }
-
-        @Override
-        public void onArriveDestination() {
-
-        }
-
-        @Override
-        public void onCalculateRouteFailure(int i) {
-
-        }
-
-        @Override
-        public void onReCalculateRouteForYaw() {
-
-        }
-
-        @Override
-        public void onReCalculateRouteForTrafficJam() {
-
-        }
-
-        @Override
-        public void onArrivedWayPoint(int i) {
-
-        }
-
-        @Override
-        public void onGpsOpenStatus(boolean b) {
-
-        }
-
-        @Override
-        public void onNaviInfoUpdate(NaviInfo naviInfo) {
-
-        }
-
-        @Override
-        public void onNaviInfoUpdated(AMapNaviInfo aMapNaviInfo) {
-
-        }
-
-        @Override
-        public void updateCameraInfo(AMapNaviCameraInfo[] aMapNaviCameraInfos) {
-
-        }
-
-        @Override
-        public void updateIntervalCameraInfo(AMapNaviCameraInfo aMapNaviCameraInfo, AMapNaviCameraInfo aMapNaviCameraInfo1, int i) {
-
-        }
-
-        @Override
-        public void onServiceAreaUpdate(AMapServiceAreaInfo[] aMapServiceAreaInfos) {
-
-        }
-
-        @Override
-        public void showCross(AMapNaviCross aMapNaviCross) {
-
-        }
-
-        @Override
-        public void hideCross() {
-
-        }
-
-        @Override
-        public void showModeCross(AMapModelCross aMapModelCross) {
-
-        }
-
-        @Override
-        public void hideModeCross() {
-
-        }
-
-        @Override
-        public void showLaneInfo(AMapLaneInfo[] aMapLaneInfos, byte[] bytes, byte[] bytes1) {
-
-        }
-
-        @Override
-        public void showLaneInfo(AMapLaneInfo aMapLaneInfo) {
-
-        }
-
-        @Override
-        public void hideLaneInfo() {
-
-        }
-
-        @Override
-        public void onCalculateRouteSuccess(int[] ints) {
-
-        }
-
-        @Override
-        public void notifyParallelRoad(int i) {
-
-        }
-
-        @Override
-        public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
-
-        }
-
-        @Override
-        public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
-            for (AMapNaviTrafficFacilityInfo info :
-                    aMapNaviTrafficFacilityInfos) {
-                if(info.getBroadcastType() == 102 || info.getBroadcastType() == 4){
-                    mLimitText.setText(Integer.toString(info.getLimitSpeed()));
-                    if(info.getLimitSpeed()>0 && FloatingService.this.gpsUtil.getKmhSpeed()>0
-                            && FloatingService.this.gpsUtil.getKmhSpeed()>info.getLimitSpeed()){
-                        FloatingService.this.setSpeeding(true);
-                    }
-                    else {
-                        FloatingService.this.setSpeeding(false);
-                    }
-                }
-
-            }
-        }
-
-        @Override
-        public void OnUpdateTrafficFacility(TrafficFacilityInfo trafficFacilityInfo) {
-
-        }
-
-        @Override
-        public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
-
-        }
-
-        @Override
-        public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {
-
-        }
-
-        @Override
-        public void onPlayRing(int i) {
-
-        }
     }
     private class FloatingOnTouchListener implements View.OnTouchListener {
 

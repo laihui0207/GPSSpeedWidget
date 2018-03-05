@@ -6,6 +6,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
+import com.amap.api.navi.AMapNavi;
+import com.amap.api.navi.AMapNaviListener;
+import com.amap.api.navi.enums.AimLessMode;
+import com.amap.api.navi.enums.BroadcastMode;
+import com.amap.api.navi.model.*;
+import com.autonavi.tbt.TrafficFacilityInfo;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.TTSUtil;
 
 import java.text.NumberFormat;
 import java.util.Timer;
@@ -24,6 +32,7 @@ public class GpsUtil {
     Double speed=0D;
     Integer mphSpeed=Integer.valueOf(0);
     Integer kmhSpeed=Integer.valueOf(0);
+    Integer limitSpeed=Integer.valueOf(0);
     String mphSpeedStr="0";
     String kmhSpeedStr="0";
     String velocita_prec = "ciao";
@@ -35,6 +44,8 @@ public class GpsUtil {
     boolean serviceStarted=false;
     TimerTask locationScanTask;
     Timer locationTimer;
+    AMapNavi aMapNavi;
+    TTSUtil ttsUtil;
     final Handler locationHandler = new Handler();
     LocationListener locationListener=new LocationListener() {
         @Override
@@ -63,6 +74,7 @@ public class GpsUtil {
 
     public static GpsUtil getInstance(Context context){
         instance.setContext(context);
+        instance.initInstance();
         return instance;
     }
     public void startLocationService(){
@@ -84,6 +96,7 @@ public class GpsUtil {
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
         serviceStarted=true;
     }
     public void stopLocationService(){
@@ -91,6 +104,9 @@ public class GpsUtil {
             this.locationTimer.cancel();
             this.locationTimer.purge();
             serviceStarted=false;
+            if(aMapNavi!=null){
+                aMapNavi.stopAimlessMode();
+            }
         }
     }
     public float getBearing() {
@@ -175,11 +191,18 @@ public class GpsUtil {
     public Integer getKmhSpeed() {
         return kmhSpeed;
     }
-
+    public Integer getLimitSpeed(){
+        return limitSpeed;
+    }
     private void setContext(Context context) {
         this.context = context;
     }
-
+    private void initInstance(){
+        aMapNavi=AMapNavi.getInstance(context);
+        aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
+        aMapNavi.addAMapNaviListener(new NaviListenerImpl());
+        ttsUtil=TTSUtil.getInstance(context);
+    }
     public boolean isGpsEnabled() {
         return gpsEnabled;
     }
@@ -199,5 +222,184 @@ public class GpsUtil {
 
     public String getLongitude() {
         return longitude;
+    }
+    private class NaviListenerImpl implements AMapNaviListener {
+        @Override
+        public void onInitNaviFailure() {
+            Toast.makeText(context,"巡航初始化失败！",Toast.LENGTH_SHORT);
+        }
+
+        @Override
+        public void onInitNaviSuccess() {
+
+        }
+
+        @Override
+        public void onStartNavi(int i) {
+            Toast.makeText(context,"智能巡航开始",Toast.LENGTH_SHORT);
+        }
+
+        @Override
+        public void onTrafficStatusUpdate() {
+
+        }
+
+        @Override
+        public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
+            // mSpeedometerText.setText(Float.toString(aMapNaviLocation.getSpeed()));
+        }
+
+        @Override
+        public void onGetNavigationText(int i, String s) {
+
+        }
+
+        @Override
+        public void onGetNavigationText(String s) {
+            if(PrefUtils.isEnableAudioService(context)) {
+                ttsUtil.speak(s);
+            }
+        }
+
+        @Override
+        public void onEndEmulatorNavi() {
+
+        }
+
+        @Override
+        public void onArriveDestination() {
+
+        }
+
+        @Override
+        public void onCalculateRouteFailure(int i) {
+
+        }
+
+        @Override
+        public void onReCalculateRouteForYaw() {
+
+        }
+
+        @Override
+        public void onReCalculateRouteForTrafficJam() {
+
+        }
+
+        @Override
+        public void onArrivedWayPoint(int i) {
+
+        }
+
+        @Override
+        public void onGpsOpenStatus(boolean b) {
+
+        }
+
+        @Override
+        public void onNaviInfoUpdate(NaviInfo naviInfo) {
+
+        }
+
+        @Override
+        public void onNaviInfoUpdated(AMapNaviInfo aMapNaviInfo) {
+
+        }
+
+        @Override
+        public void updateCameraInfo(AMapNaviCameraInfo[] aMapNaviCameraInfos) {
+
+        }
+
+        @Override
+        public void updateIntervalCameraInfo(AMapNaviCameraInfo aMapNaviCameraInfo, AMapNaviCameraInfo aMapNaviCameraInfo1, int i) {
+
+        }
+
+        @Override
+        public void onServiceAreaUpdate(AMapServiceAreaInfo[] aMapServiceAreaInfos) {
+
+        }
+
+        @Override
+        public void showCross(AMapNaviCross aMapNaviCross) {
+
+        }
+
+        @Override
+        public void hideCross() {
+
+        }
+
+        @Override
+        public void showModeCross(AMapModelCross aMapModelCross) {
+
+        }
+
+        @Override
+        public void hideModeCross() {
+
+        }
+
+        @Override
+        public void showLaneInfo(AMapLaneInfo[] aMapLaneInfos, byte[] bytes, byte[] bytes1) {
+
+        }
+
+        @Override
+        public void showLaneInfo(AMapLaneInfo aMapLaneInfo) {
+
+        }
+
+        @Override
+        public void hideLaneInfo() {
+
+        }
+
+        @Override
+        public void onCalculateRouteSuccess(int[] ints) {
+
+        }
+
+        @Override
+        public void notifyParallelRoad(int i) {
+
+        }
+
+        @Override
+        public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
+
+        }
+
+        @Override
+        public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
+            for (AMapNaviTrafficFacilityInfo info :
+                    aMapNaviTrafficFacilityInfos) {
+                if(info.getBroadcastType() == 102 || info.getBroadcastType() == 4){
+                    limitSpeed=info.getLimitSpeed();
+                }
+
+            }
+        }
+
+        @Override
+        public void OnUpdateTrafficFacility(TrafficFacilityInfo trafficFacilityInfo) {
+
+        }
+
+        @Override
+        public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
+
+        }
+
+        @Override
+        public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {
+
+        }
+
+        @Override
+        public void onPlayRing(int i) {
+
+        }
     }
 }
