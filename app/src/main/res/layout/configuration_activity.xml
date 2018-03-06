@@ -37,6 +37,13 @@
            android:layout_below="@+id/uploadGPSData" android:layout_alignLeft="@+id/EnableFalting"
            android:layout_alignStart="@+id/EnableFalting"/>
    <CheckBox
+           android:text="Enable Auto Navi service"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/enableAutoNavi"
+           android:layout_below="@+id/enableAudio" android:layout_alignLeft="@+id/enableAudio"
+           android:layout_alignStart="@+id/enableAudio"/>
+   <CheckBox
            android:text="Enable Audio Service"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
@@ -48,7 +55,7 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/EnableFalting"
-           android:layout_below="@+id/enableAudio" android:layout_alignLeft="@+id/uploadGPSData"
+           android:layout_below="@+id/enableAutoNavi" android:layout_alignLeft="@+id/uploadGPSData"
            android:layout_alignStart="@+id/uploadGPSData"/>
    <Button
            android:text="Enable Accessibility Service"

@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.location.Location;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -16,20 +16,10 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.view.*;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.amap.api.navi.AMapNavi;
-import com.amap.api.navi.AMapNaviListener;
-import com.amap.api.navi.AmapNaviPage;
-import com.amap.api.navi.enums.AimLessMode;
-import com.amap.api.navi.enums.BroadcastMode;
-import com.amap.api.navi.model.*;
-import com.autonavi.tbt.TrafficFacilityInfo;
-import com.gigamole.library.ArcProgressStackView;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.TTSUtil;
-import com.huivip.gpsspeedwidget.utils.Utils;
+import devlight.io.library.ArcProgressStackView;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -65,15 +55,35 @@ public class FloatingService extends Service{
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent!=null){
+
             boolean enableFloatingService=PrefUtils.isEnableFlatingWindow(getApplicationContext());
             if (!enableFloatingService || intent.getBooleanExtra(EXTRA_CLOSE, false)) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
+            gpsUtil=GpsUtil.getInstance(getApplicationContext());
+
+
+            this.locationScanTask = new TimerTask()
+            {
+                @Override
+                public void run()
+                {
+                    FloatingService.this.locationHandler.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            FloatingService.this.checkLocationData();
+                        }
+                    });
+                }
+            };
+            this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+            gpsUtil.startLocationService();
         }
 
-        gpsUtil.startLocationService();
         return super.onStartCommand(intent, flags, startId);
     }
     private void onStop(){
@@ -84,16 +94,13 @@ public class FloatingService extends Service{
 
     @Override
     public void onCreate() {
-
-        super.onCreate();
-        gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_international, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
+                getWindowType(),
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.START;
@@ -110,24 +117,9 @@ public class FloatingService extends Service{
         mArcView.setTextColor(ContextCompat.getColor(this, android.R.color.transparent));
         mArcView.setInterpolator(new FastOutSlowInInterpolator());
         mArcView.setModels(models);
-
-        this.locationScanTask = new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                FloatingService.this.locationHandler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        FloatingService.this.checkLocationData();
-                    }
-                });
-            }
-        };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        super.onCreate();
     }
+
     void checkLocationData() {
         //gpsUtil.checkLocationData();
         if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
@@ -148,6 +140,11 @@ public class FloatingService extends Service{
         else {
            mSpeedometerText.setText("--");
         }
+    }
+    private int getWindowType() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                WindowManager.LayoutParams.TYPE_PHONE;
     }
     public void setSpeed(String speed, int percentOfWarning) {
         if (PrefUtils.getShowSpeedometer(this) && mSpeedometerText != null) {

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.huivip.gpsspeedwidget"
-        minSdkVersion 16
+        minSdkVersion 23
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -79,7 +79,8 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
+    compile 'devlight.io:arcprogressstackview:1.0.4'
     compile 'com.jakewharton.timber:timber:4.6.0'
-    compile 'com.github.gigamole.arcprogressstackview:library:1.0.3'
+/*    compile 'com.github.gigamole.arcprogressstackview:library:1.0.3'*/
     testCompile 'junit:junit:4.12'
 }

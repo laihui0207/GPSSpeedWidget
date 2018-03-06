@@ -45,6 +45,7 @@ public class GpsUtil {
     TimerTask locationScanTask;
     Timer locationTimer;
     AMapNavi aMapNavi;
+    LocationManager locationManager;
     TTSUtil ttsUtil;
     final Handler locationHandler = new Handler();
     LocationListener locationListener=new LocationListener() {
@@ -96,20 +97,42 @@ public class GpsUtil {
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
+        //checkLocationData();
+        if(PrefUtils.isEnableAutoNaviService(context)) {
+            aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
+        }
         serviceStarted=true;
     }
     public void stopLocationService(){
         if(serviceStarted) {
-            this.locationTimer.cancel();
-            this.locationTimer.purge();
+            if(this.locationTimer!=null) {
+                this.locationTimer.cancel();
+                this.locationTimer.purge();
+            }
             serviceStarted=false;
+
             if(aMapNavi!=null){
                 aMapNavi.stopAimlessMode();
             }
             ttsUtil.release();
         }
 
+    }
+    private void setContext(Context context) {
+        this.context = context;
+    }
+    private void initInstance(){
+        ttsUtil=TTSUtil.getInstance(context);
+        aMapNavi=AMapNavi.getInstance(context);
+        aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
+        aMapNavi.addAMapNaviListener(new NaviListenerImpl());
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+       /* Criteria criteria = new Criteria();
+        criteria.setCostAllowed(true);//设置产生费用，收费的一般比较精确
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);//精确度设为最佳
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        //动态获取最佳定位方式
+        providerId = locationManager.getBestProvider(criteria, true);*/
     }
     public float getBearing() {
         return bearing;
@@ -143,7 +166,7 @@ public class GpsUtil {
     }
     void checkLocationData() {
         try {
-            LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
             if (locationManager.getProvider(this.providerId) == null) {
                 return;
             }
@@ -152,7 +175,7 @@ public class GpsUtil {
             if (localLocation != null) {
                 updateLocationData(localLocation);
             }
-            locationManager.requestLocationUpdates(this.providerId, 1L, 1.0F, this.locationListener);
+            locationManager.requestLocationUpdates(this.providerId, 0, 0, this.locationListener);
         }catch (SecurityException e){
             Toast.makeText(context, "GPS widget Need Location Permissions!", Toast.LENGTH_SHORT).show();
         }
@@ -196,15 +219,7 @@ public class GpsUtil {
     public Integer getLimitSpeed(){
         return limitSpeed;
     }
-    private void setContext(Context context) {
-        this.context = context;
-    }
-    private void initInstance(){
-        ttsUtil=TTSUtil.getInstance(context);
-        aMapNavi=AMapNavi.getInstance(context);
-        aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
-        aMapNavi.addAMapNaviListener(new NaviListenerImpl());
-    }
+
     public boolean isGpsEnabled() {
         return gpsEnabled;
     }
@@ -259,8 +274,8 @@ public class GpsUtil {
         public void onGetNavigationText(String s) {
             if(PrefUtils.isEnableAudioService(context)) {
                 if(!speakText.equalsIgnoreCase(s)) {
-                    ttsUtil.speak(s);
                     speakText=s;
+                    ttsUtil.speak(s);
                 }
             }
         }

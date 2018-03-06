@@ -63,56 +63,66 @@ public class ConfigurationActivity extends Activity {
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         CheckBox enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
+        CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         boolean start=PrefUtils.isEnableAutoStart(this);
         autoStartCheckBox.setChecked(start);
         if(!Utils.isLocationPermissionGranted(this)) {
             askForPermission(Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_LOCATION);
         }
-        boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(this);
-        boolean uploadGPSData=PrefUtils.isEnableUploadGPSHistory(this);
-        boolean enableFloating=PrefUtils.isEnableFlatingWindow(this);
-        boolean enableAudio=PrefUtils.isEnableAudioService(this);
+        boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(getApplicationContext());
+        boolean uploadGPSData=PrefUtils.isEnableUploadGPSHistory(getApplicationContext());
+        boolean enableFloating=PrefUtils.isEnableFlatingWindow(getApplicationContext());
+        boolean enableAudio=PrefUtils.isEnableAudioService(getApplicationContext());
+        boolean enableAutoNavi=PrefUtils.isEnableAutoNaviService(getApplicationContext());
         recordGPSCheckBox.setChecked(recordGPS);
         uploadGPSCheckBox.setChecked(uploadGPSData);
         enableFloatingWidnowCheckBox.setChecked(enableFloating);
         enableAudioCheckBox.setChecked(enableAudio);
+        enableAutoNaviCheckBox.setChecked(enableAutoNavi);
         autoStartCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
-                PrefUtils.setEnableAutoStart(ConfigurationActivity.this,checkBoxButton.isChecked());
+                PrefUtils.setEnableAutoStart(getApplicationContext(),checkBoxButton.isChecked());
             }
         });
         recordGPSCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
-                if(!Utils.isStoragePermissionGranted(ConfigurationActivity.this)) {
+                if(!Utils.isStoragePermissionGranted(getApplicationContext())) {
                     askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_STORAGE);
                 }
-                PrefUtils.setRecordGPSHistory(ConfigurationActivity.this,checkBoxButton.isChecked());
+                PrefUtils.setRecordGPSHistory(getApplicationContext(),checkBoxButton.isChecked());
             }
         });
         uploadGPSCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
-                if(!Utils.isPhonePermissionGranted(ConfigurationActivity.this)) {
+                if(!Utils.isPhonePermissionGranted(getApplicationContext())) {
                     askForPermission(Manifest.permission.READ_PHONE_STATE, REQUEST_PHONE);
                 }
-                PrefUtils.setUploadGPSHistory(ConfigurationActivity.this,checkBoxButton.isChecked());
+                PrefUtils.setUploadGPSHistory(getApplicationContext(),checkBoxButton.isChecked());
             }
         });
         enableFloatingWidnowCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                PrefUtils.setFlatingWindow(ConfigurationActivity.this,compoundButton.isChecked());
+                PrefUtils.setFlatingWindow(getApplicationContext(),compoundButton.isChecked());
             }
         });
         enableAudioCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
-                PrefUtils.setEnableAudioService(ConfigurationActivity.this,checkBoxButton.isChecked());
+                PrefUtils.setEnableAudioService(getApplicationContext(),checkBoxButton.isChecked());
+            }
+        });
+        enableAutoNaviCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
+                PrefUtils.setEnableAutoNaviService(getApplicationContext(),checkBoxButton.isChecked());
             }
         });
         enableServiceButton=findViewById(R.id.enableOver);
@@ -132,7 +142,7 @@ public class ConfigurationActivity extends Activity {
                 //Snackbar.make(enableFloatingButton, R.string.open_settings_failed_overlay, Snackbar.LENGTH_LONG).show();
             }
         });
-        PrefUtils.setApps(this, getDescktopPackageName());
+        PrefUtils.setApps(getApplicationContext(), getDescktopPackageName());
         Button btnOk= (Button) findViewById(R.id.confirm);
         View.OnClickListener confirmListener  = new View.OnClickListener() {
 
@@ -190,7 +200,7 @@ public class ConfigurationActivity extends Activity {
                 Manifest.permission.WRITE_SETTINGS,
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.ACCESS_WIFI_STATE,
-                Manifest.permission.CHANGE_WIFI_STATE
+                Manifest.permission.CHANGE_WIFI_STATE,
         };
 
         ArrayList<String> toApplyList = new ArrayList<String>();
@@ -205,7 +215,12 @@ public class ConfigurationActivity extends Activity {
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-
+        if(!Settings.System.canWrite(this)){
+            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                    Uri.parse("package:" + getPackageName()));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivityForResult(intent, 124);
+        }
     }
     private void askForPermission(String permission, Integer requestCode) {
         if (ContextCompat.checkSelfPermission(ConfigurationActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {

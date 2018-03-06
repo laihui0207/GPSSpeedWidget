@@ -49,16 +49,19 @@ public class TTSUtil {
     }
     private void setContext(Context context){
         this.context=context;
-        if(!inited) {
+        if( PrefUtils.isEnableAudioService(context) && !inited) {
             initialTts();
             inited=true;
         }
     }
     public void speak(String text){
-        int result = synthesizer.speak(text);
+        if(PrefUtils.isEnableAudioService(context)) {
+            synthesizer.speak(text);
+        }
     }
     public void release(){
         synthesizer.release();
+        inited=false;
     }
     protected void initialTts() {
         LoggerProxy.printable(true); // 日志打印在logcat中

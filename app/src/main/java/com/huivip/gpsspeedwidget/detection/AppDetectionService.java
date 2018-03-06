@@ -49,7 +49,7 @@ public class AppDetectionService extends AccessibilityService {
     }
 
     public void updateSelectedApps() {
-        enabledApps = PrefUtils.getApps(this);
+        enabledApps = PrefUtils.getApps(getApplicationContext());
     }
 
 
@@ -59,35 +59,35 @@ public class AppDetectionService extends AccessibilityService {
             updateSelectedApps();
         }
 
-        if (event.getPackageName() == null
+      /*  if (event.getPackageName() == null
                 || event.getClassName() == null
-                || (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED && !event.getPackageName().equals(GOOGLE_MAPS_PACKAGE)
-                || enabledApps == null)) {
+                || enabledApps == null) {
             return;
-        }
+        }*/
 
         ComponentName componentName = new ComponentName(
                 event.getPackageName().toString(),
                 event.getClassName().toString()
         );
-        boolean isActivity = componentName.getPackageName().toLowerCase().contains("activity")
+        Log.d("huivip","PackageName:"+event.getPackageName().toString()+",className:"+componentName.getClassName());
+      /*  boolean isActivity = componentName.getPackageName().toLowerCase().contains("activity")
                 || tryGetActivity(componentName) != null;
 
         if (!isActivity) {
             return;
-        }
-        Intent floatSevice=new Intent(this, FloatingService.class);
+        }*/
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
-
+        Log.d("huivip","Should Stop:"+shouldStopService);
+        Intent floatService=new Intent(this, FloatingService.class);
         if (shouldStopService) {
-            floatSevice.putExtra(FloatingService.EXTRA_CLOSE, true);
+            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
 
         try {
-            startService(floatSevice);
+            startService(floatService);
         } catch (Exception e) {
-
+            Log.d("huivip","Start Floating server Failed"+e.getMessage());
         }
     }
 

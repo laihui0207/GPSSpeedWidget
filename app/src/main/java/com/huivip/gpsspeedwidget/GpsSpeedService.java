@@ -469,12 +469,13 @@ public class GpsSpeedService extends Service {
     void closeAndResetData()
     {
         this.locationTimer.cancel();
-        stopSelf();
         this.remoteViews.setTextViewText(R.id.textView1, "   OFF");
         this.remoteViews.setTextViewText(R.id.textView1_1, "");
         this.remoteViews.setImageViewResource(R.id.ialtimetro,R.drawable.base);
         this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_0);
         this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
+        stopSelf();
+
     }
 
 }
