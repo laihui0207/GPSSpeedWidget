@@ -128,7 +128,7 @@ public class FloatingService extends Service{
                 int kmhSpeed = (int) Math.round((double) metersPerSeconds * 60 * 60 / 1000);
                 int speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
                 setSpeed(gpsUtil.getKmhSpeedStr(),speedometerPercentage);
-                mLimitText.setText(gpsUtil.getLimitSpeed());
+                mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
                 if(gpsUtil.getLimitSpeed()>0 && gpsUtil.getKmhSpeed()>gpsUtil.getLimitSpeed()){
                     setSpeeding(true);
                 }

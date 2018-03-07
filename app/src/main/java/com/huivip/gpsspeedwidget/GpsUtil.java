@@ -10,6 +10,7 @@ import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.enums.AimLessMode;
 import com.amap.api.navi.enums.BroadcastMode;
+import com.amap.api.navi.enums.CameraType;
 import com.amap.api.navi.model.*;
 import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -37,7 +38,7 @@ public class GpsUtil {
     String kmhSpeedStr="0";
     String velocita_prec = "ciao";
     Integer c = Integer.valueOf(0);
-    String providerId = "gps";
+    String providerId = LocationManager.GPS_PROVIDER;
     boolean gpsEnabled=false;
     boolean gpsLocationStarted=false;
     boolean gpsLocationChanged=false;
@@ -327,7 +328,11 @@ public class GpsUtil {
 
         @Override
         public void updateCameraInfo(AMapNaviCameraInfo[] aMapNaviCameraInfos) {
-
+            for(AMapNaviCameraInfo aMapNaviCameraInfo:aMapNaviCameraInfos){
+                if(aMapNaviCameraInfo.getCameraType()== CameraType.SPEED || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYSTART){
+                    limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
+                }
+            }
         }
 
         @Override
