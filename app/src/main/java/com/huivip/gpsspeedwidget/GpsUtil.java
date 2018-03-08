@@ -72,16 +72,12 @@ public class GpsUtil {
         }
 
     };
-    private static GpsUtil instance=new GpsUtil();
-
-    public static GpsUtil getInstance(Context context){
-        instance.setContext(context);
-        instance.initInstance();
-        return instance;
-    }
-    public void startLocationService(){
-        if(serviceStarted) return;
+    private static GpsUtil instance;
+    private GpsUtil(Context context){
+        this.context=context;
+        ttsUtil=TTSUtil.getInstance(context);
         this.locationTimer = new Timer();
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         this.locationScanTask = new TimerTask()
         {
             @Override
@@ -97,43 +93,45 @@ public class GpsUtil {
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        //checkLocationData();
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
+    }
+    public static GpsUtil getInstance(Context context){
+        if(instance==null){
+            synchronized (GpsUtil.class) {
+                if(instance==null){
+                    instance=new GpsUtil(context);
+                }
+            }
+        }
+        return instance;
+    }
+    public void startLocationService(){
+        if(serviceStarted) return;
+        this.locationTimer = new Timer();
         if(PrefUtils.isEnableAutoNaviService(context)) {
+            aMapNavi=AMapNavi.getInstance(context);
+            aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
+            aMapNavi.addAMapNaviListener(new NaviListenerImpl());
             aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
         }
         serviceStarted=true;
     }
-    public void stopLocationService(){
-        if(serviceStarted) {
+    public void stopLocationService(boolean stop){
+        if(serviceStarted && ((!stop && !PrefUtils.isWidgetActived(context)) || (PrefUtils.isWidgetActived(context) && stop))) {
             if(this.locationTimer!=null) {
                 this.locationTimer.cancel();
                 this.locationTimer.purge();
             }
-            serviceStarted=false;
-
             if(aMapNavi!=null){
                 aMapNavi.stopAimlessMode();
             }
-            ttsUtil.release();
+            if(ttsUtil!=null) {
+                ttsUtil.release();
+                ttsUtil=null;
+            }
+            serviceStarted=false;
         }
 
-    }
-    private void setContext(Context context) {
-        this.context = context;
-    }
-    private void initInstance(){
-        ttsUtil=TTSUtil.getInstance(context);
-        aMapNavi=AMapNavi.getInstance(context);
-        aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
-        aMapNavi.addAMapNaviListener(new NaviListenerImpl());
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-       /* Criteria criteria = new Criteria();
-        criteria.setCostAllowed(true);//设置产生费用，收费的一般比较精确
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);//精确度设为最佳
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        //动态获取最佳定位方式
-        providerId = locationManager.getBestProvider(criteria, true);*/
     }
     public float getBearing() {
         return bearing;
@@ -176,7 +174,7 @@ public class GpsUtil {
             if (localLocation != null) {
                 updateLocationData(localLocation);
             }
-            locationManager.requestLocationUpdates(this.providerId, 0, 0, this.locationListener);
+            locationManager.requestLocationUpdates(this.providerId, 1L, 1.0F, this.locationListener);
         }catch (SecurityException e){
             Toast.makeText(context, "GPS widget Need Location Permissions!", Toast.LENGTH_SHORT).show();
         }
@@ -245,11 +243,12 @@ public class GpsUtil {
         String speakText="";
         @Override
         public void onInitNaviFailure() {
+            Toast.makeText(context,"智能巡航异常",Toast.LENGTH_SHORT);
         }
 
         @Override
         public void onInitNaviSuccess() {
-
+            Toast.makeText(context,"智能巡航开始",Toast.LENGTH_SHORT);
         }
 
         @Override
@@ -263,7 +262,7 @@ public class GpsUtil {
 
         @Override
         public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-            // mSpeedometerText.setText(Float.toString(aMapNaviLocation.getSpeed()));
+
         }
 
         @Override

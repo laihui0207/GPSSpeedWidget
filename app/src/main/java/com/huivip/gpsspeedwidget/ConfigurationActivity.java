@@ -129,6 +129,7 @@ public class ConfigurationActivity extends Activity {
         enableServiceButton.setOnClickListener(v -> {
             try {
                 startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+
             } catch (ActivityNotFoundException e) {
             }
         });
@@ -216,10 +217,10 @@ public class ConfigurationActivity extends Activity {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
         if(!Settings.System.canWrite(this)){
-            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+            Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
                     Uri.parse("package:" + getPackageName()));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityForResult(intent, 124);
+            intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivityForResult(intentWriteSetting, 124);
         }
     }
     private void askForPermission(String permission, Integer requestCode) {

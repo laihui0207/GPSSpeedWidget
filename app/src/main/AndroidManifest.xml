@@ -43,7 +43,7 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
-        <receiver android:name=".GpsSpeedWidget" android:label="@string/app_name">
+        <receiver android:name=".GpsSpeedWidget" android:label="SpeedMeter">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -59,13 +59,6 @@
         </receiver>
         <service android:name=".GpsSpeedService"/>
         <service android:name=".FloatingService"/>
-       <!-- <service
-                android:name=".detection.GmapsNavNotificationListener"
-                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>-->
         <service
                 android:name=".detection.AppDetectionService"
                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">

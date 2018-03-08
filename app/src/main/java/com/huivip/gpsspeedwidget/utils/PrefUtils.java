@@ -42,6 +42,7 @@ public abstract class PrefUtils {
     public static final String ENABLE_FLATING_WINDOW="uploadGpsHistory";
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enableService";
     public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enableService";
+    public static final String WIDGET_ACTIVED="com.huivip.widget.actived";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -54,7 +55,6 @@ public abstract class PrefUtils {
     public static void setFirstRun(Context context, boolean firstRun) {
         edit(context).putBoolean(PREF_FIRSTRUN, firstRun).apply();
     }
-
     public static boolean isFirstRun(Context context) {
         return getSharedPreferences(context).getBoolean(PREF_FIRSTRUN, true);
     }
@@ -77,6 +77,12 @@ public abstract class PrefUtils {
     public static void setUploadGPSHistory(Context context,boolean uploadHistory){
         edit(context).putBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, uploadHistory).apply();
     }
+    public static boolean isWidgetActived(Context context){
+        return getSharedPreferences(context).getBoolean(WIDGET_ACTIVED, false);
+    }
+    public static void setWidgetActived(Context context,boolean widgetActived){
+        edit(context).putBoolean(WIDGET_ACTIVED, widgetActived).apply();
+    }
     public static boolean isEnableUploadGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, false);
     }
@@ -87,7 +93,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(ENABLE_AUDIO_SERVICE, enableService).apply();
     }
     public static boolean isEnableAutoNaviService(Context context){
-        return getSharedPreferences(context).getBoolean(ENABLE_AUTONAVI_SERVICE, false);
+        return getSharedPreferences(context).getBoolean(ENABLE_AUTONAVI_SERVICE, true);
     }
     public static void setEnableAutoNaviService(Context context,boolean enableService){
         edit(context).putBoolean(ENABLE_AUTONAVI_SERVICE, enableService).apply();

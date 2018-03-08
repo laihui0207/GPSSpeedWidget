@@ -26,38 +26,55 @@ public class TTSUtil {
     protected String offlineVoice = OfflineResource.VOICE_MALE;
     protected MySyntherizer synthesizer;
     protected Handler mainHandler;
-    private static TTSUtil ttsUtil=new TTSUtil();
+    private String speakText;
+    private static TTSUtil ttsUtil;
     boolean inited=false;
-    private TTSUtil() {
-        mainHandler = new Handler() {
-            /*
-             * @param msg
-             */
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if (msg.obj != null) {
-                    Log.d("GPS",msg.obj.toString());
+    private TTSUtil(Context context) {
+        this.context=context;
+        if( PrefUtils.isEnableAudioService(context)) {
+            initialTts();
+            mainHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    if (msg.obj != null) {
+                        Log.d("GPS",msg.obj.toString());
+                    }
+                }
+
+            };
+        }
+
+    }
+
+    public static TTSUtil getInstance(Context context) {
+        if (ttsUtil == null) {
+            synchronized (TTSUtil.class) {
+                if(ttsUtil==null) {
+                    ttsUtil = new TTSUtil(context);
                 }
             }
-
-        };
-    }
-    public static TTSUtil getInstance(Context context){
-        ttsUtil.setContext(context);
-        return ttsUtil;
-    }
-    private void setContext(Context context){
-        this.context=context;
-        if( PrefUtils.isEnableAudioService(context) && !inited) {
-            initialTts();
-            inited=true;
         }
+        return ttsUtil;
     }
     public void speak(String text){
         if(PrefUtils.isEnableAudioService(context)) {
-            synthesizer.speak(text);
+            if(text!=null && !text.equals(speakText)){
+                speakText=text;
+                if(ttsUtil!=null && synthesizer!=null){
+                    int result = synthesizer.speak(text);
+                    if (result != 0) {
+                        ttsUtil.release();
+                        ttsUtil = TTSUtil.getInstance(context);
+                    }
+                } else {
+                    ttsUtil=TTSUtil.getInstance(context);
+                }
+            }
         }
+    }
+    public void stop(){
+        synthesizer.stop();
     }
     public void release(){
         synthesizer.release();

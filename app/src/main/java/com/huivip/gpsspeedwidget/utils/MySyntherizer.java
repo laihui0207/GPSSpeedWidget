@@ -49,6 +49,10 @@ public class MySyntherizer implements MainHandlerConstant {
         isInitied = true;
     }
 
+    public static boolean isIsInitied() {
+        return isInitied;
+    }
+
     /**
      * 注意该方法需要在新线程中调用。且该线程不能结束。详细请参见NonBlockSyntherizer的实现
      *

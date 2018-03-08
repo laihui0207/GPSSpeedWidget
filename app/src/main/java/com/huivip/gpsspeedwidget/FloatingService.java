@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
 import butterknife.BindView;
@@ -62,25 +63,7 @@ public class FloatingService extends Service{
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
-            gpsUtil=GpsUtil.getInstance(getApplicationContext());
 
-
-            this.locationScanTask = new TimerTask()
-            {
-                @Override
-                public void run()
-                {
-                    FloatingService.this.locationHandler.post(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            FloatingService.this.checkLocationData();
-                        }
-                    });
-                }
-            };
-            this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
             gpsUtil.startLocationService();
         }
 
@@ -90,10 +73,18 @@ public class FloatingService extends Service{
         if(mFloatingView!=null && mWindowManager!=null){
             mWindowManager.removeView(mFloatingView);
         }
+        if(locationTimer!=null){
+            locationTimer.cancel();
+            locationTimer.purge();
+        }
+        if(gpsUtil!= null) {
+            gpsUtil.stopLocationService(false);
+        }
     }
 
     @Override
     public void onCreate() {
+        gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_international, null);
@@ -117,6 +108,23 @@ public class FloatingService extends Service{
         mArcView.setTextColor(ContextCompat.getColor(this, android.R.color.transparent));
         mArcView.setInterpolator(new FastOutSlowInInterpolator());
         mArcView.setModels(models);
+
+        this.locationScanTask = new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                FloatingService.this.locationHandler.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        FloatingService.this.checkLocationData();
+                    }
+                });
+            }
+        };
+        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         super.onCreate();
     }
 

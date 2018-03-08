@@ -58,14 +58,16 @@ public class GpsSpeedService extends Service {
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent,flags,startId);
         Log.d("GPS","GPS service Start.....");
+        Log.d("huivip",Boolean.toString(PrefUtils.isWidgetActived(getApplicationContext())));
         if (serviceStoped) {
+
             gpsUtil.startLocationService();
             boolean recordGPS= PrefUtils.isEnableRecordGPSHistory(this);
             boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);
@@ -105,7 +107,7 @@ public class GpsSpeedService extends Service {
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         } else {
             serviceStoped = true;
-            gpsUtil.stopLocationService();
+            gpsUtil.stopLocationService(true);
             boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(this);
             boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);
             if(recordGPS) {

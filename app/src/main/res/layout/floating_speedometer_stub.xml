@@ -11,18 +11,6 @@
     android:background="@drawable/circle"
     android:elevation="2dp">
 
-   <!-- <com.gigamole.library.ArcProgressStackView
-        android:id="@+id/arcview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:apsv_animated="true"
-        app:apsv_animation_duration="100"
-        app:apsv_draw_width="8dp"
-        app:apsv_model_bg_enabled="true"
-        app:apsv_shadowed="false"
-        app:apsv_start_angle="135"
-        app:apsv_sweep_angle="270"
-        tools:visibility="gone" />-->
     <devlight.io.library.ArcProgressStackView
             android:id="@+id/arcview"
             android:layout_width="match_parent"
@@ -39,8 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:orientation="vertical"
-    >
+            android:orientation="vertical">
         <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/speed"
                 android:layout_width="match_parent"
