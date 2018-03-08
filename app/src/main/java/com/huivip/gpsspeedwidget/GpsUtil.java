@@ -37,6 +37,7 @@ public class GpsUtil {
     String mphSpeedStr="0";
     String kmhSpeedStr="0";
     String velocita_prec = "ciao";
+    Integer speedometerPercentage=Integer.valueOf(0);
     Integer c = Integer.valueOf(0);
     String providerId = LocationManager.GPS_PROVIDER;
     boolean gpsEnabled=false;
@@ -48,6 +49,7 @@ public class GpsUtil {
     AMapNavi aMapNavi;
     LocationManager locationManager;
     TTSUtil ttsUtil;
+    private Thread naviThread;
     final Handler locationHandler = new Handler();
     LocationListener locationListener=new LocationListener() {
         @Override
@@ -108,8 +110,8 @@ public class GpsUtil {
     public void startLocationService(){
         if(serviceStarted) return;
         this.locationTimer = new Timer();
-        if(PrefUtils.isEnableAutoNaviService(context)) {
-            aMapNavi=AMapNavi.getInstance(context);
+        if (PrefUtils.isEnableAutoNaviService(context)) {
+            aMapNavi = AMapNavi.getInstance(context);
             aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
             aMapNavi.addAMapNaviListener(new NaviListenerImpl());
             aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
@@ -139,6 +141,10 @@ public class GpsUtil {
 
     public Double getSpeed() {
         return speed;
+    }
+
+    public Integer getSpeedometerPercentage() {
+        return speedometerPercentage;
     }
 
     private void updateLocationData(Location paramLocation)
@@ -190,13 +196,14 @@ public class GpsUtil {
             }
         }
     }
+    NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     void computeAndShowData() {
-        NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
         localNumberFormat.setMaximumFractionDigits(1);
         mphSpeed = (int)(this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         kmhSpeed=(int)(this.speed.doubleValue() * 3.6D);
-        mphSpeedStr=localNumberFormat.format(this.speed.doubleValue() * 3.6D / 1.609344D);
-        kmhSpeedStr=localNumberFormat.format(this.speed.doubleValue() * 3.6D);
+        speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
+        mphSpeedStr=localNumberFormat.format(mphSpeed);
+        kmhSpeedStr=localNumberFormat.format(kmhSpeed);
         Log.d("GPS",kmhSpeedStr);
     }
 

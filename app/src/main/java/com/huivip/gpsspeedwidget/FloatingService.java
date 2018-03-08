@@ -56,17 +56,14 @@ public class FloatingService extends Service{
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent!=null){
-
             boolean enableFloatingService=PrefUtils.isEnableFlatingWindow(getApplicationContext());
             if (!enableFloatingService || intent.getBooleanExtra(EXTRA_CLOSE, false)) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
-
-            gpsUtil.startLocationService();
         }
-
+        gpsUtil.startLocationService();
         return super.onStartCommand(intent, flags, startId);
     }
     private void onStop(){
@@ -77,9 +74,9 @@ public class FloatingService extends Service{
             locationTimer.cancel();
             locationTimer.purge();
         }
-        if(gpsUtil!= null) {
+       /* if(gpsUtil!= null) {
             gpsUtil.stopLocationService(false);
-        }
+        }*/
     }
 
     @Override
@@ -129,13 +126,9 @@ public class FloatingService extends Service{
     }
 
     void checkLocationData() {
-        //gpsUtil.checkLocationData();
-        if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
+        if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
             if(gpsUtil.isGpsLocationChanged()){
-                double metersPerSeconds=gpsUtil.getSpeed();
-                int kmhSpeed = (int) Math.round((double) metersPerSeconds * 60 * 60 / 1000);
-                int speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
-                setSpeed(gpsUtil.getKmhSpeedStr(),speedometerPercentage);
+                setSpeed(gpsUtil.getKmhSpeedStr(),gpsUtil.getSpeedometerPercentage());
                 mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
                 if(gpsUtil.getLimitSpeed()>0 && gpsUtil.getKmhSpeed()>gpsUtil.getLimitSpeed()){
                     setSpeeding(true);

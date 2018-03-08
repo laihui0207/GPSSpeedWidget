@@ -59,26 +59,25 @@ public class AppDetectionService extends AccessibilityService {
             updateSelectedApps();
         }
 
-      /*  if (event.getPackageName() == null
+        if (event.getPackageName() == null
                 || event.getClassName() == null
                 || enabledApps == null) {
             return;
-        }*/
+        }
 
         ComponentName componentName = new ComponentName(
                 event.getPackageName().toString(),
                 event.getClassName().toString()
         );
-        Log.d("huivip","PackageName:"+event.getPackageName().toString()+",className:"+componentName.getClassName());
-      /*  boolean isActivity = componentName.getPackageName().toLowerCase().contains("activity")
+       /* boolean isActivity = componentName.getPackageName().toLowerCase().contains("activity")
                 || tryGetActivity(componentName) != null;
 
         if (!isActivity) {
             return;
         }*/
 
+
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
-        Log.d("huivip","Should Stop:"+shouldStopService);
         Intent floatService=new Intent(this, FloatingService.class);
         if (shouldStopService) {
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
