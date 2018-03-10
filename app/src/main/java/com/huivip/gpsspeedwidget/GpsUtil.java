@@ -49,7 +49,6 @@ public class GpsUtil {
     AMapNavi aMapNavi;
     LocationManager locationManager;
     TTSUtil ttsUtil;
-    private Thread naviThread;
     final Handler locationHandler = new Handler();
     LocationListener locationListener=new LocationListener() {
         @Override
@@ -78,8 +77,22 @@ public class GpsUtil {
     private GpsUtil(Context context){
         this.context=context;
         ttsUtil=TTSUtil.getInstance(context);
+
+    }
+    public static GpsUtil getInstance(Context context){
+        if(instance==null){
+            synchronized (GpsUtil.class) {
+                if(instance==null){
+                    instance=new GpsUtil(context);
+                }
+            }
+        }
+        return instance;
+    }
+    public void startLocationService(){
+        if(serviceStarted) return;
         this.locationTimer = new Timer();
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
         this.locationScanTask = new TimerTask()
         {
             @Override
@@ -95,21 +108,7 @@ public class GpsUtil {
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
-    }
-    public static GpsUtil getInstance(Context context){
-        if(instance==null){
-            synchronized (GpsUtil.class) {
-                if(instance==null){
-                    instance=new GpsUtil(context);
-                }
-            }
-        }
-        return instance;
-    }
-    public void startLocationService(){
-        if(serviceStarted) return;
-        this.locationTimer = new Timer();
+        this.locationTimer.schedule(this.locationScanTask, 0L,100L);
         if (PrefUtils.isEnableAutoNaviService(context)) {
             aMapNavi = AMapNavi.getInstance(context);
             aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
@@ -128,8 +127,7 @@ public class GpsUtil {
                 aMapNavi.stopAimlessMode();
             }
             if(ttsUtil!=null) {
-                ttsUtil.release();
-                ttsUtil=null;
+                ttsUtil.stop();
             }
             serviceStarted=false;
         }
@@ -171,7 +169,7 @@ public class GpsUtil {
     }
     void checkLocationData() {
         try {
-
+            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             if (locationManager.getProvider(this.providerId) == null) {
                 return;
             }
@@ -255,7 +253,8 @@ public class GpsUtil {
 
         @Override
         public void onInitNaviSuccess() {
-            Toast.makeText(context,"智能巡航开始",Toast.LENGTH_SHORT);
+            ttsUtil.speak("智能巡航服务开启");
+            Toast.makeText(context,"智能巡航服务开启",Toast.LENGTH_SHORT);
         }
 
         @Override

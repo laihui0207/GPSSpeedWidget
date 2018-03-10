@@ -121,7 +121,7 @@ public class FloatingService extends Service{
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         super.onCreate();
     }
 

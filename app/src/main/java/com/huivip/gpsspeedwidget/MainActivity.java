@@ -22,6 +22,7 @@ import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
+import com.huivip.gpsspeedwidget.utils.TTSUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -181,7 +182,15 @@ public class MainActivity extends Activity implements TraceListener {
                                 myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                     }
         });
+        Button testbutton=(Button)findViewById(R.id.button_test);
+        testbutton.setOnClickListener(new View.OnClickListener(){
 
+            @Override
+            public void onClick(View view) {
+                TTSUtil ttsUtil=TTSUtil.getInstance(getApplicationContext());
+                ttsUtil.speak("你好，语音测试成功");
+            }
+        });
         Button trackBtn= (Button) findViewById(R.id.TrackBtn);
         View.OnClickListener trackBtnListener=new View.OnClickListener(){
 

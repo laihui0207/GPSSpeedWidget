@@ -35,7 +35,6 @@ public class GpsSpeedService extends Service {
     Long lineId=0L;
     @Override
     public void onCreate() {
-        super.onCreate();
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         this.serviceStoped = true;
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
@@ -43,64 +42,59 @@ public class GpsSpeedService extends Service {
         this.manager = AppWidgetManager.getInstance(this);
         this.c = Integer.valueOf(0);
         this.lineId=System.currentTimeMillis();
-        this.locationScanTask = new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                GpsSpeedService.this.locationHandler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        GpsSpeedService.this.checkLocationData();
-                    }
-                });
+        boolean recordGPS= PrefUtils.isEnableRecordGPSHistory(this);
+        boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);
+        if(recordGPS) {
+            if(uploadGPS) {
+                Intent broadcastIntent = new Intent(GpsSpeedService.this, MessageReceiver.class);
+                PendingIntent sender = PendingIntent.getBroadcast(GpsSpeedService.this, 0, broadcastIntent, 0);
+                AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+                alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60 * 1000, sender);
             }
-        };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
+            this.recordGPSTask = new TimerTask()
+            {
+                @Override
+                public void run()
+                {
+                    GpsSpeedService.this.recordGPSHandler.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled() && gpsUtil.getMphSpeed()>0  ) {
+                                DBUtil dbUtil=new DBUtil(getApplicationContext());
+                                dbUtil.insert(gpsUtil.getLongitude(),gpsUtil.getLatitude(),gpsUtil.getKmhSpeedStr()
+                                        ,gpsUtil.getSpeed(),gpsUtil.getBearing(),new Date(),lineId);
+                            }
+                        }
+                    });
+                }
+            };
+            this.recordGPSTimer.schedule(this.recordGPSTask, 0L, 2000L);
+        }
+        super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent,flags,startId);
-        Log.d("GPS","GPS service Start.....");
-        Log.d("huivip",Boolean.toString(PrefUtils.isWidgetActived(getApplicationContext())));
         if (serviceStoped) {
-
             gpsUtil.startLocationService();
-            boolean recordGPS= PrefUtils.isEnableRecordGPSHistory(this);
-            boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);
-            Log.d("GPS","Values:"+recordGPS+","+uploadGPS);
-            if(recordGPS) {
-                if(uploadGPS) {
-                    Intent broadcastIntent = new Intent(GpsSpeedService.this, MessageReceiver.class);
-                    intent.setAction("com.huivip.recordGpsHistory.start");
-                    PendingIntent sender = PendingIntent.getBroadcast(GpsSpeedService.this, 0, broadcastIntent, 0);
-                    AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
-                    alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60 * 1000, sender);
-                }
-                this.recordGPSTask = new TimerTask()
+            this.locationScanTask = new TimerTask()
+            {
+                @Override
+                public void run()
                 {
-                    @Override
-                    public void run()
+                    GpsSpeedService.this.locationHandler.post(new Runnable()
                     {
-                        GpsSpeedService.this.recordGPSHandler.post(new Runnable()
+                        @Override
+                        public void run()
                         {
-                            @Override
-                            public void run()
-                            {
-                                if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled() && gpsUtil.getMphSpeed()>0  ) {
-                                    DBUtil dbUtil=new DBUtil(getApplicationContext());
-                                    dbUtil.insert(gpsUtil.getLongitude(),gpsUtil.getLatitude(),gpsUtil.getKmhSpeedStr()
-                                            ,gpsUtil.getSpeed(),gpsUtil.getBearing(),new Date(),lineId);
-                                }
-                            }
-                        });
-                    }
-                };
-                this.recordGPSTimer.schedule(this.recordGPSTask, 0L, 2000L);
-            }
+                            GpsSpeedService.this.checkLocationData();
+                        }
+                    });
+                }
+            };
+            this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
             serviceStoped =false;
             this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
             this.remoteViews.setTextViewText(R.id.textView1_1, "");
@@ -108,27 +102,25 @@ public class GpsSpeedService extends Service {
         } else {
             serviceStoped = true;
             gpsUtil.stopLocationService(true);
-            boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(this);
+
+            closeAndResetData();
+        }
+        return super.onStartCommand(intent,flags,startId);
+    }
+
+    @Override
+    public void onDestroy() {
+         boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(this);
             boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);
             if(recordGPS) {
                 if(uploadGPS) {
                     Intent broadcastIntent = new Intent(GpsSpeedService.this, MessageReceiver.class);
-                    intent.setAction("com.huivip.recordGpsHistory.start");
                     PendingIntent sender = PendingIntent.getBroadcast(GpsSpeedService.this, 0, broadcastIntent, 0);
                     AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
                     alarm.cancel(sender);
                 }
                this.recordGPSTimer.cancel();
             }
-
-            closeAndResetData();
-        }
-        return Service.START_REDELIVER_INTENT;
-
-    }
-
-    @Override
-    public void onDestroy() {
         super.onDestroy();
     }
 
@@ -470,7 +462,10 @@ public class GpsSpeedService extends Service {
     }
     void closeAndResetData()
     {
-        this.locationTimer.cancel();
+        if (this.locationTimer != null) {
+            this.locationTimer.cancel();
+            this.locationTimer.purge();
+        }
         this.remoteViews.setTextViewText(R.id.textView1, "   OFF");
         this.remoteViews.setTextViewText(R.id.textView1_1, "");
         this.remoteViews.setImageViewResource(R.id.ialtimetro,R.drawable.base);
