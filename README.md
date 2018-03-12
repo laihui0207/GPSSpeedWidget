@@ -24,4 +24,14 @@
  悬浮窗口在非桌面状态 启动
  
  
-  
+ ## GPS轨迹记录后台服务
+ 
+ ###程序： 
+ ```$avascript
+server/GPSHistory.js
+```
+### 启动方法
+```$xslt
+node GPSHistory.js 
+```
+    
