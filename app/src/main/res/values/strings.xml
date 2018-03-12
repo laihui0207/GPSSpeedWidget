@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GPSSpeedWidget</string>
+    <string name="app_name">GPS速度插件</string>
     <string name="str_btn_ok">OK</string>
     <string name="startAfterSystemLaunch">Auto Start After System Launch</string>
     <string name="recordGPSHistory">Record GPS History</string>
@@ -7,8 +7,8 @@
     <string name="enableFloatingWindow">Enable Floating Window</string>
     <string name="enableAudio">Enable Audio</string>
     <string name="SelectDate">Select Date</string>
-    <string name="accessibility_service_summary">Auto-launch in map apps</string>
-    <string name="accessibility_service_description">Allow Velociraptor to detect the foreground app and launch automatically.\n\nVelociraptor does not use any information other than the foreground app info. This service is mainly intended for users with disabilities.</string>
+    <string name="accessibility_service_summary">在其它程序上方自动启动悬浮窗口</string>
+    <string name="accessibility_service_description">当启动了其它程序不能看到窗口插件的速度时，允许悬浮窗口在其它程序上方自动启动，显示当前限速和速度</string>
     <string name="kmph">%s km/h</string>
     <string name="mph">%s mph</string>
     <string name="notif_title">Velociraptor is running</string>

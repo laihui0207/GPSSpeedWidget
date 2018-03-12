@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
@@ -79,7 +80,7 @@ public class AppDetectionService extends AccessibilityService {
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
         Intent floatService=new Intent(this, FloatingService.class);
-        if (shouldStopService) {
+        if (shouldStopService || !PrefUtils.isEnableFlatingWindow(getApplicationContext())) {
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
 

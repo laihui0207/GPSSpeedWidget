@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 import butterknife.BindView;
+import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TTSUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -41,6 +43,7 @@ public class ConfigurationActivity extends Activity {
     Button appSelectionButton;
     @BindView(R.id.enableOver)
     Button enableServiceButton;
+    CheckBox enableFloatingWidnowCheckBox;
     private static final int REQUEST_LOCATION = 105;
     private static  final int REQUEST_STORAGE=106;
     private static final int REQUEST_PHONE=107;
@@ -61,14 +64,14 @@ public class ConfigurationActivity extends Activity {
         CheckBox autoStartCheckBox=(CheckBox)findViewById(R.id.autoStart);
         CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
-        CheckBox enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
+        enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         boolean start=PrefUtils.isEnableAutoStart(this);
         autoStartCheckBox.setChecked(start);
-        if(!Utils.isLocationPermissionGranted(this)) {
+        /*if(!Utils.isLocationPermissionGranted(this)) {
             askForPermission(Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_LOCATION);
-        }
+        }*/
         boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(getApplicationContext());
         boolean uploadGPSData=PrefUtils.isEnableUploadGPSHistory(getApplicationContext());
         boolean enableFloating=PrefUtils.isEnableFlatingWindow(getApplicationContext());
@@ -108,6 +111,9 @@ public class ConfigurationActivity extends Activity {
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(compoundButton.isChecked()){
+
+                }
                 PrefUtils.setFlatingWindow(getApplicationContext(),compoundButton.isChecked());
             }
         });
@@ -125,7 +131,16 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableAutoNaviService(getApplicationContext(),checkBoxButton.isChecked());
             }
         });
+        boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
+        enableFloatingButton=findViewById(R.id.EnableFalting);
+        enableFloatingButton.setOnClickListener(v -> {
+            try {
+                openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
+            } catch (ActivityNotFoundException ignored) {
+            }
+        });
         enableServiceButton=findViewById(R.id.enableOver);
+        enableServiceButton.setEnabled(overlayEnabled);
         enableServiceButton.setOnClickListener(v -> {
             try {
                 startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
@@ -134,15 +149,6 @@ public class ConfigurationActivity extends Activity {
             }
         });
 
-        enableFloatingButton=findViewById(R.id.EnableFalting);
-        enableFloatingButton.setOnClickListener(v -> {
-            try {
-                //Open the current default browswer App Info page
-                openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
-            } catch (ActivityNotFoundException ignored) {
-                //Snackbar.make(enableFloatingButton, R.string.open_settings_failed_overlay, Snackbar.LENGTH_LONG).show();
-            }
-        });
         PrefUtils.setApps(getApplicationContext(), getDescktopPackageName());
         Button btnOk= (Button) findViewById(R.id.confirm);
         View.OnClickListener confirmListener  = new View.OnClickListener() {
@@ -167,6 +173,11 @@ public class ConfigurationActivity extends Activity {
         }
     }
     private void invalidateStates() {
+        boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
+        boolean serviceEnabled = Utils.isAccessibilityServiceEnabled(this, AppDetectionService.class);
+        enableFloatingWidnowCheckBox.setEnabled(overlayEnabled && serviceEnabled);
+        enableFloatingButton.setEnabled(!overlayEnabled);
+        enableServiceButton.setEnabled(overlayEnabled && !serviceEnabled);
         boolean serviceReady=Utils.isServiceReady(this);
         Button btnOk= (Button) findViewById(R.id.confirm);
         if(serviceReady){
@@ -192,12 +203,17 @@ public class ConfigurationActivity extends Activity {
         }
         return names;
     }
+    /*private boolean isNotificationAccessGranted() {
+        return NotificationManagerCompat.getEnabledListenerPackages(ConfigurationActivity.this).contains(BuildConfig.APPLICATION_ID);
+    }*/
     private void initPermission() {
         String[] permissions = {
                 Manifest.permission.INTERNET,
                 Manifest.permission.ACCESS_NETWORK_STATE,
                 Manifest.permission.MODIFY_AUDIO_SETTINGS,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.WRITE_SETTINGS,
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.ACCESS_WIFI_STATE,
@@ -216,12 +232,14 @@ public class ConfigurationActivity extends Activity {
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-        if(!Settings.System.canWrite(this)){
+       /* if(!Settings.System.canWrite(this)){
             Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
                     Uri.parse("package:" + getPackageName()));
             intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivityForResult(intentWriteSetting, 124);
-        }
+        }*/
+      /*  startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+        openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);*/
     }
     private void askForPermission(String permission, Integer requestCode) {
         if (ContextCompat.checkSelfPermission(ConfigurationActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {

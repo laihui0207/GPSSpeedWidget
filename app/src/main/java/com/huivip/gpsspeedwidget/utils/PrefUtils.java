@@ -113,7 +113,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(ENABLE_FLATING_WINDOW, flattingWindow).apply();
     }
     public static boolean isEnableFlatingWindow(Context context){
-        return getSharedPreferences(context).getBoolean(ENABLE_FLATING_WINDOW, true);
+        return getSharedPreferences(context).getBoolean(ENABLE_FLATING_WINDOW, false);
     }
     public static void setFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_FLOATING_LOCATION, left + "," + screenYRatio).apply();

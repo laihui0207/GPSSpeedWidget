@@ -15,50 +15,47 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/autoStart"
-           android:text="@string/startAfterSystemLaunch"
+           android:text="开机自动启动"
            android:layout_marginStart="31dp" android:layout_alignParentTop="true" android:layout_alignParentStart="true"
            android:layout_marginTop="37dp"/>
    <CheckBox
-           android:text="@string/recordGPSHistory"
+           android:text="记录GPS轨迹"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content" android:layout_below="@+id/autoStart"
            android:layout_alignStart="@+id/autoStart" android:id="@+id/recordGPS"/>
    <CheckBox
-           android:text="@string/uploadGPSHistory"
+           android:text="上传GPS数据"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/uploadGPSData"
            android:layout_below="@+id/recordGPS" android:layout_alignStart="@+id/recordGPS"/>
    <CheckBox
-           android:text="@string/enableFloatingWindow"
+           android:text="开启悬浮窗口"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableFloatingWindow"
-           android:layout_below="@+id/uploadGPSData" android:layout_alignLeft="@+id/EnableFalting"
-           android:layout_alignStart="@+id/EnableFalting"/>
+           android:layout_below="@+id/enableOver" android:layout_alignStart="@+id/enableOver"/>
    <CheckBox
-           android:text="Enable Auto Navi service"
+           android:text="开启智能巡航"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableAutoNavi"
            android:layout_below="@+id/enableAudio" android:layout_alignLeft="@+id/enableAudio"
            android:layout_alignStart="@+id/enableAudio"/>
    <CheckBox
-           android:text="Enable Audio Service"
+           android:text="开启语音功能"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableAudio"
-           android:layout_below="@+id/enableFloatingWindow" android:layout_alignLeft="@+id/enableFloatingWindow"
-           android:layout_alignStart="@+id/enableFloatingWindow"/>
+           android:layout_below="@+id/uploadGPSData" android:layout_alignEnd="@+id/uploadGPSData"/>
    <Button
-           android:text="Enable Draw Over Feature"
+           android:text="1. Enable Draw Over Feature"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/EnableFalting"
-           android:layout_below="@+id/enableAutoNavi" android:layout_alignLeft="@+id/uploadGPSData"
-           android:layout_alignStart="@+id/uploadGPSData"/>
+           android:layout_below="@+id/enableAutoNavi" android:layout_alignStart="@+id/enableAutoNavi"/>
    <Button
-           android:text="Enable Accessibility Service"
+           android:text="2. Enable Accessibility Service"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableOver"
