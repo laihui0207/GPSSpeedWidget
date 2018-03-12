@@ -41,6 +41,7 @@ public class ConfigurationActivity extends Activity {
     @BindView(R.id.enableOver)
     Button enableServiceButton;
     CheckBox enableFloatingWidnowCheckBox;
+    CheckBox enableShowFlattingOnDesktopCheckBox;
     EditText remoteUrlEditBox;
     private static final int REQUEST_LOCATION = 105;
     private static  final int REQUEST_STORAGE=106;
@@ -63,6 +64,7 @@ public class ConfigurationActivity extends Activity {
         CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
+        enableShowFlattingOnDesktopCheckBox=findViewById(R.id.checkBox_showondescktop);
         remoteUrlEditBox=findViewById(R.id.editText_remoteURL);
         CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
@@ -80,6 +82,7 @@ public class ConfigurationActivity extends Activity {
         uploadGPSCheckBox.setChecked(uploadGPSData);
         remoteUrlEditBox.setText(PrefUtils.getGPSHistoryServerURL(getApplicationContext()));
         enableFloatingWidnowCheckBox.setChecked(enableFloating);
+        enableShowFlattingOnDesktopCheckBox.setChecked(PrefUtils.isEnableShowFlatingOnDesktop(getApplicationContext()));
         enableAudioCheckBox.setChecked(enableAudio);
         enableAutoNaviCheckBox.setChecked(enableAutoNavi);
         remoteUrlEditBox.setEnabled(uploadGPSCheckBox.isChecked());
@@ -119,10 +122,15 @@ public class ConfigurationActivity extends Activity {
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(compoundButton.isChecked()){
-
-                }
+                enableShowFlattingOnDesktopCheckBox.setEnabled(compoundButton.isChecked());
                 PrefUtils.setFlatingWindow(getApplicationContext(),compoundButton.isChecked());
+            }
+        });
+        enableShowFlattingOnDesktopCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PrefUtils.setEnableShowFlattingOnDesktop(getApplicationContext(),compoundButton.isChecked());
             }
         });
         enableAudioCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
@@ -191,6 +199,7 @@ public class ConfigurationActivity extends Activity {
         enableFloatingWidnowCheckBox.setEnabled(overlayEnabled && serviceEnabled);
         enableFloatingButton.setEnabled(!overlayEnabled);
         enableServiceButton.setEnabled(overlayEnabled && !serviceEnabled);
+        enableShowFlattingOnDesktopCheckBox.setEnabled(enableFloatingWidnowCheckBox.isChecked());
         boolean serviceReady=Utils.isServiceReady(this);
         Button btnOk= (Button) findViewById(R.id.confirm);
         if(serviceReady){

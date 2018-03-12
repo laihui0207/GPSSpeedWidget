@@ -45,6 +45,7 @@ public abstract class PrefUtils {
     public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enableService";
     public static final String WIDGET_ACTIVED="com.huivip.widget.actived";
     public static final String GPS_REMOTE_URL="com.huivip.widget.remoteUrl";
+    public static final String ENABLE_SHOW_FLATTING_ON_DESKTOP="com.huivip.widget.showFlatingOnDesktop";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -74,6 +75,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableAutoStart(Context context){
         return getSharedPreferences(context).getBoolean(AUTO_START_PREFS_NAME, true);
+    }
+    public static void setEnableShowFlattingOnDesktop(Context context,boolean show){
+        edit(context).putBoolean(ENABLE_SHOW_FLATTING_ON_DESKTOP, show).apply();
+    }
+    public static boolean isEnableShowFlatingOnDesktop(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_SHOW_FLATTING_ON_DESKTOP, false);
     }
     public static void setRecordGPSHistory(Context context,boolean recordHistory){
         edit(context).putBoolean(RECORD_GPS_HISTORY_PREFS_NAME, recordHistory).apply();

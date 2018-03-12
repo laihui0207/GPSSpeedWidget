@@ -69,9 +69,10 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:text="@string/str_btn_ok"
-           android:layout_below="@+id/enableOver" android:layout_alignRight="@+id/EnableFalting"
-           android:layout_alignEnd="@+id/EnableFalting" android:layout_marginRight="21dp"
-           android:layout_marginEnd="21dp" android:layout_marginTop="68dp" android:layout_weight="1"/>
+           android:layout_marginRight="21dp"
+           android:layout_marginTop="11dp" android:layout_weight="1"
+           android:layout_below="@+id/checkBox_showondescktop" android:layout_alignEnd="@+id/checkBox_showondescktop"
+           android:layout_marginEnd="17dp"/>
    <Button
            android:text="1. Enable Draw Over Feature"
            android:layout_width="wrap_content"
@@ -87,4 +88,9 @@
            android:layout_alignLeft="@+id/EnableFalting"
            android:layout_alignStart="@+id/EnableFalting" android:layout_below="@+id/EnableFalting"
            android:layout_weight="1"/>
+   <CheckBox
+           android:text="桌面也显示悬浮窗口"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" android:layout_below="@+id/enableFloatingWindow"
+           android:id="@+id/checkBox_showondescktop" android:layout_toEndOf="@+id/button_select_app"/>
 </RelativeLayout>

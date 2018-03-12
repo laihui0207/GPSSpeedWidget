@@ -26,9 +26,6 @@ import java.util.Set;
 
 public class AppDetectionService extends AccessibilityService {
 
-    public static final String GOOGLE_MAPS_PACKAGE = "com.google.android.apps.maps";
-    public static final String GMAPS_BOTTOM_CONTAINER_ID = "com.google.android.apps.maps:id/bottommapoverlay_container";
-    public static final String GMAPS_SPEED_LIMIT_TEXT = "SPEED LIMIT";
     private static AppDetectionService INSTANCE;
 
     private Set<String> enabledApps;
@@ -80,7 +77,8 @@ public class AppDetectionService extends AccessibilityService {
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
         Intent floatService=new Intent(this, FloatingService.class);
-        if (shouldStopService || !PrefUtils.isEnableFlatingWindow(getApplicationContext())) {
+        if(!PrefUtils.isEnableShowFlatingOnDesktop(getApplicationContext())
+                && (shouldStopService || !PrefUtils.isEnableFlatingWindow(getApplicationContext()))){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
 
