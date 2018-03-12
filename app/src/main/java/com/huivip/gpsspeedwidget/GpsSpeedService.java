@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -96,8 +97,8 @@ public class GpsSpeedService extends Service {
             };
             this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
             serviceStoped =false;
-            this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
-            this.remoteViews.setTextViewText(R.id.textView1_1, "");
+            //this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
+            this.remoteViews.setTextViewText(R.id.textView1_1, "WAIT");
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         } else {
             serviceStoped = true;
@@ -136,15 +137,26 @@ public class GpsSpeedService extends Service {
             }
         }
         else {
-            this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
-            this.remoteViews.setTextViewText(R.id.textView1_1, "");
+            //this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
+            this.remoteViews.setTextViewText(R.id.textView1_1, "WAIT");
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         }
     }
+    public void setSpeeding(boolean speeding) {
+        int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_dark;
+        int color = ContextCompat.getColor(this, colorRes);
+        this.remoteViews.setTextColor(R.id.textView1_1,color);
+    }
     void computeAndShowData(){
         int mphNumber = gpsUtil.getMphSpeed().intValue();
-        this.remoteViews.setTextViewText(R.id.textView1, gpsUtil.getMphSpeedStr());
+       // this.remoteViews.setTextViewText(R.id.textView1, gpsUtil.getMphSpeedStr());
         this.remoteViews.setTextViewText(R.id.textView1_1, gpsUtil.getKmhSpeedStr());
+        if(gpsUtil.getLimitSpeed()>0 && gpsUtil.getKmhSpeed()>gpsUtil.getLimitSpeed()){
+            setSpeeding(true);
+        }
+        else {
+            setSpeeding(false);
+        }
         switch (mphNumber)
         {
             default:
@@ -466,8 +478,8 @@ public class GpsSpeedService extends Service {
             this.locationTimer.cancel();
             this.locationTimer.purge();
         }
-        this.remoteViews.setTextViewText(R.id.textView1, "   OFF");
-        this.remoteViews.setTextViewText(R.id.textView1_1, "");
+        //this.remoteViews.setTextViewText(R.id.textView1, "   OFF");
+        this.remoteViews.setTextViewText(R.id.textView1_1, "OFF");
         this.remoteViews.setImageViewResource(R.id.ialtimetro,R.drawable.base);
         this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_0);
         this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
