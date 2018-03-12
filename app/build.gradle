@@ -44,13 +44,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    /*android.applicationVariants.all {
+    android.applicationVariants.all {
         variant ->
             variant.outputs.each {
-                output -> output.outputFile = new File(output.outputFile.parent, "GPSWidget_"
+                output -> output.outputFile = new File(output.outputFile.parent, "GPS速度插件_"
                         + buildType.name + "_v" + defaultConfig.versionName + "-${releaseTime()}.apk");
             }
-    }*/
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

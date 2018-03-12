@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
+import com.huivip.gpsspeedwidget.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.Constant;
 
 import java.lang.annotation.Retention;
@@ -43,6 +44,7 @@ public abstract class PrefUtils {
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enableService";
     public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enableService";
     public static final String WIDGET_ACTIVED="com.huivip.widget.actived";
+    public static final String GPS_REMOTE_URL="com.huivip.widget.remoteUrl";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -58,7 +60,12 @@ public abstract class PrefUtils {
     public static boolean isFirstRun(Context context) {
         return getSharedPreferences(context).getBoolean(PREF_FIRSTRUN, true);
     }
-
+    public static String getGPSHistoryServerURL(Context context){
+        return getSharedPreferences(context).getString(GPS_REMOTE_URL,Constant.LBSURL);
+    }
+    public static void setGpsRemoteUrl(Context context,String url){
+        edit(context).putString(GPS_REMOTE_URL,url);
+    }
     public static void setTermsAccepted(Context context, boolean firstRun) {
         edit(context).putBoolean(PREF_TERMS_ACCEPTED, firstRun).apply();
     }

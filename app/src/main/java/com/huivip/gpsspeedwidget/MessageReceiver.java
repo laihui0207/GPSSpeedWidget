@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 import com.autonavi.rtbt.GPSDataInfo;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +33,7 @@ public class MessageReceiver extends BroadcastReceiver {
                     params.put("deviceId", deviceId);
                     params.put("t", "gps");
                     params.put("data", jsonStringFromList(locationVOList));
-                    String result = HttpUtils.submitPostData(Constant.LBSURL+Constant.LBSPOSTGPSURL, params, "utf-8");
+                    String result = HttpUtils.submitPostData(PrefUtils.getGPSHistoryServerURL(context)+Constant.LBSPOSTGPSURL, params, "utf-8");
                     Log.d("GPSWidget","Upload Data Result:"+result);
                     if(result!=null && result.equalsIgnoreCase("Success")) {
                         dbUtil.delete(now);

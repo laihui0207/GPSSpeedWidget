@@ -3,38 +3,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-   <Button
-           android:id="@+id/confirm"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:text="@string/str_btn_ok"
-           android:layout_below="@+id/enableOver" android:layout_alignRight="@+id/EnableFalting"
-           android:layout_alignEnd="@+id/EnableFalting" android:layout_marginRight="21dp"
-           android:layout_marginEnd="21dp" android:layout_marginTop="68dp"/>
    <CheckBox
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/autoStart"
            android:text="开机自动启动"
-           android:layout_marginStart="31dp" android:layout_alignParentTop="true" android:layout_alignParentStart="true"
-           android:layout_marginTop="37dp"/>
+           android:layout_marginTop="12dp"
+           android:layout_below="@+id/button_select_app"
+           android:layout_alignEnd="@+id/enableAudio"/>
    <CheckBox
            android:text="记录GPS轨迹"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content" android:layout_below="@+id/autoStart"
            android:layout_alignStart="@+id/autoStart" android:id="@+id/recordGPS"/>
-   <CheckBox
-           android:text="上传GPS数据"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/uploadGPSData"
-           android:layout_below="@+id/recordGPS" android:layout_alignStart="@+id/recordGPS"/>
+   <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                 android:id="@+id/linearLayout"
+                 android:layout_below="@+id/recordGPS">
+      <CheckBox
+              android:text="上传GPS数据"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/uploadGPSData"
+              android:layout_below="@+id/recordGPS" android:layout_alignStart="@+id/recordGPS"/>
+      <Space
+              android:layout_width="10dp"
+              android:layout_height="wrap_content"/>
+      <EditText
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:inputType="textUri"
+              android:text=""
+              android:hint="记录轨迹服务器地址"
+              android:ems="10"
+              android:id="@+id/editText_remoteURL" android:layout_weight="1"/>
+
+   </LinearLayout>
+
    <CheckBox
            android:text="开启悬浮窗口"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableFloatingWindow"
-           android:layout_below="@+id/enableOver" android:layout_alignStart="@+id/enableOver"/>
+           android:layout_below="@+id/enableOver" android:layout_alignStart="@+id/linearLayout"/>
    <CheckBox
            android:text="开启智能巡航"
            android:layout_width="wrap_content"
@@ -47,26 +57,34 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableAudio"
-           android:layout_below="@+id/uploadGPSData" android:layout_alignEnd="@+id/uploadGPSData"/>
+           android:layout_below="@+id/linearLayout" android:layout_toEndOf="@+id/button_select_app"/>
+   <Button
+           android:text="Select maps"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/button_select_app"
+           android:visibility="gone"/>
+   <Button
+           android:id="@+id/confirm"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="@string/str_btn_ok"
+           android:layout_below="@+id/enableOver" android:layout_alignRight="@+id/EnableFalting"
+           android:layout_alignEnd="@+id/EnableFalting" android:layout_marginRight="21dp"
+           android:layout_marginEnd="21dp" android:layout_marginTop="68dp" android:layout_weight="1"/>
    <Button
            android:text="1. Enable Draw Over Feature"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/EnableFalting"
-           android:layout_below="@+id/enableAutoNavi" android:layout_alignStart="@+id/enableAutoNavi"/>
+           android:layout_below="@+id/enableAutoNavi" android:layout_alignStart="@+id/enableAutoNavi"
+           android:layout_weight="1"/>
    <Button
            android:text="2. Enable Accessibility Service"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableOver"
            android:layout_alignLeft="@+id/EnableFalting"
-           android:layout_alignStart="@+id/EnableFalting" android:layout_below="@+id/EnableFalting"/>
-   <Button
-           android:text="Select maps"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/button_select_app"
-           android:layout_below="@+id/uploadGPSData" android:layout_toRightOf="@+id/button_enable_location"
-           android:layout_toEndOf="@+id/button_enable_location" android:visibility="gone"/>
-
+           android:layout_alignStart="@+id/EnableFalting" android:layout_below="@+id/EnableFalting"
+           android:layout_weight="1"/>
 </RelativeLayout>

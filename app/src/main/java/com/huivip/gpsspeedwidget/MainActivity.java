@@ -22,6 +22,7 @@ import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TTSUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -155,7 +156,7 @@ public class MainActivity extends Activity implements TraceListener {
                         String getLastedURL="";
                         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
                         String deviceId=deviceUuidFactory.getDeviceUuid().toString();
-                        getLastedURL=Constant.LBSURL+String.format(Constant.LBSGETLASTEDPOSTIONURL,deviceId);
+                        getLastedURL= PrefUtils.getGPSHistoryServerURL(getApplicationContext())+String.format(Constant.LBSGETLASTEDPOSTIONURL,deviceId);
                         String dataResult= HttpUtils.getData(getLastedURL);
                         Log.d("GPSWidget","URL:"+getLastedURL+",Result:"+dataResult);
 
@@ -221,7 +222,7 @@ public class MainActivity extends Activity implements TraceListener {
                         String dataUrl="";
                         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
                         String deviceId=deviceUuidFactory.getDeviceUuid().toString();//"d9990887-4fae-3cb8-a53a-f95293300290";//
-                        dataUrl=Constant.LBSURL+String.format(Constant.LBSGETDATA,deviceId,startTime,endTime);
+                        dataUrl=PrefUtils.getGPSHistoryServerURL(getApplicationContext())+String.format(Constant.LBSGETDATA,deviceId,startTime,endTime);
                         String dataResult=HttpUtils.getData(dataUrl);
                         Log.d("GPSWidget","URL:"+dataUrl+",Result:"+dataResult);
 

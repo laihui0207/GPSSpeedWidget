@@ -17,10 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.Toast;
+import android.widget.*;
 import butterknife.BindView;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -44,6 +41,7 @@ public class ConfigurationActivity extends Activity {
     @BindView(R.id.enableOver)
     Button enableServiceButton;
     CheckBox enableFloatingWidnowCheckBox;
+    EditText remoteUrlEditBox;
     private static final int REQUEST_LOCATION = 105;
     private static  final int REQUEST_STORAGE=106;
     private static final int REQUEST_PHONE=107;
@@ -65,6 +63,7 @@ public class ConfigurationActivity extends Activity {
         CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
+        remoteUrlEditBox=findViewById(R.id.editText_remoteURL);
         CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         boolean start=PrefUtils.isEnableAutoStart(this);
@@ -79,9 +78,11 @@ public class ConfigurationActivity extends Activity {
         boolean enableAutoNavi=PrefUtils.isEnableAutoNaviService(getApplicationContext());
         recordGPSCheckBox.setChecked(recordGPS);
         uploadGPSCheckBox.setChecked(uploadGPSData);
+        remoteUrlEditBox.setText(PrefUtils.getGPSHistoryServerURL(getApplicationContext()));
         enableFloatingWidnowCheckBox.setChecked(enableFloating);
         enableAudioCheckBox.setChecked(enableAudio);
         enableAutoNaviCheckBox.setChecked(enableAutoNavi);
+        remoteUrlEditBox.setEnabled(uploadGPSCheckBox.isChecked());
         autoStartCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
@@ -101,9 +102,16 @@ public class ConfigurationActivity extends Activity {
 
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
-                if(!Utils.isPhonePermissionGranted(getApplicationContext())) {
-                    askForPermission(Manifest.permission.READ_PHONE_STATE, REQUEST_PHONE);
+                if(checkBoxButton.isChecked()) {
+                    if (!Utils.isPhonePermissionGranted(getApplicationContext())) {
+                        askForPermission(Manifest.permission.READ_PHONE_STATE, REQUEST_PHONE);
+                    }
+                    remoteUrlEditBox.setEnabled(true);
                 }
+                else {
+                    remoteUrlEditBox.setEnabled(false);
+                }
+
                 PrefUtils.setUploadGPSHistory(getApplicationContext(),checkBoxButton.isChecked());
             }
         });
@@ -155,6 +163,11 @@ public class ConfigurationActivity extends Activity {
 
             @Override
             public void onClick(View v) {
+                EditText urlText=findViewById(R.id.editText_remoteURL);
+                String url=urlText.getText().toString();
+                if(url!=null && !url.equalsIgnoreCase("")){
+                    PrefUtils.setGpsRemoteUrl(getApplicationContext(),url.trim());
+                }
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
