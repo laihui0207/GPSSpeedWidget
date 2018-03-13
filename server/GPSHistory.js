@@ -60,7 +60,7 @@ app.get("/data", function (req, res) {
     else {
         var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue," +
             "strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime,lineId " +
-            "from GPS where deviceId=?";
+            "from GPS where deviceId like ?%";
         if (startTime != undefined) {
             sql += " and createTime > ? ";
         }

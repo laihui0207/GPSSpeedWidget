@@ -14,6 +14,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 /*import com.crashlytics.android.Crashlytics;*/
 import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.FloatingService;
 import com.huivip.gpsspeedwidget.GpsSpeedService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -73,7 +74,14 @@ public class AppDetectionService extends AccessibilityService {
         if (!isActivity) {
             return;
         }*/
-
+       // when in auto navi or autolite app, disable audio service
+       if(componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
+               || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)){
+           PrefUtils.setEnableAudioService(getApplicationContext(),false);
+       }
+       else {
+           PrefUtils.setEnableAudioService(getApplicationContext(),true);
+       }
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
         Intent floatService=new Intent(this, FloatingService.class);

@@ -11,6 +11,9 @@ public class Constant {
     public static final String LBSGETDATA="/data?deviceId=%s&startTime=%s&endTime=%s";
     public static final String CrashLogDir="";
 
+    public static final String AMAPAUTOPACKAGENAME="com.autonavi.amapauto";
+    public static final String AMAPAUTOLITEPACKAGENAME="com.autonavi.amapautolite";
+
     public static int LINE=1;
     public static int POINT=0;
 

@@ -44,6 +44,7 @@ public class MainActivity extends Activity implements TraceListener {
     String selectDateStr="";
     AMap aMap=null;
     String myFormat = "MM/dd/yyyy";
+    DeviceUuidFactory deviceUuidFactory;
     SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CHINA);
     private int mSequenceLineID = 1000;
     private ConcurrentMap<Integer, TraceOverlay> mOverlayList = new ConcurrentHashMap<Integer, TraceOverlay>();
@@ -120,7 +121,7 @@ public class MainActivity extends Activity implements TraceListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        deviceUuidFactory = new DeviceUuidFactory(getApplicationContext());
         setContentView(R.layout.activity_main);
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
@@ -153,17 +154,42 @@ public class MainActivity extends Activity implements TraceListener {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        String getLastedURL="";
-                        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
-                        String deviceId=deviceUuidFactory.getDeviceUuid().toString();
-                        getLastedURL= PrefUtils.getGPSHistoryServerURL(getApplicationContext())+String.format(Constant.LBSGETLASTEDPOSTIONURL,deviceId);
-                        String dataResult= HttpUtils.getData(getLastedURL);
-                        Log.d("GPSWidget","URL:"+getLastedURL+",Result:"+dataResult);
+                        String deviceId = deviceUuidFactory.getDeviceUuid().toString();//"d9990887-4fae-3cb8-a53a-f95293300290";//
+                        EditText textUid=findViewById(R.id.editText_UID);
+                        String inputUid=textUid.getText().toString();
+                        if(inputUid!=null && !inputUid.trim().equalsIgnoreCase("")){
+                            deviceId=inputUid;
+                        }
+                        if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()) && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())) {
+                            String getLastedURL = "";
+                            getLastedURL = PrefUtils.getGPSHistoryServerURL(getApplicationContext()) + String.format(Constant.LBSGETLASTEDPOSTIONURL, deviceId);
+                            String dataResult = HttpUtils.getData(getLastedURL);
+                            Log.d("GPSWidget", "URL:" + getLastedURL + ",Result:" + dataResult);
 
-                        Message message=Message.obtain();
-                        message.obj=dataResult;
-                        message.arg1=Constant.POINT;
-                        lastedPositionHandler.handleMessage(message);
+                            Message message = Message.obtain();
+                            message.obj = dataResult;
+                            message.arg1 = Constant.POINT;
+                            lastedPositionHandler.handleMessage(message);
+                        } else {
+                            DBUtil dbUtil=new DBUtil(getApplicationContext());
+                            List<LocationVO> lastPoint=dbUtil.getLastedData();
+                            if(lastPoint!=null && !lastPoint.isEmpty()){
+                                JSONArray datas=new JSONArray();
+                                JSONObject data=new JSONObject();
+                                try {
+                                    data.put("lng",lastPoint.get(0).getLng());
+                                    data.put("lat",lastPoint.get(0).getLat());
+                                    data.put("createTime",lastPoint.get(0).getCreateTime());
+                                    datas.put(data);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Message message = Message.obtain();
+                                message.obj = datas.toString();
+                                message.arg1 = Constant.POINT;
+                                lastedPositionHandler.handleMessage(message);
+                            }
+                        }
 
                     }
                 }).start();
@@ -192,6 +218,10 @@ public class MainActivity extends Activity implements TraceListener {
                 ttsUtil.speak("你好，语音测试成功");
             }
         });
+        EditText textUid=findViewById(R.id.editText_UID);
+        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
+        String deviceId=deviceUuidFactory.getDeviceUuid().toString();
+        textUid.setText(deviceId);
         Button trackBtn= (Button) findViewById(R.id.TrackBtn);
         View.OnClickListener trackBtnListener=new View.OnClickListener(){
 
@@ -204,7 +234,15 @@ public class MainActivity extends Activity implements TraceListener {
                     @Override
                     public void run() {
                         String startTime="";
+                        Date startDate=null;
+                        Date endDate=null;
                         String endTime="";
+                        String deviceId = deviceUuidFactory.getDeviceUuid().toString();//"d9990887-4fae-3cb8-a53a-f95293300290";//
+                        EditText textUid=findViewById(R.id.editText_UID);
+                        String inputUid=textUid.getText().toString();
+                        if(inputUid!=null && !inputUid.trim().equalsIgnoreCase("")){
+                            deviceId=inputUid;
+                        }
                         try {
                             Date selectDate=sdf.parse(selectDateStr);
                             Calendar calendar=Calendar.getInstance();
@@ -213,23 +251,51 @@ public class MainActivity extends Activity implements TraceListener {
                             calendar.set(Calendar.HOUR,0);
                             calendar.set(Calendar.SECOND,0);
                             startTime=Long.toString(calendar.getTimeInMillis());
+                            startDate=calendar.getTime();
                             calendar.add(Calendar.DAY_OF_MONTH,1);
                             endTime=Long.toString(calendar.getTimeInMillis());
+                            endDate=calendar.getTime();
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
+                        if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()) && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())) {
+                            String dataUrl = "";
 
-                        String dataUrl="";
-                        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
-                        String deviceId=deviceUuidFactory.getDeviceUuid().toString();//"d9990887-4fae-3cb8-a53a-f95293300290";//
-                        dataUrl=PrefUtils.getGPSHistoryServerURL(getApplicationContext())+String.format(Constant.LBSGETDATA,deviceId,startTime,endTime);
-                        String dataResult=HttpUtils.getData(dataUrl);
-                        Log.d("GPSWidget","URL:"+dataUrl+",Result:"+dataResult);
 
-                        Message message=Message.obtain();
-                        message.arg1=Constant.LINE;
-                        message.obj=dataResult;
-                        lastedPositionHandler.handleMessage(message);
+                            dataUrl = PrefUtils.getGPSHistoryServerURL(getApplicationContext()) + String.format(Constant.LBSGETDATA, deviceId, startTime, endTime);
+                            String dataResult = HttpUtils.getData(dataUrl);
+                            Log.d("GPSWidget", "URL:" + dataUrl + ",Result:" + dataResult);
+
+                            Message message = Message.obtain();
+                            message.arg1 = Constant.LINE;
+                            message.obj = dataResult;
+                            lastedPositionHandler.handleMessage(message);
+                        } else {
+                            DBUtil dbUtil=new DBUtil(getApplicationContext());
+                            List<LocationVO> list=dbUtil.getBetweenDate(startDate,endDate);
+                            if(list!=null && !list.isEmpty()){
+                                JSONArray datas=new JSONArray();
+                                for(LocationVO vo:list) {
+                                    JSONObject data = new JSONObject();
+                                    try {
+                                        data.put("lng", vo.getLng());
+                                        data.put("lat", vo.getLat());
+                                        data.put("createTime", vo.getCreateTime());
+                                        data.put("bearingValue",vo.getBearingValue());
+                                        data.put("speedValue",vo.getSpeedValue());
+                                        data.put("lineId",vo.getLineId());
+                                        data.put("speed",vo.getSpeed());
+                                        datas.put(data);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                Message message = Message.obtain();
+                                message.obj = datas.toString();
+                                message.arg1 = Constant.LINE;
+                                lastedPositionHandler.handleMessage(message);
+                            }
+                        }
                     }
                 }).start();
             }

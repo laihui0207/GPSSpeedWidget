@@ -37,7 +37,7 @@
                 android:maxLines="1"
                 android:padding="14dp"
                 android:text="--"
-                android:textColor="?android:textColorPrimary"
+                android:textColor="@android:color/background_dark"
                 app:autoSizeTextType="uniform"/>
 
         <TextView

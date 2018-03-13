@@ -54,6 +54,66 @@ public class DBUtil extends SQLiteOpenHelper {
         db.execSQL(sql);
         db.close();
     }
+    public List<LocationVO> getLastedData(){
+        List<LocationVO> list=new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor=null;
+        try {
+            cursor=db.query(tableName, new String[]{"lng", "lat","speed","speedValue","bearingValue","strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime","lineId"},
+                    null,null, null, null, "createTime DESC", "1");
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    LocationVO vo = new LocationVO();
+                    vo.setLng(cursor.getString(0));
+                    vo.setLat(cursor.getString(1));
+                    vo.setSpeed(cursor.getString(2));
+                    vo.setSpeedValue(cursor.getDouble(3));
+                    vo.setBearingValue(cursor.getFloat(4));
+                    vo.setCreateTime(cursor.getLong(5));
+                    vo.setLineId(cursor.getLong(6));
+                    list.add(vo);
+                }
+            }
+        } catch(Exception e){
+
+        } finally {
+            if(null!=cursor){
+                cursor.close();
+            }
+            db.close();
+        }
+        return list;
+    }
+    public List<LocationVO> getBetweenDate(Date fromDate,Date toDate){
+        Cursor cursor=null;
+        SQLiteDatabase db = getReadableDatabase();
+        List<LocationVO> list = new ArrayList<>();
+        try {
+            cursor=db.query(tableName, new String[]{"lng", "lat","speed","speedValue","bearingValue","createTime","lineId"}, "createTime>? and createTime<?",
+                    new String[]{String.valueOf(fromDate.getTime()),String.valueOf(toDate.getTime())}, null, null, "createTime");
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    LocationVO vo = new LocationVO();
+                    vo.setLng(cursor.getString(0));
+                    vo.setLat(cursor.getString(1));
+                    vo.setSpeed(cursor.getString(2));
+                    vo.setSpeedValue(cursor.getDouble(3));
+                    vo.setBearingValue(cursor.getFloat(4));
+                    vo.setCreateTime(cursor.getLong(5));
+                    vo.setLineId(cursor.getLong(6));
+                    list.add(vo);
+                }
+            }
+        } catch(Exception e){
+
+        } finally {
+            if(null!=cursor){
+                cursor.close();
+            }
+            db.close();
+        }
+        return list;
+    }
     public List<LocationVO> getFromDate(Date fromDate){
         Cursor cursor=null;
         SQLiteDatabase db = getReadableDatabase();

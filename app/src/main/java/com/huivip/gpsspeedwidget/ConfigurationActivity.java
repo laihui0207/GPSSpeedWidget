@@ -191,7 +191,10 @@ public class ConfigurationActivity extends Activity {
             }
         };
         btnOk.setOnClickListener(confirmListener);
-
+        TextView uidView=findViewById(R.id.textView_uid);
+        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
+        String deviceId=deviceUuidFactory.getDeviceUuid().toString();
+        uidView.setText("本机ID: "+deviceId.substring(0,deviceId.indexOf("-")));
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
