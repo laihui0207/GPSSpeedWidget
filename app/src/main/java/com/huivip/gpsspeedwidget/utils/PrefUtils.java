@@ -42,6 +42,7 @@ public abstract class PrefUtils {
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
     public static final String ENABLE_FLATING_WINDOW="com.huivip.Enable.fating.History";
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enable.AudioService";
+    public static final String ENABLE_TEMP_AUDIO_SERVICE="com.huivip.enable.temp.AudioService";
     public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enable.autoNavi.Service";
     public static final String WIDGET_ACTIVED="com.huivip.widget.actived";
     public static final String GPS_REMOTE_URL="com.huivip.widget.remoteUrl";
@@ -100,7 +101,12 @@ public abstract class PrefUtils {
     public static void setWidgetActived(Context context,boolean widgetActived){
         edit(context).putBoolean(WIDGET_ACTIVED, widgetActived).apply();
     }
-
+    public static boolean isEnableTempAudioService(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_TEMP_AUDIO_SERVICE, true);
+    }
+    public static void setEnableTempAudioService(Context context,boolean enableService){
+        edit(context).putBoolean(ENABLE_TEMP_AUDIO_SERVICE, enableService).apply();
+    }
     public static boolean isEnableAudioService(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_AUDIO_SERVICE, false);
     }

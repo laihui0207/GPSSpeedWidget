@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import butterknife.BindView;
@@ -63,30 +64,22 @@ public class ConfigurationActivity extends Activity {
         }
         initPermission();
         CheckBox autoStartCheckBox=(CheckBox)findViewById(R.id.autoStart);
+        autoStartCheckBox.setChecked(PrefUtils.isEnableAutoStart(getApplicationContext()));
         CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
+        recordGPSCheckBox.setChecked(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()));
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
+        uploadGPSCheckBox.setChecked(PrefUtils.isEnableUploadGPSHistory(getApplicationContext()));
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
+        enableFloatingWidnowCheckBox.setChecked(PrefUtils.isEnableFlatingWindow(getApplicationContext()));
         enableShowFlattingOnDesktopCheckBox=findViewById(R.id.checkBox_showondescktop);
-        remoteUrlEditBox=findViewById(R.id.editText_remoteURL);
-        CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
-        CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
-        boolean start=PrefUtils.isEnableAutoStart(this);
-        autoStartCheckBox.setChecked(start);
-        /*if(!Utils.isLocationPermissionGranted(this)) {
-            askForPermission(Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_LOCATION);
-        }*/
-        boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(getApplicationContext());
-        boolean uploadGPSData=PrefUtils.isEnableUploadGPSHistory(getApplicationContext());
-        boolean enableFloating=PrefUtils.isEnableFlatingWindow(getApplicationContext());
-        boolean enableAudio=PrefUtils.isEnableAudioService(getApplicationContext());
-        boolean enableAutoNavi=PrefUtils.isEnableAutoNaviService(getApplicationContext());
-        recordGPSCheckBox.setChecked(recordGPS);
-        uploadGPSCheckBox.setChecked(uploadGPSData);
-        remoteUrlEditBox.setText(PrefUtils.getGPSHistoryServerURL(getApplicationContext()));
-        enableFloatingWidnowCheckBox.setChecked(enableFloating);
         enableShowFlattingOnDesktopCheckBox.setChecked(PrefUtils.isEnableShowFlatingOnDesktop(getApplicationContext()));
-        enableAudioCheckBox.setChecked(enableAudio);
-        enableAutoNaviCheckBox.setChecked(enableAutoNavi);
+        remoteUrlEditBox=findViewById(R.id.editText_remoteURL);
+        remoteUrlEditBox.setText(PrefUtils.getGPSHistoryServerURL(getApplicationContext()));
+        CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
+        Log.d("huivip",PrefUtils.isEnableAudioService(getApplicationContext())+"");
+        enableAudioCheckBox.setChecked(PrefUtils.isEnableAudioService(getApplicationContext()));
+        CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
+        enableAutoNaviCheckBox.setChecked(PrefUtils.isEnableAutoNaviService(getApplicationContext()));
         remoteUrlEditBox.setEnabled(uploadGPSCheckBox.isChecked());
         autoStartCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
             @Override

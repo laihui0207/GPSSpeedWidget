@@ -37,7 +37,9 @@
 
 ### 后台服务启动方法
 ```$bash
-node GPSHistory.js 
+npm install express querystring node-cache sqlite3 moment
+//node GPSHistory.js
+pm2 start GPSHistory.js 
 ```
 
 ## 改动记录

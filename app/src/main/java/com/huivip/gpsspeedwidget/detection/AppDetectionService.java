@@ -77,10 +77,10 @@ public class AppDetectionService extends AccessibilityService {
        // when in auto navi or autolite app, disable audio service
        if(componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
                || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)){
-           PrefUtils.setEnableAudioService(getApplicationContext(),false);
+           PrefUtils.setEnableTempAudioService(getApplicationContext(),false);
        }
        else {
-           PrefUtils.setEnableAudioService(getApplicationContext(),true);
+           PrefUtils.setEnableTempAudioService(getApplicationContext(),true);
        }
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());

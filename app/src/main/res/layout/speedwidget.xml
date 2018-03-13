@@ -10,9 +10,9 @@
                android:src="@drawable/base" android:layout_alignParentTop="true"
                android:layout_alignParentBottom="true"/>
     <ImageView android:id="@id/ifreccia" android:layout_width="match_parent" android:layout_height="match_parent"
-               android:layout_marginLeft="4.0dip"
-               android:src="@drawable/alt_0" android:scaleType="fitCenter" android:layout_alignParentTop="true"
-    />
+               android:layout_marginLeft="5.0dip"
+               android:src="@drawable/alt_0" android:scaleType="fitCenter"
+               android:layout_alignBottom="@+id/textView1_1" android:layout_alignParentEnd="true"/>
     <TextView android:textSize="10.0dip" android:textColor="#ffffffff" android:id="@id/textView1"
               android:layout_width="wrap_content" android:layout_height="wrap_content"
               android:text="   OFF"

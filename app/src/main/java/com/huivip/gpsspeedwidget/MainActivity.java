@@ -40,6 +40,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class MainActivity extends Activity implements TraceListener {
     MapView mMapView = null;
+    LBSTraceClient mTraceClient=null;
     Calendar myCalendar = Calendar.getInstance();
     String selectDateStr="";
     AMap aMap=null;
@@ -126,6 +127,7 @@ public class MainActivity extends Activity implements TraceListener {
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         aMap = mMapView.getMap();
+        mTraceClient = LBSTraceClient.getInstance(this.getApplicationContext());
 
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.interval(2000);
@@ -221,7 +223,7 @@ public class MainActivity extends Activity implements TraceListener {
         EditText textUid=findViewById(R.id.editText_UID);
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
         String deviceId=deviceUuidFactory.getDeviceUuid().toString();
-        textUid.setText(deviceId);
+        textUid.setText(deviceId.substring(0,deviceId.indexOf("-")));
         Button trackBtn= (Button) findViewById(R.id.TrackBtn);
         View.OnClickListener trackBtnListener=new View.OnClickListener(){
 
@@ -264,7 +266,7 @@ public class MainActivity extends Activity implements TraceListener {
 
                             dataUrl = PrefUtils.getGPSHistoryServerURL(getApplicationContext()) + String.format(Constant.LBSGETDATA, deviceId, startTime, endTime);
                             String dataResult = HttpUtils.getData(dataUrl);
-                            Log.d("GPSWidget", "URL:" + dataUrl + ",Result:" + dataResult);
+                            Log.d("GPSWidget", "URL:" + dataUrl);
 
                             Message message = Message.obtain();
                             message.arg1 = Constant.LINE;
@@ -338,20 +340,29 @@ public class MainActivity extends Activity implements TraceListener {
 
     }
     private void drawLineAndFixPoint(Message msg) {
-        List<TraceLocation> locations = new ArrayList<>();
         LatLng lastedLatLng = null;
         LatLng firstLatLng = null;
         String dataResult = (String) msg.obj;
         String format = "yyyy-MM-dd HH:mm:ss";
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.CHINA);
         String startTime="";
+        Map<String,List<TraceLocation>> lineDatas=new HashMap<>();
         try {
             if (dataResult != "-1") {
                 CoordinateConverter converter = new CoordinateConverter(getApplicationContext());
                 converter.from(CoordinateConverter.CoordType.GPS);
                 JSONArray datas = new JSONArray(dataResult);
+                List<TraceLocation> locations=null;
                 for (int i = 0; i < datas.length(); i++) {
                     JSONObject data = datas.getJSONObject(i);
+                    String lineId=data.getString("lineId");
+                    if(lineDatas.containsKey(lineId)){
+                        locations=lineDatas.get(lineId);
+                    }
+                    else {
+                        locations=new ArrayList<>();
+                    }
+
                     LatLng latLng=new LatLng(data.getDouble("lat"),data.getDouble("lng"));
                     converter.coord(latLng);
                     lastedLatLng=converter.convert();
@@ -370,6 +381,7 @@ public class MainActivity extends Activity implements TraceListener {
                     }
                     location.setTime(dateFormat.parse(data.getString("createTime")).getTime());
                     locations.add(location);
+                    lineDatas.put(lineId,locations);
                 }
 
             }
@@ -381,9 +393,15 @@ public class MainActivity extends Activity implements TraceListener {
         aMap.clear();
 
         aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").snippet("车辆开始的位置\n时间："+startTime));
-        LBSTraceClient mTraceClient = LBSTraceClient.getInstance(this.getApplicationContext());
-        mTraceClient.queryProcessedTrace(mSequenceLineID, locations,
-                LBSTraceClient.TYPE_GPS, this);
+
+       if(lineDatas!=null && lineDatas.size()>0){
+           int i=10;
+           for(String key: lineDatas.keySet()){
+               List<TraceLocation> locations=lineDatas.get(key);
+               mTraceClient.queryProcessedTrace(i++, locations,
+                       LBSTraceClient.TYPE_GPS, this);
+           }
+       }
     }
 
     private void drawPoint(Message msg) {
@@ -438,12 +456,12 @@ public class MainActivity extends Activity implements TraceListener {
 
     @Override
     public void onRequestFailed(int i, String s) {
-
+        Log.d("huivip","amp draw line failed:"+s);
     }
 
     @Override
     public void onTraceProcessing(int i, int i1, List<LatLng> list) {
-
+        Log.d("huivip","lineId:"+i);
     }
 
     @Override
@@ -458,6 +476,7 @@ public class MainActivity extends Activity implements TraceListener {
         mTraceOverlay.zoopToSpan();
         aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置").snippet("车辆最后的位置\n" +
                 "总行程："+decimalFormat.format(distance/1000D)+"公里\n等待时间："+decimalFormat.format(watingtime/60d)+" 分钟"));
+        Log.d("huviip","纠偏结束！");
     }
 
 }

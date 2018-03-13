@@ -60,7 +60,7 @@ app.get("/data", function (req, res) {
     else {
         var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue," +
             "strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime,lineId " +
-            "from GPS where deviceId like ?%";
+            "from GPS where deviceId like ?";
         if (startTime != undefined) {
             sql += " and createTime > ? ";
         }
@@ -70,7 +70,7 @@ app.get("/data", function (req, res) {
         sql += " order by createTime";
 
         db.serialize(function () {
-            db.all(sql, [deviceId, startTime, endTime], function (err, rows) {
+            db.all(sql, [deviceId+'%', startTime, endTime], function (err, rows) {
                 if (err) {
                     console.log(err.message);
                     res.end("-1");
@@ -111,10 +111,10 @@ app.get("/data", function (req, res) {
 });
 app.get("/lasted", function (req, res) {
     var deviceId = req.query.deviceId;
-    var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime,lineId from GPS where deviceId=? ";
+    var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime,lineId from GPS where deviceId like ? ";
     sql += " order by createTime DESC limit 1";
     db.serialize(function () {
-        db.all(sql, [deviceId], function (err, rows) {
+        db.all(sql, [deviceId+'%'], function (err, rows) {
             if (err) {
                 console.log(err.message);
             } else {
@@ -139,10 +139,10 @@ app.get("/lasted", function (req, res) {
 
 app.get("/dates", function (req, res) {
     var deviceId = req.query.deviceId;
-    var sql = "select strftime('%Y-%m-%d', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId=? group by strftime('%Y-%m-%d', createTime / 1000,'unixepoch', 'localtime');";
+    var sql = "select strftime('%Y-%m-%d', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId like ? group by strftime('%Y-%m-%d', createTime / 1000,'unixepoch', 'localtime');";
     sql += " order by createTime";
     db.serialize(function () {
-        db.all(sql, [deviceId], function (err, rows) {
+        db.all(sql, [deviceId+'%'], function (err, rows) {
             if (err) {
                 console.log(err.message);
             } else {

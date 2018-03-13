@@ -58,7 +58,7 @@ public class TTSUtil {
     }
 
     public void speak(String text) {
-        if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null) {
+        if (PrefUtils.isEnableAudioService(context) && PrefUtils.isEnableTempAudioService(context) && mSpeechSynthesizer!=null) {
             int result = mSpeechSynthesizer.speak(text);
             if(result!=0){
                 Log.d("huivip","语音播放失败");

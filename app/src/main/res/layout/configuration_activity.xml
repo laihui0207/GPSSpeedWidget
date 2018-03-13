@@ -57,7 +57,8 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableAudio"
-           android:layout_below="@+id/linearLayout" android:layout_toEndOf="@+id/button_select_app"/>
+           android:layout_below="@+id/linearLayout" android:layout_toEndOf="@+id/button_select_app"
+           android:checked="false"/>
    <Button
            android:text="Select maps"
            android:layout_width="wrap_content"
