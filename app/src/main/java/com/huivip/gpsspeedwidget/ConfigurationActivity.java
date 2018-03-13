@@ -20,10 +20,12 @@ import android.view.View;
 import android.widget.*;
 import butterknife.BindView;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TTSUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -175,6 +177,12 @@ public class ConfigurationActivity extends Activity {
                 String url=urlText.getText().toString();
                 if(url!=null && !url.equalsIgnoreCase("")){
                     PrefUtils.setGpsRemoteUrl(getApplicationContext(),url.trim());
+                }
+                try {
+                    String destPath = FileUtil.createTmpDir(getApplicationContext());
+                    FileUtil.copyFromAssets(getApplicationContext().getAssets(), "GPSHistory.js", destPath+"/"+"GPSHistory.js", false);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);

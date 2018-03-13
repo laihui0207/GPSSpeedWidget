@@ -40,9 +40,9 @@ public abstract class PrefUtils {
     public static final String AUTO_START_PREFS_NAME="AutoStart";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
-    public static final String ENABLE_FLATING_WINDOW="uploadGpsHistory";
-    public static final String ENABLE_AUDIO_SERVICE="com.huivip.enableService";
-    public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enableService";
+    public static final String ENABLE_FLATING_WINDOW="com.huivip.Enable.fating.History";
+    public static final String ENABLE_AUDIO_SERVICE="com.huivip.enable.AudioService";
+    public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enable.autoNavi.Service";
     public static final String WIDGET_ACTIVED="com.huivip.widget.actived";
     public static final String GPS_REMOTE_URL="com.huivip.widget.remoteUrl";
     public static final String ENABLE_SHOW_FLATTING_ON_DESKTOP="com.huivip.widget.showFlatingOnDesktop";
@@ -91,15 +91,16 @@ public abstract class PrefUtils {
     public static void setUploadGPSHistory(Context context,boolean uploadHistory){
         edit(context).putBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, uploadHistory).apply();
     }
+    public static boolean isEnableUploadGPSHistory(Context context){
+        return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, false);
+    }
     public static boolean isWidgetActived(Context context){
         return getSharedPreferences(context).getBoolean(WIDGET_ACTIVED, false);
     }
     public static void setWidgetActived(Context context,boolean widgetActived){
         edit(context).putBoolean(WIDGET_ACTIVED, widgetActived).apply();
     }
-    public static boolean isEnableUploadGPSHistory(Context context){
-        return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, false);
-    }
+
     public static boolean isEnableAudioService(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_AUDIO_SERVICE, false);
     }

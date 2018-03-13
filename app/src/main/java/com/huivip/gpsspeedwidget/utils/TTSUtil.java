@@ -32,7 +32,7 @@ public class TTSUtil {
     private static TTSUtil ttsUtil;
     boolean inited=false;
     // ================选择TtsMode.ONLINE  不需要设置以下参数; 选择TtsMode.MIX 需要设置下面2个离线资源文件的路径
-    private static final String TEMP_DIR = "/sdcard/baiduTTS"; // 重要！请手动将assets目录下的3个dat 文件复制到该目录
+    private static final String TEMP_DIR = "/sdcard/GPS"; // 重要！请手动将assets目录下的3个dat 文件复制到该目录
 
     // 请确保该PATH下有这个文件
     private static final String TEXT_FILENAME = TEMP_DIR + "/" + "bd_etts_text.dat";
@@ -127,7 +127,7 @@ public class TTSUtil {
         // 设置合成的语调，0-9 ，默认 5
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_PITCH, "5");
 
-        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_MIX_MODE, SpeechSynthesizer.MIX_MODE_HIGH_SPEED_SYNTHESIZE);
+        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_MIX_MODE, SpeechSynthesizer.MIX_MODE_HIGH_SPEED_NETWORK);
         // 该参数设置为TtsMode.MIX生效。即纯在线模式不生效。
         // MIX_MODE_DEFAULT 默认 ，wifi状态下使用在线，非wifi离线。在线状态下，请求超时6s自动转离线
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE_WIFI wifi状态下使用在线，非wifi离线。在线状态下， 请求超时1.2s自动转离线
@@ -144,7 +144,7 @@ public class TTSUtil {
             params.put(SpeechSynthesizer.PARAM_TTS_TEXT_MODEL_FILE, TEXT_FILENAME);
             params.put(SpeechSynthesizer.PARAM_TTS_SPEECH_MODEL_FILE, MODEL_FILENAME);
         }
-        InitConfig initConfig =  new InitConfig(appId, appKey, secretKey, ttsMode, params, listener);
+       // InitConfig initConfig =  new InitConfig(appId, appKey, secretKey, ttsMode, params, listener);
        /* AutoCheck.getInstance(context).check(initConfig, new Handler() {
             @Override
             public void handleMessage(Message msg) {
