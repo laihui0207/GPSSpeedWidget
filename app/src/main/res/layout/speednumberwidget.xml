@@ -30,13 +30,13 @@
                     android:includeFontPadding="false"
                     android:textColor="#fff"
                     android:textSize="80sp"/>
-             <TextView
-                     android:text="限速" android:textColor="#ffffffff"
-                     android:layout_width="match_parent"
-                     android:layout_alignBottom="@id/limitLayout"
-                     android:layout_marginBottom="1.0dip"
-                     android:gravity="center_vertical|center_horizontal"
-                     android:layout_height="53dp" android:id="@+id/textView_limit_label"
+            <TextView
+                    android:text="限速" android:textColor="#ffffffff"
+                    android:layout_width="match_parent"
+                    android:layout_alignBottom="@id/limitLayout"
+                    android:layout_marginBottom="1.0dip"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_height="52dp" android:id="@+id/textView_limit_label"
             />
         </LinearLayout>
 

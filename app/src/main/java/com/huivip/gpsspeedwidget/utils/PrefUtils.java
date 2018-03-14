@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
-import com.huivip.gpsspeedwidget.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.Constant;
 
 import java.lang.annotation.Retention;
@@ -47,6 +46,7 @@ public abstract class PrefUtils {
     public static final String WIDGET_ACTIVED="com.huivip.widget.actived";
     public static final String GPS_REMOTE_URL="com.huivip.widget.remoteUrl";
     public static final String SHOW_FLATTING_ON="com.huivip.widget.showFlatingOn";
+
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
     public static final String SHOW_NO_DESKTOP="1";

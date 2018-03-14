@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -20,6 +19,7 @@ import java.util.TimerTask;
  */
 public class GpsSpeedService extends Service {
     static final int MAX_VELOCITA_NUMBER=140;
+    public static final String EXTRA_AUTOBOOT = "com.huivip.gpsspeedwidget.EXTRA_AUTOBOOT";
     GpsUtil gpsUtil;
     AppWidgetManager manager;
 
@@ -83,7 +83,7 @@ public class GpsSpeedService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (serviceStoped) {
+        if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
             gpsUtil.startLocationService();
             this.locationScanTask = new TimerTask()
             {
@@ -162,6 +162,7 @@ public class GpsSpeedService extends Service {
        // this.remoteViews.setTextViewText(R.id.textView1, gpsUtil.getMphSpeedStr());
         this.remoteViews.setTextViewText(R.id.textView1_1, gpsUtil.getKmhSpeedStr());
         this.numberRemoteViews.setTextViewText(R.id.number_speed,gpsUtil.getKmhSpeedStr());
+        this.numberRemoteViews.setTextViewText(R.id.number_limit,gpsUtil.getLimitSpeed()+"");
         if(gpsUtil.getLimitSpeed()>0 && gpsUtil.getKmhSpeed()>gpsUtil.getLimitSpeed()){
             setSpeeding(true);
         }
@@ -482,6 +483,7 @@ public class GpsSpeedService extends Service {
                 break;
         }
         this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
+        this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);
     }
     void closeAndResetData()
     {

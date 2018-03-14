@@ -1,12 +1,7 @@
 package com.huivip.gpsspeedwidget.utils;
 
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.media.AudioManager;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 import com.baidu.tts.auth.AuthInfo;
 import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
@@ -14,7 +9,6 @@ import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
 import com.huivip.gpsspeedwidget.listener.MessageListener;
-import com.huivip.gpsspeedwidget.listener.UiMessageListener;
 
 import java.io.File;
 import java.io.IOException;

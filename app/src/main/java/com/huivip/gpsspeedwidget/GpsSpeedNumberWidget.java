@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -25,6 +24,7 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         if(paramIntent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)){
             boolean start = PrefUtils.isEnableAutoStart(context);
             if(start && PrefUtils.isWidgetActived(context)) {
+                service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT,true);
                 context.startService(service);
             }
         }
@@ -48,14 +48,12 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
-        Log.d("huivip","Widget Enabled");
         PrefUtils.setWidgetActived(context,true);
     }
 
     @Override
     public void onDisabled(Context context) {
         super.onDisabled(context);
-        Log.d("huivip","Widget Disabled");
         PrefUtils.setWidgetActived(context,false);
     }
 
