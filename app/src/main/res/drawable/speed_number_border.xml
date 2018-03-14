@@ -4,9 +4,10 @@
         android:shape="ring"
         android:thickness="10dp"
         android:innerRadius="90dp"
+        android:innerRadiusRatio="2.5"
         android:useLevel="false">
-    <size
+   <!-- <size
             android:width="150dp"
-            android:height="150dp" />
+            android:height="150dp" />-->
     <solid android:color="#283593" />
 </shape>

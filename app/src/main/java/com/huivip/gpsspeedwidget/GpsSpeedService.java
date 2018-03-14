@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
+import android.widget.ProgressBar;
 import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.Date;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -105,6 +107,7 @@ public class GpsSpeedService extends Service {
             //this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
             this.remoteViews.setTextViewText(R.id.textView1_1, "...");
             this.numberRemoteViews.setTextViewText(R.id.number_speed,"...");
+            //this.numberRemoteViews.setProgressBar(R.id.progressBar,125,50,false);
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
             this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);
         } else {
@@ -155,12 +158,14 @@ public class GpsSpeedService extends Service {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_dark;
         int color = ContextCompat.getColor(this, colorRes);
         this.remoteViews.setTextColor(R.id.textView1_1,color);
-        this.numberRemoteViews.setTextColor(R.id.number_limit,color);
+        this.numberRemoteViews.setTextColor(R.id.number_speed,color);
+
     }
     void computeAndShowData(){
         int mphNumber = gpsUtil.getMphSpeed().intValue();
        // this.remoteViews.setTextViewText(R.id.textView1, gpsUtil.getMphSpeedStr());
         this.remoteViews.setTextViewText(R.id.textView1_1, gpsUtil.getKmhSpeedStr());
+        this.numberRemoteViews.setProgressBar(R.id.progressBar,125,gpsUtil.getSpeedometerPercentage(),false);
         this.numberRemoteViews.setTextViewText(R.id.number_speed,gpsUtil.getKmhSpeedStr());
         this.numberRemoteViews.setTextViewText(R.id.number_limit,gpsUtil.getLimitSpeed()+"");
         if(gpsUtil.getLimitSpeed()>0 && gpsUtil.getKmhSpeed()>gpsUtil.getLimitSpeed()){
@@ -496,6 +501,7 @@ public class GpsSpeedService extends Service {
         this.numberRemoteViews.setTextViewText(R.id.number_speed,"关");
         this.remoteViews.setImageViewResource(R.id.ialtimetro,R.drawable.base);
         this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_0);
+        this.numberRemoteViews.setProgressBar(R.id.progressBar,125,0,false);
         this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);
         stopSelf();
