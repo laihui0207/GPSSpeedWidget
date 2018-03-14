@@ -12,7 +12,8 @@
     <ImageView android:id="@id/ifreccia" android:layout_width="match_parent" android:layout_height="match_parent"
                android:layout_marginLeft="5.0dip"
                android:src="@drawable/alt_0" android:scaleType="fitCenter"
-               android:layout_alignBottom="@+id/textView1_1" android:layout_alignParentEnd="true"/>
+               android:layout_alignParentEnd="true"
+               android:layout_alignBottom="@+id/textView1_1"/>
     <TextView android:textSize="10.0dip" android:textColor="#ffffffff" android:id="@id/textView1"
               android:layout_width="wrap_content" android:layout_height="wrap_content"
               android:text="   OFF"
@@ -26,7 +27,7 @@
               android:layout_alignBottom="@+id/ialtimetro"
               android:layout_marginBottom="20.0dip" android:layout_centerHorizontal="true"
               android:layout_alignLeft="@+id/textView1"/>
-    <TextView android:textAppearance="?android:textAppearanceSmall" android:textSize="25.0dip"
+   <!-- <TextView android:textAppearance="?android:textAppearanceSmall" android:textSize="25.0dip"
               android:textColor="#ffffffff" android:id="@id/textView1Mph" android:layout_width="match_parent"
               android:layout_height="match_parent" android:text=""
               android:layout_toRightOf="@id/textView1" android:layout_alignBaseline="@id/textView1"
@@ -37,5 +38,5 @@
               android:layout_height="wrap_content" android:text="  OFF "
               android:layout_toRightOf="@+id/textView1_1" android:layout_alignBaseline="@+id/textView1_1"
               android:layout_alignBottom="@+id/textView1_1" android:layout_marginLeft="2.0dip"
-              android:layout_centerHorizontal="false" android:layout_alignParentTop="false" android:visibility="gone"/>
+              android:layout_centerHorizontal="false" android:layout_alignParentTop="false" android:visibility="gone"/>-->
 </RelativeLayout>

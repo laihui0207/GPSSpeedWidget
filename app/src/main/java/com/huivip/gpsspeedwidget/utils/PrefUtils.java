@@ -46,7 +46,10 @@ public abstract class PrefUtils {
     public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enable.autoNavi.Service";
     public static final String WIDGET_ACTIVED="com.huivip.widget.actived";
     public static final String GPS_REMOTE_URL="com.huivip.widget.remoteUrl";
-    public static final String ENABLE_SHOW_FLATTING_ON_DESKTOP="com.huivip.widget.showFlatingOnDesktop";
+    public static final String SHOW_FLATTING_ON="com.huivip.widget.showFlatingOn";
+    public static final String SHOW_ALL="0";
+    public static final String SHOW_ONLY_DESKTOP="2";
+    public static final String SHOW_NO_DESKTOP="1";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -77,11 +80,11 @@ public abstract class PrefUtils {
     public static boolean isEnableAutoStart(Context context){
         return getSharedPreferences(context).getBoolean(AUTO_START_PREFS_NAME, true);
     }
-    public static void setEnableShowFlattingOnDesktop(Context context,boolean show){
-        edit(context).putBoolean(ENABLE_SHOW_FLATTING_ON_DESKTOP, show).apply();
+    public static void setShowFlattingOn(Context context,String show){
+        edit(context).putString(SHOW_FLATTING_ON, show).apply();
     }
-    public static boolean isEnableShowFlatingOnDesktop(Context context){
-        return getSharedPreferences(context).getBoolean(ENABLE_SHOW_FLATTING_ON_DESKTOP, false);
+    public static String getShowFlatingOn(Context context){
+        return getSharedPreferences(context).getString(SHOW_FLATTING_ON, SHOW_NO_DESKTOP);
     }
     public static void setRecordGPSHistory(Context context,boolean recordHistory){
         edit(context).putBoolean(RECORD_GPS_HISTORY_PREFS_NAME, recordHistory).apply();

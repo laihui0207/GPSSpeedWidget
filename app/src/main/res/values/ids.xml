@@ -6,6 +6,9 @@
     <item type="id" name="textView1_1">false</item>
     <item type="id" name="textView1Mph">false</item>
     <item type="id" name="textView1Kmh">false</item>
+    <item type="id" name="textView_speedNumber">false</item>
+    <item type="id" name="ialtimetro_number">false</item>
+    <item type="id" name="ifreccia_number">false</item>
 
     <!--<item type="id" name="ialtimetro2">false</item>
     <item type="id" name="ifreccia2">false</item>

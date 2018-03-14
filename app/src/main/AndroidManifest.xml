@@ -51,6 +51,14 @@
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/watch_widget_provider"/>
         </receiver>
+        <receiver android:name=".GpsSpeedNumberWidget" android:label="SpeedNumber">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="GPS_WIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/number_widget_provider"/>
+        </receiver>
         <receiver android:name=".MessageReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

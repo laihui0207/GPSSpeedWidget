@@ -24,12 +24,14 @@ public class GpsSpeedService extends Service {
     AppWidgetManager manager;
 
     RemoteViews remoteViews;
+    RemoteViews numberRemoteViews;
     TimerTask locationScanTask;
     TimerTask recordGPSTask;
     boolean serviceStoped = true;
     Timer locationTimer = new Timer();
     Timer recordGPSTimer=new Timer();
     ComponentName thisWidget;
+    ComponentName numberWidget;
     final Handler locationHandler = new Handler();
     final Handler recordGPSHandler=new Handler();
     Integer c = Integer.valueOf(0);
@@ -39,7 +41,9 @@ public class GpsSpeedService extends Service {
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         this.serviceStoped = true;
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
+        this.numberRemoteViews = new RemoteViews(getPackageName(),R.layout.speednumberwidget);
         this.thisWidget = new ComponentName(this, GpsSpeedWidget.class);
+        this.numberWidget=new ComponentName(this,GpsSpeedNumberWidget.class);
         this.manager = AppWidgetManager.getInstance(this);
         this.c = Integer.valueOf(0);
         this.lineId=System.currentTimeMillis();
@@ -48,6 +52,7 @@ public class GpsSpeedService extends Service {
         if(recordGPS) {
             if(uploadGPS) {
                 Intent broadcastIntent = new Intent(GpsSpeedService.this, MessageReceiver.class);
+                broadcastIntent.setAction(Constant.UPLOADACTION);
                 PendingIntent sender = PendingIntent.getBroadcast(GpsSpeedService.this, 0, broadcastIntent, 0);
                 AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
                 alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60 * 1000, sender);
@@ -98,8 +103,10 @@ public class GpsSpeedService extends Service {
             this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
             serviceStoped =false;
             //this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
-            this.remoteViews.setTextViewText(R.id.textView1_1, "WAIT");
+            this.remoteViews.setTextViewText(R.id.textView1_1, "...");
+            this.numberRemoteViews.setTextViewText(R.id.number_speed,"...");
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
+            this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);
         } else {
             serviceStoped = true;
             gpsUtil.stopLocationService(true);
@@ -138,19 +145,23 @@ public class GpsSpeedService extends Service {
         }
         else {
             //this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
-            this.remoteViews.setTextViewText(R.id.textView1_1, "WAIT");
+            this.remoteViews.setTextViewText(R.id.textView1_1, "...");
+            this.numberRemoteViews.setTextViewText(R.id.number_speed,"...");
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
+            this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);
         }
     }
     public void setSpeeding(boolean speeding) {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_dark;
         int color = ContextCompat.getColor(this, colorRes);
         this.remoteViews.setTextColor(R.id.textView1_1,color);
+        this.numberRemoteViews.setTextColor(R.id.number_limit,color);
     }
     void computeAndShowData(){
         int mphNumber = gpsUtil.getMphSpeed().intValue();
        // this.remoteViews.setTextViewText(R.id.textView1, gpsUtil.getMphSpeedStr());
         this.remoteViews.setTextViewText(R.id.textView1_1, gpsUtil.getKmhSpeedStr());
+        this.numberRemoteViews.setTextViewText(R.id.number_speed,gpsUtil.getKmhSpeedStr());
         if(gpsUtil.getLimitSpeed()>0 && gpsUtil.getKmhSpeed()>gpsUtil.getLimitSpeed()){
             setSpeeding(true);
         }
@@ -479,10 +490,12 @@ public class GpsSpeedService extends Service {
             this.locationTimer.purge();
         }
         //this.remoteViews.setTextViewText(R.id.textView1, "   OFF");
-        this.remoteViews.setTextViewText(R.id.textView1_1, "OFF");
+        this.remoteViews.setTextViewText(R.id.textView1_1, "关");
+        this.numberRemoteViews.setTextViewText(R.id.number_speed,"关");
         this.remoteViews.setImageViewResource(R.id.ialtimetro,R.drawable.base);
         this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_0);
         this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
+        this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);
         stopSelf();
 
     }

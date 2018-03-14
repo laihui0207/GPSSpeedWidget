@@ -39,6 +39,7 @@ public class MessageReceiver extends BroadcastReceiver {
                         dbUtil.delete(now);
                     }
                 }
+                Log.d("huivip","Upload Data Finish");
             }
         }.start();
     }

@@ -13,6 +13,7 @@ public class Constant {
 
     public static final String AMAPAUTOPACKAGENAME="com.autonavi.amapauto";
     public static final String AMAPAUTOLITEPACKAGENAME="com.autonavi.amapautolite";
+    public static final String UPLOADACTION="com.huivip.recordGpsHistory.start";
 
     public static int LINE=1;
     public static int POINT=0;

@@ -71,9 +71,8 @@
            android:layout_height="wrap_content"
            android:text="@string/str_btn_ok"
            android:layout_marginRight="21dp"
-           android:layout_marginTop="11dp" android:layout_weight="1"
-           android:layout_below="@+id/checkBox_showondescktop" android:layout_alignEnd="@+id/checkBox_showondescktop"
-           android:layout_marginEnd="17dp"/>
+           android:layout_weight="1"
+           android:layout_above="@+id/textView_uid" android:layout_alignEnd="@+id/radioGroup_flatingSelect"/>
    <Button
            android:text="1. Enable Draw Over Feature"
            android:layout_width="wrap_content"
@@ -93,10 +92,29 @@
            android:text="桌面也显示悬浮窗口"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content" android:layout_below="@+id/enableFloatingWindow"
-           android:id="@+id/checkBox_showondescktop" android:layout_toEndOf="@+id/button_select_app"/>
+           android:id="@+id/checkBox_showondescktop" android:layout_toEndOf="@+id/button_select_app"
+           android:visibility="gone"/>
    <TextView
            android:text="TextView"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content" android:layout_alignParentBottom="true"
            android:layout_toEndOf="@+id/button_select_app" android:id="@+id/textView_uid"/>
+   <RadioGroup
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" android:layout_below="@+id/checkBox_showondescktop"
+           android:layout_toEndOf="@+id/button_select_app" android:layout_marginStart="15dp"
+           android:id="@+id/radioGroup_flatingSelect">
+      <RadioButton
+              android:text="不在桌面显示"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content" android:id="@+id/fradioButton_noHome" android:layout_weight="1"/>
+      <RadioButton
+              android:text="只在桌面显示"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content" android:id="@+id/radioButton_onlyHome" android:layout_weight="1"/>
+      <RadioButton
+              android:text="上帝模式"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content" android:id="@+id/radioButton_all" android:layout_weight="1"/>
+   </RadioGroup>
 </RelativeLayout>

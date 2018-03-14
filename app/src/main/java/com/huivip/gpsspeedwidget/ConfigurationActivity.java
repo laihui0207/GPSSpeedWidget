@@ -46,6 +46,7 @@ public class ConfigurationActivity extends Activity {
     CheckBox enableFloatingWidnowCheckBox;
     CheckBox enableShowFlattingOnDesktopCheckBox;
     EditText remoteUrlEditBox;
+    RadioGroup floatingSelectGroup;
     private static final int REQUEST_LOCATION = 105;
     private static  final int REQUEST_STORAGE=106;
     private static final int REQUEST_PHONE=107;
@@ -71,8 +72,8 @@ public class ConfigurationActivity extends Activity {
         uploadGPSCheckBox.setChecked(PrefUtils.isEnableUploadGPSHistory(getApplicationContext()));
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         enableFloatingWidnowCheckBox.setChecked(PrefUtils.isEnableFlatingWindow(getApplicationContext()));
-        enableShowFlattingOnDesktopCheckBox=findViewById(R.id.checkBox_showondescktop);
-        enableShowFlattingOnDesktopCheckBox.setChecked(PrefUtils.isEnableShowFlatingOnDesktop(getApplicationContext()));
+        //enableShowFlattingOnDesktopCheckBox=findViewById(R.id.checkBox_showondescktop);
+        //enableShowFlattingOnDesktopCheckBox.setChecked(PrefUtils.isEnableShowFlatingOnDesktop(getApplicationContext()));
         remoteUrlEditBox=findViewById(R.id.editText_remoteURL);
         remoteUrlEditBox.setText(PrefUtils.getGPSHistoryServerURL(getApplicationContext()));
         CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
@@ -117,17 +118,17 @@ public class ConfigurationActivity extends Activity {
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                enableShowFlattingOnDesktopCheckBox.setEnabled(compoundButton.isChecked());
+                floatingSelectGroup.setEnabled(compoundButton.isChecked());
                 PrefUtils.setFlatingWindow(getApplicationContext(),compoundButton.isChecked());
             }
         });
-        enableShowFlattingOnDesktopCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+        /*enableShowFlattingOnDesktopCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 PrefUtils.setEnableShowFlattingOnDesktop(getApplicationContext(),compoundButton.isChecked());
             }
-        });
+        });*/
         enableAudioCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
@@ -159,6 +160,27 @@ public class ConfigurationActivity extends Activity {
             } catch (ActivityNotFoundException e) {
             }
         });
+        floatingSelectGroup=findViewById(R.id.radioGroup_flatingSelect);
+        floatingSelectGroup.setEnabled(enableFloatingWidnowCheckBox.isChecked());
+        floatingSelectGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int selectId=radioGroup.getCheckedRadioButtonId();
+                switch (selectId) {
+                    case R.id.radioButton_all:
+                        PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_ALL);
+                        break;
+                    case R.id.radioButton_onlyHome:
+                        PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_ONLY_DESKTOP);
+                        break;
+                    case R.id.fradioButton_noHome:
+                        PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_NO_DESKTOP);
+                        break;
+                        default:
+                            PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_NO_DESKTOP);
+                }
+            }
+        });
 
         PrefUtils.setApps(getApplicationContext(), getDescktopPackageName());
         Button btnOk= (Button) findViewById(R.id.confirm);
@@ -188,6 +210,20 @@ public class ConfigurationActivity extends Activity {
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
         String deviceId=deviceUuidFactory.getDeviceUuid().toString();
         uidView.setText("本机ID: "+deviceId.substring(0,deviceId.indexOf("-")));
+
+        RadioButton allShowButton=findViewById(R.id.radioButton_all);
+        RadioButton onlyDesktopButton=findViewById(R.id.radioButton_onlyHome);
+        RadioButton noDesktopButton=findViewById(R.id.fradioButton_noHome);
+
+        String floatShowOn=PrefUtils.getShowFlatingOn(getApplicationContext());
+        if(floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
+            onlyDesktopButton.setChecked(true);
+        } else if(floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP)){
+            noDesktopButton.setChecked(true);
+        } else if(floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_ALL)){
+            allShowButton.setChecked(true);
+        }
+
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -203,7 +239,8 @@ public class ConfigurationActivity extends Activity {
         enableFloatingWidnowCheckBox.setEnabled(overlayEnabled && serviceEnabled);
         enableFloatingButton.setEnabled(!overlayEnabled);
         enableServiceButton.setEnabled(overlayEnabled && !serviceEnabled);
-        enableShowFlattingOnDesktopCheckBox.setEnabled(enableFloatingWidnowCheckBox.isChecked());
+        //enableShowFlattingOnDesktopCheckBox.setEnabled(enableFloatingWidnowCheckBox.isChecked());
+        floatingSelectGroup.setEnabled(enableFloatingWidnowCheckBox.isChecked());
         boolean serviceReady=Utils.isServiceReady(this);
         Button btnOk= (Button) findViewById(R.id.confirm);
         if(serviceReady){
