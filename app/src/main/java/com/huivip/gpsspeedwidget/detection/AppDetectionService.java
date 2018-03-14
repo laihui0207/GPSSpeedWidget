@@ -1,28 +1,15 @@
 package com.huivip.gpsspeedwidget.detection;
 
 import android.accessibilityservice.AccessibilityService;
-import android.accessibilityservice.AccessibilityServiceInfo;
-import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityNodeInfo;
-/*import com.crashlytics.android.Crashlytics;*/
-import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.FloatingService;
-import com.huivip.gpsspeedwidget.GpsSpeedService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-/*import com.pluscubed.velociraptor.BuildConfig;*/
-/*import com.pluscubed.velociraptor.limit.LimitService;*/
-import timber.log.Timber;
-
-import java.util.List;
 import java.util.Set;
 
 public class AppDetectionService extends AccessibilityService {
