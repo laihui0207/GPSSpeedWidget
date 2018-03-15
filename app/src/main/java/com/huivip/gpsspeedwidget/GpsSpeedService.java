@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -36,6 +37,7 @@ public class GpsSpeedService extends Service {
     final Handler recordGPSHandler=new Handler();
     Integer c = Integer.valueOf(0);
     Long lineId=0L;
+
     @Override
     public void onCreate() {
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
@@ -83,8 +85,10 @@ public class GpsSpeedService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if(intent==null) return super.onStartCommand(intent,flags,startId);
         if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
             gpsUtil.startLocationService();
+            Log.d("huivip",intent.getBooleanExtra(EXTRA_AUTOBOOT,false)+"");
             this.locationScanTask = new TimerTask()
             {
                 @Override
@@ -96,6 +100,7 @@ public class GpsSpeedService extends Service {
                         public void run()
                         {
                             GpsSpeedService.this.checkLocationData();
+                            Log.d("huivip","GPS Service Check Location");
                         }
                     });
                 }
@@ -108,6 +113,9 @@ public class GpsSpeedService extends Service {
             //this.numberRemoteViews.setProgressBar(R.id.progressBar,125,50,false);
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
             this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);
+            if(intent.getBooleanExtra(EXTRA_AUTOBOOT,false)){
+                intent.removeExtra(EXTRA_AUTOBOOT);
+            }
         } else {
             serviceStoped = true;
             gpsUtil.stopLocationService(true);
@@ -166,12 +174,7 @@ public class GpsSpeedService extends Service {
         this.numberRemoteViews.setProgressBar(R.id.progressBar,125,gpsUtil.getSpeedometerPercentage(),false);
         this.numberRemoteViews.setTextViewText(R.id.number_speed,gpsUtil.getKmhSpeedStr());
         this.numberRemoteViews.setTextViewText(R.id.number_limit,gpsUtil.getLimitSpeed()+"");
-        if(gpsUtil.getLimitSpeed()>0 && gpsUtil.getKmhSpeed()>gpsUtil.getLimitSpeed()){
-            setSpeeding(true);
-        }
-        else {
-            setSpeeding(false);
-        }
+        setSpeeding(gpsUtil.isHasLimited());
         switch (mphNumber)
         {
             default:

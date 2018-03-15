@@ -46,6 +46,9 @@ public abstract class PrefUtils {
     public static final String WIDGET_ACTIVED="com.huivip.widget.actived";
     public static final String GPS_REMOTE_URL="com.huivip.widget.remoteUrl";
     public static final String SHOW_FLATTING_ON="com.huivip.widget.showFlatingOn";
+    public static final String FLOATTING_WINDOWS_AUTO_SOLT="com.huivip.wdiget.floatting.autoslot";
+    public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
+    public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
 
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
@@ -98,6 +101,12 @@ public abstract class PrefUtils {
     public static boolean isEnableUploadGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, false);
     }
+    public static boolean isFloattingAutoSolt(Context context){
+        return getSharedPreferences(context).getBoolean(FLOATTING_WINDOWS_AUTO_SOLT, true);
+    }
+    public static void setFloattingWindowsAutoSolt(Context context,boolean autoSolt){
+        edit(context).putBoolean(FLOATTING_WINDOWS_AUTO_SOLT, autoSolt).apply();
+    }
     public static boolean isWidgetActived(Context context){
         return getSharedPreferences(context).getBoolean(WIDGET_ACTIVED, false);
     }
@@ -125,7 +134,13 @@ public abstract class PrefUtils {
     public static boolean isTermsAccepted(Context context) {
         return getSharedPreferences(context).getBoolean(PREF_TERMS_ACCEPTED, false);
     }
+    public static void setSpeedAdjust(Context context, int value) {
+        edit(context).putInt(PREF_GPS_SPEED_ADJUST, value).apply();
+    }
 
+    public static int getSpeedAdjust(Context context) {
+        return getSharedPreferences(context).getInt(PREF_GPS_SPEED_ADJUST, 0);
+    }
     public static void setVersionCode(Context context, int versionCode) {
         edit(context).putInt(PREF_VERSION_CODE, versionCode).apply();
     }
@@ -138,6 +153,13 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableFlatingWindow(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_FLATING_WINDOW, false);
+    }
+    public static void setFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
+
+    public static String getFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(FLOATTING_WINDOW_XY, "0,0");
     }
     public static void setFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_FLOATING_LOCATION, left + "," + screenYRatio).apply();

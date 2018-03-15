@@ -17,6 +17,7 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TTSUtil;
 
 import java.text.NumberFormat;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,6 +40,7 @@ public class GpsUtil {
     String velocita_prec = "ciao";
     Integer speedometerPercentage=Integer.valueOf(0);
     Integer c = Integer.valueOf(0);
+    Integer speedAdjust=Integer.valueOf(0);
     String providerId = LocationManager.GPS_PROVIDER;
     boolean gpsEnabled=false;
     boolean gpsLocationStarted=false;
@@ -47,8 +49,12 @@ public class GpsUtil {
     TimerTask locationScanTask;
     Timer locationTimer;
     AMapNavi aMapNavi;
+    NaviListenerImpl naviListener;
     LocationManager locationManager;
     TTSUtil ttsUtil;
+    boolean limitSpeaked=false;
+    Integer limitCounter=Integer.valueOf(0);
+    boolean hasLimited=false;
     final Handler locationHandler = new Handler();
     LocationListener locationListener=new LocationListener() {
         @Override
@@ -76,6 +82,8 @@ public class GpsUtil {
     private static GpsUtil instance;
     private GpsUtil(Context context){
         this.context=context;
+        Random random=new Random();
+        c=random.nextInt();
         ttsUtil=TTSUtil.getInstance(context);
 
     }
@@ -92,7 +100,8 @@ public class GpsUtil {
     public void startLocationService(){
         if(serviceStarted) return;
         this.locationTimer = new Timer();
-
+        Log.d("huivip","Random: "+c);
+        speedAdjust=PrefUtils.getSpeedAdjust(context);
         this.locationScanTask = new TimerTask()
         {
             @Override
@@ -104,15 +113,17 @@ public class GpsUtil {
                     public void run()
                     {
                         checkLocationData();
+                        //Log.d("huivip","GPS UTIL Check Location");
                     }
                 });
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L,100L);
         if (PrefUtils.isEnableAutoNaviService(context)) {
+            naviListener=new NaviListenerImpl();
             aMapNavi = AMapNavi.getInstance(context);
             aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
-            aMapNavi.addAMapNaviListener(new NaviListenerImpl());
+            aMapNavi.addAMapNaviListener(naviListener);
             aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
         }
         serviceStarted=true;
@@ -125,6 +136,8 @@ public class GpsUtil {
             }
             if(aMapNavi!=null){
                 aMapNavi.stopAimlessMode();
+                aMapNavi.removeAMapNaviListener(naviListener);
+                aMapNavi.destroy();
             }
             if(ttsUtil!=null) {
                 ttsUtil.stop();
@@ -199,10 +212,33 @@ public class GpsUtil {
         localNumberFormat.setMaximumFractionDigits(1);
         mphSpeed = (int)(this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         kmhSpeed=(int)(this.speed.doubleValue() * 3.6D);
+        if(speedAdjust!=0){
+            kmhSpeed+=speedAdjust;
+            if(kmhSpeed<0){
+                kmhSpeed=0;
+            }
+        }
         speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
         mphSpeedStr=localNumberFormat.format(mphSpeed);
         kmhSpeedStr=localNumberFormat.format(kmhSpeed);
-        Log.d("GPS",kmhSpeedStr);
+        // limit speak just say one times in one minutes
+        if(limitSpeed>0 && kmhSpeed>limitSpeed){
+            hasLimited=true;
+            limitCounter++;
+            if(!limitSpeaked || limitCounter > 600){
+                limitSpeaked=true;
+                limitCounter=0;
+                ttsUtil.speak("您已超速");
+            }
+        } else {
+          hasLimited=false;
+          limitSpeaked=false;
+          limitCounter=0;
+        }
+    }
+
+    public boolean isHasLimited() {
+        return hasLimited;
     }
 
     public Integer getMphSpeed() {
@@ -248,13 +284,11 @@ public class GpsUtil {
         String speakText="";
         @Override
         public void onInitNaviFailure() {
-            Toast.makeText(context,"智能巡航异常",Toast.LENGTH_SHORT);
         }
 
         @Override
         public void onInitNaviSuccess() {
             ttsUtil.speak("智能巡航服务开启");
-            Toast.makeText(context,"智能巡航服务开启",Toast.LENGTH_SHORT);
         }
 
         @Override

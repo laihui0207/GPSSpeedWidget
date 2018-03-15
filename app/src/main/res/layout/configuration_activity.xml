@@ -8,9 +8,7 @@
            android:layout_height="wrap_content"
            android:id="@+id/autoStart"
            android:text="开机自动启动"
-           android:layout_marginTop="12dp"
-           android:layout_below="@+id/button_select_app"
-           android:layout_alignEnd="@+id/enableAudio"/>
+           android:layout_below="@+id/button_select_app" android:layout_toEndOf="@+id/button_select_app"/>
    <CheckBox
            android:text="记录GPS轨迹"
            android:layout_width="wrap_content"
@@ -50,15 +48,14 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableAutoNavi"
-           android:layout_below="@+id/enableAudio" android:layout_alignLeft="@+id/enableAudio"
-           android:layout_alignStart="@+id/enableAudio"/>
+           android:layout_alignBaseline="@+id/enableAudio" android:layout_alignBottom="@+id/enableAudio"
+           android:layout_toEndOf="@+id/button_select_app"/>
    <CheckBox
            android:text="开启语音功能"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableAudio"
-           android:layout_below="@+id/linearLayout" android:layout_toEndOf="@+id/button_select_app"
-           android:checked="false"/>
+           android:checked="false" android:layout_below="@+id/linearLayout" android:layout_alignEnd="@+id/enableOver"/>
    <Button
            android:text="Select maps"
            android:layout_width="wrap_content"
@@ -72,7 +69,8 @@
            android:text="@string/str_btn_ok"
            android:layout_marginRight="21dp"
            android:layout_weight="1"
-           android:layout_above="@+id/textView_uid" android:layout_alignEnd="@+id/radioGroup_flatingSelect"/>
+           android:layout_alignBaseline="@+id/textView" android:layout_alignBottom="@+id/textView"
+           android:layout_alignEnd="@+id/checkBox_showSpeed"/>
    <Button
            android:text="1. Enable Draw Over Feature"
            android:layout_width="wrap_content"
@@ -117,4 +115,34 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content" android:id="@+id/radioButton_all" android:layout_weight="1"/>
    </RadioGroup>
+    <CheckBox
+            android:text="自动靠边"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_above="@+id/radioGroup_flatingSelect"
+            android:layout_toEndOf="@+id/enableFloatingWindow" android:id="@+id/checkBox_autoSolt"/>
+   <TextView
+           android:text="GPS速度调整:"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/textView"
+           android:layout_alignBottom="@+id/editText_speedadjust" android:layout_toEndOf="@+id/button_select_app"/>
+   <EditText
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:inputType="numberSigned"
+           android:ems="5"
+           android:hint="0(-5,5)"
+           android:layout_below="@+id/radioGroup_flatingSelect"
+           android:id="@+id/editText_speedadjust" android:layout_toEndOf="@+id/textView"/>
+   <CheckBox
+           android:text="显示限速窗口"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/checkBox_showLimit" android:layout_below="@+id/checkBox_autoSolt"
+           android:layout_toEndOf="@+id/radioGroup_flatingSelect" android:layout_marginStart="14dp"/>
+   <CheckBox
+           android:text="显示速度窗口"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" android:layout_below="@+id/checkBox_showLimit"
+           android:layout_alignStart="@+id/checkBox_showLimit" android:id="@+id/checkBox_showSpeed"/>
 </RelativeLayout>

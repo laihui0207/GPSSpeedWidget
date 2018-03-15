@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.opengl.Visibility;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -35,6 +36,8 @@ public class FloatingService extends Service{
 
     private WindowManager mWindowManager;
     private View mFloatingView;
+    @BindView(R.id.limit)
+    View mLimitView;
     @BindView(R.id.speedometer)
     View mSpeedometerView;
     GpsUtil gpsUtil;
@@ -96,6 +99,10 @@ public class FloatingService extends Service{
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
+        boolean isShowLimit=PrefUtils.getShowLimits(getApplicationContext());
+        mLimitView.setVisibility(isShowLimit ? View.VISIBLE : View.GONE);
+        boolean isShowSpeed=PrefUtils.getShowSpeedometer(getApplicationContext());
+        mSpeedometerView.setVisibility(isShowSpeed ? View.VISIBLE : View.GONE);
         initMonitorPosition();
 
         final ArrayList<ArcProgressStackView.Model> models = new ArrayList<>();
@@ -117,6 +124,7 @@ public class FloatingService extends Service{
                     public void run()
                     {
                         FloatingService.this.checkLocationData();
+                        //Log.d("huivip","Float Service Check Location");
                     }
                 });
             }
@@ -130,12 +138,7 @@ public class FloatingService extends Service{
             if(gpsUtil.isGpsLocationChanged()){
                 setSpeed(gpsUtil.getKmhSpeedStr(),gpsUtil.getSpeedometerPercentage());
                 mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
-                if(gpsUtil.getLimitSpeed()>0 && gpsUtil.getKmhSpeed()>gpsUtil.getLimitSpeed()){
-                    setSpeeding(true);
-                }
-                else {
-                    setSpeeding(false);
-                }
+                setSpeeding(gpsUtil.isHasLimited());
             }
         }
         else {
@@ -163,16 +166,20 @@ public class FloatingService extends Service{
             @Override
             public void onGlobalLayout() {
                 WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-
                 String[] split = PrefUtils.getFloatingLocation(getApplicationContext()).split(",");
                 boolean left = Boolean.parseBoolean(split[0]);
                 float yRatio = Float.parseFloat(split[1]);
-
-                Point screenSize = new Point();
-                mWindowManager.getDefaultDisplay().getSize(screenSize);
-                params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
-                params.y = (int) (yRatio * screenSize.y + 0.5f);
-
+                if(PrefUtils.isFloattingAutoSolt(getApplicationContext())) {
+                    Point screenSize = new Point();
+                    mWindowManager.getDefaultDisplay().getSize(screenSize);
+                    params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
+                    params.y = (int) (yRatio * screenSize.y + 0.5f);
+                }
+                else {
+                    String[] xy=PrefUtils.getFloatingSolidLocation(getApplicationContext()).split(",");
+                    params.x=(int)Float.parseFloat(xy[0]);
+                    params.y=(int)Float.parseFloat(xy[1]);
+                }
                 try {
                     mWindowManager.updateViewLayout(mFloatingView, params);
                 } catch (IllegalArgumentException ignore) {
@@ -204,7 +211,6 @@ public class FloatingService extends Service{
         }
 
         PrefUtils.setFloatingLocation(getApplicationContext(), (float) params.y / screenSize.y, endX == 0);
-
         ValueAnimator valueAnimator = ValueAnimator.ofInt(params.x, endX)
                 .setDuration(300);
         valueAnimator.setInterpolator(new LinearOutSlowInInterpolator());
@@ -301,7 +307,11 @@ public class FloatingService extends Service{
                             fadeAnimator.start();
                         }
                     } else {
-                        animateViewToSideSlot();
+                        if(PrefUtils.isFloattingAutoSolt(getApplicationContext())) {
+                             animateViewToSideSlot();
+                        } else {
+                            PrefUtils.setFloatingSolidLocation(getApplicationContext(),params.x,params.y);
+                        }
                     }
                     return true;
             }

@@ -8,5 +8,5 @@
     android:type="linear"/>
 <!--    <padding android:bottom="5dp" android:left="5dp" android:right="5dp" android:top="5dp"/>-->
     <corners android:radius="20dp"/>
-    <stroke android:color="#dcdcdc" android:width="2dp"/>
+    <stroke android:color="#393939" android:width="1dp"/>
 </shape>

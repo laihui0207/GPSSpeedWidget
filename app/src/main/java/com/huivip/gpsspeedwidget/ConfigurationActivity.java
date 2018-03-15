@@ -16,6 +16,8 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
@@ -82,6 +84,10 @@ public class ConfigurationActivity extends Activity {
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         enableAutoNaviCheckBox.setChecked(PrefUtils.isEnableAutoNaviService(getApplicationContext()));
         remoteUrlEditBox.setEnabled(uploadGPSCheckBox.isChecked());
+
+        CheckBox autoSoltCheckBox=findViewById(R.id.checkBox_autoSolt);
+        autoSoltCheckBox.setChecked(PrefUtils.isFloattingAutoSolt(getApplicationContext()));
+        autoSoltCheckBox.setEnabled(enableFloatingWidnowCheckBox.isChecked());
         autoStartCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
@@ -119,6 +125,7 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 floatingSelectGroup.setEnabled(compoundButton.isChecked());
+                autoSoltCheckBox.setEnabled(compoundButton.isChecked());
                 PrefUtils.setFlatingWindow(getApplicationContext(),compoundButton.isChecked());
             }
         });
@@ -141,6 +148,28 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
                 PrefUtils.setEnableAutoNaviService(getApplicationContext(),checkBoxButton.isChecked());
+            }
+        });
+        autoSoltCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PrefUtils.setFloattingWindowsAutoSolt(getApplicationContext(),compoundButton.isChecked());
+            }
+        });
+        CheckBox showLimitCheckbox=findViewById(R.id.checkBox_showLimit);
+        showLimitCheckbox.setChecked(PrefUtils.getShowLimits(getApplicationContext()));
+        showLimitCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PrefUtils.setShowLimits(getApplicationContext(),compoundButton.isChecked());
+            }
+        });
+        CheckBox showSpeedCheckBox=findViewById(R.id.checkBox_showSpeed);
+        showSpeedCheckBox.setChecked(PrefUtils.getShowSpeedometer(getApplicationContext()));
+        showSpeedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PrefUtils.setShowSpeedometer(getApplicationContext(),compoundButton.isChecked());
             }
         });
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
@@ -199,6 +228,11 @@ public class ConfigurationActivity extends Activity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                EditText speedAdjustEditText=findViewById(R.id.editText_speedadjust);
+                String adjustValue=speedAdjustEditText.getText().toString();
+                if(adjustValue!=null && !adjustValue.equalsIgnoreCase("")){
+                    PrefUtils.setSpeedAdjust(getApplicationContext(),Integer.parseInt(adjustValue));
+                }
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
@@ -223,7 +257,11 @@ public class ConfigurationActivity extends Activity {
         } else if(floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_ALL)){
             allShowButton.setChecked(true);
         }
-
+        EditText speedAdjustEditText=findViewById(R.id.editText_speedadjust);
+        speedAdjustEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(-5, 5)});
+        if(PrefUtils.getSpeedAdjust(getApplicationContext())!=0){
+            speedAdjustEditText.setText(PrefUtils.getSpeedAdjust(getApplicationContext())+"");
+        }
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -322,4 +360,37 @@ public class ConfigurationActivity extends Activity {
             //Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
         }
     }
+    public class InputFilterMinMax implements InputFilter {
+
+        private int min, max;
+
+        public InputFilterMinMax(int min, int max) {
+            this.min = min;
+            this.max = max;
+        }
+
+        public InputFilterMinMax(String min, String max) {
+            this.min = Integer.parseInt(min);
+            this.max = Integer.parseInt(max);
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            try {
+                if(source.toString().equalsIgnoreCase("-")){
+                    return null;
+                }
+                int input = Integer.parseInt(dest.toString() + source.toString());
+                if (isInRange(min, max, input))
+                    return null;
+            } catch (NumberFormatException nfe) { }
+            return "";
+        }
+
+        private boolean isInRange(int a, int b, int c) {
+            return b > a ? c >= a && c <= b : c >= b && c <= a;
+        }
+
+    }
 }
+
