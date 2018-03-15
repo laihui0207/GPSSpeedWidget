@@ -17,7 +17,7 @@
                       android:gravity="center"
                       android:background="@drawable/speed_limit_border"
                       android:layout_gravity="center"
-                      android:layout_height="match_parent" android:layout_weight="0.89">
+                      android:layout_height="match_parent" android:layout_weight="1">
             <TextView
                     android:text="..."
                     android:id="@+id/number_limit"
@@ -44,7 +44,7 @@
                 android:layout_width="180dp"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:layout_height="match_parent" android:layout_weight="0.16">
+                android:layout_height="match_parent" android:layout_weight="1">
             <ProgressBar
                     android:id="@+id/progressBar"
                     android:layout_width="200dp"
