@@ -1,5 +1,7 @@
 package com.huivip.gpsspeedwidget.listener;
 
+import android.content.Context;
+import android.media.AudioManager;
 import android.util.Log;
 import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizerListener;
@@ -12,7 +14,9 @@ import com.huivip.gpsspeedwidget.MainHandlerConstant;
 
 public class MessageListener implements SpeechSynthesizerListener, MainHandlerConstant {
     private static final String TAG = "MessageListener";
-
+    Context context;
+    AudioManager am;
+    int currentMusicVolume;
     /**
      * 播放开始，每句播放开始都会回调
      *
@@ -21,6 +25,11 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSynthesizeStart(String utteranceId) {
         sendMessage("准备开始合成,序列号:" + utteranceId);
+    }
+
+    public MessageListener(Context context) {
+        this.context = context;
+        am= (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
 
     /**
@@ -43,10 +52,13 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSynthesizeFinish(String utteranceId) {
         sendMessage("合成结束回调, 序列号:" + utteranceId);
+
     }
 
     @Override
     public void onSpeechStart(String utteranceId) {
+        currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC,3,0);
         sendMessage("播放开始回调, 序列号:" + utteranceId);
     }
 
@@ -69,6 +81,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
     }
 
     /**

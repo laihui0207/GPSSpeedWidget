@@ -88,7 +88,7 @@ public class GpsSpeedService extends Service {
         if(intent==null) return super.onStartCommand(intent,flags,startId);
         if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
             gpsUtil.startLocationService();
-            Log.d("huivip",intent.getBooleanExtra(EXTRA_AUTOBOOT,false)+"");
+            //Log.d("huivip",intent.getBooleanExtra(EXTRA_AUTOBOOT,false)+"");
             this.locationScanTask = new TimerTask()
             {
                 @Override
@@ -100,7 +100,7 @@ public class GpsSpeedService extends Service {
                         public void run()
                         {
                             GpsSpeedService.this.checkLocationData();
-                            Log.d("huivip","GPS Service Check Location");
+                            //Log.d("huivip","GPS Service Check Location");
                         }
                     });
                 }

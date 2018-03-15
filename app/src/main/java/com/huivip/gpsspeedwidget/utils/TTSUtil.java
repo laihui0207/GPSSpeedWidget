@@ -24,6 +24,7 @@ public class TTSUtil {
     protected String offlineVoice = OfflineResource.VOICE_MALE;
     protected SpeechSynthesizer mSpeechSynthesizer;
     private static TTSUtil ttsUtil;
+    AudioManager am;
     boolean inited=false;
     // ================选择TtsMode.ONLINE  不需要设置以下参数; 选择TtsMode.MIX 需要设置下面2个离线资源文件的路径
     private static final String TEMP_DIR = "/sdcard/GPS"; // 重要！请手动将assets目录下的3个dat 文件复制到该目录
@@ -37,6 +38,7 @@ public class TTSUtil {
     private TTSUtil(Context context) {
         this.context=context;
         initTTs();
+        //am=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 
     }
 
@@ -53,7 +55,14 @@ public class TTSUtil {
 
     public void speak(String text) {
         if (PrefUtils.isEnableAudioService(context) && PrefUtils.isEnableTempAudioService(context) && mSpeechSynthesizer!=null) {
+            /*int currentMusicVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+            int maxVolume=am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            Log.d("huivip","max:"+maxVolume+",curent:"+currentMusicVolume);*/
+            //am.setStreamVolume(AudioManager.STREAM_MUSIC,3,AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+            //am.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_LOWER,AudioManager.FLAG_SHOW_UI);
             int result = mSpeechSynthesizer.speak(text);
+            //am.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE,AudioManager.FLAG_SHOW_UI);
+           // am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
             if(result!=0){
                 Log.d("huivip","语音播放失败");
             }
@@ -84,7 +93,7 @@ public class TTSUtil {
             }
         }
         // 日志更新在UI中，可以换成MessageListener，在logcat中查看日志
-        SpeechSynthesizerListener listener = new MessageListener();
+        SpeechSynthesizerListener listener = new MessageListener(context);
 
         // 1. 获取实例
         mSpeechSynthesizer = SpeechSynthesizer.getInstance();
@@ -129,7 +138,7 @@ public class TTSUtil {
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
 
         //mSpeechSynthesizer.setAudioStreamType(AudioManager.MODE_IN_CALL);
-        mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_DTMF);
+        mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
 
         // x. 额外 ： 自动so文件是否复制正确及上面设置的参数
         Map<String, String> params = new HashMap<>();
