@@ -49,6 +49,7 @@ public abstract class PrefUtils {
     public static final String FLOATTING_WINDOWS_AUTO_SOLT="com.huivip.wdiget.floatting.autoslot";
     public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
+    public static final String TTS_VOLUME="com.huivip.widget.tts.volume";
 
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
@@ -140,6 +141,13 @@ public abstract class PrefUtils {
 
     public static int getSpeedAdjust(Context context) {
         return getSharedPreferences(context).getInt(PREF_GPS_SPEED_ADJUST, 0);
+    }
+    public static void setTtsVolume(Context context, int value) {
+        edit(context).putInt(TTS_VOLUME, value).apply();
+    }
+
+    public static int getTtsVolume(Context context) {
+        return getSharedPreferences(context).getInt(TTS_VOLUME, 0);
     }
     public static void setVersionCode(Context context, int versionCode) {
         edit(context).putInt(PREF_VERSION_CODE, versionCode).apply();

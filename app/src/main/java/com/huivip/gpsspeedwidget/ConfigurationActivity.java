@@ -5,10 +5,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -233,6 +235,9 @@ public class ConfigurationActivity extends Activity {
                 if(adjustValue!=null && !adjustValue.equalsIgnoreCase("")){
                     PrefUtils.setSpeedAdjust(getApplicationContext(),Integer.parseInt(adjustValue));
                 }
+                EditText ttsVolume=findViewById(R.id.editText_audioVolume);
+                String setedVolume=ttsVolume.getText().toString();
+                PrefUtils.setTtsVolume(getApplicationContext(),Integer.parseInt(setedVolume));
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
@@ -262,6 +267,17 @@ public class ConfigurationActivity extends Activity {
         if(PrefUtils.getSpeedAdjust(getApplicationContext())!=0){
             speedAdjustEditText.setText(PrefUtils.getSpeedAdjust(getApplicationContext())+"");
         }
+
+        EditText ttsVolume=findViewById(R.id.editText_audioVolume);
+        int savedVolume=PrefUtils.getTtsVolume(getApplicationContext());
+        if(savedVolume==0){
+            AudioManager am= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            int currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
+            savedVolume=currentMusicVolume;
+        }
+        ttsVolume.setText(savedVolume+"");
+        ttsVolume.setFilters(new InputFilter[]{ new InputFilterMinMax(0, 20)});
+
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

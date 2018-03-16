@@ -6,6 +6,7 @@ import android.util.Log;
 import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.huivip.gpsspeedwidget.MainHandlerConstant;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 /**
  * SpeechSynthesizerListener 简单地实现，仅仅记录日志
@@ -16,6 +17,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     private static final String TAG = "MessageListener";
     Context context;
     AudioManager am;
+    int currentSystemVolume;
     int currentMusicVolume;
     /**
      * 播放开始，每句播放开始都会回调
@@ -57,8 +59,13 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
 
     @Override
     public void onSpeechStart(String utteranceId) {
+        currentSystemVolume=am.getStreamVolume(AudioManager.STREAM_SYSTEM);
         currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC,3,0);
+        int musicVolume= PrefUtils.getTtsVolume(context);
+        if(musicVolume!=0){
+            am.setStreamVolume(AudioManager.STREAM_MUSIC,musicVolume,0);
+        }
+        am.setStreamVolume(AudioManager.STREAM_SYSTEM,1,0);
         sendMessage("播放开始回调, 序列号:" + utteranceId);
     }
 
@@ -81,6 +88,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
+        am.setStreamVolume(AudioManager.STREAM_SYSTEM,currentSystemVolume,0);
         am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
     }
 
@@ -94,6 +102,12 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     public void onError(String utteranceId, SpeechError speechError) {
         sendErrorMessage("错误发生：" + speechError.description + "，错误编码："
                 + speechError.code + "，序列号:" + utteranceId);
+        if(currentSystemVolume!=0){
+            am.setStreamVolume(AudioManager.STREAM_SYSTEM,currentSystemVolume,0);
+        }
+        if(currentMusicVolume!=0){
+            am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
+        }
     }
 
     private void sendErrorMessage(String message) {

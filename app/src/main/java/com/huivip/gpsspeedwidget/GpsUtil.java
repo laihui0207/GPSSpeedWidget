@@ -288,7 +288,7 @@ public class GpsUtil {
 
         @Override
         public void onInitNaviSuccess() {
-            ttsUtil.speak("智能巡航服务开启");
+           // ttsUtil.speak("智能巡航服务开启");
         }
 
         @Override

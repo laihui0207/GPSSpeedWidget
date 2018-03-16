@@ -23,7 +23,7 @@
             app:apsv_start_angle="135"
             app:apsv_sweep_angle="270"
             tools:visibility="gone"/>
-    <LinearLayout
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
@@ -31,25 +31,28 @@
         <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/speed"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:padding="14dp"
                 android:text="--"
                 android:textColor="@android:color/background_dark"
-                app:autoSizeTextType="uniform"/>
+                app:autoSizeTextType="uniform"
+                android:layout_centerVertical="true" android:layout_alignParentStart="true"/>
 
         <TextView
                 android:id="@+id/speedUnits"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:includeFontPadding="false"
+                android:gravity="center_vertical|center_horizontal"
                 android:textColor="?android:textColorPrimary"
                 android:textSize="12sp"
-                tools:text="km/h"/>
+                tools:text="km/h" android:text="km/h" android:layout_below="@+id/speed"
+                android:layout_alignParentStart="true"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

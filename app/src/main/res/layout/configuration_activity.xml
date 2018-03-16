@@ -55,7 +55,8 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableAudio"
-           android:checked="false" android:layout_below="@+id/linearLayout" android:layout_alignEnd="@+id/enableOver"/>
+           android:checked="false" android:layout_below="@+id/linearLayout"
+           android:layout_alignStart="@+id/checkBox_showLimit"/>
    <Button
            android:text="Select maps"
            android:layout_width="wrap_content"
@@ -69,17 +70,16 @@
            android:text="@string/str_btn_ok"
            android:layout_marginRight="21dp"
            android:layout_weight="1"
-           android:layout_alignBaseline="@+id/textView" android:layout_alignBottom="@+id/textView"
-           android:layout_alignEnd="@+id/checkBox_showSpeed"/>
+           android:layout_below="@+id/editText_speedadjust" android:layout_toEndOf="@+id/checkBox_autoSolt"/>
    <Button
-           android:text="1. Enable Draw Over Feature"
+           android:text="1. 允许顶层显示功能"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/EnableFalting"
            android:layout_below="@+id/enableAutoNavi" android:layout_alignStart="@+id/enableAutoNavi"
            android:layout_weight="1"/>
    <Button
-           android:text="2. Enable Accessibility Service"
+           android:text="2. 允许程序交互功能"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableOver"
@@ -145,4 +145,25 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content" android:layout_below="@+id/checkBox_showLimit"
            android:layout_alignStart="@+id/checkBox_showLimit" android:id="@+id/checkBox_showSpeed"/>
+    <TextView
+            android:text="启用1，2两项才能使用悬浮窗"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_showmessage"
+            android:layout_alignBaseline="@+id/enableOver" android:layout_alignBottom="@+id/enableOver"
+            android:layout_toEndOf="@+id/enableOver"/>
+   <TextView
+           android:text="语音音量："
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/textView_audio"
+           android:layout_alignBottom="@+id/confirm" android:layout_alignStart="@+id/radioGroup_flatingSelect"/>
+   <EditText
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:inputType="number"
+           android:ems="2"
+           android:id="@+id/editText_audioVolume"
+           android:layout_alignBottom="@+id/textView_audio"
+           android:layout_toEndOf="@+id/textView_audio"/>
 </RelativeLayout>
