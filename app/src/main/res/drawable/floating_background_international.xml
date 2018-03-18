@@ -4,6 +4,7 @@
     <item>
         <shape android:shape="oval">
             <solid android:color="#fff" />
+<!--            <gradient android:startColor="@android:color/transparent" android:endColor="@android:color/transparent"/>-->
         </shape>
     </item>
 
@@ -12,6 +13,7 @@
             <stroke
                 android:width="8dp"
                 android:color="#f44336" />
+<!--            <gradient android:startColor="@android:color/transparent" android:endColor="@android:color/transparent"/>-->
         </shape>
     </item>
 

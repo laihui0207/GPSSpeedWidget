@@ -1,25 +1,31 @@
 package com.huivip.gpsspeedwidget;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.*;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
-import com.amap.api.navi.enums.AimLessMode;
-import com.amap.api.navi.enums.BroadcastMode;
-import com.amap.api.navi.enums.CameraType;
+import com.amap.api.navi.enums.*;
 import com.amap.api.navi.model.*;
 import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TTSUtil;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.text.NumberFormat;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.content.Context.CONNECTIVITY_SERVICE;
 
 /**
  * @author sunlaihui
@@ -55,7 +61,10 @@ public class GpsUtil {
     boolean limitSpeaked=false;
     Integer limitCounter=Integer.valueOf(0);
     boolean hasLimited=false;
+    boolean aimlessStatred=false;
     final Handler locationHandler = new Handler();
+    BroadcastReceiver broadcastReceiver;
+    int locationCheckCounter=0;
     LocationListener locationListener=new LocationListener() {
         @Override
         public void onLocationChanged(Location paramAnonymousLocation) {
@@ -79,6 +88,7 @@ public class GpsUtil {
         }
 
     };
+
     private static GpsUtil instance;
     private GpsUtil(Context context){
         this.context=context;
@@ -119,14 +129,52 @@ public class GpsUtil {
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L,100L);
-        if (PrefUtils.isEnableAutoNaviService(context)) {
+        if(Utils.isNetworkConnected(context)){
+            startAimlessNavi();
+        } else {
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.d("huivip","Network Changed!");
+                    ConnectivityManager connectMgr = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
+                    NetworkInfo activeNetwork = connectMgr.getActiveNetworkInfo();
+                    if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+                        Log.d("huivip","network connected!");
+                        if(!aimlessStatred){
+                            startAimlessNavi();
+                        }
+                    }
+                    else {
+                        if(aimlessStatred){
+                            stopAimlessNavi();
+                        }
+                    }
+                }
+            };
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            context.registerReceiver(broadcastReceiver,intentFilter);
+        }
+        serviceStarted=true;
+    }
+    private void startAimlessNavi(){
+        if (PrefUtils.isEnableAutoNaviService(context) && !aimlessStatred) {
             naviListener=new NaviListenerImpl();
             aMapNavi = AMapNavi.getInstance(context);
             aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
             aMapNavi.addAMapNaviListener(naviListener);
+            aMapNavi.getNaviSetting().setTrafficStatusUpdateEnabled(true);
             aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
         }
-        serviceStarted=true;
+    }
+    private void stopAimlessNavi(){
+        if(aMapNavi!=null){
+            aMapNavi.stopAimlessMode();
+            aMapNavi.removeAMapNaviListener(naviListener);
+            aMapNavi.destroy();
+            aMapNavi=null;
+            aimlessStatred=false;
+        }
     }
     public void stopLocationService(boolean stop){
         if(serviceStarted && ((!stop && !PrefUtils.isWidgetActived(context)) || (PrefUtils.isWidgetActived(context) && stop))) {
@@ -134,11 +182,7 @@ public class GpsUtil {
                 this.locationTimer.cancel();
                 this.locationTimer.purge();
             }
-            if(aMapNavi!=null){
-                aMapNavi.stopAimlessMode();
-                aMapNavi.removeAMapNaviListener(naviListener);
-                aMapNavi.destroy();
-            }
+            stopAimlessNavi();
             if(ttsUtil!=null) {
                 ttsUtil.stop();
             }
@@ -206,6 +250,18 @@ public class GpsUtil {
                 gpsLocationChanged=false;
             }
         }
+        if(!gpsLocationChanged){
+            locationCheckCounter++;
+            // 30 second no location change to set speed to 0
+            if(locationCheckCounter>300){
+                mphSpeed=0;
+                kmhSpeed=0;
+            }
+        }
+        else {
+            locationCheckCounter=0;
+        }
+
     }
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     void computeAndShowData() {
@@ -284,15 +340,21 @@ public class GpsUtil {
         String speakText="";
         @Override
         public void onInitNaviFailure() {
+            aimlessStatred=false;
         }
 
         @Override
         public void onInitNaviSuccess() {
-           // ttsUtil.speak("智能巡航服务开启");
+            ttsUtil.speak("智能巡航服务开启");
+            aimlessStatred=true;
+            Toast.makeText(context,"智能巡航服务开启",Toast.LENGTH_SHORT).show();
         }
 
         @Override
-        public void onStartNavi(int i) {
+        public void onStartNavi(int naviType) {
+            if(naviType==NaviType.CRUISE) {
+                Log.d("huivip", "巡航模式开启");
+            }
         }
 
         @Override
@@ -302,6 +364,7 @@ public class GpsUtil {
 
         @Override
         public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
+            float bearing=aMapNaviLocation.getBearing();
 
         }
 
@@ -357,7 +420,8 @@ public class GpsUtil {
 
         @Override
         public void onNaviInfoUpdate(NaviInfo naviInfo) {
-
+            Log.d("huivip","Current Road:"+naviInfo.getCurrentRoadName());
+            Toast.makeText(context,naviInfo.getCurrentRoadName()+"",Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -368,15 +432,20 @@ public class GpsUtil {
         @Override
         public void updateCameraInfo(AMapNaviCameraInfo[] aMapNaviCameraInfos) {
             for(AMapNaviCameraInfo aMapNaviCameraInfo:aMapNaviCameraInfos){
-                if(aMapNaviCameraInfo.getCameraType()== CameraType.SPEED || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYSTART){
+                if(aMapNaviCameraInfo.getCameraType()== CameraType.SPEED
+                        || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYSTART
+                        || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYEND
+                        || aMapNaviCameraInfo.getCameraType() == CameraType.BREAKRULE ){
                     limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
                 }
             }
         }
 
         @Override
-        public void updateIntervalCameraInfo(AMapNaviCameraInfo aMapNaviCameraInfo, AMapNaviCameraInfo aMapNaviCameraInfo1, int i) {
-
+        public void updateIntervalCameraInfo(AMapNaviCameraInfo aMapNaviCameraInfo, AMapNaviCameraInfo aMapNaviCameraInfo1, int status) {
+            if(status== CarEnterCameraStatus.ENTER){
+                limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
+            }
         }
 
         @Override
@@ -431,17 +500,22 @@ public class GpsUtil {
 
         @Override
         public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
-
+            if(aMapNaviTrafficFacilityInfo.getLimitSpeed()!=limitSpeed){
+                limitSpeed=aMapNaviTrafficFacilityInfo.getLimitSpeed();
+            }
         }
 
         @Override
         public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
             for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
-                if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4) {
+                /*if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4) {
                     limitSpeed = info.getLimitSpeed();
+                }*/
+                if(info.getLimitSpeed()!=limitSpeed){
+                    limitSpeed=info.getLimitSpeed();
                 }
-
             }
+
         }
 
         @Override
@@ -451,6 +525,7 @@ public class GpsUtil {
 
         @Override
         public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
+            Log.d("huivip","Time:"+aimLessModeStat.getAimlessModeTime()+",Distance:"+aimLessModeStat.getAimlessModeDistance());
 
         }
 
@@ -460,8 +535,10 @@ public class GpsUtil {
         }
 
         @Override
-        public void onPlayRing(int i) {
-
+        public void onPlayRing(int status) {
+            if(status == AMapNaviRingType.RING_EDOG){
+                limitSpeed=0;
+            }
         }
     }
 }

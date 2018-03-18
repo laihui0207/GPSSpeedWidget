@@ -55,14 +55,11 @@ public class TTSUtil {
 
     public void speak(String text) {
         if (PrefUtils.isEnableAudioService(context) && PrefUtils.isEnableTempAudioService(context) && mSpeechSynthesizer!=null) {
-            /*int currentMusicVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-            int maxVolume=am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-            Log.d("huivip","max:"+maxVolume+",curent:"+currentMusicVolume);*/
-            //am.setStreamVolume(AudioManager.STREAM_MUSIC,3,AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-            //am.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_LOWER,AudioManager.FLAG_SHOW_UI);
+            if(!inited){
+                release();
+                initTTs();
+            }
             int result = mSpeechSynthesizer.speak(text);
-            //am.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE,AudioManager.FLAG_SHOW_UI);
-           // am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
             if(result!=0){
                 Log.d("huivip","语音播放失败");
             }
@@ -76,6 +73,7 @@ public class TTSUtil {
     public void release(){
         if(PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null) {
             mSpeechSynthesizer.release();
+            inited=false;
         }
     }
     private void initTTs() {
@@ -101,7 +99,7 @@ public class TTSUtil {
 
         // 2. 设置listener
         mSpeechSynthesizer.setSpeechSynthesizerListener(listener);
-
+       // mSpeechSynthesizer.setStereoVolume(1F,1F);
         // 3. 设置appId，appKey.secretKey
         int result = mSpeechSynthesizer.setAppId(appId);
         result = mSpeechSynthesizer.setApiKey(appKey, secretKey);
@@ -124,7 +122,7 @@ public class TTSUtil {
         // 设置在线发声音人： 0 普通女声（默认） 1 普通男声 2 特别男声 3 情感男声<度逍遥> 4 情感儿童声<度丫丫>
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "0");
         // 设置合成的音量，0-9 ，默认 5
-        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "7");
+        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "9");
         // 设置合成的语速，0-9 ，默认 5
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, "5");
         // 设置合成的语调，0-9 ，默认 5
@@ -137,8 +135,8 @@ public class TTSUtil {
         // MIX_MODE_HIGH_SPEED_NETWORK ， 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
 
-        //mSpeechSynthesizer.setAudioStreamType(AudioManager.MODE_IN_CALL);
-        mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mSpeechSynthesizer.setAudioStreamType(AudioManager.MODE_IN_CALL);
+       // mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
 
         // x. 额外 ： 自动so文件是否复制正确及上面设置的参数
         Map<String, String> params = new HashMap<>();
@@ -166,6 +164,9 @@ public class TTSUtil {
 
         // 6. 初始化
         result = mSpeechSynthesizer.initTts(ttsMode);
+        if(result==0){
+            inited=true;
+        }
         Log.d("huivip","TTS Init:"+result);
 
     }

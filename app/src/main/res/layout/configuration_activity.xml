@@ -70,7 +70,9 @@
            android:text="@string/str_btn_ok"
            android:layout_marginRight="21dp"
            android:layout_weight="1"
-           android:layout_below="@+id/editText_speedadjust" android:layout_toEndOf="@+id/checkBox_autoSolt"/>
+           android:elevation="21dp"
+           android:layout_marginTop="17dp" android:layout_below="@+id/radioGroup_flatingSelect"
+           android:layout_toEndOf="@+id/checkBox_autoSolt" android:layout_marginStart="17dp"/>
    <Button
            android:text="1. 允许顶层显示功能"
            android:layout_width="wrap_content"
@@ -83,9 +85,8 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableOver"
-           android:layout_alignLeft="@+id/EnableFalting"
-           android:layout_alignStart="@+id/EnableFalting" android:layout_below="@+id/EnableFalting"
-           android:layout_weight="1"/>
+           android:layout_weight="1" android:layout_below="@+id/enableAudio"
+           android:layout_toEndOf="@+id/EnableFalting"/>
    <CheckBox
            android:text="桌面也显示悬浮窗口"
            android:layout_width="wrap_content"
@@ -95,8 +96,8 @@
    <TextView
            android:text="TextView"
            android:layout_width="wrap_content"
-           android:layout_height="wrap_content" android:layout_alignParentBottom="true"
-           android:layout_toEndOf="@+id/button_select_app" android:id="@+id/textView_uid"/>
+           android:layout_height="wrap_content"
+           android:id="@+id/textView_uid" android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"/>
    <RadioGroup
            android:layout_width="wrap_content"
            android:layout_height="wrap_content" android:layout_below="@+id/checkBox_showondescktop"
@@ -125,15 +126,15 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/textView"
-           android:layout_alignBottom="@+id/editText_speedadjust" android:layout_toEndOf="@+id/button_select_app"/>
+           android:layout_above="@+id/linearLayout" android:layout_toStartOf="@+id/editText_speedadjust"/>
    <EditText
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:inputType="numberSigned"
            android:ems="5"
            android:hint="0(-5,5)"
-           android:layout_below="@+id/radioGroup_flatingSelect"
-           android:id="@+id/editText_speedadjust" android:layout_toEndOf="@+id/textView"/>
+           android:id="@+id/editText_speedadjust"
+           android:layout_above="@+id/linearLayout" android:layout_alignStart="@+id/confirm"/>
    <CheckBox
            android:text="显示限速窗口"
            android:layout_width="wrap_content"
@@ -150,14 +151,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView_showmessage"
-            android:layout_alignBaseline="@+id/enableOver" android:layout_alignBottom="@+id/enableOver"
-            android:layout_toEndOf="@+id/enableOver"/>
+            android:layout_alignParentBottom="true" android:layout_toEndOf="@+id/button_select_app"/>
    <TextView
            android:text="语音音量："
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/textView_audio"
-           android:layout_alignBottom="@+id/confirm" android:layout_alignStart="@+id/radioGroup_flatingSelect"/>
+           android:layout_alignTop="@+id/confirm" android:layout_toEndOf="@+id/button_select_app"/>
    <EditText
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
@@ -166,4 +166,11 @@
            android:id="@+id/editText_audioVolume"
            android:layout_alignBottom="@+id/textView_audio"
            android:layout_toEndOf="@+id/textView_audio"/>
+   <TextView
+           android:text="max:"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:id="@+id/textView_maxVolume"
+           android:layout_toEndOf="@+id/editText_audioVolume"
+           android:layout_alignBottom="@+id/editText_audioVolume" android:layout_alignTop="@+id/confirm"/>
 </RelativeLayout>

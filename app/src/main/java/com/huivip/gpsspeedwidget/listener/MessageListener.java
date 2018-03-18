@@ -18,6 +18,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     Context context;
     AudioManager am;
     int currentSystemVolume;
+    int currentVoiceCallVolume;
     int currentMusicVolume;
     /**
      * 播放开始，每句播放开始都会回调
@@ -60,13 +61,16 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechStart(String utteranceId) {
         currentSystemVolume=am.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        currentVoiceCallVolume=am.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
         currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        int musicVolume= PrefUtils.getTtsVolume(context);
+        int voiceVolume= PrefUtils.getTtsVolume(context);
 
-        am.setStreamVolume(AudioManager.STREAM_SYSTEM,1,0);
-        if(musicVolume!=0){
-            am.setStreamVolume(AudioManager.STREAM_MUSIC,musicVolume,0);
+        if(voiceVolume!=0){
+            am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
+            am.setSpeakerphoneOn(true);
+            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,voiceVolume,0);
         }
+
         sendMessage("播放开始回调, 序列号:" + utteranceId);
     }
 
@@ -89,6 +93,8 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
+        am.setSpeakerphoneOn(false);
+        am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,currentVoiceCallVolume,0);
         am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
         am.setStreamVolume(AudioManager.STREAM_SYSTEM,currentSystemVolume,0);
     }
@@ -104,6 +110,10 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         sendErrorMessage("错误发生：" + speechError.description + "，错误编码："
                 + speechError.code + "，序列号:" + utteranceId);
 
+
+        if(currentVoiceCallVolume!=0){
+            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,currentVoiceCallVolume,0);
+        }
         if(currentMusicVolume!=0){
             am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
         }

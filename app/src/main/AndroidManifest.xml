@@ -95,6 +95,8 @@
                     android:resource="@xml/accessibility_service"/>
         </service>
 
+        <activity android:name=".AudioTestActivity">
+        </activity>
     </application>
 
 </manifest>

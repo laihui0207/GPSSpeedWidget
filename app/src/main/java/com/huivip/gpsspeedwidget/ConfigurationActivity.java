@@ -79,9 +79,12 @@ public class ConfigurationActivity extends Activity {
         //enableShowFlattingOnDesktopCheckBox=findViewById(R.id.checkBox_showondescktop);
         //enableShowFlattingOnDesktopCheckBox.setChecked(PrefUtils.isEnableShowFlatingOnDesktop(getApplicationContext()));
         remoteUrlEditBox=findViewById(R.id.editText_remoteURL);
-        remoteUrlEditBox.setText(PrefUtils.getGPSHistoryServerURL(getApplicationContext()));
+        if(!PrefUtils.getGPSHistoryServerURL(getApplicationContext()).equalsIgnoreCase(Constant.LBSURL)) {
+            remoteUrlEditBox.setText(PrefUtils.getGPSHistoryServerURL(getApplicationContext()));
+        } else {
+            remoteUrlEditBox.setText("");
+        }
         CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
-        Log.d("huivip",PrefUtils.isEnableAudioService(getApplicationContext())+"");
         enableAudioCheckBox.setChecked(PrefUtils.isEnableAudioService(getApplicationContext()));
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         enableAutoNaviCheckBox.setChecked(PrefUtils.isEnableAutoNaviService(getApplicationContext()));
@@ -244,6 +247,7 @@ public class ConfigurationActivity extends Activity {
                 finish();
             }
         };
+
         btnOk.setOnClickListener(confirmListener);
         TextView uidView=findViewById(R.id.textView_uid);
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
@@ -270,13 +274,17 @@ public class ConfigurationActivity extends Activity {
 
         EditText ttsVolume=findViewById(R.id.editText_audioVolume);
         int savedVolume=PrefUtils.getTtsVolume(getApplicationContext());
-        if(savedVolume==0){
-            AudioManager am= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            int currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        AudioManager am= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        /*if(savedVolume==0){
+
+            int currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
             savedVolume=currentMusicVolume;
-        }
+        }*/
         ttsVolume.setText(savedVolume+"");
-        ttsVolume.setFilters(new InputFilter[]{ new InputFilterMinMax(0, 20)});
+        ttsVolume.setFilters(new InputFilter[]{ new InputFilterMinMax(-1, am.getStreamVolume(AudioManager.STREAM_VOICE_CALL)+1)});
+        TextView maxVolume=findViewById(R.id.textView_maxVolume);
+        maxVolume.setText("max:"+am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
+                +",current:"+am.getStreamVolume(AudioManager.STREAM_VOICE_CALL));
 
     }
     @Override
@@ -349,14 +357,12 @@ public class ConfigurationActivity extends Activity {
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-       /* if(!Settings.System.canWrite(this)){
+        if(!Settings.System.canWrite(this)){
             Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
                     Uri.parse("package:" + getPackageName()));
             intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivityForResult(intentWriteSetting, 124);
-        }*/
-      /*  startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
-        openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);*/
+        }
     }
     private void askForPermission(String permission, Integer requestCode) {
         if (ContextCompat.checkSelfPermission(ConfigurationActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {

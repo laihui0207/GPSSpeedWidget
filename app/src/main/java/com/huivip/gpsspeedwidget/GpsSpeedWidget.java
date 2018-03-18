@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -23,6 +24,7 @@ public class GpsSpeedWidget extends AppWidgetProvider {
                 service, 0));
         if(paramIntent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)){
             boolean start = PrefUtils.isEnableAutoStart(context);
+            Log.d("huivip","Widget have Boot Start action");
             if(start && PrefUtils.isWidgetActived(context)) {
                 service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT,true);
                 context.startService(service);

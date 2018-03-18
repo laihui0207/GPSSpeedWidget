@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" android:orientation="vertical">
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView_maxSystem" android:layout_weight="1"/>
+        <EditText
+                android:layout_width="185dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/editText_system"/>
+        <Button
+                android:text="System Set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/button_system" android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView_maxMusic" android:layout_weight="1"/>
+        <EditText
+                android:layout_width="186dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/editText_music"/>
+        <Button
+                android:text="Music Set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/button_music" android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView_maxRing" android:layout_weight="1.73"/>
+        <EditText
+                android:layout_width="188dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/editText_ring"/>
+        <Button
+                android:text="Ring Set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/button_ring" android:layout_weight="0.83"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView_voiceCall" android:layout_weight="1"/>
+        <EditText
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/editText_voiceCall"/>
+        <Button
+                android:text="VoiceCall Set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/button_voiceCall" android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+        <Button
+                android:text="Refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/button_save" android:layout_weight="1"/>
+        <Button
+                android:text="Test Audio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/button_testtts" android:layout_weight="1"/>
+    </LinearLayout>
+</LinearLayout>

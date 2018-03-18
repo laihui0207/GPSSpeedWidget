@@ -157,8 +157,9 @@ public class MainActivity extends Activity implements TraceListener {
 
             @Override
             public void onClick(View view) {
-                TTSUtil ttsUtil=TTSUtil.getInstance(getApplicationContext());
-                ttsUtil.speak("你好，语音测试成功");
+                //TTSUtil ttsUtil=TTSUtil.getInstance(getApplicationContext());
+                //ttsUtil.speak("你好，语音测试成功");
+                startActivity(new Intent(MainActivity.this,AudioTestActivity.class));
             }
         });
         EditText textUid=findViewById(R.id.editText_UID);
