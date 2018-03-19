@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             app:apsv_animated="true"
             app:apsv_animation_duration="100"
-            app:apsv_draw_width="8dp"
+            app:apsv_draw_width="4dp"
             app:apsv_model_bg_enabled="true"
             app:apsv_shadowed="false"
             app:apsv_start_angle="135"

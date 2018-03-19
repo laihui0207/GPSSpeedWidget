@@ -531,7 +531,8 @@ public class GpsUtil {
 
         @Override
         public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {
-
+            Log.d("huivip",aimLessModeCongestionInfo.getRoadName());
+            Toast.makeText(context,aimLessModeCongestionInfo.getRoadName(),Toast.LENGTH_SHORT).show();
         }
 
         @Override
