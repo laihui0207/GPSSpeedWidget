@@ -112,7 +112,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content" android:id="@+id/radioButton_onlyHome" android:layout_weight="1"/>
       <RadioButton
-              android:text="上帝模式"
+              android:text="一直显示"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content" android:id="@+id/radioButton_all" android:layout_weight="1"/>
    </RadioGroup>
@@ -173,4 +173,10 @@
            android:id="@+id/textView_maxVolume"
            android:layout_toEndOf="@+id/editText_audioVolume"
            android:layout_alignBottom="@+id/editText_audioVolume" android:layout_alignTop="@+id/confirm"/>
+   <CheckBox
+           android:text="横排显示"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/checkBox_h_direction" android:layout_alignBaseline="@+id/checkBox_autoSolt"
+           android:layout_alignBottom="@+id/checkBox_autoSolt" android:layout_toEndOf="@+id/checkBox_autoSolt"/>
 </RelativeLayout>

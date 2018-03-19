@@ -47,6 +47,7 @@ public abstract class PrefUtils {
     public static final String GPS_REMOTE_URL="com.huivip.widget.remoteUrl";
     public static final String SHOW_FLATTING_ON="com.huivip.widget.showFlatingOn";
     public static final String FLOATTING_WINDOWS_AUTO_SOLT="com.huivip.wdiget.floatting.autoslot";
+    public static final String FLOATING_WINDWS_DIRECTION_horizontal="com.huivip.widget.Direction";
     public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
     public static final String TTS_VOLUME="com.huivip.widget.tts.volume";
@@ -119,6 +120,12 @@ public abstract class PrefUtils {
     }
     public static void setEnableTempAudioService(Context context,boolean enableService){
         edit(context).putBoolean(ENABLE_TEMP_AUDIO_SERVICE, enableService).apply();
+    }
+    public static boolean isFloattingDirectionHorizontal(Context context){
+        return getSharedPreferences(context).getBoolean(FLOATING_WINDWS_DIRECTION_horizontal, false);
+    }
+    public static void setFloattingDirectionHorizontal(Context context,boolean value){
+        edit(context).putBoolean(FLOATING_WINDWS_DIRECTION_horizontal, value).apply();
     }
     public static boolean isEnableAudioService(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_AUDIO_SERVICE, false);

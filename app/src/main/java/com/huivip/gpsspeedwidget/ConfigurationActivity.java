@@ -285,6 +285,14 @@ public class ConfigurationActivity extends Activity {
         TextView maxVolume=findViewById(R.id.textView_maxVolume);
         maxVolume.setText("max:"+am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
                 +",current:"+am.getStreamVolume(AudioManager.STREAM_VOICE_CALL));
+        CheckBox flattingDirectionCheckbox=findViewById(R.id.checkBox_h_direction);
+        flattingDirectionCheckbox.setChecked(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext()));
+        flattingDirectionCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PrefUtils.setFloattingDirectionHorizontal(getApplicationContext(),compoundButton.isChecked());
+            }
+        });
 
     }
     @Override

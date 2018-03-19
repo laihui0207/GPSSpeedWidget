@@ -61,7 +61,8 @@ public class AppDetectionService extends AccessibilityService {
         if (!isActivity) {
             return;
         }*/
-       // when in auto navi or autolite app, disable audio service
+       //Log.d("huivip","Package name:"+componentName.getPackageName());
+       // when in auto navi or auto navi lite app, temp disable audio service
        if(componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
                || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)){
            PrefUtils.setEnableTempAudioService(getApplicationContext(),false);

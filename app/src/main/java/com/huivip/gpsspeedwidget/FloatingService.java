@@ -17,6 +17,7 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.Log;
 import android.view.*;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -103,6 +104,17 @@ public class FloatingService extends Service{
         mLimitView.setVisibility(isShowLimit ? View.VISIBLE : View.GONE);
         boolean isShowSpeed=PrefUtils.getShowSpeedometer(getApplicationContext());
         mSpeedometerView.setVisibility(isShowSpeed ? View.VISIBLE : View.GONE);
+        if(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext())) {
+            RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
+            speedLayout.addRule(RelativeLayout.RIGHT_OF, R.id.limit);
+            speedLayout.removeRule(RelativeLayout.BELOW);
+            mSpeedometerView.setLayoutParams(speedLayout);
+        } else {
+            RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
+            speedLayout.addRule(RelativeLayout.BELOW, R.id.limit);
+            speedLayout.removeRule(RelativeLayout.RIGHT_OF);
+            mSpeedometerView.setLayoutParams(speedLayout);
+        }
         initMonitorPosition();
 
         final ArrayList<ArcProgressStackView.Model> models = new ArrayList<>();

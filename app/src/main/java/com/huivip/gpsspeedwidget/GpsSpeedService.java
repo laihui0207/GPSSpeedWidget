@@ -88,6 +88,12 @@ public class GpsSpeedService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
        //if(intent==null) return super.onStartCommand(intent,flags,startId);
+       /* if(intent.getBooleanExtra(EXTRA_AUTOBOOT,false)){
+            Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.android.messaging");
+            if (launchIntent != null) {
+                startActivity(launchIntent);//null pointer check in case package name was not found
+            }
+        }*/
         if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
             serviceStoped =false;
             //this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
