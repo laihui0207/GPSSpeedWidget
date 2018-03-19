@@ -179,4 +179,10 @@
            android:layout_height="wrap_content"
            android:id="@+id/checkBox_h_direction" android:layout_alignBaseline="@+id/checkBox_autoSolt"
            android:layout_alignBottom="@+id/checkBox_autoSolt" android:layout_toEndOf="@+id/checkBox_autoSolt"/>
+   <Button
+           android:text="选择开机启动应用"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" android:layout_below="@+id/textView_audio"
+           android:layout_toEndOf="@+id/button_select_app" android:layout_marginTop="13dp"
+           android:id="@+id/button_selectApp"/>
 </RelativeLayout>

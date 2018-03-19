@@ -24,6 +24,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import butterknife.BindView;
+import com.bumptech.glide.Glide;
+import com.huivip.gpsspeedwidget.appselection.AppInfo;
+import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
+import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -31,6 +35,7 @@ import com.huivip.gpsspeedwidget.utils.TTSUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -215,7 +220,8 @@ public class ConfigurationActivity extends Activity {
                 }
             }
         });
-
+        Glide.get(this)
+                .register(AppInfo.class, InputStream.class, new AppInfoIconLoader.Factory());
         PrefUtils.setApps(getApplicationContext(), getDescktopPackageName());
         Button btnOk= (Button) findViewById(R.id.confirm);
         View.OnClickListener confirmListener  = new View.OnClickListener() {
@@ -291,6 +297,13 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 PrefUtils.setFloattingDirectionHorizontal(getApplicationContext(),compoundButton.isChecked());
+            }
+        });
+        Button selectAppButton=findViewById(R.id.button_selectApp);
+        selectAppButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ConfigurationActivity.this,AppSelectionActivity.class));
             }
         });
 

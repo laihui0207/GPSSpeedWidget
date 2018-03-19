@@ -28,6 +28,7 @@ public abstract class PrefUtils {
     private static final String PREF_BEEP = "pref_beep";
     private static final String PREF_DEBUGGING = "pref_debugging";
     private static final String PREF_APPS = "pref_apps";
+    private static final String PREF_AUTO_LAUNCH_APPS = "pref_Auto_apps";
     private static final String PREF_FIRSTRUN = "pref_initial";
     private static final String PREF_VERSION_CODE = "pref_version_code";
     private static final String PREF_SPEEDLIMIT_SIZE = "pref_speedlimit_size";
@@ -290,7 +291,13 @@ public abstract class PrefUtils {
     public static void setApps(Context context, Set<String> packageNames) {
         edit(context).putStringSet(PREF_APPS, packageNames).apply();
     }
+    public static Set<String> getAutoLaunchApps(Context context) {
+        return new HashSet<>(getSharedPreferences(context).getStringSet(PREF_AUTO_LAUNCH_APPS, new HashSet<String>()));
+    }
 
+    public static void setAutoLaunchApps(Context context, Set<String> packageNames) {
+        edit(context).putStringSet(PREF_AUTO_LAUNCH_APPS, packageNames).apply();
+    }
     public static float getSpeedometerSize(Context context) {
         return getSharedPreferences(context).getFloat(PREF_SPEEDOMETER_SIZE, 1f);
     }

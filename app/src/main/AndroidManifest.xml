@@ -30,7 +30,7 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/Theme.Velociraptor" >
         <meta-data
                 android:name="com.amap.api.v2.apikey"
                 android:value="6d91e53ca05dee32ec58c9d257224e7b"/>
@@ -97,6 +97,7 @@
 
         <activity android:name=".AudioTestActivity">
         </activity>
+        <activity android:name=".appselection.AppSelectionActivity"></activity>
     </application>
 
 </manifest>

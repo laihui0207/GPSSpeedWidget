@@ -12,6 +12,7 @@ import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.Date;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -88,12 +89,15 @@ public class GpsSpeedService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
        //if(intent==null) return super.onStartCommand(intent,flags,startId);
-       /* if(intent.getBooleanExtra(EXTRA_AUTOBOOT,false)){
-            Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.android.messaging");
-            if (launchIntent != null) {
-                startActivity(launchIntent);//null pointer check in case package name was not found
+        if(intent.getBooleanExtra(EXTRA_AUTOBOOT,false)){
+            Set<String> autoApps=PrefUtils.getAutoLaunchApps(getApplicationContext());
+            for(String packageName:autoApps) {
+                Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+                if (launchIntent != null) {
+                    startActivity(launchIntent);//null pointer check in case package name was not found
+                }
             }
-        }*/
+        }
         if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
             serviceStoped =false;
             //this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
