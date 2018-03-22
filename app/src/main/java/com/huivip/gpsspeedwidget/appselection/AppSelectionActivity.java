@@ -41,8 +41,8 @@ public class AppSelectionActivity extends AppCompatActivity {
 
     public static final String STATE_SELECTED_APPS = "state_selected_apps";
     public static final String STATE_APPS = "state_apps";
-    public static final String STATE_MAP_APPS = "state_map_apps";
-    public static final String STATE_MAPS_ONLY = "state_maps_only";
+    //public static final String STATE_MAP_APPS = "state_map_apps";
+    //public static final String STATE_MAPS_ONLY = "state_maps_only";
 
     private AppAdapter mAdapter;
     private RecyclerFastScroller mScroller;
@@ -50,13 +50,13 @@ public class AppSelectionActivity extends AppCompatActivity {
 
     private Set<String> mSelectedApps;
     private List<AppInfo> mAppList;
-    private List<AppInfo> mMapApps;
+    //private List<AppInfo> mMapApps;
 
-    private boolean mMapsOnly;
+   // private boolean mMapsOnly;
 
     private CompositeSubscription mLoadAppsSubscription;
     private boolean mLoadingAppList;
-    private boolean mLoadingMapApps;
+    //private boolean mLoadingMapApps;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,35 +78,35 @@ public class AppSelectionActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (mMapsOnly) {
+                /*if (mMapsOnly) {
                     reloadMapApps();
-                } else {
+                } else {*/
                     reloadInstalledApps();
-                }
+                /*}*/
                 mAdapter.setAppInfos(new ArrayList<AppInfo>());
             }
         });
         mSwipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
 
         mLoadAppsSubscription = new CompositeSubscription();
-        if (savedInstanceState == null) {
-            mMapsOnly = true;
-        } else {
+        if (savedInstanceState != null) {
+         /*   mMapsOnly = true;
+        } else {*/
             mAppList = savedInstanceState.getParcelableArrayList(STATE_APPS);
-            mMapApps = savedInstanceState.getParcelableArrayList(STATE_MAP_APPS);
-            mMapsOnly = false;// savedInstanceState.getBoolean(STATE_MAPS_ONLY);
+           // mMapApps = savedInstanceState.getParcelableArrayList(STATE_MAP_APPS);
+            //mMapsOnly = false;// savedInstanceState.getBoolean(STATE_MAPS_ONLY);
             mSelectedApps = new HashSet<>(savedInstanceState.getStringArrayList(STATE_SELECTED_APPS));
         }
 
-        if (mMapApps == null) {
+        /*if (mMapApps == null) {
             reloadMapApps();
         } else if (mMapsOnly) {
             mAdapter.setAppInfos(mMapApps);
-        }
+        }*/
 
         if (mAppList == null) {
             reloadInstalledApps();
-        } else if (!mMapsOnly) {
+        } else /*if (!mMapsOnly) */{
             mAdapter.setAppInfos(mAppList);
         }
 
@@ -116,7 +116,7 @@ public class AppSelectionActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        if (mLoadingAppList || mLoadingMapApps) {
+        if (mLoadingAppList /*|| mLoadingMapApps*/) {
             mSwipeRefreshLayout.setRefreshing(true);
         }
     }
@@ -130,10 +130,10 @@ public class AppSelectionActivity extends AppCompatActivity {
                 .subscribe(new SingleSubscriber<List<AppInfo>>() {
                     @Override
                     public void onSuccess(List<AppInfo> installedApps) {
-                        if (!mMapsOnly) {
+                       /* if (!mMapsOnly) {*/
                             mAdapter.setAppInfos(installedApps);
                             mSwipeRefreshLayout.setRefreshing(false);
-                        }
+                      /*  }*/
                         mAppList = installedApps;
 
                         mLoadingAppList = false;
@@ -150,7 +150,7 @@ public class AppSelectionActivity extends AppCompatActivity {
         mLoadAppsSubscription.add(subscription);
     }
 
-    private void reloadMapApps() {
+    /*private void reloadMapApps() {
         mLoadingMapApps = true;
         mSwipeRefreshLayout.setRefreshing(true);
         mSelectedApps = PrefUtils.getAutoLaunchApps(this);
@@ -174,7 +174,7 @@ public class AppSelectionActivity extends AppCompatActivity {
                     }
                 });
         mLoadAppsSubscription.add(subscription);
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
@@ -186,13 +186,13 @@ public class AppSelectionActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_app_selection, menu);
-        MenuItem item = menu.findItem(R.id.menu_app_selection_maps);
-        Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.ic_map_white_24dp).mutate();
-        drawable = DrawableCompat.wrap(drawable);
-        if (mMapsOnly) {
+       // MenuItem item = menu.findItem(R.id.menu_app_selection_maps);
+      /*  Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.ic_map_white_24dp).mutate();
+        drawable = DrawableCompat.wrap(drawable);*/
+       /* if (mMapsOnly) {
             DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.colorAccent));
-        }
-        item.setIcon(drawable);
+        }*/
+       // item.setIcon(drawable);
         return true;
     }
 
@@ -202,14 +202,14 @@ public class AppSelectionActivity extends AppCompatActivity {
             case R.id.menu_app_selection_done:
                 finish();
                 return true;
-            case R.id.menu_app_selection_maps:
+            /*case R.id.menu_app_selection_maps:
                 //mMapsOnly = !mMapsOnly;
                 invalidateOptionsMenu();
                 mAdapter.setAppInfos(mAppList);
-                mSwipeRefreshLayout.setRefreshing(
+                *//*mSwipeRefreshLayout.setRefreshing(
                         mMapsOnly && mLoadingMapApps ||
-                                !mMapsOnly && mLoadingAppList);
-                return true;
+                                !mMapsOnly && mLoadingAppList);*//*
+                return true;*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -245,8 +245,8 @@ public class AppSelectionActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(STATE_APPS, (ArrayList<AppInfo>) mAppList);
-        outState.putParcelableArrayList(STATE_MAP_APPS, (ArrayList<AppInfo>) mMapApps);
-        outState.putBoolean(STATE_MAPS_ONLY, mMapsOnly);
+        //outState.putParcelableArrayList(STATE_MAP_APPS, (ArrayList<AppInfo>) mMapApps);
+        //outState.putBoolean(STATE_MAPS_ONLY, mMapsOnly);
         outState.putStringArrayList(STATE_SELECTED_APPS, new ArrayList<>(mSelectedApps));
         super.onSaveInstanceState(outState);
     }

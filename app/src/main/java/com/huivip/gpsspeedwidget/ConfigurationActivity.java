@@ -79,6 +79,7 @@ public class ConfigurationActivity extends Activity {
         recordGPSCheckBox.setChecked(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()));
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         uploadGPSCheckBox.setChecked(PrefUtils.isEnableUploadGPSHistory(getApplicationContext()));
+
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         enableFloatingWidnowCheckBox.setChecked(PrefUtils.isEnableFlatingWindow(getApplicationContext()));
         //enableShowFlattingOnDesktopCheckBox=findViewById(R.id.checkBox_showondescktop);
@@ -91,6 +92,10 @@ public class ConfigurationActivity extends Activity {
         }
         CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
         enableAudioCheckBox.setChecked(PrefUtils.isEnableAudioService(getApplicationContext()));
+        CheckBox audidMixCheckBox=findViewById(R.id.checkBox_mix);
+        audidMixCheckBox.setChecked(PrefUtils.isEnableAudioMixService(getApplicationContext()));
+        audidMixCheckBox.setEnabled(enableAudioCheckBox.isChecked());
+
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         enableAutoNaviCheckBox.setChecked(PrefUtils.isEnableAutoNaviService(getApplicationContext()));
         remoteUrlEditBox.setEnabled(uploadGPSCheckBox.isChecked());
@@ -146,11 +151,26 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableShowFlattingOnDesktop(getApplicationContext(),compoundButton.isChecked());
             }
         });*/
+
         enableAudioCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
+                audidMixCheckBox.setEnabled(checkBoxButton.isChecked());
                 PrefUtils.setEnableAudioService(getApplicationContext(),checkBoxButton.isChecked());
+                if(checkBoxButton.isChecked()) {
+                    checkIfCanIncreaseMusic();
+                }
+            }
+        });
+        audidMixCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PrefUtils.setEnableAudioMixService(getApplicationContext(),compoundButton.isChecked());
+                TTSUtil ttsUtil=TTSUtil.getInstance(getApplicationContext());
+                ttsUtil.release();
+                ttsUtil.initTTs();
             }
         });
         enableAutoNaviCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
@@ -244,9 +264,9 @@ public class ConfigurationActivity extends Activity {
                 if(adjustValue!=null && !adjustValue.equalsIgnoreCase("")){
                     PrefUtils.setSpeedAdjust(getApplicationContext(),Integer.parseInt(adjustValue));
                 }
-                EditText ttsVolume=findViewById(R.id.editText_audioVolume);
+                /*EditText ttsVolume=findViewById(R.id.editText_audioVolume);
                 String setedVolume=ttsVolume.getText().toString();
-                PrefUtils.setTtsVolume(getApplicationContext(),Integer.parseInt(setedVolume));
+                PrefUtils.setTtsVolume(getApplicationContext(),Integer.parseInt(setedVolume));*/
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
@@ -278,24 +298,23 @@ public class ConfigurationActivity extends Activity {
             speedAdjustEditText.setText(PrefUtils.getSpeedAdjust(getApplicationContext())+"");
         }
 
-        EditText ttsVolume=findViewById(R.id.editText_audioVolume);
-        int savedVolume=PrefUtils.getTtsVolume(getApplicationContext());
-        AudioManager am= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        /*if(savedVolume==0){
-
-            int currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
-            savedVolume=currentMusicVolume;
-        }*/
-        ttsVolume.setText(savedVolume+"");
-        ttsVolume.setFilters(new InputFilter[]{ new InputFilterMinMax(-1, am.getStreamVolume(AudioManager.STREAM_VOICE_CALL)+1)});
-        TextView maxVolume=findViewById(R.id.textView_maxVolume);
-        maxVolume.setText("max:"+am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
-                +",current:"+am.getStreamVolume(AudioManager.STREAM_VOICE_CALL));
         CheckBox flattingDirectionCheckbox=findViewById(R.id.checkBox_h_direction);
         flattingDirectionCheckbox.setChecked(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext()));
         flattingDirectionCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                /*View mSpeedometerView=findViewById(R.id.speedometer);
+                if(compoundButton.isChecked()) {
+                    RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
+                    speedLayout.addRule(RelativeLayout.RIGHT_OF, R.id.limit);
+                    speedLayout.removeRule(RelativeLayout.BELOW);
+                    mSpeedometerView.setLayoutParams(speedLayout);
+                } else {
+                    RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
+                    speedLayout.addRule(RelativeLayout.BELOW, R.id.limit);
+                    speedLayout.removeRule(RelativeLayout.RIGHT_OF);
+                    mSpeedometerView.setLayoutParams(speedLayout);
+                }*/
                 PrefUtils.setFloattingDirectionHorizontal(getApplicationContext(),compoundButton.isChecked());
             }
         });
@@ -315,6 +334,22 @@ public class ConfigurationActivity extends Activity {
         if (hasFocus) {
             invalidateStates();
         }
+    }
+    private void checkIfCanIncreaseMusic(){
+        AudioManager audioManager= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int systemVolume=audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        int musicVolume=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        boolean ifSeparatedAudio=false;
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,2,0);
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,1,0);
+        int systemVolumeCurrent=audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        if(systemVolumeCurrent!=2 && systemVolumeCurrent==1){
+            Log.d("huivip","Separated");
+            ifSeparatedAudio=true;
+        }
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,systemVolume,0);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,musicVolume,0);
+        PrefUtils.setseparatedVolume(getApplicationContext(),ifSeparatedAudio);
     }
     private void invalidateStates() {
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);

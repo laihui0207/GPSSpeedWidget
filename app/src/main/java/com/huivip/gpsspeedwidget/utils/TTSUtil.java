@@ -74,9 +74,10 @@ public class TTSUtil {
         if(PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null) {
             mSpeechSynthesizer.release();
             inited=false;
+            mSpeechSynthesizer=null;
         }
     }
-    private void initTTs() {
+    public void initTTs() {
         LoggerProxy.printable(true); // 日志打印在logcat中
         boolean isMix = ttsMode.equals(TtsMode.MIX);
         boolean isSuccess;
@@ -122,7 +123,7 @@ public class TTSUtil {
         // 设置在线发声音人： 0 普通女声（默认） 1 普通男声 2 特别男声 3 情感男声<度逍遥> 4 情感儿童声<度丫丫>
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "0");
         // 设置合成的音量，0-9 ，默认 5
-        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "9");
+        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "8");
         // 设置合成的语速，0-9 ，默认 5
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, "5");
         // 设置合成的语调，0-9 ，默认 5
@@ -134,8 +135,13 @@ public class TTSUtil {
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE_WIFI wifi状态下使用在线，非wifi离线。在线状态下， 请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_NETWORK ， 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
-
-        mSpeechSynthesizer.setAudioStreamType(AudioManager.MODE_IN_CALL);
+        if(!PrefUtils.isEnableAudioMixService(context)){
+            Log.d("huivip","Audio use voice Call");
+            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
+        } else {
+            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
+        }
+        //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_ALARM);
        // mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
 
         // x. 额外 ： 自动so文件是否复制正确及上面设置的参数

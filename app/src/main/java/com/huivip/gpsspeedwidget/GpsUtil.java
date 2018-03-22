@@ -135,20 +135,19 @@ public class GpsUtil {
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    Log.d("huivip","Network Changed!");
                     ConnectivityManager connectMgr = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
                     NetworkInfo activeNetwork = connectMgr.getActiveNetworkInfo();
                     if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                        Log.d("huivip","network connected!");
-                        if(!aimlessStatred){
+                        if(!aimlessStatred && serviceStarted){
                             startAimlessNavi();
                         }
+                        context.unregisterReceiver(broadcastReceiver);
                     }
-                    else {
+                   /* else {
                         if(aimlessStatred){
                             stopAimlessNavi();
                         }
-                    }
+                    }*/
                 }
             };
             IntentFilter intentFilter = new IntentFilter();
@@ -345,7 +344,7 @@ public class GpsUtil {
 
         @Override
         public void onInitNaviSuccess() {
-            ttsUtil.speak("智能巡航服务开启");
+           // ttsUtil.speak("智能巡航服务开启");
             aimlessStatred=true;
             Toast.makeText(context,"智能巡航服务开启",Toast.LENGTH_SHORT).show();
         }
@@ -436,6 +435,9 @@ public class GpsUtil {
                         || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYSTART
                         || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYEND
                         || aMapNaviCameraInfo.getCameraType() == CameraType.BREAKRULE ){
+                    limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
+                }
+                if(aMapNaviCameraInfo.getCameraSpeed()!=0){
                     limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
                 }
             }

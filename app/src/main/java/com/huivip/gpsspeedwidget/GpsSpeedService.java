@@ -97,17 +97,23 @@ public class GpsSpeedService extends Service {
                     startActivity(launchIntent);//null pointer check in case package name was not found
                 }
             }
+            Log.d("huivip","GPS service Get AutoBoot event!");
         }
-        if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
+
+        boolean ifEnableWidget=PrefUtils.isWidgetActived(getApplicationContext());
+        if(!ifEnableWidget){
+            return super.onStartCommand(intent,flags,startId);
+        }
+        if ( intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
             serviceStoped =false;
             //this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
             this.remoteViews.setTextViewText(R.id.textView1_1, "...");
             this.numberRemoteViews.setTextViewText(R.id.number_speed,"...");
-            //this.numberRemoteViews.setProgressBar(R.id.progressBar,125,50,false);
+            this.numberRemoteViews.setTextViewText(R.id.number_limit,"...");
+            this.numberRemoteViews.setProgressBar(R.id.progressBar,125,0,false);
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
             this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);
             gpsUtil.startLocationService();
-            //Log.d("huivip",intent.getBooleanExtra(EXTRA_AUTOBOOT,false)+"");
             this.locationScanTask = new TimerTask()
             {
                 @Override
@@ -126,7 +132,7 @@ public class GpsSpeedService extends Service {
             };
             this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
 
-
+            PrefUtils.setUserManualClosedServer(getApplicationContext(),false);
             if(intent.getBooleanExtra(EXTRA_AUTOBOOT,false)){
                 intent.removeExtra(EXTRA_AUTOBOOT);
             }
@@ -148,6 +154,7 @@ public class GpsSpeedService extends Service {
             if(alarm!=null){
                 alarm.cancel(uploadMessageSender);
             }
+            PrefUtils.setUserManualClosedServer(getApplicationContext(),true);
             stopSelf();
         }
         return super.onStartCommand(intent,flags,startId);

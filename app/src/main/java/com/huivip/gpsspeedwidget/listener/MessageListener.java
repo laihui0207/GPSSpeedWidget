@@ -63,12 +63,12 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         currentSystemVolume=am.getStreamVolume(AudioManager.STREAM_SYSTEM);
         currentVoiceCallVolume=am.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
         currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        int voiceVolume= PrefUtils.getTtsVolume(context);
 
-        if(voiceVolume!=0){
+        if(PrefUtils.isSeparatedVolume(context)){
+            Log.d("huivip","increase music");
             am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
             am.setSpeakerphoneOn(true);
-            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,voiceVolume,0);
+            //am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,voiceVolume,0);
         }
 
         sendMessage("播放开始回调, 序列号:" + utteranceId);
@@ -94,7 +94,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
         am.setSpeakerphoneOn(false);
-        am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,currentVoiceCallVolume,0);
+        //am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,currentVoiceCallVolume,0);
         am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
         am.setStreamVolume(AudioManager.STREAM_SYSTEM,currentSystemVolume,0);
     }
@@ -111,9 +111,9 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
                 + speechError.code + "，序列号:" + utteranceId);
 
 
-        if(currentVoiceCallVolume!=0){
+      /*  if(currentVoiceCallVolume!=0){
             am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,currentVoiceCallVolume,0);
-        }
+        }*/
         if(currentMusicVolume!=0){
             am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
         }

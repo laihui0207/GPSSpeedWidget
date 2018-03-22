@@ -50,7 +50,6 @@ public class AppDetectionService extends AccessibilityService {
                 || enabledApps == null) {
             return;
         }
-
         ComponentName componentName = new ComponentName(
                 event.getPackageName().toString(),
                 event.getClassName().toString()

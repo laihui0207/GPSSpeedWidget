@@ -8,7 +8,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 27
         versionCode 1
-        versionName "1.5"
+        versionName "1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
@@ -44,14 +44,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    /*  android.applicationVariants.all {
+      android.applicationVariants.all {
         variant ->
             variant.outputs.each {
                 output ->
                     output.outputFile = new File(output.outputFile.parent, "GPS速度插件_"
                             + buildType.name + "_v" + defaultConfig.versionName + "-${releaseTime()}.apk");
             }
-    }*/
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

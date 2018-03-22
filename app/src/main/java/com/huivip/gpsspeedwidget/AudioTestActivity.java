@@ -17,6 +17,9 @@ public class AudioTestActivity extends Activity {
     EditText musicEditText;
     EditText ringEditText;
     EditText voiceCallEditText;
+    EditText alarmEditText;
+    EditText notificationText;
+/*    EditText accEditText;*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,10 +33,19 @@ public class AudioTestActivity extends Activity {
         ringTextView.setText("Ring: current:"+audioManager.getStreamVolume(AudioManager.STREAM_RING)+",max:"+audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
         TextView voiceCallTextView=findViewById(R.id.textView_voiceCall);
         voiceCallTextView.setText("VoiceCall: current:"+audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL)+",max:"+audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL));
+        TextView alarmTextView=findViewById(R.id.textView_Alarm);
+        alarmTextView.setText("Alarm Current:"+audioManager.getStreamVolume(AudioManager.STREAM_ALARM)+",max:"+audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
+        TextView NotificationTextView=findViewById(R.id.textView_Notification);
+        NotificationTextView.setText("Notification Current:"+audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION)+",max:"+audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION));
+       /* TextView accTextView=findViewById(R.id.textView_ACC);
+        accTextView.setText("ACC Current:"+audioManager.getStreamVolume(AudioManager.STREAM_ACCESSIBILITY)+",max:"+audioManager.getStreamMaxVolume(AudioManager.STREAM_ACCESSIBILITY));*/
         systemEditText=findViewById(R.id.editText_system);
         musicEditText=findViewById(R.id.editText_music);
         ringEditText=findViewById(R.id.editText_ring);
         voiceCallEditText=findViewById(R.id.editText_voiceCall);
+        alarmEditText=findViewById(R.id.editText_Alarm);
+        notificationText=findViewById(R.id.editText_Notification);
+/*        accEditText=findViewById(R.id.editText_ACC);*/
         Button buttonSystem=findViewById(R.id.button_system);
         buttonSystem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +74,27 @@ public class AudioTestActivity extends Activity {
                 audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,Integer.parseInt(voiceCallEditText.getText().toString()),AudioManager.FLAG_SHOW_UI);
             }
         });
+        Button alarmButton=findViewById(R.id.button_Alarm);
+        alarmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                audioManager.setStreamVolume(AudioManager.STREAM_ALARM,Integer.parseInt(alarmEditText.getText().toString()),AudioManager.FLAG_SHOW_UI);
+            }
+        });
+        Button notificationButton=findViewById(R.id.button_Notification);
+        notificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,Integer.parseInt(notificationText.getText().toString()),AudioManager.FLAG_SHOW_UI);
+            }
+        });
+       /* Button accButton=findViewById(R.id.button_ACC);
+        accButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                audioManager.setStreamVolume(AudioManager.STREAM_ACCESSIBILITY,Integer.parseInt(accEditText.getText().toString()),AudioManager.FLAG_SHOW_UI);
+            }
+        });*/
         Button testButton=findViewById(R.id.button_testtts);
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +119,7 @@ public class AudioTestActivity extends Activity {
         musicEditText.setText(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)+"");
         ringEditText.setText(audioManager.getStreamVolume(AudioManager.STREAM_RING)+"");
         voiceCallEditText.setText(audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL)+"");
-
+        alarmEditText.setText(audioManager.getStreamVolume(AudioManager.STREAM_ALARM)+"");
+        notificationText.setText(audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION)+"");
     }
 }

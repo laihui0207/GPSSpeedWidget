@@ -12,8 +12,9 @@
    <CheckBox
            android:text="记录GPS轨迹"
            android:layout_width="wrap_content"
-           android:layout_height="wrap_content" android:layout_below="@+id/autoStart"
-           android:layout_alignStart="@+id/autoStart" android:id="@+id/recordGPS"/>
+           android:layout_height="wrap_content"
+           android:id="@+id/recordGPS" android:layout_below="@+id/autoStart" android:layout_alignParentStart="true"
+           android:layout_marginTop="13dp"/>
    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                  android:id="@+id/linearLayout"
                  android:layout_below="@+id/recordGPS">
@@ -55,8 +56,8 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableAudio"
-           android:checked="false" android:layout_below="@+id/linearLayout"
-           android:layout_alignStart="@+id/checkBox_showLimit"/>
+           android:checked="false"
+           android:layout_below="@+id/linearLayout" android:layout_toEndOf="@+id/enableAutoNavi"/>
    <Button
            android:text="Select maps"
            android:layout_width="wrap_content"
@@ -134,7 +135,8 @@
            android:ems="5"
            android:hint="0(-5,5)"
            android:id="@+id/editText_speedadjust"
-           android:layout_above="@+id/linearLayout" android:layout_alignStart="@+id/confirm"/>
+           android:layout_above="@+id/linearLayout" android:layout_alignStart="@+id/confirm"
+           android:layout_below="@+id/autoStart"/>
    <CheckBox
            android:text="显示限速窗口"
            android:layout_width="wrap_content"
@@ -152,27 +154,14 @@
             android:layout_height="wrap_content"
             android:id="@+id/textView_showmessage"
             android:layout_alignParentBottom="true" android:layout_toEndOf="@+id/button_select_app"/>
-   <TextView
-           android:text="语音音量："
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/textView_audio"
-           android:layout_alignTop="@+id/confirm" android:layout_toEndOf="@+id/button_select_app"/>
-   <EditText
+  <!-- <EditText
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:inputType="number"
            android:ems="2"
            android:id="@+id/editText_audioVolume"
            android:layout_alignBottom="@+id/textView_audio"
-           android:layout_toEndOf="@+id/textView_audio"/>
-   <TextView
-           android:text="max:"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:id="@+id/textView_maxVolume"
-           android:layout_toEndOf="@+id/editText_audioVolume"
-           android:layout_alignBottom="@+id/editText_audioVolume" android:layout_alignTop="@+id/confirm"/>
+           android:layout_toEndOf="@+id/textView_audio"/>-->
    <CheckBox
            android:text="横排显示"
            android:layout_width="wrap_content"
@@ -180,9 +169,15 @@
            android:id="@+id/checkBox_h_direction" android:layout_alignBaseline="@+id/checkBox_autoSolt"
            android:layout_alignBottom="@+id/checkBox_autoSolt" android:layout_toEndOf="@+id/checkBox_autoSolt"/>
    <Button
-           android:text="选择开机启动应用"
+           android:text="辅助开机启动其它应用"
            android:layout_width="wrap_content"
-           android:layout_height="wrap_content" android:layout_below="@+id/textView_audio"
-           android:layout_toEndOf="@+id/button_select_app" android:layout_marginTop="13dp"
-           android:id="@+id/button_selectApp"/>
+           android:layout_height="wrap_content"
+           android:id="@+id/button_selectApp"
+           android:layout_toEndOf="@+id/radioGroup_flatingSelect"
+           android:layout_below="@+id/button_select_app"/>
+   <CheckBox
+           android:text="语音与音乐混合"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" android:layout_below="@+id/linearLayout"
+           android:layout_toEndOf="@+id/enableAudio" android:id="@+id/checkBox_mix"/>
 </RelativeLayout>

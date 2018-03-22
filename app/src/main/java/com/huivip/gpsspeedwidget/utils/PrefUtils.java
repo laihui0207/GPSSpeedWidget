@@ -42,6 +42,7 @@ public abstract class PrefUtils {
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
     public static final String ENABLE_FLATING_WINDOW="com.huivip.Enable.fating.History";
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enable.AudioService";
+    public static final String ENABLE_AUDIO_MIX="com.huivip.enable.AudioMix";
     public static final String ENABLE_TEMP_AUDIO_SERVICE="com.huivip.enable.temp.AudioService";
     public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enable.autoNavi.Service";
     public static final String WIDGET_ACTIVED="com.huivip.widget.actived";
@@ -51,7 +52,8 @@ public abstract class PrefUtils {
     public static final String FLOATING_WINDWS_DIRECTION_horizontal="com.huivip.widget.Direction";
     public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
-    public static final String TTS_VOLUME="com.huivip.widget.tts.volume";
+    public static final String SEPARATED_VOLUME ="com.huivip.widget.tts.volume";
+    public static final String USER_CLOSED_SERVER="com.huivip.widget.Close.serviced";
 
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
@@ -122,6 +124,12 @@ public abstract class PrefUtils {
     public static void setEnableTempAudioService(Context context,boolean enableService){
         edit(context).putBoolean(ENABLE_TEMP_AUDIO_SERVICE, enableService).apply();
     }
+    public static boolean isUserManualClosedService(Context context){
+        return getSharedPreferences(context).getBoolean(USER_CLOSED_SERVER, false);
+    }
+    public static void setUserManualClosedServer(Context context,boolean closed){
+        edit(context).putBoolean(USER_CLOSED_SERVER, closed).apply();
+    }
     public static boolean isFloattingDirectionHorizontal(Context context){
         return getSharedPreferences(context).getBoolean(FLOATING_WINDWS_DIRECTION_horizontal, false);
     }
@@ -133,6 +141,12 @@ public abstract class PrefUtils {
     }
     public static void setEnableAudioService(Context context,boolean enableService){
         edit(context).putBoolean(ENABLE_AUDIO_SERVICE, enableService).apply();
+    }
+    public static boolean isEnableAudioMixService(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_AUDIO_MIX, false);
+    }
+    public static void setEnableAudioMixService(Context context,boolean enableService){
+        edit(context).putBoolean(ENABLE_AUDIO_MIX, enableService).apply();
     }
     public static boolean isEnableAutoNaviService(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_AUTONAVI_SERVICE, true);
@@ -150,12 +164,12 @@ public abstract class PrefUtils {
     public static int getSpeedAdjust(Context context) {
         return getSharedPreferences(context).getInt(PREF_GPS_SPEED_ADJUST, 0);
     }
-    public static void setTtsVolume(Context context, int value) {
-        edit(context).putInt(TTS_VOLUME, value).apply();
+    public static void setseparatedVolume(Context context, boolean value) {
+        edit(context).putBoolean(SEPARATED_VOLUME, value).apply();
     }
 
-    public static int getTtsVolume(Context context) {
-        return getSharedPreferences(context).getInt(TTS_VOLUME, 0);
+    public static boolean isSeparatedVolume(Context context) {
+        return getSharedPreferences(context).getBoolean(SEPARATED_VOLUME, false);
     }
     public static void setVersionCode(Context context, int versionCode) {
         edit(context).putInt(PREF_VERSION_CODE, versionCode).apply();

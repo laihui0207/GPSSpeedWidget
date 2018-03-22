@@ -61,13 +61,14 @@ public class FloatingService extends Service{
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent!=null){
             boolean enableFloatingService=PrefUtils.isEnableFlatingWindow(getApplicationContext());
-            if (!enableFloatingService || intent.getBooleanExtra(EXTRA_CLOSE, false)) {
+            boolean userClosedService=PrefUtils.isUserManualClosedService(getApplicationContext());
+            if (!enableFloatingService || userClosedService || intent.getBooleanExtra(EXTRA_CLOSE, false)) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
+            gpsUtil.startLocationService();
         }
-        gpsUtil.startLocationService();
         return super.onStartCommand(intent, flags, startId);
     }
     private void onStop(){
