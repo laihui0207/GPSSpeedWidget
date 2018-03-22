@@ -300,22 +300,15 @@ public class ConfigurationActivity extends Activity {
 
         CheckBox flattingDirectionCheckbox=findViewById(R.id.checkBox_h_direction);
         flattingDirectionCheckbox.setChecked(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext()));
+        Intent floatService=new Intent(this, FloatingService.class);
         flattingDirectionCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                /*View mSpeedometerView=findViewById(R.id.speedometer);
-                if(compoundButton.isChecked()) {
-                    RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
-                    speedLayout.addRule(RelativeLayout.RIGHT_OF, R.id.limit);
-                    speedLayout.removeRule(RelativeLayout.BELOW);
-                    mSpeedometerView.setLayoutParams(speedLayout);
-                } else {
-                    RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
-                    speedLayout.addRule(RelativeLayout.BELOW, R.id.limit);
-                    speedLayout.removeRule(RelativeLayout.RIGHT_OF);
-                    mSpeedometerView.setLayoutParams(speedLayout);
-                }*/
                 PrefUtils.setFloattingDirectionHorizontal(getApplicationContext(),compoundButton.isChecked());
+                floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                startService(floatService);
+                floatService.removeExtra(FloatingService.EXTRA_CLOSE);
+                startService(floatService);
             }
         });
         Button selectAppButton=findViewById(R.id.button_selectApp);
