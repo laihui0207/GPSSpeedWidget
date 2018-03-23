@@ -264,6 +264,8 @@ public class ConfigurationActivity extends Activity {
                 if(adjustValue!=null && !adjustValue.equalsIgnoreCase("")){
                     PrefUtils.setSpeedAdjust(getApplicationContext(),Integer.parseInt(adjustValue));
                 }
+                boolean serviceEnabled = Utils.isAccessibilityServiceEnabled(getApplicationContext(), AppDetectionService.class);
+                PrefUtils.setEnableAccessibilityService(getApplicationContext(),serviceEnabled);
                 /*EditText ttsVolume=findViewById(R.id.editText_audioVolume);
                 String setedVolume=ttsVolume.getText().toString();
                 PrefUtils.setTtsVolume(getApplicationContext(),Integer.parseInt(setedVolume));*/
@@ -347,7 +349,8 @@ public class ConfigurationActivity extends Activity {
     private void invalidateStates() {
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
         boolean serviceEnabled = Utils.isAccessibilityServiceEnabled(this, AppDetectionService.class);
-        enableFloatingWidnowCheckBox.setEnabled(overlayEnabled && serviceEnabled);
+        PrefUtils.setEnableAccessibilityService(getApplicationContext(),serviceEnabled);
+        enableFloatingWidnowCheckBox.setEnabled(overlayEnabled);
         enableFloatingButton.setEnabled(!overlayEnabled);
         enableServiceButton.setEnabled(overlayEnabled && !serviceEnabled);
         //enableShowFlattingOnDesktopCheckBox.setEnabled(enableFloatingWidnowCheckBox.isChecked());
@@ -406,12 +409,12 @@ public class ConfigurationActivity extends Activity {
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-        if(!Settings.System.canWrite(this)){
-            Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+        //if(!Settings.System.canWrite(this)){
+           /* Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
                     Uri.parse("package:" + getPackageName()));
             intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityForResult(intentWriteSetting, 124);
-        }
+            startActivityForResult(intentWriteSetting, 124);*/
+       // }
     }
     private void askForPermission(String permission, Integer requestCode) {
         if (ContextCompat.checkSelfPermission(ConfigurationActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {

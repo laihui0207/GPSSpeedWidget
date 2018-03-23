@@ -72,7 +72,7 @@ public class MainActivity extends Activity implements TraceListener {
 
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.interval(2000);
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_MAP_ROTATE_NO_CENTER);
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
         aMap.setMyLocationStyle(myLocationStyle);
         aMap.getUiSettings().setMyLocationButtonEnabled(true);
         aMap.setMyLocationEnabled(true);
@@ -333,6 +333,7 @@ public class MainActivity extends Activity implements TraceListener {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        aMap.setMyLocationEnabled(false);
         aMap.clear();
 
 
@@ -368,6 +369,7 @@ public class MainActivity extends Activity implements TraceListener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        aMap.setMyLocationEnabled(false);
         if (lat != 0 && lng != 0) {
             LatLng latLng = new LatLng(lat, lng);
             CoordinateConverter converter = new CoordinateConverter(getApplicationContext());
@@ -376,6 +378,7 @@ public class MainActivity extends Activity implements TraceListener {
             LatLng desLatLng = converter.convert();
             final Marker marker = aMap.addMarker(new MarkerOptions().position(desLatLng).title("车辆位置").snippet("车辆最后的位置\n时间："+lastedPointTime));
             CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(desLatLng,18,30,0));
+
             aMap.moveCamera(mCameraUpdate);
         }
     }

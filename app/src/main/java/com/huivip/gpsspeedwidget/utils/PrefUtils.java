@@ -54,6 +54,7 @@ public abstract class PrefUtils {
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
     public static final String SEPARATED_VOLUME ="com.huivip.widget.tts.volume";
     public static final String USER_CLOSED_SERVER="com.huivip.widget.Close.serviced";
+    public static final String ENABLE_ACCESSIBILITY_SEVICE="com.huivip.widget.cant.enalble.Accessibility.serviced";
 
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
@@ -129,6 +130,12 @@ public abstract class PrefUtils {
     }
     public static void setUserManualClosedServer(Context context,boolean closed){
         edit(context).putBoolean(USER_CLOSED_SERVER, closed).apply();
+    }
+    public static boolean isEnableAccessibilityService(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_ACCESSIBILITY_SEVICE, false);
+    }
+    public static void setEnableAccessibilityService(Context context,boolean enable){
+        edit(context).putBoolean(ENABLE_ACCESSIBILITY_SEVICE, enable).apply();
     }
     public static boolean isFloattingDirectionHorizontal(Context context){
         return getSharedPreferences(context).getBoolean(FLOATING_WINDWS_DIRECTION_horizontal, false);

@@ -88,7 +88,7 @@ public class GpsSpeedService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-       //if(intent==null) return super.onStartCommand(intent,flags,startId);
+       if(intent==null) return super.onStartCommand(intent,flags,startId);
         if(intent.getBooleanExtra(EXTRA_AUTOBOOT,false)){
             Set<String> autoApps=PrefUtils.getAutoLaunchApps(getApplicationContext());
             for(String packageName:autoApps) {
@@ -96,6 +96,11 @@ public class GpsSpeedService extends Service {
                 if (launchIntent != null) {
                     startActivity(launchIntent);//null pointer check in case package name was not found
                 }
+            }
+            if(!PrefUtils.isEnableAccessibilityService(getApplicationContext())
+                    && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)){
+                Intent floatService=new Intent(this, FloatingService.class);
+                startService(floatService);
             }
             Log.d("huivip","GPS service Get AutoBoot event!");
         }
@@ -131,7 +136,11 @@ public class GpsSpeedService extends Service {
                 }
             };
             this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-
+            if(!PrefUtils.isEnableAccessibilityService(getApplicationContext())
+                    && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)){
+                Intent floatService=new Intent(this, FloatingService.class);
+                startService(floatService);
+            }
             PrefUtils.setUserManualClosedServer(getApplicationContext(),false);
             if(intent.getBooleanExtra(EXTRA_AUTOBOOT,false)){
                 intent.removeExtra(EXTRA_AUTOBOOT);
@@ -145,12 +154,16 @@ public class GpsSpeedService extends Service {
             this.numberRemoteViews.setProgressBar(R.id.progressBar,125,0,false);
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
             this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);
+
             gpsUtil.stopLocationService(true);
             cancelGPSHistoryJob();
             if (this.locationTimer != null) {
                 this.locationTimer.cancel();
                 this.locationTimer.purge();
             }
+            Intent floatService=new Intent(this, FloatingService.class);
+            floatService.putExtra(FloatingService.EXTRA_CLOSE,true);
+            startService(floatService);
             if(alarm!=null){
                 alarm.cancel(uploadMessageSender);
             }
