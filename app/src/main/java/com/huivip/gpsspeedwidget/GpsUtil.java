@@ -444,6 +444,7 @@ public class GpsUtil {
                 if(aMapNaviCameraInfo.getCameraSpeed()!=0){
                     limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
                 }
+
             }
         }
 

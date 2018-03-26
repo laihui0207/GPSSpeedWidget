@@ -99,6 +99,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/button_Alarm" android:layout_weight="1"/>
     </LinearLayout>
+    <AutoCompleteTextView
+            android:text="AutoCompleteTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/autoCompleteTextView"/>
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"

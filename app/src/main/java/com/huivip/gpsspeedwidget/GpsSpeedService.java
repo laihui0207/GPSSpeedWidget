@@ -237,7 +237,7 @@ public class GpsSpeedService extends Service {
         int mphNumber = gpsUtil.getMphSpeed().intValue();
        // this.remoteViews.setTextViewText(R.id.textView1, gpsUtil.getMphSpeedStr());
         setSpeeding(gpsUtil.isHasLimited());
-        if(numberWidgetEnabled) {
+        if(watchWidgetEnabled) {
             this.remoteViews.setTextViewText(R.id.textView1_1, gpsUtil.getKmhSpeedStr());
             switch (mphNumber) {
                 default:

@@ -26,7 +26,7 @@
                     android:progressDrawable="@drawable/circle_speed_number"
                     android:background="@drawable/speed_limit_border"
                     style="?android:attr/progressBarStyleHorizontal"
-                    android:max="125"
+                    android:max="100"
                     android:progress="0"/>
             <TextView
                     android:layout_width="match_parent"

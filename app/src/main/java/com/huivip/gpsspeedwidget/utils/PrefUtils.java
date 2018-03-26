@@ -58,7 +58,8 @@ public abstract class PrefUtils {
     public static final String ENABLE_ACCESSIBILITY_SEVICE="com.huivip.widget.cant.enalble.Accessibility.serviced";
     public static final String ENABLE_WATCH_WIDGET="com.huivip.wdiget.watch.enabled";
     public static final String ENABLE_NUMBER_WIDGET="com.huivip.wdiget.number.enabled";
-
+    public static final String DEVICEID_STORAGE="com.huivip.deviceId.String";
+    public static final String CURRENT_DEVICEID="com.huivip.deviceId";
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
     public static final String SHOW_NO_DESKTOP="1";
@@ -85,6 +86,18 @@ public abstract class PrefUtils {
     }
     public static void setTermsAccepted(Context context, boolean firstRun) {
         edit(context).putBoolean(PREF_TERMS_ACCEPTED, firstRun).apply();
+    }
+    public static void setDeviceIDStorage(Context context,String value){
+        edit(context).putString(DEVICEID_STORAGE,value).apply();
+    }
+    public static String getDeviceIdStorage(Context context){
+        return getSharedPreferences(context).getString(DEVICEID_STORAGE,"");
+    }
+    public static void setDeviceIDString(Context context,String value){
+        edit(context).putString(CURRENT_DEVICEID,value).apply();
+    }
+    public static String getDeviceIdString(Context context){
+        return getSharedPreferences(context).getString(CURRENT_DEVICEID,"");
     }
     public static void setEnableAutoStart(Context context,boolean autoStart){
         edit(context).putBoolean(AUTO_START_PREFS_NAME, autoStart).apply();

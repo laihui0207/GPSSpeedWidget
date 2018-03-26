@@ -9,9 +9,7 @@ import android.os.Message;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
+import android.widget.*;
 import com.amap.api.maps.*;
 import com.amap.api.maps.model.*;
 import com.amap.api.trace.LBSTraceClient;
@@ -100,6 +98,7 @@ public class MainActivity extends Activity implements TraceListener {
                         if(inputUid!=null && !inputUid.trim().equalsIgnoreCase("")){
                             deviceId=inputUid;
                         }
+                        saveDeviceIdString(deviceId);
                         if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()) && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())) {
                             String getLastedURL = "";
                             getLastedURL = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETLASTEDPOSTIONURL, deviceId);
@@ -159,10 +158,17 @@ public class MainActivity extends Activity implements TraceListener {
                 startActivity(new Intent(MainActivity.this,AudioTestActivity.class));
             }
         });
-        EditText textUid=findViewById(R.id.editText_UID);
+        AutoCompleteTextView textUid=findViewById(R.id.editText_UID);
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
         String deviceId=deviceUuidFactory.getDeviceUuid().toString();
-        textUid.setText(deviceId.substring(0,deviceId.indexOf("-")));
+        String deviceId_shortString=deviceId.substring(0,deviceId.indexOf("-"));
+        PrefUtils.setDeviceIDString(getApplicationContext(),deviceId_shortString);
+        textUid.setText(deviceId_shortString);
+        String devices=PrefUtils.getDeviceIdStorage(getApplicationContext());
+        String[] devicesArray=devices.split(",");
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.select_dialog_item,devicesArray);
+        textUid.setAdapter(arrayAdapter);
+        Log.d("huivip",devices);
         Button trackBtn= (Button) findViewById(R.id.TrackBtn);
         View.OnClickListener trackBtnListener=new View.OnClickListener(){
 
@@ -201,7 +207,7 @@ public class MainActivity extends Activity implements TraceListener {
                         }
                         if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()) && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())) {
                             String dataUrl = "";
-
+                            saveDeviceIdString(deviceId);
                             dataUrl = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETDATA, deviceId, startTime, endTime);
                             String dataResult = HttpUtils.getData(dataUrl);
                             Log.d("GPSWidget", "URL:" + dataUrl);
@@ -243,7 +249,35 @@ public class MainActivity extends Activity implements TraceListener {
         trackBtn.setOnClickListener(trackBtnListener);
         //setSystemUiVisibility(this,true);
     }
-
+    private void saveDeviceIdString(String deviceString){
+        String storedDevices=PrefUtils.getDeviceIdStorage(getApplicationContext());
+        if(storedDevices==null || storedDevices.equalsIgnoreCase("")){
+            PrefUtils.setDeviceIDStorage(getApplicationContext(),deviceString);
+        } else {
+            String[] strArray=storedDevices.split(",");
+            List<String> stringList =new ArrayList<>();
+            for(String dId:strArray){
+                stringList.add(dId);
+            }
+            if(!stringList.contains(deviceString)){
+                stringList.add(deviceString);
+            }
+            String deviceStr="";
+            for(String str:stringList){
+                deviceStr+=str+",";
+            }
+            if(deviceStr.length()>1){
+                deviceStr=deviceStr.substring(0,deviceStr.length()-1);
+            }
+           // storedDevices=deviceStr;
+            Log.d("huivip",deviceStr);
+            PrefUtils.setDeviceIDStorage(getApplicationContext(),deviceStr);
+        }
+        /*AutoCompleteTextView textUid=findViewById(R.id.editText_UID);
+        String[] devicesArray=storedDevices.split(",");
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.select_dialog_item,devicesArray);
+        textUid.setAdapter(arrayAdapter);*/
+    }
     private void drawLine(Message msg){
         List<LatLng> latLngs = new ArrayList<>();
         LatLng lastedLatLng=null;
