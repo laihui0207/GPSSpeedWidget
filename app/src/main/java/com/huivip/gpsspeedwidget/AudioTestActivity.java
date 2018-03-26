@@ -2,13 +2,16 @@ package com.huivip.gpsspeedwidget;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
+import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TTSUtil;
 
 public class AudioTestActivity extends Activity {
@@ -72,6 +75,7 @@ public class AudioTestActivity extends Activity {
             @Override
             public void onClick(View view) {
                 audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,Integer.parseInt(voiceCallEditText.getText().toString()),AudioManager.FLAG_SHOW_UI);
+                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(voiceCallEditText.getText().toString()));
             }
         });
         Button alarmButton=findViewById(R.id.button_Alarm);
@@ -113,6 +117,21 @@ public class AudioTestActivity extends Activity {
             }
         });
         reloadVolume();
+        Button rebootBtn=findViewById(R.id.button_reboot);
+        rebootBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_REBOOT);
+                intent.putExtra("nowait", 1);
+                intent.putExtra("interval", 1);
+                intent.putExtra("startTime", 1);
+                intent.putExtra("window", 0);
+                sendBroadcast(intent);*/
+                PowerManager manager = (PowerManager)getSystemService(Context.POWER_SERVICE);
+                manager.reboot("重新启动系统");
+            }
+        });
     }
     private void reloadVolume(){
         systemEditText.setText(audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM)+"");

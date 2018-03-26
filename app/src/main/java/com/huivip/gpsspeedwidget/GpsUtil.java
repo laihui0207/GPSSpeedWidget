@@ -41,6 +41,7 @@ public class GpsUtil {
     Integer mphSpeed=Integer.valueOf(0);
     Integer kmhSpeed=Integer.valueOf(0);
     Integer limitSpeed=Integer.valueOf(0);
+    Integer limitDistance=Integer.valueOf(0);
     String mphSpeedStr="0";
     String kmhSpeedStr="0";
     String velocita_prec = "ciao";
@@ -314,7 +315,9 @@ public class GpsUtil {
     public Integer getLimitSpeed(){
         return limitSpeed;
     }
-
+    public Integer getLimitDistance(){
+        return limitDistance;
+    }
     public boolean isGpsEnabled() {
         return gpsEnabled;
     }
@@ -420,7 +423,7 @@ public class GpsUtil {
         @Override
         public void onNaviInfoUpdate(NaviInfo naviInfo) {
             Log.d("huivip","Current Road:"+naviInfo.getCurrentRoadName());
-            Toast.makeText(context,naviInfo.getCurrentRoadName()+"",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context,naviInfo.getCurrentRoadName()+"",Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -436,6 +439,7 @@ public class GpsUtil {
                         || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYEND
                         || aMapNaviCameraInfo.getCameraType() == CameraType.BREAKRULE ){
                     limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
+                    limitDistance=aMapNaviCameraInfo.getCameraDistance();
                 }
                 if(aMapNaviCameraInfo.getCameraSpeed()!=0){
                     limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
@@ -510,9 +514,9 @@ public class GpsUtil {
         @Override
         public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
             for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
-                /*if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4) {
+                if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4) {
                     limitSpeed = info.getLimitSpeed();
-                }*/
+                }
                 if(info.getLimitSpeed()!=limitSpeed){
                     limitSpeed=info.getLimitSpeed();
                 }
@@ -534,7 +538,7 @@ public class GpsUtil {
         @Override
         public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {
             Log.d("huivip",aimLessModeCongestionInfo.getRoadName());
-            Toast.makeText(context,aimLessModeCongestionInfo.getRoadName(),Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context,aimLessModeCongestionInfo.getRoadName(),Toast.LENGTH_SHORT).show();
         }
 
         @Override

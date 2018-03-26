@@ -123,7 +123,7 @@ public class TTSUtil {
         // 设置在线发声音人： 0 普通女声（默认） 1 普通男声 2 特别男声 3 情感男声<度逍遥> 4 情感儿童声<度丫丫>
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "0");
         // 设置合成的音量，0-9 ，默认 5
-        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "8");
+        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "9");
         // 设置合成的语速，0-9 ，默认 5
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, "5");
         // 设置合成的语调，0-9 ，默认 5
@@ -139,8 +139,9 @@ public class TTSUtil {
             Log.d("huivip","Audio use voice Call");
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
         } else {
-            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
+            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         }
+        mSpeechSynthesizer.setStereoVolume(1.0f,1.0f);
         //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_ALARM);
        // mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
 

@@ -4,14 +4,11 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -23,7 +20,6 @@ import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.TTSUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,8 +28,6 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author sunlaihui
@@ -81,6 +75,9 @@ public class MainActivity extends Activity implements TraceListener {
         final Handler lastedPositionHandler=new Handler(){
             @Override
             public void handleMessage(Message msg) {
+                MyLocationStyle myLocationStyle = new MyLocationStyle();
+                myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
+                aMap.setMyLocationStyle(myLocationStyle);
                 if(msg.arg1==Constant.POINT) {
                     drawPoint(msg);
                 }
@@ -105,7 +102,7 @@ public class MainActivity extends Activity implements TraceListener {
                         }
                         if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()) && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())) {
                             String getLastedURL = "";
-                            getLastedURL = PrefUtils.getGPSHistoryServerURL(getApplicationContext()) + String.format(Constant.LBSGETLASTEDPOSTIONURL, deviceId);
+                            getLastedURL = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETLASTEDPOSTIONURL, deviceId);
                             String dataResult = HttpUtils.getData(getLastedURL);
                             Log.d("GPSWidget", "URL:" + getLastedURL + ",Result:" + dataResult);
 
@@ -205,8 +202,7 @@ public class MainActivity extends Activity implements TraceListener {
                         if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()) && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())) {
                             String dataUrl = "";
 
-
-                            dataUrl = PrefUtils.getGPSHistoryServerURL(getApplicationContext()) + String.format(Constant.LBSGETDATA, deviceId, startTime, endTime);
+                            dataUrl = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETDATA, deviceId, startTime, endTime);
                             String dataResult = HttpUtils.getData(dataUrl);
                             Log.d("GPSWidget", "URL:" + dataUrl);
 
@@ -333,7 +329,7 @@ public class MainActivity extends Activity implements TraceListener {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        aMap.setMyLocationEnabled(false);
+
         aMap.clear();
 
 

@@ -137,6 +137,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/button_ACC" android:layout_weight="1"/>
     </LinearLayout>-->
+    <Button
+            android:text="Reboot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/button_reboot" android:visibility="gone"/>
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"

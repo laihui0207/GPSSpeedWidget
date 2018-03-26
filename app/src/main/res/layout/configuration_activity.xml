@@ -180,4 +180,17 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content" android:layout_below="@+id/linearLayout"
            android:layout_toEndOf="@+id/enableAudio" android:id="@+id/checkBox_mix"/>
+   <TextView
+           android:text="语音音量:"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" android:layout_alignTop="@+id/confirm"
+           android:layout_alignParentStart="true" android:id="@+id/textView_audioVolume"/>
+   <EditText
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:inputType="number"
+           android:ems="6"
+           android:hint="设置语音音量"
+           android:layout_below="@+id/radioGroup_flatingSelect" android:layout_toEndOf="@+id/textView_audioVolume"
+           android:id="@+id/editText_audioVolume"/>
 </RelativeLayout>

@@ -64,11 +64,12 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         currentVoiceCallVolume=am.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
         currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
 
-        if(PrefUtils.isSeparatedVolume(context)){
+        if(PrefUtils.isSeparatedVolume(context) && !PrefUtils.isEnableAudioMixService(context)){
             Log.d("huivip","increase music");
             am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
             am.setSpeakerphoneOn(true);
-            //am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,voiceVolume,0);
+            int audioVolume=PrefUtils.getAudioVolume(context);
+            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,audioVolume,0);
         }
 
         sendMessage("播放开始回调, 序列号:" + utteranceId);

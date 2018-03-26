@@ -40,23 +40,26 @@ public class GpsSpeedWidget extends AppWidgetProvider {
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
-        super.onDeleted(context, appWidgetIds);
         PrefUtils.setWidgetActived(context,false);
+        PrefUtils.setEnabledWatchWidget(context,false);
         context.stopService(new Intent(context,GpsSpeedService.class));
+        super.onDeleted(context, appWidgetIds);
     }
 
     @Override
     public void onEnabled(Context context) {
-        super.onEnabled(context);
         PrefUtils.setUserManualClosedServer(context,false);
         PrefUtils.setWidgetActived(context,true);
+        PrefUtils.setEnabledWatchWidget(context,true);
+        super.onEnabled(context);
     }
 
     @Override
     public void onDisabled(Context context) {
-        super.onDisabled(context);
         PrefUtils.setUserManualClosedServer(context,false);
+        PrefUtils.setEnabledWatchWidget(context,false);
         PrefUtils.setWidgetActived(context,false);
+        super.onDisabled(context);
     }
 
 }

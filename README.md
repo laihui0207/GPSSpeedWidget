@@ -37,8 +37,9 @@
 
 ### 后台服务启动方法
 ```$bash
-npm install express querystring node-cache sqlite3 moment
-//node GPSHistory.js
+npm install express querystring node-cache sqlite3 moment -y
+
+npm install pm2 -y
 pm2 start GPSHistory.js 
 ```
 
@@ -101,3 +102,9 @@ pm2 start GPSHistory.js
 4. 优化界面
 5. 在不能启用2程序交互功能的机器上，选择悬浮窗 一直开着的模式，支持开机自动打开悬浮窗
 6. 桌面插件开关同时控制悬浮窗口
+
+### 20180325 1.6.3
+1. 修复bug；轨迹记录后台服务器地址不能保存
+2. 优化桌面插件刷新逻辑
+3. 恢复语音音量设置功能
+4. 优化语音压低功能，不勾选语音混合，自动检测是否支持语音压低功能

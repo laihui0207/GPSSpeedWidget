@@ -1,13 +1,11 @@
 package com.huivip.gpsspeedwidget;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
@@ -16,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -85,8 +82,8 @@ public class ConfigurationActivity extends Activity {
         //enableShowFlattingOnDesktopCheckBox=findViewById(R.id.checkBox_showondescktop);
         //enableShowFlattingOnDesktopCheckBox.setChecked(PrefUtils.isEnableShowFlatingOnDesktop(getApplicationContext()));
         remoteUrlEditBox=findViewById(R.id.editText_remoteURL);
-        if(!PrefUtils.getGPSHistoryServerURL(getApplicationContext()).equalsIgnoreCase(Constant.LBSURL)) {
-            remoteUrlEditBox.setText(PrefUtils.getGPSHistoryServerURL(getApplicationContext()));
+        if(!PrefUtils.getGPSRemoteUrl(getApplicationContext()).equalsIgnoreCase(Constant.LBSURL)) {
+            remoteUrlEditBox.setText(PrefUtils.getGPSRemoteUrl(getApplicationContext()));
         } else {
             remoteUrlEditBox.setText("");
         }
@@ -266,9 +263,9 @@ public class ConfigurationActivity extends Activity {
                 }
                 boolean serviceEnabled = Utils.isAccessibilityServiceEnabled(getApplicationContext(), AppDetectionService.class);
                 PrefUtils.setEnableAccessibilityService(getApplicationContext(),serviceEnabled);
-                /*EditText ttsVolume=findViewById(R.id.editText_audioVolume);
+                EditText ttsVolume=findViewById(R.id.editText_audioVolume);
                 String setedVolume=ttsVolume.getText().toString();
-                PrefUtils.setTtsVolume(getApplicationContext(),Integer.parseInt(setedVolume));*/
+                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(setedVolume));
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
@@ -320,7 +317,9 @@ public class ConfigurationActivity extends Activity {
                 startActivity(new Intent(ConfigurationActivity.this,AppSelectionActivity.class));
             }
         });
-
+        EditText audioVolumeEditText=findViewById(R.id.editText_audioVolume);
+        audioVolumeEditText.setText(PrefUtils.getAudioVolume(getApplicationContext())+"");
+        audioVolumeEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, 30)});
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

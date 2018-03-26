@@ -52,9 +52,12 @@ public abstract class PrefUtils {
     public static final String FLOATING_WINDWS_DIRECTION_horizontal="com.huivip.widget.Direction";
     public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
-    public static final String SEPARATED_VOLUME ="com.huivip.widget.tts.volume";
+    public static final String SEPARATED_VOLUME ="com.huivip.widget.separated.volume";
+    public static final String AUDIO_VOLUME="com.huivipo.widget.audio.volume";
     public static final String USER_CLOSED_SERVER="com.huivip.widget.Close.serviced";
     public static final String ENABLE_ACCESSIBILITY_SEVICE="com.huivip.widget.cant.enalble.Accessibility.serviced";
+    public static final String ENABLE_WATCH_WIDGET="com.huivip.wdiget.watch.enabled";
+    public static final String ENABLE_NUMBER_WIDGET="com.huivip.wdiget.number.enabled";
 
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
@@ -74,11 +77,11 @@ public abstract class PrefUtils {
     public static boolean isFirstRun(Context context) {
         return getSharedPreferences(context).getBoolean(PREF_FIRSTRUN, true);
     }
-    public static String getGPSHistoryServerURL(Context context){
+    public static String getGPSRemoteUrl(Context context){
         return getSharedPreferences(context).getString(GPS_REMOTE_URL,Constant.LBSURL);
     }
     public static void setGpsRemoteUrl(Context context,String url){
-        edit(context).putString(GPS_REMOTE_URL,url);
+        edit(context).putString(GPS_REMOTE_URL,url).apply();
     }
     public static void setTermsAccepted(Context context, boolean firstRun) {
         edit(context).putBoolean(PREF_TERMS_ACCEPTED, firstRun).apply();
@@ -171,6 +174,15 @@ public abstract class PrefUtils {
     public static int getSpeedAdjust(Context context) {
         return getSharedPreferences(context).getInt(PREF_GPS_SPEED_ADJUST, 0);
     }
+
+    public static void setAudioVolume(Context context, int value) {
+        edit(context).putInt(AUDIO_VOLUME, value).apply();
+    }
+
+    public static int getAudioVolume(Context context) {
+        return getSharedPreferences(context).getInt(AUDIO_VOLUME, 0);
+    }
+
     public static void setseparatedVolume(Context context, boolean value) {
         edit(context).putBoolean(SEPARATED_VOLUME, value).apply();
     }
@@ -178,6 +190,23 @@ public abstract class PrefUtils {
     public static boolean isSeparatedVolume(Context context) {
         return getSharedPreferences(context).getBoolean(SEPARATED_VOLUME, false);
     }
+
+
+    public static void setEnabledWatchWidget(Context context, boolean value) {
+        edit(context).putBoolean(ENABLE_WATCH_WIDGET, value).apply();
+    }
+
+    public static boolean isEnabledWatchWidget(Context context) {
+        return getSharedPreferences(context).getBoolean(ENABLE_WATCH_WIDGET, false);
+    }
+    public static void setEnabledNumberWidget(Context context, boolean value) {
+        edit(context).putBoolean(ENABLE_NUMBER_WIDGET, value).apply();
+    }
+
+    public static boolean isEnabledNumberWidget(Context context) {
+        return getSharedPreferences(context).getBoolean(ENABLE_NUMBER_WIDGET, false);
+    }
+
     public static void setVersionCode(Context context, int versionCode) {
         edit(context).putInt(PREF_VERSION_CODE, versionCode).apply();
     }
