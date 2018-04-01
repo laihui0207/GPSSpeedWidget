@@ -12,10 +12,14 @@ import android.view.View;
 import android.widget.*;
 import com.amap.api.maps.*;
 import com.amap.api.maps.model.*;
+import com.amap.api.navi.*;
+import com.amap.api.navi.model.*;
+import com.amap.api.navi.view.DriveWayView;
 import com.amap.api.trace.LBSTraceClient;
 import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
+import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import org.json.JSONArray;
@@ -364,7 +368,7 @@ public class MainActivity extends Activity implements TraceListener {
             e.printStackTrace();
         }
 
-        aMap.clear();
+        aMap.clear(true);
 
 
        if(lineDatas!=null && lineDatas.size()>0){

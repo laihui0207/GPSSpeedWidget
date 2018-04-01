@@ -44,6 +44,8 @@ public class FloatingService extends Service{
     GpsUtil gpsUtil;
     @BindView(R.id.arcview)
     ArcProgressStackView mArcView;
+    @BindView(R.id.arcviewLimit)
+    ArcProgressStackView mLimstArcView;
     @BindView(R.id.speed)
     TextView mSpeedometerText;
     @BindView(R.id.limit_text)
@@ -126,6 +128,14 @@ public class FloatingService extends Service{
         mArcView.setInterpolator(new FastOutSlowInInterpolator());
         mArcView.setModels(models);
 
+        final ArrayList<ArcProgressStackView.Model> limitModels = new ArrayList<>();
+        limitModels.add(new ArcProgressStackView.Model("", 0,
+                        ContextCompat.getColor(this, R.color.colorAccent),
+                ContextCompat.getColor(this, R.color.colorPrimary800)));
+        mLimstArcView.setTextColor(ContextCompat.getColor(this, android.R.color.transparent));
+        mLimstArcView.setInterpolator(new FastOutSlowInInterpolator());
+        mLimstArcView.setModels(limitModels);
+
         this.locationScanTask = new TimerTask()
         {
             @Override
@@ -152,6 +162,7 @@ public class FloatingService extends Service{
                 setSpeed(gpsUtil.getKmhSpeedStr(),gpsUtil.getSpeedometerPercentage());
                 mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
                 setSpeeding(gpsUtil.isHasLimited());
+                setLimit(gpsUtil.getLimitDistancePercentage());
             }
         }
         else {
@@ -162,6 +173,12 @@ public class FloatingService extends Service{
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
                 WindowManager.LayoutParams.TYPE_PHONE;
+    }
+    public void setLimit(int percentOfLimit){
+        if(PrefUtils.getShowLimits(this)) {
+            mLimstArcView.getModels().get(0).setProgress(percentOfLimit);
+            mLimstArcView.animateProgress();
+        }
     }
     public void setSpeed(String speed, int percentOfWarning) {
         if (PrefUtils.getShowSpeedometer(this) && mSpeedometerText != null) {

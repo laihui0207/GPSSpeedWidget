@@ -84,6 +84,7 @@
 
         <service android:name=".GpsSpeedService"/>
         <service android:name=".FloatingService"/>
+        <service android:name=".RecordGpsHistoryService"/>
         <service
                 android:name=".detection.AppDetectionService"
                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">

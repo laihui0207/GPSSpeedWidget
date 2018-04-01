@@ -23,7 +23,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:indeterminate="false"
-                    android:progressDrawable="@drawable/circle_speed_number"
+                    android:progressDrawable="@drawable/circle_limit_number"
                     android:background="@drawable/speed_limit_border"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:max="100"
@@ -47,6 +47,13 @@
                     android:gravity="center_vertical|center_horizontal"
                     android:layout_height="40dp" android:id="@+id/textView_limit_label"
                     android:layout_below="@+id/number_limit"/>
+            <TextView
+                    android:text="0米"
+                    android:textColor="#fff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" android:layout_marginTop="38dp"
+                    android:id="@+id/textView_distance"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -83,6 +90,12 @@
                     android:gravity="center_vertical|center_horizontal"
                     android:layout_height="40dp" android:id="@+id/textView_unit"
                     android:layout_below="@+id/number_speed" android:layout_alignParentStart="true"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" android:layout_marginTop="34dp"
+                    android:textColor="#fff"
+                    android:id="@+id/textView_direction" android:text="北"/>
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

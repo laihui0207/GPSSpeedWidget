@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.enums.*;
@@ -30,18 +32,21 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 /**
  * @author sunlaihui
  */
-public class GpsUtil {
+public class GpsUtil implements AMapNaviListener{
     Context context;
     private String latitude;
     private String longitude;
     private float bearing;
+    private float lastBearing;
+    private String latedDirectionName;
+    private boolean isTurned=false;
     private String velocitaString=null;
     private Integer velocitaNumber;
     Double speed=0D;
     Integer mphSpeed=Integer.valueOf(0);
     Integer kmhSpeed=Integer.valueOf(0);
     Integer limitSpeed=Integer.valueOf(0);
-    Integer limitDistance=Integer.valueOf(0);
+    Float limitDistance=0F;
     String mphSpeedStr="0";
     String kmhSpeedStr="0";
     String velocita_prec = "ciao";
@@ -56,7 +61,7 @@ public class GpsUtil {
     TimerTask locationScanTask;
     Timer locationTimer;
     AMapNavi aMapNavi;
-    NaviListenerImpl naviListener;
+    /*NaviListenerImpl naviListener;*/
     LocationManager locationManager;
     TTSUtil ttsUtil;
     boolean limitSpeaked=false;
@@ -66,6 +71,8 @@ public class GpsUtil {
     final Handler locationHandler = new Handler();
     BroadcastReceiver broadcastReceiver;
     int locationCheckCounter=0;
+    int limitDistancePercentage=50;
+    LatLng cameraLocation;
     LocationListener locationListener=new LocationListener() {
         @Override
         public void onLocationChanged(Location paramAnonymousLocation) {
@@ -111,7 +118,6 @@ public class GpsUtil {
     public void startLocationService(){
         if(serviceStarted) return;
         this.locationTimer = new Timer();
-        Log.d("huivip","Random: "+c);
         speedAdjust=PrefUtils.getSpeedAdjust(context);
         this.locationScanTask = new TimerTask()
         {
@@ -155,14 +161,16 @@ public class GpsUtil {
             intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             context.registerReceiver(broadcastReceiver,intentFilter);
         }
+        Intent recordService=new Intent(context,RecordGpsHistoryService.class);
+        context.startService(recordService);
         serviceStarted=true;
     }
     private void startAimlessNavi(){
         if (PrefUtils.isEnableAutoNaviService(context) && !aimlessStatred) {
-            naviListener=new NaviListenerImpl();
+           /* naviListener=new NaviListenerImpl();*/
             aMapNavi = AMapNavi.getInstance(context);
             aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
-            aMapNavi.addAMapNaviListener(naviListener);
+            aMapNavi.addAMapNaviListener(this);
             aMapNavi.getNaviSetting().setTrafficStatusUpdateEnabled(true);
             aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
         }
@@ -170,7 +178,7 @@ public class GpsUtil {
     private void stopAimlessNavi(){
         if(aMapNavi!=null){
             aMapNavi.stopAimlessMode();
-            aMapNavi.removeAMapNaviListener(naviListener);
+            aMapNavi.removeAMapNaviListener(this);
             aMapNavi.destroy();
             aMapNavi=null;
             aimlessStatred=false;
@@ -183,12 +191,35 @@ public class GpsUtil {
                 this.locationTimer.purge();
             }
             stopAimlessNavi();
+            Intent recordService=new Intent(context,RecordGpsHistoryService.class);
+            recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE,true);
+            context.startService(recordService);
             if(ttsUtil!=null) {
                 ttsUtil.stop();
             }
             serviceStarted=false;
         }
 
+    }
+    public String getDirection(){
+        String direction="北";
+        if(bearing>=22.5 && bearing< 67.5){
+            direction="东北";
+        }
+        else if(bearing>=67.5 && bearing<=112.5){
+            direction="东";
+        } else if(bearing>112.5 && bearing<=157.5){
+            direction="东南";
+        } else if(bearing>=157.5 && bearing<= 202.5){
+            direction="南";
+        } else if(bearing>= 202.5 && bearing<= 247.5){
+            direction="西南";
+        } else if(bearing>=247.5 && bearing<= 292.5){
+            direction="西";
+        } else if(bearing>=292.5 && bearing <= 337.5){
+            direction="西北";
+        }
+        return direction;
     }
     public float getBearing() {
         return bearing;
@@ -250,7 +281,7 @@ public class GpsUtil {
                 gpsLocationChanged=false;
             }
         }
-        if(!gpsLocationChanged){
+        /*if(!gpsLocationChanged){
             locationCheckCounter++;
             // 30 second no location change to set speed to 0
             if(locationCheckCounter>300){
@@ -260,7 +291,7 @@ public class GpsUtil {
         }
         else {
             locationCheckCounter=0;
-        }
+        }*/
 
     }
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
@@ -277,6 +308,11 @@ public class GpsUtil {
         speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
         mphSpeedStr=localNumberFormat.format(mphSpeed);
         kmhSpeedStr=localNumberFormat.format(kmhSpeed);
+        if(limitDistance>0) {
+            limitDistancePercentage = Math.round((300F - limitDistance) / 300 * 100);
+        } else if(limitDistance<=0 || limitSpeed==0){
+            limitDistancePercentage=0;
+        }
         // limit speak just say one times in one minutes
         if(limitSpeed>0 && kmhSpeed>limitSpeed){
             hasLimited=true;
@@ -297,6 +333,10 @@ public class GpsUtil {
         return hasLimited;
     }
 
+    public int getLimitDistancePercentage() {
+        return limitDistancePercentage;
+    }
+
     public Integer getMphSpeed() {
         return mphSpeed;
     }
@@ -315,7 +355,7 @@ public class GpsUtil {
     public Integer getLimitSpeed(){
         return limitSpeed;
     }
-    public Integer getLimitDistance(){
+    public Float getLimitDistance(){
         return limitDistance;
     }
     public boolean isGpsEnabled() {
@@ -338,7 +378,7 @@ public class GpsUtil {
     public String getLongitude() {
         return longitude;
     }
-    private class NaviListenerImpl implements AMapNaviListener {
+  /*  private class NaviListenerImpl implements AMapNaviListener {*/
         String speakText="";
         @Override
         public void onInitNaviFailure() {
@@ -366,7 +406,36 @@ public class GpsUtil {
 
         @Override
         public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-            float bearing=aMapNaviLocation.getBearing();
+            bearing=aMapNaviLocation.getBearing();
+            if(latedDirectionName!=null && latedDirectionName.equals(getDirection())){
+                isTurned=true;
+                latedDirectionName=getDirection();
+            } else {
+                isTurned=false;
+            }
+            /*if(lastBearing!=0 && Math.abs(bearing-lastBearing)>15){
+                lastBearing=bearing;
+                isTurned=true;
+            }
+            else {
+                isTurned=false;
+            }*/
+            LatLng currentLocation=new LatLng(aMapNaviLocation.getCoord().getLatitude(),aMapNaviLocation.getCoord().getLongitude(),true);
+            if(cameraLocation!=null){
+                limitDistance=Float.parseFloat(localNumberFormat.format(AMapUtils.calculateLineDistance(currentLocation,cameraLocation)));
+            }
+           /* if(limitDistance<=5){
+                limitSpeed=0;
+            }*/
+            if(limitDistance<=5 || limitDistance > 300 || isTurned){
+                limitDistance=0F;
+                if(isTurned || limitSpeed==0){
+                    cameraLocation=null;
+                }
+                if(limitSpeed!=0 && limitDistance<=5){
+                    limitSpeed=0;
+                }
+            }
 
         }
 
@@ -439,7 +508,7 @@ public class GpsUtil {
                         || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYEND
                         || aMapNaviCameraInfo.getCameraType() == CameraType.BREAKRULE ){
                     limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
-                    limitDistance=aMapNaviCameraInfo.getCameraDistance();
+                    cameraLocation=new LatLng(aMapNaviCameraInfo.getY(),aMapNaviCameraInfo.getX(),true);
                 }
                 if(aMapNaviCameraInfo.getCameraSpeed()!=0){
                     limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
@@ -487,7 +556,6 @@ public class GpsUtil {
 
         @Override
         public void showLaneInfo(AMapLaneInfo aMapLaneInfo) {
-
         }
 
         @Override
@@ -515,8 +583,9 @@ public class GpsUtil {
         @Override
         public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
             for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
-                if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4) {
+                if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4 || info.getLimitSpeed()!=0) {
                     limitSpeed = info.getLimitSpeed();
+                    cameraLocation=new LatLng(info.getCoorY(),info.getCoorX(),true);
                 }
                 if(info.getLimitSpeed()!=limitSpeed){
                     limitSpeed=info.getLimitSpeed();
@@ -546,7 +615,9 @@ public class GpsUtil {
         public void onPlayRing(int status) {
             if(status == AMapNaviRingType.RING_EDOG){
                 limitSpeed=0;
+                limitDistance=0F;
+                cameraLocation=null;
             }
         }
-    }
+   /* }*/
 }

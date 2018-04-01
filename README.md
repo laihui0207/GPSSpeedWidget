@@ -30,7 +30,7 @@
 /sdcard/GPS/GPSHistory.js
 
 部署方法：
-1. 在服务器安装 nodejs
+1. 在服务器安装 nodejs，项目依赖项
 2. 使用nodejs 启动服务
 3. 服务器开放8090端口
 4. 在主窗口的配置窗口设置 后台服务器地址
@@ -38,8 +38,7 @@
 ### 后台服务启动方法
 ```$bash
 npm install express querystring node-cache sqlite3 moment -y
-
-npm install pm2 -y
+npm install pm2 -y -g 
 pm2 start GPSHistory.js 
 ```
 
@@ -108,3 +107,8 @@ pm2 start GPSHistory.js
 2. 优化桌面插件刷新逻辑
 3. 恢复语音音量设置功能
 4. 优化语音压低功能，不勾选语音混合，自动检测是否支持语音压低功能
+
+### 20180329 1.6.5
+1. 轨迹查询ID增加记忆功能
+2. 增加摄像头距离显示
+3. 数字插件增加行车方向显示
