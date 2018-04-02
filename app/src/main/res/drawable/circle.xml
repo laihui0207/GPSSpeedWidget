@@ -3,8 +3,8 @@
 
     <item>
         <shape android:shape="oval">
-            <solid android:color="#fff" />
-<!--            <gradient android:startColor="@android:color/transparent" android:endColor="@android:color/transparent"/>-->
+            <solid android:color="#b0065e8d" />
+<!--            <gradient android:startColor="#000" android:endColor="#fff" android:angle="90"/>-->
         </shape>
     </item>
 
@@ -13,7 +13,7 @@
             <stroke
                 android:width="4dp"
                 android:color="#000" />
-            <gradient android:startColor="@android:color/transparent" android:endColor="@android:color/transparent"/>
+<!--            <gradient android:startColor="@android:color/transparent" android:endColor="@android:color/transparent"/>-->
         </shape>
     </item>
 

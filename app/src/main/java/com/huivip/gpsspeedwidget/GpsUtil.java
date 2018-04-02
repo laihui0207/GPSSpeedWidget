@@ -421,8 +421,17 @@ public class GpsUtil implements AMapNaviListener{
                 isTurned=false;
             }*/
             LatLng currentLocation=new LatLng(aMapNaviLocation.getCoord().getLatitude(),aMapNaviLocation.getCoord().getLongitude(),true);
+          /*  Location location=new Location("");
+            location.setLatitude(currentLocation.latitude);
+            location.setLongitude(currentLocation.longitude);*/
             if(cameraLocation!=null){
                 limitDistance=Float.parseFloat(localNumberFormat.format(AMapUtils.calculateLineDistance(currentLocation,cameraLocation)));
+              /*  Location cameraLocation1=new Location("");
+                cameraLocation1.setLatitude(cameraLocation.latitude);
+                cameraLocation1.setLongitude(cameraLocation.longitude);
+                float betweenBearing=location.bearingTo(cameraLocation1);
+                if(betweenBearing-)*/
+
             }
            /* if(limitDistance<=5){
                 limitSpeed=0;

@@ -167,12 +167,18 @@ public class MainActivity extends Activity implements TraceListener {
         String deviceId=deviceUuidFactory.getDeviceUuid().toString();
         String deviceId_shortString=deviceId.substring(0,deviceId.indexOf("-"));
         PrefUtils.setDeviceIDString(getApplicationContext(),deviceId_shortString);
-        textUid.setText(deviceId_shortString);
         String devices=PrefUtils.getDeviceIdStorage(getApplicationContext());
+        Log.d("huivip","devices:"+devices);
         String[] devicesArray=devices.split(",");
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.select_dialog_item,devicesArray);
         textUid.setAdapter(arrayAdapter);
-        Log.d("huivip",devices);
+        if(devicesArray!=null && devicesArray.length>0){
+            textUid.setText(devicesArray[0]);
+        }
+        else {
+            textUid.setText(deviceId_shortString);
+        }
+
         Button trackBtn= (Button) findViewById(R.id.TrackBtn);
         View.OnClickListener trackBtnListener=new View.OnClickListener(){
 
@@ -261,26 +267,19 @@ public class MainActivity extends Activity implements TraceListener {
             String[] strArray=storedDevices.split(",");
             List<String> stringList =new ArrayList<>();
             for(String dId:strArray){
-                stringList.add(dId);
+                if(!dId.equalsIgnoreCase(deviceString)) {
+                    stringList.add(dId);
+                }
             }
-            if(!stringList.contains(deviceString)){
-                stringList.add(deviceString);
-            }
-            String deviceStr="";
+            String deviceStr=deviceString+",";
             for(String str:stringList){
                 deviceStr+=str+",";
             }
             if(deviceStr.length()>1){
                 deviceStr=deviceStr.substring(0,deviceStr.length()-1);
             }
-           // storedDevices=deviceStr;
-            Log.d("huivip",deviceStr);
             PrefUtils.setDeviceIDStorage(getApplicationContext(),deviceStr);
         }
-        /*AutoCompleteTextView textUid=findViewById(R.id.editText_UID);
-        String[] devicesArray=storedDevices.split(",");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.select_dialog_item,devicesArray);
-        textUid.setAdapter(arrayAdapter);*/
     }
     private void drawLine(Message msg){
         List<LatLng> latLngs = new ArrayList<>();

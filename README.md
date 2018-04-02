@@ -40,6 +40,8 @@
 npm install express querystring node-cache sqlite3 moment -y
 npm install pm2 -y -g 
 pm2 start GPSHistory.js 
+pm2 startup systemd
+pm2 save
 ```
 
 ## 改动记录

@@ -36,139 +36,109 @@ public class GpsSpeedService extends Service {
     ComponentName numberWidget;
     final Handler locationHandler = new Handler();
 
-    Integer c = Integer.valueOf(0);
-
     boolean watchWidgetEnabled=false;
     boolean numberWidgetEnabled=false;
     @Override
     public void onCreate() {
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
-        this.serviceStoped = true;
-
-        this.c = Integer.valueOf(0);
-
+        this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
+        this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
+        this.thisWidget = new ComponentName(this, GpsSpeedWidget.class);
+        this.numberWidget = new ComponentName(this, GpsSpeedNumberWidget.class);
+        this.manager = AppWidgetManager.getInstance(this);
         super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(intent==null) return super.onStartCommand(intent,flags,startId);
-        this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
-        this.numberRemoteViews = new RemoteViews(getPackageName(),R.layout.speednumberwidget);
-        this.thisWidget = new ComponentName(this, GpsSpeedWidget.class);
-        this.numberWidget=new ComponentName(this,GpsSpeedNumberWidget.class);
-        this.manager = AppWidgetManager.getInstance(this);
-        numberWidgetEnabled= PrefUtils.isEnabledNumberWidget(this);
-        watchWidgetEnabled=PrefUtils.isEnabledWatchWidget(this);
-        if(intent.getBooleanExtra(EXTRA_AUTOBOOT,false)){
-            Set<String> autoApps=PrefUtils.getAutoLaunchApps(getApplicationContext());
-            for(String packageName:autoApps) {
-                Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-                if (launchIntent != null) {
-                    startActivity(launchIntent);//null pointer check in case package name was not found
-                }
-            }
-            if(!PrefUtils.isEnableAccessibilityService(getApplicationContext())
-                    && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)){
-                Intent floatService=new Intent(this, FloatingService.class);
-                startService(floatService);
-            }
-        }
 
-        boolean ifEnableWidget=PrefUtils.isWidgetActived(getApplicationContext());
+       /* numberWidgetEnabled = PrefUtils.isEnabledNumberWidget(this);
+        watchWidgetEnabled = PrefUtils.isEnabledWatchWidget(this);*/
+       if(intent!=null) {
+           if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false)) {
+               Set<String> autoApps = PrefUtils.getAutoLaunchApps(getApplicationContext());
+               for (String packageName : autoApps) {
+                   Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+                   if (launchIntent != null) {
+                       startActivity(launchIntent);//null pointer check in case package name was not found
+                   }
+               }
+               if (!PrefUtils.isEnableAccessibilityService(getApplicationContext())
+                       && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+                   Intent floatService = new Intent(this, FloatingService.class);
+                   startService(floatService);
+               }
+           }
+
+       /* boolean ifEnableWidget=PrefUtils.isWidgetActived(getApplicationContext());
         if(!ifEnableWidget){
             return super.onStartCommand(intent,flags,startId);
-        }
-        if ( intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
-            serviceStoped =false;
-            //this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
-            if(watchWidgetEnabled){
-                this.remoteViews.setTextViewText(R.id.textView1_1, "...");
-                this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
-            }
-            if(numberWidgetEnabled){
-                this.numberRemoteViews.setTextViewText(R.id.number_speed,"...");
-                this.numberRemoteViews.setTextViewText(R.id.number_limit,"...");
-                this.numberRemoteViews.setProgressBar(R.id.progressBar,125,0,false);
-                this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);
-            }
-            gpsUtil.startLocationService();
-            this.locationScanTask = new TimerTask()
-            {
-                @Override
-                public void run()
-                {
-                    GpsSpeedService.this.locationHandler.post(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            GpsSpeedService.this.checkLocationData();
-                            //Log.d("huivip","GPS Service Check Location");
-                        }
-                    });
-                }
-            };
-            this.locationTimer.schedule(this.locationScanTask, 0L,100L);
-            if(!PrefUtils.isEnableAccessibilityService(getApplicationContext())
-                    && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)){
-                Intent floatService=new Intent(this, FloatingService.class);
-                startService(floatService);
-            }
-            PrefUtils.setUserManualClosedServer(getApplicationContext(),false);
+        }*/
+           if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
+               serviceStoped = false;
+               //this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
+               /*if (watchWidgetEnabled) {*/
+                   this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "...");
+                   this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
+              /* }*/
+              /* if (numberWidgetEnabled) {*/
+                   this.numberRemoteViews.setTextViewText(R.id.number_speed, "...");
+                   this.numberRemoteViews.setTextViewText(R.id.number_limit, "...");
+                   this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, 0, false);
+                   this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
+               /*}*/
+               gpsUtil.startLocationService();
+               this.locationScanTask = new TimerTask() {
+                   @Override
+                   public void run() {
+                       GpsSpeedService.this.locationHandler.post(new Runnable() {
+                           @Override
+                           public void run() {
+                               GpsSpeedService.this.checkLocationData();
+                               //Log.d("huivip","GPS Service Check Location");
+                           }
+                       });
+                   }
+               };
+               this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+               if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+                   Intent floatService = new Intent(this, FloatingService.class);
+                   startService(floatService);
+               }
+               PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
             if(intent.getBooleanExtra(EXTRA_AUTOBOOT,false)){
                 intent.removeExtra(EXTRA_AUTOBOOT);
             }
-        } else {
-            serviceStoped = true;
-            if(watchWidgetEnabled){
-                this.remoteViews.setTextViewText(R.id.textView1_1, "关");
-                this.remoteViews.setImageViewResource(R.id.ialtimetro,R.drawable.base);
-                this.remoteViews.setImageViewResource(R.id.ifreccia,R.drawable.alt_0);
-                this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
-            }
-            if(numberWidgetEnabled){
-                this.numberRemoteViews.setTextViewText(R.id.number_speed,"关");
-                this.numberRemoteViews.setProgressBar(R.id.progressBar,125,0,false);
-                this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);
-            }
+           } else {
+               serviceStoped = true;
+              /* if (watchWidgetEnabled) {*/
+                   this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "关");
+                   this.remoteViews.setImageViewResource(R.id.ialtimetro, R.drawable.base);
+                   this.remoteViews.setImageViewResource(R.id.ifreccia, R.drawable.alt_0);
+                   this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
+              /* }
+               if (numberWidgetEnabled) {*/
+                   this.numberRemoteViews.setTextViewText(R.id.number_speed, "关");
+                   this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, 0, false);
+                   this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
+               /*}*/
 
-            gpsUtil.stopLocationService(true);
-            cancelGPSHistoryJob();
-            if (this.locationTimer != null) {
-                this.locationTimer.cancel();
-                this.locationTimer.purge();
-            }
-            Intent floatService=new Intent(this, FloatingService.class);
-            floatService.putExtra(FloatingService.EXTRA_CLOSE,true);
-            startService(floatService);
-           /* if(alarm!=null){
-                alarm.cancel(uploadMessageSender);
-            }*/
-            PrefUtils.setUserManualClosedServer(getApplicationContext(),true);
-            stopSelf();
-        }
-        return super.onStartCommand(intent,Service.START_FLAG_REDELIVERY,startId);
-    }
-    private void cancelGPSHistoryJob(){
-        boolean recordGPS=PrefUtils.isEnableRecordGPSHistory(this);
-        boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);
-        if(recordGPS) {
-            if(uploadGPS) {
-                Intent broadcastIntent = new Intent(GpsSpeedService.this, MessageReceiver.class);
-                PendingIntent sender = PendingIntent.getBroadcast(GpsSpeedService.this, 0, broadcastIntent, 0);
-                AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
-                alarm.cancel(sender);
-            }
-            /*if(this.recordGPSTimer!=null) {
-                this.recordGPSTimer.cancel();
-                this.recordGPSTimer.purge();
-            }*/
-        }
+               gpsUtil.stopLocationService(true);
+               if (this.locationTimer != null) {
+                   this.locationTimer.cancel();
+                   this.locationTimer.purge();
+               }
+               Intent floatService = new Intent(this, FloatingService.class);
+               floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+               startService(floatService);
+               PrefUtils.setUserManualClosedServer(getApplicationContext(), true);
+               stopSelf();
+           }
+       }
+        return Service.START_REDELIVER_INTENT; // super.onStartCommand(intent,Service.START_FLAG_REDELIVERY,startId);
     }
     @Override
     public void onDestroy() {
-        cancelGPSHistoryJob();
         super.onDestroy();
     }
 
@@ -185,7 +155,7 @@ public class GpsSpeedService extends Service {
         }
         else {
             //this.remoteViews.setTextViewText(R.id.textView1, "  WAIT");
-            /*this.remoteViews.setTextViewText(R.id.textView1_1, "...");
+            /*this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "...");
             this.numberRemoteViews.setTextViewText(R.id.number_speed,"...");
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
             this.manager.updateAppWidget(this.numberWidget,this.numberRemoteViews);*/
@@ -194,15 +164,16 @@ public class GpsSpeedService extends Service {
     public void setSpeeding(boolean speeding) {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_dark;
         int color = ContextCompat.getColor(this, colorRes);
-        this.remoteViews.setTextColor(R.id.textView1_1,color);
+        this.remoteViews.setTextColor(R.id.textView1_watch_speed,color);
         this.numberRemoteViews.setTextColor(R.id.number_speed,color);
 
     }
     void computeAndShowData(){
         int mphNumber = gpsUtil.getMphSpeed().intValue();
         setSpeeding(gpsUtil.isHasLimited());
-        if(watchWidgetEnabled) {
-            this.remoteViews.setTextViewText(R.id.textView1_1, gpsUtil.getKmhSpeedStr());
+        /*if(watchWidgetEnabled) {*/
+            this.remoteViews.setTextViewText(R.id.textView1_watch_speed, gpsUtil.getKmhSpeedStr()+"");
+            this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getLimitSpeed() + "");
             switch (mphNumber) {
                 default:
                     if (mphNumber > MAX_VELOCITA_NUMBER) {
@@ -516,20 +487,20 @@ public class GpsSpeedService extends Service {
                     break;
             }
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
-        }
-        if(numberWidgetEnabled) {
-            this.numberRemoteViews.setTextViewText(R.id.textView_direction,gpsUtil.getDirection());
+       /* }
+        if(numberWidgetEnabled) {*/
+            this.numberRemoteViews.setTextViewText(R.id.textView_direction,gpsUtil.getDirection()+"");
             if(gpsUtil.getLimitDistance()>0){
                 this.numberRemoteViews.setTextViewText(R.id.textView_distance,gpsUtil.getLimitDistance()+"米");
             }
             else {
-                this.numberRemoteViews.setTextViewText(R.id.textView_distance,"");
+                this.numberRemoteViews.setTextViewText(R.id.textView_distance," ");
             }
             this.numberRemoteViews.setProgressBar(R.id.progressBarLimit, 100, gpsUtil.getLimitDistancePercentage(), false);
             this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, gpsUtil.getSpeedometerPercentage(), false);
             this.numberRemoteViews.setTextViewText(R.id.number_speed, gpsUtil.getKmhSpeedStr()+"");
             this.numberRemoteViews.setTextViewText(R.id.number_limit, gpsUtil.getLimitSpeed() + "");
             this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
-        }
+        /*}*/
     }
 }

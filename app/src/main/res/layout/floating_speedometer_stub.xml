@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/speedometer"
-    android:layout_width="96dp"
-    android:layout_height="96dp"
-    android:layout_centerHorizontal="true"
-    android:layout_below="@id/limit"
-    android:layout_margin="8dp"
-    android:background="@drawable/circle"
-    android:elevation="2dp">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/speedometer"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/limit"
+                android:background="@drawable/circle"
+                android:elevation="2dp" android:layout_margin="4dp">
 
     <devlight.io.library.ArcProgressStackView
             android:id="@+id/arcview"
@@ -31,16 +30,16 @@
         <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/speed"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:padding="12dp"
                 android:textSize="65sp"
-                android:text="--"
+                android:text="50"
                 android:textColor="@android:color/background_dark"
                 app:autoSizeTextType="uniform"
-                android:layout_alignParentTop="true" android:layout_alignParentStart="true"/>
+                android:layout_alignParentBottom="true" android:layout_alignParentStart="true"/>
 
         <TextView
                 android:id="@+id/speedUnits"
@@ -52,7 +51,13 @@
                 android:textColor="?android:textColorPrimary"
                 android:textSize="5sp"
                 tools:text="km/h" android:text="km/h"
-                android:layout_below="@+id/speed" android:layout_alignParentStart="true"/>
+                android:layout_below="@+id/speed" android:layout_alignParentStart="true" android:visibility="gone"/>
+        <TextView
+                android:text="北"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView_number_direction" android:layout_alignTop="@+id/speed"
+                android:layout_centerHorizontal="true" android:textSize="15sp"/>
 
     </RelativeLayout>
 

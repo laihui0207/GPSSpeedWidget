@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.opengl.Visibility;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -15,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.util.Log;
 import android.view.*;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,11 +43,15 @@ public class FloatingService extends Service{
     @BindView(R.id.arcview)
     ArcProgressStackView mArcView;
     @BindView(R.id.arcviewLimit)
-    ArcProgressStackView mLimstArcView;
+    ArcProgressStackView mLimitArcView;
     @BindView(R.id.speed)
     TextView mSpeedometerText;
     @BindView(R.id.limit_text)
     TextView mLimitText;
+    @BindView(R.id.textView_number_direction)
+    TextView mSpeedDirectionText;
+    @BindView(R.id.textView_floating_distance)
+    TextView mFloatingimitDistance;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
@@ -130,12 +132,12 @@ public class FloatingService extends Service{
 
         final ArrayList<ArcProgressStackView.Model> limitModels = new ArrayList<>();
         limitModels.add(new ArcProgressStackView.Model("", 0,
-                        ContextCompat.getColor(this, R.color.colorAccent),
+                        ContextCompat.getColor(this, R.color.red500),
                 ContextCompat.getColor(this, R.color.colorPrimary800)));
-        mLimstArcView.setTextColor(ContextCompat.getColor(this, android.R.color.transparent));
-        mLimstArcView.setInterpolator(new FastOutSlowInInterpolator());
-        mLimstArcView.setModels(limitModels);
-
+        mLimitArcView.setTextColor(ContextCompat.getColor(this, android.R.color.transparent));
+        mLimitArcView.setInterpolator(new FastOutSlowInInterpolator());
+        mLimitArcView.setModels(limitModels);
+        //setLimit(30);
         this.locationScanTask = new TimerTask()
         {
             @Override
@@ -163,6 +165,8 @@ public class FloatingService extends Service{
                 mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
                 setSpeeding(gpsUtil.isHasLimited());
                 setLimit(gpsUtil.getLimitDistancePercentage());
+
+                mSpeedDirectionText.setText(gpsUtil.getDirection());
             }
         }
         else {
@@ -176,8 +180,14 @@ public class FloatingService extends Service{
     }
     public void setLimit(int percentOfLimit){
         if(PrefUtils.getShowLimits(this)) {
-            mLimstArcView.getModels().get(0).setProgress(percentOfLimit);
-            mLimstArcView.animateProgress();
+            mLimitArcView.getModels().get(0).setProgress(percentOfLimit);
+            mLimitArcView.animateProgress();
+            if(gpsUtil.getLimitDistance()>0){
+                mFloatingimitDistance.setText(Float.toString(gpsUtil.getLimitDistance())+"米");
+            }
+            else {
+                mFloatingimitDistance.setText("");
+            }
         }
     }
     public void setSpeed(String speed, int percentOfWarning) {
@@ -226,7 +236,6 @@ public class FloatingService extends Service{
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
         int color = ContextCompat.getColor(this, colorRes);
         mSpeedometerText.setTextColor(color);
-/*        mSpeedometerUnitsText.setTextColor(color);*/
     }
     private void animateViewToSideSlot() {
         Point screenSize = new Point();
