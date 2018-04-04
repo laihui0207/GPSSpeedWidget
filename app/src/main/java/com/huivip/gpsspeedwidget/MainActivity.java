@@ -169,11 +169,13 @@ public class MainActivity extends Activity implements TraceListener {
         PrefUtils.setDeviceIDString(getApplicationContext(),deviceId_shortString);
         String devices=PrefUtils.getDeviceIdStorage(getApplicationContext());
         Log.d("huivip","devices:"+devices);
-        String[] devicesArray=devices.split(",");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.select_dialog_item,devicesArray);
-        textUid.setAdapter(arrayAdapter);
-        if(devicesArray!=null && devicesArray.length>0){
-            textUid.setText(devicesArray[0]);
+        if(devices!=null && devices.length()>0) {
+            String[] devicesArray=devices.split(",");
+            if(devicesArray!=null && devicesArray.length>0){
+                textUid.setText(devicesArray[0]);
+            }
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.select_dialog_item,devicesArray);
+            textUid.setAdapter(arrayAdapter);
         }
         else {
             textUid.setText(deviceId_shortString);

@@ -71,6 +71,7 @@ public class AppDetectionService extends AccessibilityService {
        }
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
+        PrefUtils.setOnDesktop(getApplicationContext(),shouldStopService);
         Intent floatService=new Intent(this, FloatingService.class);
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);

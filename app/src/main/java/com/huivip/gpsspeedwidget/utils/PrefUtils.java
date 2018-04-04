@@ -60,6 +60,7 @@ public abstract class PrefUtils {
     public static final String ENABLE_NUMBER_WIDGET="com.huivip.wdiget.number.enabled";
     public static final String DEVICEID_STORAGE="com.huivip.deviceId.String";
     public static final String CURRENT_DEVICEID="com.huivip.deviceId";
+    public static final String ACTIVITY_ON_DESKTOP="com.huivip.widget.onDesktop";
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
     public static final String SHOW_NO_DESKTOP="1";
@@ -128,6 +129,12 @@ public abstract class PrefUtils {
     }
     public static void setFloattingWindowsAutoSolt(Context context,boolean autoSolt){
         edit(context).putBoolean(FLOATTING_WINDOWS_AUTO_SOLT, autoSolt).apply();
+    }
+    public static boolean isOnDesktop(Context context){
+        return getSharedPreferences(context).getBoolean(ACTIVITY_ON_DESKTOP, true);
+    }
+    public static void setOnDesktop(Context context,boolean onDesktop){
+        edit(context).putBoolean(ACTIVITY_ON_DESKTOP, onDesktop).apply();
     }
     public static boolean isWidgetActived(Context context){
         return getSharedPreferences(context).getBoolean(WIDGET_ACTIVED, false);
