@@ -70,9 +70,9 @@ public class GpsUtil implements AMapNaviListener{
     boolean aimlessStatred=false;
     final Handler locationHandler = new Handler();
     BroadcastReceiver broadcastReceiver;
-    int locationCheckCounter=0;
+    int directionCheckCounter=0;
     int limitDistancePercentage=50;
-    LatLng cameraLocation;
+    Location cameraLocation;
     LocationListener locationListener=new LocationListener() {
         @Override
         public void onLocationChanged(Location paramAnonymousLocation) {
@@ -406,44 +406,36 @@ public class GpsUtil implements AMapNaviListener{
 
         @Override
         public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-            bearing=aMapNaviLocation.getBearing();
-            if(latedDirectionName!=null && latedDirectionName.equals(getDirection())){
-                isTurned=true;
-                latedDirectionName=getDirection();
-            } else {
-                isTurned=false;
-            }
-            /*if(lastBearing!=0 && Math.abs(bearing-lastBearing)>15){
-                lastBearing=bearing;
-                isTurned=true;
-            }
-            else {
-                isTurned=false;
-            }*/
-            LatLng currentLocation=new LatLng(aMapNaviLocation.getCoord().getLatitude(),aMapNaviLocation.getCoord().getLongitude(),true);
-          /*  Location location=new Location("");
-            location.setLatitude(currentLocation.latitude);
-            location.setLongitude(currentLocation.longitude);*/
             if(cameraLocation!=null){
-                limitDistance=Float.parseFloat(localNumberFormat.format(AMapUtils.calculateLineDistance(currentLocation,cameraLocation)));
-              /*  Location cameraLocation1=new Location("");
-                cameraLocation1.setLatitude(cameraLocation.latitude);
-                cameraLocation1.setLongitude(cameraLocation.longitude);
-                float betweenBearing=location.bearingTo(cameraLocation1);
-                if(betweenBearing-)*/
+                bearing=aMapNaviLocation.getBearing();
+                Location location=new Location("");
+                location.setLatitude(aMapNaviLocation.getCoord().getLatitude());
+                location.setLongitude(aMapNaviLocation.getCoord().getLongitude());
+                float betweenBearing=location.bearingTo(cameraLocation);
+                if(Math.abs(bearing-betweenBearing)>50){
+                    directionCheckCounter++;
+                    if(directionCheckCounter>150 && kmhSpeed>0) {
+                        isTurned = true;
+                        directionCheckCounter=0;
+                        limitSpeed=0;
+                    }
+                }
+                else {
+                    limitDistance=Float.parseFloat(localNumberFormat.format(location.distanceTo(cameraLocation)));
+                    isTurned=false;
+                }
 
             }
-           /* if(limitDistance<=5){
-                limitSpeed=0;
-            }*/
+            else {
+                directionCheckCounter=0;
+                limitDistance=0F;
+            }
             if(limitDistance<=5 || limitDistance > 300 || isTurned){
                 limitDistance=0F;
                 if(isTurned || limitSpeed==0){
                     cameraLocation=null;
                 }
-                if(limitSpeed!=0 && limitDistance<=5){
-                    limitSpeed=0;
-                }
+
             }
 
         }
@@ -517,7 +509,9 @@ public class GpsUtil implements AMapNaviListener{
                         || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYEND
                         || aMapNaviCameraInfo.getCameraType() == CameraType.BREAKRULE ){
                     limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
-                    cameraLocation=new LatLng(aMapNaviCameraInfo.getY(),aMapNaviCameraInfo.getX(),true);
+                    cameraLocation= new Location("");
+                    cameraLocation.setLatitude(aMapNaviCameraInfo.getY());
+                    cameraLocation.setLongitude(aMapNaviCameraInfo.getX());
                 }
                 if(aMapNaviCameraInfo.getCameraSpeed()!=0){
                     limitSpeed=aMapNaviCameraInfo.getCameraSpeed();
@@ -594,7 +588,9 @@ public class GpsUtil implements AMapNaviListener{
             for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
                 if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4 || info.getLimitSpeed()!=0) {
                     limitSpeed = info.getLimitSpeed();
-                    cameraLocation=new LatLng(info.getCoorY(),info.getCoorX(),true);
+                    cameraLocation= new Location("");
+                    cameraLocation.setLatitude(info.getCoorY());
+                    cameraLocation.setLongitude(info.getCoorX());
                 }
                 if(info.getLimitSpeed()!=limitSpeed){
                     limitSpeed=info.getLimitSpeed();
