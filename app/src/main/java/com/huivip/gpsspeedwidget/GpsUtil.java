@@ -559,6 +559,7 @@ public class GpsUtil implements AMapNaviListener{
 
         @Override
         public void showLaneInfo(AMapLaneInfo aMapLaneInfo) {
+            Toast.makeText(context,"Get Lan info: count="+aMapLaneInfo.laneCount,Toast.LENGTH_SHORT).show();
         }
 
         @Override
