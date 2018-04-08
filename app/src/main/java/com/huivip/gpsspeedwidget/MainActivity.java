@@ -157,8 +157,6 @@ public class MainActivity extends Activity implements TraceListener {
 
             @Override
             public void onClick(View view) {
-                //TTSUtil ttsUtil=TTSUtil.getInstance(getApplicationContext());
-                //ttsUtil.speak("你好，语音测试成功");
                 startActivity(new Intent(MainActivity.this,AudioTestActivity.class));
             }
         });
@@ -444,8 +442,9 @@ public class MainActivity extends Activity implements TraceListener {
     }
 
     @Override
-    public void onTraceProcessing(int i, int i1, List<LatLng> list) {
-        Log.d("huivip","lineId:"+i);
+    public void onTraceProcessing(int lineId, int index, List<LatLng> list) {
+        Log.d("huivip","lineId:"+lineId);
+
     }
 
     @Override

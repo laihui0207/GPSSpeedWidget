@@ -14,10 +14,10 @@ import java.util.List;
  * @author sunlaihui
  */
 public class DBUtil extends SQLiteOpenHelper {
-    private static final String dbName = "GPSWidget.db";
+    private static final String dbName = "GPSHistory.db";
 
     private static final int version = 1;
-    private static final String tableName="GPSHistory";
+    private static final String tableName="GPS";
     public DBUtil(Context context){
         super(context, dbName,null,version);
     }
@@ -26,7 +26,8 @@ public class DBUtil extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS "+tableName+" (id integer primary key autoincrement," +
-                " lng varchar(20), lat varchar(20),speed varchar(10),speedValue REAL,bearingValue REAL, createTime integer,lineId integer)");
+                "deviceId varchar(50), lng varchar(20), lat varchar(20),speed varchar(10),speedValue REAL," +
+                "bearingValue REAL, createTime integer,lineId integer)");
     }
 
     @Override
@@ -34,8 +35,9 @@ public class DBUtil extends SQLiteOpenHelper {
 
     }
 
-    public void insert(String lng, String lat,String speed,double speedValue,double bearingValue, Date date,long lineId) {
+    public void insert(String deviceId,String lng, String lat,String speed,double speedValue,double bearingValue, Date date,long lineId) {
         ContentValues cv = new ContentValues();
+        cv.put("deviceId",deviceId);
         cv.put("lng", lng);
         cv.put("lat", lat);
         cv.put("speed",speed);

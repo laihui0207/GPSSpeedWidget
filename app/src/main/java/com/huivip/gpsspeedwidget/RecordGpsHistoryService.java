@@ -25,11 +25,13 @@ public class RecordGpsHistoryService extends Service{
     TimerTask recordGPSTask;
     PendingIntent uploadMessageSender;
     final Handler recordGPSHandler=new Handler();
+    String deviceId;
     @Override
     public void onCreate() {
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         this.lineId=System.currentTimeMillis();
-
+        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
+        deviceId=deviceUuidFactory.getDeviceUuid().toString();
         super.onCreate();
     }
 
@@ -63,7 +65,7 @@ public class RecordGpsHistoryService extends Service{
                         {
                             if(gpsUtil.isGpsLocationStarted() && gpsUtil.isGpsEnabled() && gpsUtil.getMphSpeed()>0  ) {
                                 DBUtil dbUtil=new DBUtil(getApplicationContext());
-                                dbUtil.insert(gpsUtil.getLongitude(),gpsUtil.getLatitude(),gpsUtil.getKmhSpeedStr()
+                                dbUtil.insert(deviceId,gpsUtil.getLongitude(),gpsUtil.getLatitude(),gpsUtil.getKmhSpeedStr()
                                         ,gpsUtil.getSpeed(),gpsUtil.getBearing(),new Date(),lineId);
                             }
                             //Log.d("huivip","Record gps data!");

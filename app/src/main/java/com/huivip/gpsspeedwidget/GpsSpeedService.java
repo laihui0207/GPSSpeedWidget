@@ -79,9 +79,16 @@ public class GpsSpeedService extends Service {
                             }
                         }
                     }
-                });
+                }).start();
+                if (PrefUtils.isEnableFlatingWindow(getApplicationContext())
+                        && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+                    Intent floatService = new Intent(this, FloatingService.class);
+                    startService(floatService);
+                }
             }
-
+            if(!PrefUtils.isWidgetActived(getApplicationContext())){
+                return super.onStartCommand(intent,flags,startId);
+            }
             if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
                 serviceStoped = false;
                 if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {

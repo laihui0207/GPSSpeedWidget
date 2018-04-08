@@ -8,7 +8,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_below="@id/limit"
                 android:background="@drawable/circle"
-                android:elevation="2dp" android:layout_margin="4dp">
+                android:elevation="2dp">
 
     <devlight.io.library.ArcProgressStackView
             android:id="@+id/arcview"

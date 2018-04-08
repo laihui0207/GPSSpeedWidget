@@ -37,8 +37,6 @@ public class GpsUtil implements AMapNaviListener {
     private String latitude;
     private String longitude;
     private float bearing;
-    private float lastBearing;
-    private String latedDirectionName;
     private boolean isTurned = false;
     private String velocitaString = null;
     private Integer velocitaNumber;
@@ -289,9 +287,11 @@ public class GpsUtil implements AMapNaviListener {
         mphSpeed = (int) (this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         kmhSpeed = (int) (this.speed.doubleValue() * 3.6D);
         if (speedAdjust != 0) {
-            kmhSpeed += speedAdjust;
-            if (kmhSpeed < 0) {
-                kmhSpeed = 0;
+            if(kmhSpeed>0) {
+                kmhSpeed += speedAdjust;
+                if (kmhSpeed < 0) {
+                    kmhSpeed = 0;
+                }
             }
         }
         speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
@@ -306,7 +306,7 @@ public class GpsUtil implements AMapNaviListener {
         if (limitSpeed > 0 && kmhSpeed > limitSpeed) {
             hasLimited = true;
             limitCounter++;
-            if (!limitSpeaked || limitCounter > 600) {
+            if (!limitSpeaked || limitCounter > 300) {
                 limitSpeaked = true;
                 limitCounter = 0;
                 ttsUtil.speak("您已超速");
@@ -407,7 +407,7 @@ public class GpsUtil implements AMapNaviListener {
             float betweenBearing = location.bearingTo(cameraLocation);
             if (Math.abs(bearing - betweenBearing) > 50) {
                 directionCheckCounter++;
-                if (directionCheckCounter > 150 && kmhSpeed > 0) {
+                if (directionCheckCounter > 50 && kmhSpeed > 0) {
                     isTurned = true;
                     directionCheckCounter = 0;
                     limitSpeed = 0;
