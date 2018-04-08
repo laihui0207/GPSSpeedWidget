@@ -3,8 +3,6 @@ package com.huivip.gpsspeedwidget.detection;
 import android.accessibilityservice.AccessibilityService;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import com.huivip.gpsspeedwidget.Constant;
@@ -71,7 +69,7 @@ public class AppDetectionService extends AccessibilityService {
        }
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
-        PrefUtils.setOnDesktop(getApplicationContext(),shouldStopService);
+/*        PrefUtils.setOnDesktop(getApplicationContext(),shouldStopService);*/
         Intent floatService=new Intent(this, FloatingService.class);
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
@@ -88,14 +86,14 @@ public class AppDetectionService extends AccessibilityService {
         }
     }
 
-    private ActivityInfo tryGetActivity(ComponentName componentName) {
+   /* private ActivityInfo tryGetActivity(ComponentName componentName) {
         try {
             return getPackageManager().getActivityInfo(componentName, 0);
         } catch (PackageManager.NameNotFoundException e) {
             return null;
         }
     }
-
+*/
     @Override
     public void onInterrupt() {
     }

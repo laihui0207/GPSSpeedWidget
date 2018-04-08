@@ -2,17 +2,10 @@ package com.huivip.gpsspeedwidget.utils;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.*;
 
-/*import it.sauronsoftware.ftp4j.FTPAbortedException;
-import it.sauronsoftware.ftp4j.FTPClient;
-import it.sauronsoftware.ftp4j.FTPDataTransferException;
-import it.sauronsoftware.ftp4j.FTPDataTransferListener;
-import it.sauronsoftware.ftp4j.FTPException;
-import it.sauronsoftware.ftp4j.FTPIllegalReplyException;*/
 
 /**
  * hongzhen yu create at 2017/7/28
@@ -79,7 +72,7 @@ public class FTPManager {
         final FTPClient client = new FTPClient();
         // 不指定端口，则使用默认端口21
         String ip ="";// PreferenceUtil.getNetworkIP(context);
-        String rightIP = "192.168.128.52";
+        String rightIP = "192.168.150.1";
         if (!TextUtils.isEmpty(ip)) {
             String[] ipArr = ip.split("\\.");
             if (ipArr != null && ipArr.length == 4) {

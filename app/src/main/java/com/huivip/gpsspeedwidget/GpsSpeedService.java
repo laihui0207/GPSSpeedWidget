@@ -91,18 +91,18 @@ public class GpsSpeedService extends Service {
             }
             if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
                 serviceStoped = false;
-                if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {
+/*                if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {*/
                     this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "...");
                     this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
                     this.remoteViews=null;
-                }
-                if(PrefUtils.isEnabledNumberWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {
+               /* }
+                if(PrefUtils.isEnabledNumberWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {*/
                     this.numberRemoteViews.setTextViewText(R.id.number_speed, "...");
                     this.numberRemoteViews.setTextViewText(R.id.number_limit, "...");
                     this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, 0, false);
                     this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
                     this.numberRemoteViews=null;
-                }
+              /*  }*/
 
                 gpsUtil.startLocationService();
 
@@ -117,19 +117,19 @@ public class GpsSpeedService extends Service {
                 Toast.makeText(getApplicationContext(),"GPS服务开启",Toast.LENGTH_SHORT).show();
             } else {
                 serviceStoped = true;
-                if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext()) ) {
+/*                if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext()) ) {*/
                     this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "关");
                     this.remoteViews.setImageViewResource(R.id.ialtimetro, R.drawable.base);
                     this.remoteViews.setImageViewResource(R.id.ifreccia, R.drawable.alt_0);
                     this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
                     this.remoteViews=null;
-                }
-                if(PrefUtils.isEnabledNumberWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {
+              /*  }
+                if(PrefUtils.isEnabledNumberWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {*/
                     this.numberRemoteViews.setTextViewText(R.id.number_speed, "关");
                     this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, 0, false);
                     this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
                     this.numberRemoteViews=null;
-                }
+                /*}*/
 
                 gpsUtil.stopLocationService(true);
                 if (this.locationTimer != null) {
@@ -207,7 +207,7 @@ public class GpsSpeedService extends Service {
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         int mphNumber = gpsUtil.getMphSpeed().intValue();
         setSpeeding(gpsUtil.isHasLimited());
-        if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {
+/*        if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {*/
             this.remoteViews.setTextViewText(R.id.textView1_watch_speed, gpsUtil.getKmhSpeedStr() + "");
             this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getLimitSpeed() + "");
             this.remoteViews.setTextViewText(R.id.textView_watch_direction, gpsUtil.getDirection() + "");
@@ -525,8 +525,8 @@ public class GpsSpeedService extends Service {
             }
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
             this.remoteViews=null;
-        }
-        if(PrefUtils.isEnabledNumberWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {
+       /* }
+        if(PrefUtils.isEnabledNumberWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {*/
             this.numberRemoteViews.setTextViewText(R.id.textView_direction, gpsUtil.getDirection() + "");
             if (gpsUtil.getLimitDistance() > 0) {
                 this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getLimitDistance() + "米");
@@ -539,6 +539,6 @@ public class GpsSpeedService extends Service {
             this.numberRemoteViews.setTextViewText(R.id.number_limit, gpsUtil.getLimitSpeed() + "");
             this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
             this.numberRemoteViews=null;
-        }
+       /* }*/
     }
 }
