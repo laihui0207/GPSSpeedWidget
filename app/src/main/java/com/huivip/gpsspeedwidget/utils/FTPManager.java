@@ -2,6 +2,8 @@ package com.huivip.gpsspeedwidget.utils;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.*;
@@ -39,39 +41,15 @@ public class FTPManager {
     public void setContext(Context context){
         this.context=context;
     }
-   /* public void ftp4jUpload(final String path, final IResultListener listener) {
-        new Thread() {
-            public void run() {
-                try {
-                    String targetName = ftp4jUpload(path);
-                    if (listener != null) {
-                        listener.onSuccess(targetName);
-                    }
-                } catch (IllegalStateException | IOException
-                        | FTPIllegalReplyException | FTPException
-                        | FTPDataTransferException | FTPAbortedException e) {
-                    e.printStackTrace();
-                    Log.d("lixm", "ftp4jUpload error : ", e);
-                    if (listener != null) {
-                        listener.onFilure(e.getMessage());
-                    }
-                }
-
-            }
-        }.start();
-    }
-*/
     /**
      * FTP协议文件上传
      *
-     * @param path
-
      */
-    public String ftp4jUpload(String path) throws IllegalStateException, IOException{
+    public String ftp4jUpload(File file) throws IllegalStateException, IOException{
         // 创建客户端
         final FTPClient client = new FTPClient();
         // 不指定端口，则使用默认端口21
-        String ip ="";// PreferenceUtil.getNetworkIP(context);
+        String ip ="192.168.150.1";// PreferenceUtil.getNetworkIP(context);
         String rightIP = "192.168.150.1";
         if (!TextUtils.isEmpty(ip)) {
             String[] ipArr = ip.split("\\.");
@@ -87,25 +65,36 @@ public class FTPManager {
         client.connect(rightIP, rightPort);
         // 用户登录
         String user ="";// PreferenceUtil.getNetworkUser(context);
-        String rightUser = "test";
+        String rightUser = "laihui";
         if (!TextUtils.isEmpty(user)) {
             rightUser = user;
         }
         String pwd ="";// PreferenceUtil.getNetworkPwd(context);
-        String rightPwd = "test";
+        String rightPwd = "pass";
         if (!TextUtils.isEmpty(pwd)) {
             rightPwd = pwd;
         }
         client.login(rightUser, rightPwd);
-        String rightFilePath = "";
-        String filePath ="";// PreferenceUtil.getNetworkFtpPath(context);
+        String rightFilePath = "sda1";
+        String filePath ="sda1";// PreferenceUtil.getNetworkFtpPath(context);
         if (!TextUtils.isEmpty(filePath)) {
-            rightFilePath = "/" + filePath + "/";
+            rightFilePath = "/" + filePath + "/gps";
+            client.makeDirectory(rightFilePath);
+           boolean changed= client.changeWorkingDirectory(rightFilePath);
+           Log.d("huivip","Changed workdir:"+changed);
            // client.changeDirectory(rightFilePath+PreferenceUtil.getUserCode(MyApplication.getMyApplication())+"/");
         }
-        File file = new File(path);
+        //File file = new File(path);
+        client.setBufferSize(1024);
+        client.setControlEncoding("UTF-8");
+        client.enterLocalPassiveMode();
+        client.setFileType(FTP.BINARY_FILE_TYPE);
         InputStream in=new FileInputStream(file);
         boolean result=client.storeFile("GPSHistory.db",in);
+        in.close();
+        Log.d("huivip","ftp upload:"+result);
+        client.logout();
+        client.disconnect();
         //client.upload(file);
        // client.rename(srcName, targetName);
         return "";

@@ -15,6 +15,9 @@ public class Constant {
     public static final String AMAPAUTOLITEPACKAGENAME="com.autonavi.amapautolite";
     public static final String UPLOADACTION="com.huivip.recordGpsHistory.start";
 
+    public static final String AMAP_SEND_ACTION="AUTONAVI_STANDARD_BROADCAST_SEND";
+    public static final String AMAP_RECEIVE_ACTION="AUTONAVI_STANDARD_BROADCAST_RECV";
+
     public static int LINE=1;
     public static int POINT=0;
 

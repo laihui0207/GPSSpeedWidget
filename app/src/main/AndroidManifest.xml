@@ -81,7 +81,12 @@
                 <action android:name="com.huivip.recordGpsHistory.start"/>
             </intent-filter>
         </receiver>
-
+        <receiver android:name=".listener.AutoMapBoardReceiver">
+            <intent-filter>
+                <action android:name="AUTONAVI_STANDARD_BROADCAST_SEND"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
         <service android:name=".GpsSpeedService"/>
         <service android:name=".FloatingService"/>
         <service android:name=".RecordGpsHistoryService"/>
@@ -106,6 +111,7 @@
 
         <activity android:name=".AudioTestActivity">
         </activity>
+        <activity android:name=".BackupGPSHistoryActivity"></activity>
         <activity android:name=".appselection.AppSelectionActivity"></activity>
     </application>
 

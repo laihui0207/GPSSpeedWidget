@@ -12,14 +12,10 @@ import android.view.View;
 import android.widget.*;
 import com.amap.api.maps.*;
 import com.amap.api.maps.model.*;
-import com.amap.api.navi.*;
-import com.amap.api.navi.model.*;
-import com.amap.api.navi.view.DriveWayView;
 import com.amap.api.trace.LBSTraceClient;
 import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
-import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import org.json.JSONArray;
@@ -158,6 +154,14 @@ public class MainActivity extends Activity implements TraceListener {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this,AudioTestActivity.class));
+            }
+        });
+        Button backupButton=(Button)findViewById(R.id.button_backup);
+        backupButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,BackupGPSHistoryActivity.class));
             }
         });
         AutoCompleteTextView textUid=findViewById(R.id.editText_UID);

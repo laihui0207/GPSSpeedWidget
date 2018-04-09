@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 import com.amap.api.maps.AMapUtils;
@@ -69,6 +70,8 @@ public class GpsUtil implements AMapNaviListener {
     BroadcastReceiver broadcastReceiver;
     int directionCheckCounter = 0;
     int limitDistancePercentage = 0;
+    float distance=0F;
+    Location preLocation;
     Location cameraLocation;
     LocationListener locationListener = new LocationListener() {
         @Override
@@ -227,11 +230,15 @@ public class GpsUtil implements AMapNaviListener {
     public Double getSpeed() {
         return speed;
     }
-
+    public String getDistance(){
+        localNumberFormat.setMaximumFractionDigits(1);
+        return localNumberFormat.format(distance/1000)+"km";
+    }
     public Integer getSpeedometerPercentage() {
         return speedometerPercentage;
     }
 
+    NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     private void updateLocationData(Location paramLocation) {
         if (paramLocation != null) {
             this.latitude = Double.toString(paramLocation.getLatitude());
@@ -239,12 +246,15 @@ public class GpsUtil implements AMapNaviListener {
             this.velocitaString = null;
             if (paramLocation.hasSpeed()) {
                 this.velocitaNumber = Integer.valueOf((int) paramLocation.getSpeed());
-                NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
                 localNumberFormat.setMaximumFractionDigits(1);
                 this.speed = Double.valueOf(paramLocation.getSpeed());
                 this.velocitaString = localNumberFormat.format(this.speed);
                 this.bearing = paramLocation.getBearing();
             }
+            if(preLocation!=null){
+                distance+=preLocation.distanceTo(paramLocation);
+            }
+            preLocation=paramLocation;
         } else {
 
             this.velocitaString = null;
@@ -279,8 +289,6 @@ public class GpsUtil implements AMapNaviListener {
             }
         }
     }
-
-    NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
 
     void computeAndShowData() {
         localNumberFormat.setMaximumFractionDigits(1);
@@ -478,13 +486,15 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void onGpsOpenStatus(boolean b) {
-
+        gpsEnabled=true;
     }
 
     @Override
     public void onNaviInfoUpdate(NaviInfo naviInfo) {
-        Log.d("huivip", "Current Road:" + naviInfo.getCurrentRoadName());
-        //Toast.makeText(context,naviInfo.getCurrentRoadName()+"",Toast.LENGTH_SHORT).show();
+        //Log.d("huivip", "Current Road:" + naviInfo.getCurrentRoadName());
+        if(!TextUtils.isEmpty(naviInfo.getCurrentRoadName())){
+            Toast.makeText(context, "当前道路:"+naviInfo.getCurrentRoadName() + "", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -550,7 +560,7 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void showLaneInfo(AMapLaneInfo aMapLaneInfo) {
-        //Toast.makeText(context,"Get Lan info: count="+aMapLaneInfo.laneCount,Toast.LENGTH_SHORT).show();
+        Toast.makeText(context,"Get Lan info: count="+aMapLaneInfo.getLaneTypeIdArray().toString(),Toast.LENGTH_SHORT).show();
     }
 
     @Override

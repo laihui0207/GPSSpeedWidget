@@ -73,7 +73,7 @@ public class FloatingService extends Service{
             }
             gpsUtil.startLocationService();
         }
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){

@@ -7,12 +7,15 @@ import android.media.AudioManager;
 import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.TTSUtil;
+import com.huivip.gpsspeedwidget.utils.*;
+
+import java.io.File;
+import java.io.IOException;
 
 public class AudioTestActivity extends Activity {
     AudioManager audioManager;
@@ -128,8 +131,23 @@ public class AudioTestActivity extends Activity {
                 intent.putExtra("startTime", 1);
                 intent.putExtra("window", 0);
                 sendBroadcast(intent);*/
-                PowerManager manager = (PowerManager)getSystemService(Context.POWER_SERVICE);
-                manager.reboot("重新启动系统");
+                /*PowerManager manager = (PowerManager)getSystemService(Context.POWER_SERVICE);
+                manager.reboot("重新启动系统");*/
+                /*String appName= getString(R.string.app_name);
+                openMapOperation("androidauto://rootmap?sourceApplication=" + appName);*/
+                Intent intent = new Intent();
+                intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+                intent.putExtra("KEY_TYPE", 10029);
+                sendBroadcast(intent);
+               /* Intent intent = new Intent();
+                intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+                intent.putExtra("KEY_TYPE", 10039);
+                intent.putExtra("POINAME", "厦门火车站");
+                intent.putExtra("LON", 118.122648);
+                intent.putExtra("LAT", 24.473529);
+                intent.putExtra("DEV",0);
+                intent.putExtra("SOURCE_APP", "Third App");
+                sendBroadcast(intent);*/
             }
         });
     }
@@ -140,5 +158,13 @@ public class AudioTestActivity extends Activity {
         voiceCallEditText.setText(audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL)+"");
         alarmEditText.setText(audioManager.getStreamVolume(AudioManager.STREAM_ALARM)+"");
         notificationText.setText(audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION)+"");
+    }
+    private void openMapOperation(String url) {
+        Intent intent = new Intent("android.intent.action.VIEW",
+                android.net.Uri.parse(url));
+        intent.setPackage("com.autonavi.amapauto");
+        intent.addCategory("android.intent.category.DEFAULT");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

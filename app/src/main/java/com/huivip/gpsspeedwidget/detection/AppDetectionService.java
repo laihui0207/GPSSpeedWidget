@@ -3,6 +3,8 @@ package com.huivip.gpsspeedwidget.detection;
 import android.accessibilityservice.AccessibilityService;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import com.huivip.gpsspeedwidget.Constant;
@@ -52,24 +54,23 @@ public class AppDetectionService extends AccessibilityService {
                 event.getPackageName().toString(),
                 event.getClassName().toString()
         );
-       /* boolean isActivity = componentName.getPackageName().toLowerCase().contains("activity")
+        boolean isActivity = componentName.getPackageName().toLowerCase().contains("activity")
                 || tryGetActivity(componentName) != null;
 
         if (!isActivity) {
             return;
-        }*/
-       //Log.d("huivip","Package name:"+componentName.getPackageName());
+        }
        // when in auto navi or auto navi lite app, temp disable audio service
-       if(componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
+       /*if(componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
                || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)){
            PrefUtils.setEnableTempAudioService(getApplicationContext(),false);
        }
        else {
            PrefUtils.setEnableTempAudioService(getApplicationContext(),true);
-       }
+       }*/
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
-/*        PrefUtils.setOnDesktop(getApplicationContext(),shouldStopService);*/
+        PrefUtils.setOnDesktop(getApplicationContext(),shouldStopService);
         Intent floatService=new Intent(this, FloatingService.class);
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
@@ -86,14 +87,13 @@ public class AppDetectionService extends AccessibilityService {
         }
     }
 
-   /* private ActivityInfo tryGetActivity(ComponentName componentName) {
+   private ActivityInfo tryGetActivity(ComponentName componentName) {
         try {
             return getPackageManager().getActivityInfo(componentName, 0);
         } catch (PackageManager.NameNotFoundException e) {
             return null;
         }
     }
-*/
     @Override
     public void onInterrupt() {
     }

@@ -531,7 +531,7 @@ public class GpsSpeedService extends Service {
             if (gpsUtil.getLimitDistance() > 0) {
                 this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getLimitDistance() + "米");
             } else {
-                this.numberRemoteViews.setTextViewText(R.id.textView_distance, " ");
+                this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getDistance()+"");
             }
             this.numberRemoteViews.setProgressBar(R.id.progressBarLimit, 100, gpsUtil.getLimitDistancePercentage(), false);
             this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, gpsUtil.getSpeedometerPercentage(), false);
