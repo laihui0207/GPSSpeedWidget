@@ -61,11 +61,11 @@ public class AppDetectionService extends AccessibilityService {
             return;
         }
        // when in auto navi or auto navi lite app, temp disable audio service
-       /*if(componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
+       if(componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
                || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)){
            PrefUtils.setEnableTempAudioService(getApplicationContext(),false);
        }
-       else {
+      /* else {
            PrefUtils.setEnableTempAudioService(getApplicationContext(),true);
        }*/
 

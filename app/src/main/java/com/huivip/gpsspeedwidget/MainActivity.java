@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -39,7 +41,13 @@ public class MainActivity extends Activity implements TraceListener {
     String myFormat = "MM/dd/yyyy";
     DeviceUuidFactory deviceUuidFactory;
     SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CHINA);
-
+    String format = "yyyy-MM-dd HH:mm:ss";
+    SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.CHINA);
+    Map<String,List<TraceLocation>> lineDatas=new HashMap<>();
+    int totalDistance=0;
+    List<TraceLocation> startPoints;
+    List<TraceLocation> endPoints;
+    NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
 
         @Override
@@ -80,8 +88,8 @@ public class MainActivity extends Activity implements TraceListener {
                     drawPoint(msg);
                 }
                 else if (msg.arg1==Constant.LINE){
-                    //drawLine(msg);
-                    drawLineAndFixPoint(msg);
+                    drawLine(msg);
+                    //drawLineAndFixPoint(msg);
                 }
             }
         };
@@ -288,6 +296,8 @@ public class MainActivity extends Activity implements TraceListener {
     private void drawLine(Message msg){
         List<LatLng> latLngs = new ArrayList<>();
         LatLng lastedLatLng=null;
+        String lastedTime="";
+        String firstTime="";
         LatLng firstLatLng=null;
         String dataResult=(String)msg.obj;
         try {
@@ -295,6 +305,41 @@ public class MainActivity extends Activity implements TraceListener {
                 CoordinateConverter converter = new CoordinateConverter(getApplicationContext());
                 converter.from(CoordinateConverter.CoordType.GPS);
                 JSONArray datas = new JSONArray(dataResult);
+                Map<String,List<LatLng>> tempMap=new HashMap<>();
+                List<LatLng> locations=new ArrayList<>();
+                /*for (int i = 0; i < datas.length(); i++) {
+                    JSONObject data = datas.getJSONObject(i);
+                    String lineId=data.getString("lineId");
+                    if(tempMap.containsKey(lineId)){
+                        locations=tempMap.get(lineId);
+                    }
+                    else {
+                        locations=new ArrayList<>();
+                    }
+                    LatLng latLng=new LatLng(data.getDouble("lat"),data.getDouble("lng"));
+
+                    TraceLocation location = new TraceLocation();
+                    location.setLatitude(data.getDouble("lat"));
+                    location.setLongitude(data.getDouble("lng"));
+                    if(!data.isNull("speedValue")){
+                        location.setSpeed(data.getLong("speedValue")*3.6F);
+                    }
+                    if(!data.isNull("bearValue")){
+                        location.setBearing(data.getLong("bearingValue"));
+                    }
+                    location.setTime(dateFormat.parse(data.getString("createTime")).getTime());
+                    locations.add(latLng);
+                    tempMap.put(lineId,locations);
+                }
+
+                if(tempMap!=null && tempMap.size()>0){
+                    int i=0;
+                    for(String key:tempMap.keySet()){
+                        lineDatas.put(i+"",tempMap.get(key));
+                        i++;
+                    }
+                }
+                */
                 for(int i=0;i<datas.length();i++){
                     JSONObject data=datas.getJSONObject(i);
                     LatLng latLng=new LatLng(data.getDouble("lat"),data.getDouble("lng"));
@@ -302,32 +347,40 @@ public class MainActivity extends Activity implements TraceListener {
                     lastedLatLng=converter.convert();
                     if(i==0){
                         firstLatLng=lastedLatLng;
+                        firstTime=data.getString("createTime");
                     }
                     latLngs.add(lastedLatLng);
+                    lastedTime=data.getString("createTime");
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }/*catch (ParseException e) {
+            e.printStackTrace();
+        }*/
         aMap.clear();
-        aMap.addPolyline(new PolylineOptions().
-                addAll(latLngs).setDottedLine(true).width(5).color(Color.argb(255, 58, 173, 211)));
-        aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置").snippet("车辆最后的位置"));
-        aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").snippet("车辆开始的位置"));
+        /*aMap.addPolyline(new PolylineOptions().
+                addAll(latLngs).setDottedLine(true).width(5).color(Color.argb(255, 58, 173, 211)));*/
+        TraceOverlay mTraceOverlay = new TraceOverlay(aMap, latLngs);
+        mTraceOverlay.setProperCamera(latLngs);
+        mTraceOverlay.zoopToSpan();
+        localNumberFormat.setMaximumFractionDigits(1);
+        aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.end)).snippet("车辆最后的位置\n时间:"+lastedTime+"\n行程:"+localNumberFormat.format(getDistance(latLngs)/1000) +"公里"));
+        aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.start)).snippet("车辆开始的位置\n时间："+firstTime));
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng,13,0,0));
         aMap.moveCamera(mCameraUpdate);
 
     }
+
     private void drawLineAndFixPoint(Message msg) {
-        LatLng lastedLatLng = null;
-        LatLng firstLatLng = null;
         String dataResult = (String) msg.obj;
-        String format = "yyyy-MM-dd HH:mm:ss";
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.CHINA);
-        String startTime="";
-        Map<String,List<TraceLocation>> lineDatas=new HashMap<>();
+        lineDatas=new HashMap<>();
+        totalDistance=0;
+        startPoints=new ArrayList<>();
+        endPoints=new ArrayList<>();
         CoordinateConverter converter = new CoordinateConverter(getApplicationContext());
         converter.from(CoordinateConverter.CoordType.GPS);
+        Map<String,List<TraceLocation>> tempMap=new HashMap<>();
         try {
             if (dataResult != "-1") {
 
@@ -336,20 +389,13 @@ public class MainActivity extends Activity implements TraceListener {
                 for (int i = 0; i < datas.length(); i++) {
                     JSONObject data = datas.getJSONObject(i);
                     String lineId=data.getString("lineId");
-                    if(lineDatas.containsKey(lineId)){
-                        locations=lineDatas.get(lineId);
+                    if(tempMap.containsKey(lineId)){
+                        locations=tempMap.get(lineId);
                     }
                     else {
                         locations=new ArrayList<>();
                     }
 
-                    LatLng latLng=new LatLng(data.getDouble("lat"),data.getDouble("lng"));
-                    converter.coord(latLng);
-                    lastedLatLng=converter.convert();
-                    if(i==0){
-                        firstLatLng=lastedLatLng;
-                        startTime=data.getString("createTime");
-                    }
                     TraceLocation location = new TraceLocation();
                     location.setLatitude(data.getDouble("lat"));
                     location.setLongitude(data.getDouble("lng"));
@@ -361,7 +407,15 @@ public class MainActivity extends Activity implements TraceListener {
                     }
                     location.setTime(dateFormat.parse(data.getString("createTime")).getTime());
                     locations.add(location);
-                    lineDatas.put(lineId,locations);
+                    tempMap.put(lineId,locations);
+                }
+
+                if(tempMap!=null && tempMap.size()>0){
+                    int i=0;
+                    for(String key:tempMap.keySet()){
+                        lineDatas.put(i+"",tempMap.get(key));
+                        i++;
+                    }
                 }
 
             }
@@ -375,14 +429,9 @@ public class MainActivity extends Activity implements TraceListener {
 
 
        if(lineDatas!=null && lineDatas.size()>0){
-           int i=10;
            for(String key: lineDatas.keySet()){
                List<TraceLocation> locations=lineDatas.get(key);
-               LatLng latLng=new LatLng(locations.get(0).getLatitude(),locations.get(0).getLongitude());
-               converter.coord(latLng);
-               firstLatLng=converter.convert();
-               aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").snippet("车辆开始的位置\n时间："+dateFormat.format(new Date(locations.get(0).getTime()))));
-               mTraceClient.queryProcessedTrace(i++, locations,
+               mTraceClient.queryProcessedTrace(Integer.parseInt(key), locations,
                        LBSTraceClient.TYPE_GPS, this);
            }
        }
@@ -450,20 +499,54 @@ public class MainActivity extends Activity implements TraceListener {
         Log.d("huivip","lineId:"+lineId);
 
     }
-
+    Map<Integer,List<LatLng>> traceResult=new TreeMap<>();
     @Override
     public void onFinished(int lineID, List<LatLng> latLngs, int distance, int watingtime) {
+       // traceResult.put(lineID, latLngs);
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
-        LatLng lastedLatLng=null;
-        if(latLngs!=null && latLngs.size()>0){
-            lastedLatLng=latLngs.get(latLngs.size()-1);
-        }
-        TraceOverlay mTraceOverlay = new TraceOverlay(aMap,latLngs);
+        TraceOverlay mTraceOverlay = new TraceOverlay(aMap, latLngs);
         mTraceOverlay.setProperCamera(latLngs);
         mTraceOverlay.zoopToSpan();
-        aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置").snippet("车辆最后的位置\n" +
-                "总行程："+decimalFormat.format(distance/1000D)+"公里\n等待时间："+decimalFormat.format(watingtime/60d)+" 分钟"));
-        Log.d("huviip","纠偏结束！");
-    }
 
+        if (lineDatas != null) {
+            //int distance=getDistance(latLngs);
+            totalDistance += distance;
+            List<TraceLocation> locations = lineDatas.get(lineID+"");
+            LatLng latLng = latLngs.get(0);
+            LatLng lastedLatLng = latLngs.get(latLngs.size() - 1);
+            startPoints.add(locations.get(0));
+            aMap.addMarker(new MarkerOptions().position(latLng)
+                    .title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.start))
+                    .snippet("车辆开始的位置\n时间:" + dateFormat.format(new Date(locations.get(0).getTime()))));
+
+            endPoints.add(locations.get(locations.size()-1));
+            aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.end)).snippet("车辆最后的位置\n" +
+                            "行程：" + decimalFormat.format(distance / 1000D) + "公里\n时间:"
+                            + dateFormat.format(new Date(locations.get(locations.size() - 1).getTime())) + "\n总行程：" + decimalFormat.format(totalDistance / 1000D) + "公里"));
+        }
+        Log.d("huviip", "纠偏结束！");
+    }
+    private void traceLine(){
+
+    }
+    private int getDistance(List<LatLng> list){
+        int distance=0;
+        if(list==null || list.size()==0) return distance;
+        Location preLocation=null;
+        for(LatLng latLng:list){
+            if(preLocation==null){
+                preLocation=new Location("");
+                preLocation.setLatitude(latLng.latitude);
+                preLocation.setLongitude(latLng.longitude);
+            } else {
+                Location currentLocation=new Location("");
+                currentLocation.setLatitude(latLng.latitude);
+                currentLocation.setLongitude(latLng.longitude);
+                distance+=preLocation.distanceTo(currentLocation);
+                preLocation=currentLocation;
+            }
+        }
+        return  distance;
+    }
 }

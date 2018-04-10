@@ -67,7 +67,7 @@ app.get("/data", function (req, res) {
         if (endTime != undefined) {
             sql += " and createTime < ? ";
         }
-        sql += " order by createTime";
+        sql += " order by lineId ASC, createTime ASC";
 
         db.serialize(function () {
             db.all(sql, [deviceId+'%', startTime, endTime], function (err, rows) {

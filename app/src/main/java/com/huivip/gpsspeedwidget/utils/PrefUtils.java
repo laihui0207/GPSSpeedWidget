@@ -64,6 +64,12 @@ public abstract class PrefUtils {
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
     public static final String SHOW_NO_DESKTOP="1";
+    public static final String FTP_URL="com.huivip.ftp.url";
+    public static final String FTP_PORT="com.huivip.ftp.port";
+    public static final String FTP_USER="com.huivip.ftp.user";
+    public static final String FTP_PASSWORD="com.huivip.ftp.password";
+    public static final String FTP_PATH="com.huivip.ftp.path";
+    public static final String FTP_AUTO_BACKUP="com.huivip.ftp.auto.backup";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -368,30 +374,42 @@ public abstract class PrefUtils {
     public static void setAutoLaunchApps(Context context, Set<String> packageNames) {
         edit(context).putStringSet(PREF_AUTO_LAUNCH_APPS, packageNames).apply();
     }
-    public static float getSpeedometerSize(Context context) {
-        return getSharedPreferences(context).getFloat(PREF_SPEEDOMETER_SIZE, 1f);
+    public static void setFtpUrl(Context context,String url){
+        edit(context).putString(FTP_URL,url).apply();
     }
-
-    public static void setSpeedometerSize(Context context, float size) {
-        edit(context).putFloat(PREF_SPEEDOMETER_SIZE, size).apply();
+    public static String getFTPUrl(Context context){
+        return getSharedPreferences(context).getString(FTP_URL,"");
     }
-
-    public static float getSpeedLimitSize(Context context) {
-        return getSharedPreferences(context).getFloat(PREF_SPEEDLIMIT_SIZE, 1f);
+    public static void setFtpPort(Context context,String port){
+        edit(context).putString(FTP_PORT,port).apply();
     }
-
-    public static void setSpeedLimitSize(Context context, float size) {
-        edit(context).putFloat(PREF_SPEEDLIMIT_SIZE, size).apply();
+    public static String getFTPPort(Context context){
+        return getSharedPreferences(context).getString(FTP_PORT,"21");
     }
-
-    public static boolean isGmapsOnlyInNavigation(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_GMAPS_ONLY_NAVIGATION, false);
+    public static void setFtpUser(Context context,String user){
+        edit(context).putString(FTP_USER,user).apply();
     }
-
-    public static void setGmapsOnlyInNavigation(Context context, boolean only) {
-        edit(context).putBoolean(PREF_GMAPS_ONLY_NAVIGATION, only).apply();
+    public static String getFTPUser(Context context){
+        return getSharedPreferences(context).getString(FTP_USER,"");
     }
-
+    public static void setFtpPassword(Context context,String password){
+        edit(context).putString(FTP_PASSWORD,password).apply();
+    }
+    public static String getFTPPassword(Context context){
+        return getSharedPreferences(context).getString(FTP_PASSWORD,"");
+    }
+    public static void setFtpPath(Context context,String path){
+        edit(context).putString(FTP_PATH,path).apply();
+    }
+    public static String getFTPPath(Context context){
+        return getSharedPreferences(context).getString(FTP_PATH,"");
+    }
+    public static void setFtpAutoBackup(Context context,boolean auto){
+        edit(context).putBoolean(FTP_AUTO_BACKUP,auto).apply();
+    }
+    public static boolean isFTPAutoBackup(Context context){
+        return getSharedPreferences(context).getBoolean(FTP_AUTO_BACKUP,false);
+    }
     @IntDef({STYLE_US, STYLE_INTERNATIONAL})
     @Retention(RetentionPolicy.SOURCE)
     public @interface SignStyle {

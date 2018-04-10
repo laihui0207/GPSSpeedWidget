@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
@@ -247,8 +248,11 @@ public class ConfigurationActivity extends Activity {
             public void onClick(View v) {
                 EditText urlText=findViewById(R.id.editText_remoteURL);
                 String url=urlText.getText().toString();
-                if(url!=null && !url.equalsIgnoreCase("")){
+                if(!TextUtils.isEmpty(url.trim())){
                     PrefUtils.setGpsRemoteUrl(getApplicationContext(),url.trim());
+                }
+                else {
+                    PrefUtils.setGpsRemoteUrl(getApplicationContext(),Constant.LBSURL);
                 }
                 try {
                     String destPath = FileUtil.createTmpDir(getApplicationContext());

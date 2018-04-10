@@ -186,7 +186,7 @@ public class FloatingService extends Service{
                 mFloatingimitDistance.setText(Float.toString(gpsUtil.getLimitDistance())+"米");
             }
             else {
-                mFloatingimitDistance.setText("");
+                mFloatingimitDistance.setText(gpsUtil.getDistance());
             }
         }
     }

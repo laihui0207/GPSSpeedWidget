@@ -10,6 +10,7 @@ import android.util.Log;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.Date;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 

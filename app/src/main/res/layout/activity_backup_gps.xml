@@ -94,10 +94,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/button_saveandbackup" android:layout_weight="1"/>
         <CheckBox
-                android:text="自动备份昨天数据"
+                android:text="自动备份历史数据"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/checkBox" android:layout_weight="1"
-                android:visibility="gone"/>
+                android:layout_height="wrap_content" android:id="@+id/checkBox_autobackup" android:layout_weight="1"
+        />
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"

@@ -424,19 +424,21 @@ public class GpsUtil implements AMapNaviListener {
                 limitDistance = Float.parseFloat(localNumberFormat.format(location.distanceTo(cameraLocation)));
                 isTurned = false;
             }
+            if (limitDistance <= 5 || limitDistance > 300 || isTurned) {
+                limitDistance = 0F;
+                if (isTurned || limitSpeed == 0) {
+                    cameraLocation = null;
+                    if(limitSpeed!=0 && isTurned){
+                        limitSpeed=0;
+                    }
+                }
 
+            }
         } else {
             directionCheckCounter = 0;
             limitDistance = 0F;
+            limitSpeed=0;
         }
-        if (limitDistance <= 5 || limitDistance > 300 || isTurned) {
-            limitDistance = 0F;
-            if (isTurned || limitSpeed == 0) {
-                cameraLocation = null;
-            }
-
-        }
-
     }
 
     @Override
@@ -508,14 +510,14 @@ public class GpsUtil implements AMapNaviListener {
             if (aMapNaviCameraInfo.getCameraType() == CameraType.SPEED
                     || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYSTART
                     || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYEND
-                    || aMapNaviCameraInfo.getCameraType() == CameraType.BREAKRULE) {
+                    || aMapNaviCameraInfo.getCameraType() == CameraType.BREAKRULE || aMapNaviCameraInfo.getCameraSpeed()!=0) {
                 limitSpeed = aMapNaviCameraInfo.getCameraSpeed();
                 cameraLocation = new Location("");
                 cameraLocation.setLatitude(aMapNaviCameraInfo.getY());
                 cameraLocation.setLongitude(aMapNaviCameraInfo.getX());
-            }
-            if (aMapNaviCameraInfo.getCameraSpeed() != 0) {
-                limitSpeed = aMapNaviCameraInfo.getCameraSpeed();
+            /*}
+            if (aMapNaviCameraInfo.getCameraSpeed() != 0) {*/
+                //limitSpeed = aMapNaviCameraInfo.getCameraSpeed();
             }
 
         }
@@ -582,6 +584,9 @@ public class GpsUtil implements AMapNaviListener {
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
         if (aMapNaviTrafficFacilityInfo.getLimitSpeed() != limitSpeed) {
             limitSpeed = aMapNaviTrafficFacilityInfo.getLimitSpeed();
+            cameraLocation = new Location("");
+            cameraLocation.setLatitude(aMapNaviTrafficFacilityInfo.getCoorY());
+            cameraLocation.setLongitude(aMapNaviTrafficFacilityInfo.getCoorX());
         }
     }
 
@@ -614,9 +619,9 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {
-            /*if(aimLessModeCongestionInfo!=null && aimLessModeCongestionInfo.getRoadName()!=null) {
-                Toast.makeText(context, aimLessModeCongestionInfo.getRoadName(), Toast.LENGTH_SHORT).show();
-            }*/
+        if (!TextUtils.isEmpty(aimLessModeCongestionInfo.getRoadName())) {
+            Toast.makeText(context, aimLessModeCongestionInfo.getRoadName(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

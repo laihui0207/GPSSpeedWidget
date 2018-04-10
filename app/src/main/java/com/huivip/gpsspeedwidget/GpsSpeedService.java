@@ -2,19 +2,24 @@ package com.huivip.gpsspeedwidget;
 
 import android.app.*;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
-import android.content.Intent;
+import android.content.*;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.opengl.Visibility;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
+import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
+import java.io.File;
 import java.util.Date;
 import java.util.Set;
 import java.util.Timer;
@@ -39,7 +44,7 @@ public class GpsSpeedService extends Service {
     ComponentName thisWidget;
     ComponentName numberWidget;
     final Handler locationHandler = new Handler();
-
+    BroadcastReceiver  broadcastReceiver;
     @Override
     public void onCreate() {
         gpsUtil = GpsUtil.getInstance(getApplicationContext());
@@ -85,6 +90,7 @@ public class GpsSpeedService extends Service {
                     Intent floatService = new Intent(this, FloatingService.class);
                     startService(floatService);
                 }
+                autoBackUpGPSData();
             }
             if(!PrefUtils.isWidgetActived(getApplicationContext())){
                 return super.onStartCommand(intent,flags,startId);
@@ -158,7 +164,55 @@ public class GpsSpeedService extends Service {
         }
         super.onDestroy();
     }
+    private void autoBackUpGPSData(){
+        if(!PrefUtils.isFTPAutoBackup(getApplicationContext())){
+            return;
+        }
+        Thread backupThread=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String address=PrefUtils.getFTPUrl(getApplicationContext());
+                if(TextUtils.isEmpty(address)) return;
+                String port=PrefUtils.getFTPPort(getApplicationContext());
+                String user=PrefUtils.getFTPUser(getApplicationContext());
+                String password=PrefUtils.getFTPPassword(getApplicationContext());
+                String remoteDir=PrefUtils.getFTPPath(getApplicationContext());
+                File dataDir=getDatabasePath("GPSHistory.db");
+                FTPUtils ftp=FTPUtils.getInstance();
+                boolean status=ftp.initFTPSetting(address,Integer.parseInt(port),user,password);
+                if(!status){
+                    Toast.makeText(getApplicationContext(),"自动备份轨迹记录登录出错",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else{
+                }
+                status=ftp.uploadFile(remoteDir,dataDir.getAbsolutePath(),"GPSHistory.db");
+                if(!status){
+                    Toast.makeText(getApplicationContext(),"自动备份轨迹记录上传出错",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+        });
+        if (Utils.isNetworkConnected(getApplicationContext())) {
+            backupThread.start();
+        } else {
 
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    ConnectivityManager connectMgr = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
+                    NetworkInfo activeNetwork = connectMgr.getActiveNetworkInfo();
+                    if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+                        backupThread.start();
+                        context.unregisterReceiver(broadcastReceiver);
+                    }
+                }
+            };
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
+        }
+    }
     @Override
     public IBinder onBind(Intent intent) {
         return null;
