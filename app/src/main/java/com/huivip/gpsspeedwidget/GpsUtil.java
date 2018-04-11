@@ -12,8 +12,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-import com.amap.api.maps.AMapUtils;
-import com.amap.api.maps.model.LatLng;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.enums.*;

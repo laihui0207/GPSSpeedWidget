@@ -17,7 +17,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             if(key==10019){
                 int status=intent.getIntExtra("EXTRA_STATE",-1);
                 switch (status) {
-                   // case 0: // auto Map Started
+                    case 0: // auto Map Started
                     case 2: // auto map in Frontend
                     case 3: // auto map in backend
                     //case 40: // heart check
@@ -31,7 +31,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                        // break;
                 }
             }
-            if(key==13012){
+            if(key==13012){  // drive way information
                 String wayInfo=intent.getStringExtra("EXTRA_DRIVE_WAY");
                 if(TextUtils.isEmpty(wayInfo)) return;
                 //Toast.makeText(context,"Way:"+wayInfo,Toast.LENGTH_SHORT).show();
@@ -41,6 +41,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+            if(key==10001){  // navi information
+
             }
         }
     }

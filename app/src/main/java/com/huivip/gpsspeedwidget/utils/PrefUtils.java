@@ -14,29 +14,14 @@ import java.util.Set;
 
 public abstract class PrefUtils {
 
-    public static final int STYLE_US = 0;
-    public static final int STYLE_INTERNATIONAL = 1;
     private static final String PREF_METRIC = "pref_metric";
-    private static final String PREF_SIGN_STYLE = "pref_international";
     private static final String PREF_FLOATING_LOCATION = "pref_floating_location";
-    private static final String PREF_TOLERANCE_PERCENT = "pref_overspeed";
-    private static final String PREF_TOLERANCE_CONSTANT = "pref_tolerance_constant";
-    private static final String PREF_TOLERANCE_MODE = "pref_tolerance_mode";
     private static final String PREF_OPACITY = "pref_opacity";
     private static final String PREF_SPEEDOMETER = "pref_speedometer";
     private static final String PREF_LIMITS = "pref_limits";
-    private static final String PREF_BEEP = "pref_beep";
-    private static final String PREF_DEBUGGING = "pref_debugging";
     private static final String PREF_APPS = "pref_apps";
     private static final String PREF_AUTO_LAUNCH_APPS = "pref_Auto_apps";
-    private static final String PREF_FIRSTRUN = "pref_initial";
-    private static final String PREF_VERSION_CODE = "pref_version_code";
-    private static final String PREF_SPEEDLIMIT_SIZE = "pref_speedlimit_size";
-    private static final String PREF_SPEEDOMETER_SIZE = "pref_speedometer_size";
-    private static final String PREF_GMAPS_ONLY_NAVIGATION = "pref_gmaps_only_nav";
     private static final String PREF_TERMS_ACCEPTED = "pref_terms_accepted";
-    public static final String PREFS_NAME = "GPSWidgetAutoLaunch";
-    public static final String DEVICE_ID_PREFS_NAME = "deviceID";
     public static final String AUTO_START_PREFS_NAME="AutoStart";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
@@ -79,20 +64,11 @@ public abstract class PrefUtils {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public static void setFirstRun(Context context, boolean firstRun) {
-        edit(context).putBoolean(PREF_FIRSTRUN, firstRun).apply();
-    }
-    public static boolean isFirstRun(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_FIRSTRUN, true);
-    }
     public static String getGPSRemoteUrl(Context context){
         return getSharedPreferences(context).getString(GPS_REMOTE_URL,Constant.LBSURL);
     }
     public static void setGpsRemoteUrl(Context context,String url){
         edit(context).putString(GPS_REMOTE_URL,url).apply();
-    }
-    public static void setTermsAccepted(Context context, boolean firstRun) {
-        edit(context).putBoolean(PREF_TERMS_ACCEPTED, firstRun).apply();
     }
     public static void setDeviceIDStorage(Context context,String value){
         edit(context).putString(DEVICEID_STORAGE,value).apply();
@@ -233,13 +209,7 @@ public abstract class PrefUtils {
         return getSharedPreferences(context).getBoolean(ENABLE_NUMBER_WIDGET, false);
     }
 
-    public static void setVersionCode(Context context, int versionCode) {
-        edit(context).putInt(PREF_VERSION_CODE, versionCode).apply();
-    }
 
-    public static int getVersionCode(Context context) {
-        return getSharedPreferences(context).getInt(PREF_VERSION_CODE, 0);
-    }
     public static void setFlatingWindow(Context context, boolean flattingWindow) {
         edit(context).putBoolean(ENABLE_FLATING_WINDOW, flattingWindow).apply();
     }
@@ -274,39 +244,6 @@ public abstract class PrefUtils {
         return getSharedPreferences(context).getBoolean(PREF_METRIC, metricDefault);
     }
 
-    public static void setUseMetric(Context context, boolean metric) {
-        edit(context).putBoolean(PREF_METRIC, metric).apply();
-    }
-
-    @SuppressWarnings("WrongConstant")
-    @SignStyle
-    public static int getSignStyle(Context context) {
-        int styleDefault;
-        Locale current = Locale.getDefault();
-        if (current.equals(Locale.US) || current.equals(Locale.CANADA)) {
-            styleDefault = STYLE_US;
-        } else {
-            styleDefault = STYLE_INTERNATIONAL;
-        }
-
-        return getSharedPreferences(context).getInt(PREF_SIGN_STYLE, styleDefault);
-    }
-
-    public static void setSignStyle(Context context, @SignStyle int style) {
-        edit(context).putInt(PREF_SIGN_STYLE, style).apply();
-    }
-
-    public static int getSpeedingPercent(Context context) {
-        return getSharedPreferences(context).getInt(PREF_TOLERANCE_PERCENT, 0);
-    }
-
-    public static void setSpeedingPercent(Context context, int amount) {
-        edit(context).putInt(PREF_TOLERANCE_PERCENT, amount).apply();
-    }
-
-    public static int getSpeedingConstant(Context context) {
-        return getSharedPreferences(context).getInt(PREF_TOLERANCE_CONSTANT, 0);
-    }
 
     public static void setOpacity(Context context, int amount) {
         edit(context).putInt(PREF_OPACITY, amount).apply();
@@ -314,18 +251,6 @@ public abstract class PrefUtils {
 
     public static int getOpacity(Context context) {
         return getSharedPreferences(context).getInt(PREF_OPACITY, 100);
-    }
-
-    public static void setSpeedingConstant(Context context, int amount) {
-        edit(context).putInt(PREF_TOLERANCE_CONSTANT, amount).apply();
-    }
-
-    public static boolean getToleranceMode(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_TOLERANCE_MODE, true);
-    }
-
-    public static void setToleranceMode(Context context, boolean and) {
-        edit(context).putBoolean(PREF_TOLERANCE_MODE, and).apply();
     }
 
     public static boolean getShowSpeedometer(Context context) {
@@ -342,22 +267,6 @@ public abstract class PrefUtils {
 
     public static void setShowLimits(Context context, boolean show) {
         edit(context).putBoolean(PREF_LIMITS, show).apply();
-    }
-
-    public static boolean isDebuggingEnabled(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_DEBUGGING, false);
-    }
-
-    public static void setDebugging(Context context, boolean debugging) {
-        edit(context).putBoolean(PREF_DEBUGGING, debugging).apply();
-    }
-
-    public static boolean isBeepAlertEnabled(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_BEEP, true);
-    }
-
-    public static void setBeepAlertEnabled(Context context, boolean beep) {
-        edit(context).putBoolean(PREF_BEEP, beep).apply();
     }
 
     public static Set<String> getApps(Context context) {
@@ -409,9 +318,5 @@ public abstract class PrefUtils {
     }
     public static boolean isFTPAutoBackup(Context context){
         return getSharedPreferences(context).getBoolean(FTP_AUTO_BACKUP,false);
-    }
-    @IntDef({STYLE_US, STYLE_INTERNATIONAL})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface SignStyle {
     }
 }
