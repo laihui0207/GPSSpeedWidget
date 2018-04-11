@@ -193,4 +193,10 @@
            android:hint="设置语音音量"
            android:layout_below="@+id/radioGroup_flatingSelect" android:layout_toEndOf="@+id/textView_audioVolume"
            android:id="@+id/editText_audioVolume"/>
+   <TextView
+           android:text="作者QQ： 478722925"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/textView3" android:layout_alignParentBottom="true"
+           android:layout_toEndOf="@+id/checkBox_autoSolt"/>
 </RelativeLayout>
