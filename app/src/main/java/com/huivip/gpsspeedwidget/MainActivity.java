@@ -365,7 +365,9 @@ public class MainActivity extends Activity implements TraceListener {
         mTraceOverlay.setProperCamera(latLngs);
         mTraceOverlay.zoopToSpan();
         localNumberFormat.setMaximumFractionDigits(1);
-        aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.end)).snippet("车辆最后的位置\n时间:"+lastedTime+"\n行程:"+localNumberFormat.format(getDistance(latLngs)/1000) +"公里"));
+        aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.end))
+                .snippet("车辆最后的位置\n时间:"+lastedTime+"\n行程:"+localNumberFormat.format(getDistance(latLngs)/1000) +"公里")).showInfoWindow();
         aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.start)).snippet("车辆开始的位置\n时间："+firstTime));
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng,13,0,0));
         aMap.moveCamera(mCameraUpdate);
@@ -523,15 +525,15 @@ public class MainActivity extends Activity implements TraceListener {
             aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.end)).snippet("车辆最后的位置\n" +
                             "行程：" + decimalFormat.format(distance / 1000D) + "公里\n时间:"
-                            + dateFormat.format(new Date(locations.get(locations.size() - 1).getTime())) + "\n总行程：" + decimalFormat.format(totalDistance / 1000D) + "公里"));
+                            + dateFormat.format(new Date(locations.get(locations.size() - 1).getTime())) + "\n总行程：" + decimalFormat.format(totalDistance / 1000D) + "公里")).showInfoWindow();
         }
         Log.d("huviip", "纠偏结束！");
     }
     private void traceLine(){
 
     }
-    private int getDistance(List<LatLng> list){
-        int distance=0;
+    private float getDistance(List<LatLng> list){
+        float distance=0F;
         if(list==null || list.size()==0) return distance;
         Location preLocation=null;
         for(LatLng latLng:list){

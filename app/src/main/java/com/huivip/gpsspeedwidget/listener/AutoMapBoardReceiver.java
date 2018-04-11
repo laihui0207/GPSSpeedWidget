@@ -17,18 +17,18 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             if(key==10019){
                 int status=intent.getIntExtra("EXTRA_STATE",-1);
                 switch (status) {
-                    case 0: // auto Map Started
+                   // case 0: // auto Map Started
                     case 2: // auto map in Frontend
                     case 3: // auto map in backend
-                    case 40: // heart check
+                    //case 40: // heart check
                         PrefUtils.setEnableTempAudioService(context, false);
                         break;
                     case 4: // auto map ended
                         PrefUtils.setEnableTempAudioService(context, true);
                         break;
-                    default:
-                        PrefUtils.setEnableTempAudioService(context, false);
-                        break;
+                    //default:
+                        //PrefUtils.setEnableTempAudioService(context, false);
+                       // break;
                 }
             }
             if(key==13012){
