@@ -61,7 +61,7 @@ public class DBUtil extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor=null;
         try {
-            cursor=db.query(tableName, new String[]{"lng", "lat","speed","speedValue","bearingValue","strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime","lineId"},
+            cursor=db.query(tableName, new String[]{"lng", "lat","speed","speedValue","bearingValue","createTime","lineId"},
                     null,null, null, null, "createTime DESC", "1");
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {

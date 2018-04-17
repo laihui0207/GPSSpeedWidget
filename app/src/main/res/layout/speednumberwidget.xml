@@ -8,7 +8,7 @@
     <LinearLayout android:id="@+id/number_widget"
                   android:orientation="horizontal"
                   android:layout_width="wrap_content"
-                  android:gravity="center"
+                  android:gravity="top|center"
                   android:layout_height="match_parent" android:weightSum="1">
 
         <RelativeLayout android:id="@+id/limitLayout"
@@ -39,21 +39,23 @@
                     android:includeFontPadding="false"
                     android:textColor="#fff"
                     android:textSize="80sp"
-                    android:layout_alignParentTop="true" android:layout_alignParentStart="true"
-                    android:layout_marginTop="57dp"/>
+                    android:layout_below="@+id/textView_distance" android:layout_alignParentStart="true"/>
             <TextView
                     android:text="限速" android:textColor="#ffffffff"
                     android:layout_width="match_parent"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:gravity="top|center_vertical|center_horizontal"
                     android:layout_height="40dp" android:id="@+id/textView_limit_label"
-                    android:layout_below="@+id/number_limit"/>
+                    android:textSize="25sp"
+                    android:layout_below="@+id/number_limit" android:layout_alignParentStart="true"/>
             <TextView
                     android:text="0米"
                     android:textColor="#fff"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" android:layout_marginTop="38dp"
-                    android:id="@+id/textView_distance"/>
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_distance"
+                    android:textSize="20sp"
+                    android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+                    android:layout_marginTop="17dp"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -70,7 +72,8 @@
                     android:background="@drawable/speed_number_border"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:max="125"
-                    android:progress="0"/>
+                    android:progress="0" android:layout_alignBottom="@+id/textView_limit_label"
+                    android:layout_alignParentStart="true"/>
             <TextView android:layout_width="match_parent"
                       android:id="@+id/number_speed"
                       android:layout_height="wrap_content"
@@ -81,21 +84,21 @@
                       android:includeFontPadding="false"
                       android:textColor="#fff"
                       android:textSize="80sp"
-                      android:layout_marginTop="57dp"
-                      android:layout_alignParentTop="true" android:layout_alignParentStart="true"/>
+                      android:layout_alignParentStart="true" android:layout_above="@+id/textView_unit"/>
             <TextView
                     android:text="km/h" android:textColor="#ffffffff"
                     android:layout_width="match_parent"
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:gravity="top|center_vertical|center_horizontal"
                     android:layout_height="40dp" android:id="@+id/textView_unit"
-                    android:layout_below="@+id/number_speed" android:layout_alignParentStart="true"/>
+                    android:textSize="25sp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_alignParentBottom="true" android:layout_alignParentStart="true"/>
             <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" android:layout_marginTop="34dp"
+                    android:layout_height="wrap_content"
                     android:textColor="#fff"
-                    android:id="@+id/textView_direction" android:text="北"/>
+                    android:id="@+id/textView_direction" android:text="北" android:textSize="20sp"
+                    android:layout_above="@+id/number_speed" android:layout_centerHorizontal="true"/>
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

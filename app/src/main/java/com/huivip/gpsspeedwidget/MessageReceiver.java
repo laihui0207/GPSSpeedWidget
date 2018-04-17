@@ -10,12 +10,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.util.*;
 
 /**
  * @author sunlaihui
  */
 public class MessageReceiver extends BroadcastReceiver {
+    private int BULK_SIZE=2000;
     @Override
     public void onReceive(final Context context, Intent intent) {
         new Thread() {
@@ -28,15 +30,41 @@ public class MessageReceiver extends BroadcastReceiver {
                 DBUtil dbUtil = new DBUtil(context);
                 List<LocationVO> locationVOList = dbUtil.getFromDate(now);
                 if (null != locationVOList && locationVOList.size() > 0) {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("deviceId", deviceId);
-                    params.put("t", "gps");
-                    params.put("data", jsonStringFromList(locationVOList));
-                    String result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context)+Constant.LBSPOSTGPSURL, params, "utf-8");
-                    Log.d("GPSWidget","Upload Data Result:"+result);
-                    if(result!=null && result.equalsIgnoreCase("Success")) {
-                        dbUtil.delete(now);
+                    if(locationVOList.size()>=BULK_SIZE){
+                        int counter=locationVOList.size()/BULK_SIZE;
+                        int leftSize=locationVOList.size()%BULK_SIZE;
+                        for(int i=0;i<counter;i++) {
+                            List<LocationVO> tempList = locationVOList.subList(i*BULK_SIZE+1,i+BULK_SIZE);
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("deviceId", deviceId);
+                            params.put("t", "gps");
+                            params.put("data", jsonStringFromList(tempList));
+                            String result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context)+Constant.LBSPOSTGPSURL, params, "utf-8");
+                        }
+                        List<LocationVO> tempList = locationVOList.subList(counter*BULK_SIZE+1,counter*BULK_SIZE+leftSize);
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("deviceId", deviceId);
+                        params.put("t", "gps");
+                        params.put("data", jsonStringFromList(tempList));
+                        String result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context)+Constant.LBSPOSTGPSURL, params, "utf-8");
+                        Log.d("GPSWidget","Upload Data Result:"+result);
+                        if(result!=null && result.equalsIgnoreCase("Success")) {
+                            dbUtil.delete(now);
+                        }
                     }
+                    else {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("deviceId", deviceId);
+                        params.put("t", "gps");
+                        params.put("data", jsonStringFromList(locationVOList));
+                        String result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context)+Constant.LBSPOSTGPSURL, params, "utf-8");
+                        Log.d("GPSWidget","Upload Data Result:"+result);
+                        if(result!=null && result.equalsIgnoreCase("Success")) {
+                            dbUtil.delete(now);
+                        }
+                    }
+
+
                 }
                 Log.d("huivip","Upload Data Finish");
             }

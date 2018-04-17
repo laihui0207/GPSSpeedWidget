@@ -39,7 +39,7 @@
    </LinearLayout>
 
    <CheckBox
-           android:text="开启悬浮窗口"
+           android:text="开启巡航悬浮窗口"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/enableFloatingWindow"
@@ -69,11 +69,9 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:text="@string/str_btn_ok"
-           android:layout_marginRight="21dp"
            android:layout_weight="1"
            android:elevation="21dp"
-           android:layout_marginTop="17dp" android:layout_below="@+id/radioGroup_flatingSelect"
-           android:layout_toEndOf="@+id/checkBox_autoSolt" android:layout_marginStart="17dp"/>
+           android:layout_below="@+id/editText_audioVolume" android:layout_alignEnd="@+id/enableOver"/>
    <Button
            android:text="1. 允许顶层显示功能"
            android:layout_width="wrap_content"
@@ -183,20 +181,28 @@
    <TextView
            android:text="语音音量:"
            android:layout_width="wrap_content"
-           android:layout_height="wrap_content" android:layout_alignTop="@+id/confirm"
-           android:layout_alignParentStart="true" android:id="@+id/textView_audioVolume"/>
+           android:layout_height="wrap_content"
+           android:id="@+id/textView_audioVolume"
+           android:layout_alignBaseline="@+id/editText_audioVolume"
+           android:layout_alignBottom="@+id/editText_audioVolume" android:layout_alignParentStart="true"/>
    <EditText
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:inputType="number"
            android:ems="6"
            android:hint="设置语音音量"
-           android:layout_below="@+id/radioGroup_flatingSelect" android:layout_toEndOf="@+id/textView_audioVolume"
-           android:id="@+id/editText_audioVolume"/>
+           android:id="@+id/editText_audioVolume"
+           android:layout_below="@+id/checkBox_navfloatiing" android:layout_toEndOf="@+id/textView_audioVolume"/>
    <TextView
            android:text="作者QQ： 478722925"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/textView3" android:layout_alignParentBottom="true"
            android:layout_toEndOf="@+id/checkBox_autoSolt"/>
+   <CheckBox
+           android:text="导航进入后台时开启导航悬浮窗口"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/checkBox_navfloatiing" android:layout_below="@+id/radioGroup_flatingSelect"
+           android:layout_toEndOf="@+id/button_select_app"/>
 </RelativeLayout>

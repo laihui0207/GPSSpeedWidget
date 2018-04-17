@@ -324,6 +324,15 @@ public class ConfigurationActivity extends Activity {
         EditText audioVolumeEditText=findViewById(R.id.editText_audioVolume);
         audioVolumeEditText.setText(PrefUtils.getAudioVolume(getApplicationContext())+"");
         audioVolumeEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, 30)});
+
+        CheckBox enableNaviFloatingCheckBox=findViewById(R.id.checkBox_navfloatiing);
+        enableNaviFloatingCheckBox.setChecked(PrefUtils.isEnableNaviFloating(getApplicationContext()));
+        enableNaviFloatingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableNaviFloating(getApplicationContext(),buttonView.isChecked());
+            }
+        });
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

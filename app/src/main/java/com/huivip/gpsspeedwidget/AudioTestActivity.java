@@ -121,6 +121,7 @@ public class AudioTestActivity extends Activity {
         });
         reloadVolume();
         Button rebootBtn=findViewById(R.id.button_reboot);
+        Intent floatService=new Intent(this,NaviFloatingService.class);
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,10 +136,10 @@ public class AudioTestActivity extends Activity {
                 manager.reboot("重新启动系统");*/
                 /*String appName= getString(R.string.app_name);
                 openMapOperation("androidauto://rootmap?sourceApplication=" + appName);*/
-                Intent intent = new Intent();
+              /*  Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
                 intent.putExtra("KEY_TYPE", 10029);
-                sendBroadcast(intent);
+                sendBroadcast(intent);*/
                /* Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
                 intent.putExtra("KEY_TYPE", 10039);
@@ -148,6 +149,8 @@ public class AudioTestActivity extends Activity {
                 intent.putExtra("DEV",0);
                 intent.putExtra("SOURCE_APP", "Third App");
                 sendBroadcast(intent);*/
+                //startActivity(new Intent(AudioTestActivity.this, HudDisplayActivity.class));
+                startService(floatService);
             }
         });
     }

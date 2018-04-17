@@ -16,6 +16,7 @@ public abstract class PrefUtils {
 
     private static final String PREF_METRIC = "pref_metric";
     private static final String PREF_FLOATING_LOCATION = "pref_floating_location";
+    private static final String PREF_NAVI_FLOATING_LOCATION= "pref_navi_floating_location";
     private static final String PREF_OPACITY = "pref_opacity";
     private static final String PREF_SPEEDOMETER = "pref_speedometer";
     private static final String PREF_LIMITS = "pref_limits";
@@ -37,6 +38,7 @@ public abstract class PrefUtils {
     public static final String FLOATING_WINDWS_DIRECTION_horizontal="com.huivip.widget.Direction";
     public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
+    public static final String NAVI_FLOATTING_WINDOW_XY="com.huivip.widget.xy";
     public static final String SEPARATED_VOLUME ="com.huivip.widget.separated.volume";
     public static final String AUDIO_VOLUME="com.huivipo.widget.audio.volume";
     public static final String USER_CLOSED_SERVER="com.huivip.widget.Close.serviced";
@@ -55,6 +57,7 @@ public abstract class PrefUtils {
     public static final String FTP_PASSWORD="com.huivip.ftp.password";
     public static final String FTP_PATH="com.huivip.ftp.path";
     public static final String FTP_AUTO_BACKUP="com.huivip.ftp.auto.backup";
+    static final String ENABLE_NAVI_FLOATING_WINDOWS="com.huivip.navi.floating";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -219,18 +222,27 @@ public abstract class PrefUtils {
     public static void setFloatingSolidLocation(Context context, float x, float y) {
         edit(context).putString(FLOATTING_WINDOW_XY, x + "," + y).apply();
     }
-
+    public static void setNaviFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(NAVI_FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
     public static String getFloatingSolidLocation(Context context) {
         return getSharedPreferences(context).getString(FLOATTING_WINDOW_XY, "0,0");
     }
     public static void setFloatingLocation(Context context, float screenYRatio, boolean left) {
-        edit(context).putString(PREF_FLOATING_LOCATION, left + "," + screenYRatio).apply();
+        edit(context).putString(PREF_NAVI_FLOATING_LOCATION, left + "," + screenYRatio).apply();
     }
-
+    public static String getNaviFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static void setNaviFloatingLocation(Context context, float screenYRatio, boolean left) {
+        edit(context).putString(PREF_NAVI_FLOATING_LOCATION, left + "," + screenYRatio).apply();
+    }
     public static String getFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_FLOATING_LOCATION, "true,0");
     }
-
+    public static String getNaviFloatingLocation(Context context) {
+        return getSharedPreferences(context).getString(PREF_NAVI_FLOATING_LOCATION, "true,0");
+    }
     public static boolean getUseMetric(Context context) {
         boolean metricDefault;
         Locale current = Locale.getDefault();
@@ -268,7 +280,13 @@ public abstract class PrefUtils {
     public static void setShowLimits(Context context, boolean show) {
         edit(context).putBoolean(PREF_LIMITS, show).apply();
     }
+    public static boolean isEnableNaviFloating(Context context) {
+        return getSharedPreferences(context).getBoolean(ENABLE_NAVI_FLOATING_WINDOWS, true);
+    }
 
+    public static void setEnableNaviFloating(Context context, boolean show) {
+        edit(context).putBoolean(ENABLE_NAVI_FLOATING_WINDOWS, show).apply();
+    }
     public static Set<String> getApps(Context context) {
         return new HashSet<>(getSharedPreferences(context).getStringSet(PREF_APPS, new HashSet<String>()));
     }

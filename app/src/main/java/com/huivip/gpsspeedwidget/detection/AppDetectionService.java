@@ -65,9 +65,9 @@ public class AppDetectionService extends AccessibilityService {
                || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)){
            PrefUtils.setEnableTempAudioService(getApplicationContext(),false);
        }
-      /* else {
+       else {
            PrefUtils.setEnableTempAudioService(getApplicationContext(),true);
-       }*/
+       }
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
         PrefUtils.setOnDesktop(getApplicationContext(),shouldStopService);

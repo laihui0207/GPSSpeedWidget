@@ -265,6 +265,7 @@ public class GpsSpeedService extends Service {
             this.remoteViews.setTextViewText(R.id.textView1_watch_speed, gpsUtil.getKmhSpeedStr() + "");
             this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getLimitSpeed() + "");
             this.remoteViews.setTextViewText(R.id.textView_watch_direction, gpsUtil.getDirection() + "");
+
             switch (mphNumber) {
                 default:
                     if (mphNumber > MAX_VELOCITA_NUMBER) {
@@ -577,6 +578,14 @@ public class GpsSpeedService extends Service {
                     this.remoteViews.setImageViewResource(R.id.ifreccia, R.drawable.alt_140);
                     break;
             }
+        if(gpsUtil.getCameraType()>-1){
+            this.numberRemoteViews.setTextViewText(R.id.textView_limit_label,gpsUtil.getCameraTypeName());
+            this.remoteViews.setTextViewText(R.id.textView_watch_limit_label,gpsUtil.getCameraTypeName());
+        }
+        else {
+            this.numberRemoteViews.setTextViewText(R.id.textView_limit_label,"限速");
+            this.remoteViews.setTextViewText(R.id.textView_watch_limit_label,"限速");
+        }
             this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
             this.remoteViews=null;
        /* }
@@ -587,6 +596,13 @@ public class GpsSpeedService extends Service {
             } else {
                 this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getDistance()+"");
             }
+
+        if(TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
+            this.numberRemoteViews.setTextViewText(R.id.textView_unit,"km/h");
+        }
+        else {
+            this.numberRemoteViews.setTextViewText(R.id.textView_unit,gpsUtil.getCurrentRoadName());
+        }
             this.numberRemoteViews.setProgressBar(R.id.progressBarLimit, 100, gpsUtil.getLimitDistancePercentage(), false);
             this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, gpsUtil.getSpeedometerPercentage(), false);
             this.numberRemoteViews.setTextViewText(R.id.number_speed, gpsUtil.getKmhSpeedStr() + "");

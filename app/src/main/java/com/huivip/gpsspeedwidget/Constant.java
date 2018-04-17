@@ -18,6 +18,10 @@ public class Constant {
     public static final String AMAP_SEND_ACTION="AUTONAVI_STANDARD_BROADCAST_SEND";
     public static final String AMAP_RECEIVE_ACTION="AUTONAVI_STANDARD_BROADCAST_RECV";
 
+    public static int Navi_Floating_Enabled=1;
+    public static int Navi_Floating_Disabled=0;
+    public static int Navi_Status_Started=1;
+    public static  int Navi_Status_Ended=0;
     public static int LINE=1;
     public static int POINT=0;
 

@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.text.TextUtils;
 import android.view.*;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -52,6 +53,10 @@ public class FloatingService extends Service{
     TextView mSpeedDirectionText;
     @BindView(R.id.textView_floating_distance)
     TextView mFloatingimitDistance;
+    @BindView(R.id.limit_show)
+    TextView limitShowLabel;
+    @BindView(R.id.speedUnits)
+    TextView speedUnitTextView;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
@@ -165,8 +170,19 @@ public class FloatingService extends Service{
                 mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
                 setSpeeding(gpsUtil.isHasLimited());
                 setLimit(gpsUtil.getLimitDistancePercentage());
-
+                if(gpsUtil.getCameraType()>-1){
+                    limitShowLabel.setText(gpsUtil.getCameraTypeName());
+                }
+                else {
+                    limitShowLabel.setText("限速");
+                }
                 mSpeedDirectionText.setText(gpsUtil.getDirection());
+                if(TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
+                    speedUnitTextView.setText("km/h");
+                }
+                else {
+                    speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
+                }
             }
         }
         else {

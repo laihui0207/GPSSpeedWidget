@@ -116,7 +116,7 @@ public class MainActivity extends Activity implements TraceListener {
                             message.obj = dataResult;
                             message.arg1 = Constant.POINT;
                             lastedPositionHandler.handleMessage(message);
-                        } else {
+                        } else if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext())){
                             DBUtil dbUtil=new DBUtil(getApplicationContext());
                             List<LocationVO> lastPoint=dbUtil.getLastedData();
                             if(lastPoint!=null && !lastPoint.isEmpty()){
@@ -125,7 +125,7 @@ public class MainActivity extends Activity implements TraceListener {
                                 try {
                                     data.put("lng",lastPoint.get(0).getLng());
                                     data.put("lat",lastPoint.get(0).getLat());
-                                    data.put("createTime",lastPoint.get(0).getCreateTime());
+                                    data.put("createTime",dateFormat.format(new Date(lastPoint.get(0).getCreateTime())));
                                     datas.put(data);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -135,6 +135,8 @@ public class MainActivity extends Activity implements TraceListener {
                                 message.arg1 = Constant.POINT;
                                 lastedPositionHandler.handleMessage(message);
                             }
+                        } else {
+                            Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -236,7 +238,7 @@ public class MainActivity extends Activity implements TraceListener {
                             message.arg1 = Constant.LINE;
                             message.obj = dataResult;
                             lastedPositionHandler.handleMessage(message);
-                        } else {
+                        } else if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext())) {
                             DBUtil dbUtil=new DBUtil(getApplicationContext());
                             List<LocationVO> list=dbUtil.getBetweenDate(startDate,endDate);
                             if(list!=null && !list.isEmpty()){
@@ -246,7 +248,7 @@ public class MainActivity extends Activity implements TraceListener {
                                     try {
                                         data.put("lng", vo.getLng());
                                         data.put("lat", vo.getLat());
-                                        data.put("createTime", vo.getCreateTime());
+                                        data.put("createTime", dateFormat.format(new Date(vo.getCreateTime())));
                                         data.put("bearingValue",vo.getBearingValue());
                                         data.put("speedValue",vo.getSpeedValue());
                                         data.put("lineId",vo.getLineId());
@@ -261,6 +263,8 @@ public class MainActivity extends Activity implements TraceListener {
                                 message.arg1 = Constant.LINE;
                                 lastedPositionHandler.handleMessage(message);
                             }
+                        } else {
+                            Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).start();
