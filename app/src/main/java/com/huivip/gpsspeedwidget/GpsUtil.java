@@ -733,21 +733,61 @@ public class GpsUtil implements AMapNaviListener {
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
     }
-
+    /*
+    0：未知道路设施
+4：测速摄像头、测速雷达
+5：违章摄像头
+10:请谨慎驾驶
+11:有连续拍照
+12：铁路道口
+13：注意落石（左侧）
+14：事故易发地段
+15：易滑
+16：村庄
+18：前方学校
+19：有人看管的铁路道口
+20：无人看管的铁路道口
+21：两侧变窄
+22：向左急弯路
+23：向右急弯路
+24：反向弯路
+25：连续弯路
+26：左侧合流标识牌
+27：右侧合流标识牌
+28：监控摄像头
+29：专用道摄像头
+31：禁止超车
+36：右侧变窄
+37：左侧变窄
+38：窄桥
+39：左右绕行
+40：左侧绕行
+41：右侧绕行
+42：注意落石（右侧）
+43：傍山险路（左侧）
+44：傍山险路（右侧）
+47：上陡坡
+48：下陡坡
+49：过水路面
+50：路面不平
+52：慢行
+53：注意危险
+58：隧道
+59：渡口
+92:闯红灯
+93:应急车道
+94:非机动车道
+100：不绑定电子眼高发地
+101:车道违章
+102:超速违章
+     */
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
         for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
-           /* if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4 || info.getLimitSpeed() != 0) {
-                limitSpeed = info.getLimitSpeed();
-                cameraLocation = new Location("");
-                cameraLocation.setLatitude(info.getCoorY());
-                cameraLocation.setLongitude(info.getCoorX());
-            }
-            if (info.getLimitSpeed() != limitSpeed) {
-                limitSpeed = info.getLimitSpeed();
-            }*/
-           setCameraDistance(info.getDistance());
-           setCameraSpeed(info.getLimitSpeed());
+            //if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4 || info.getLimitSpeed() != 0) {
+                setCameraDistance(info.getDistance());
+                setCameraSpeed(info.getLimitSpeed());
+           // }
         }
 
     }
