@@ -21,6 +21,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 int status=intent.getIntExtra("EXTRA_STATE",-1);
                 switch (status) {
                     case 0: // auto Map Started
+                        Toast.makeText(context,"Backend Auto Map Started",Toast.LENGTH_SHORT).show();
                         break;
                     case 3: // auto map in frontend
                         //PrefUtils.setEnableTempAudioService(context, false);
@@ -30,19 +31,20 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         //Toast.makeText(context,"FrontEnd",Toast.LENGTH_SHORT).show();
                         break;
                     case 4: // auto map in backend
-                        //PrefUtils.setEnableTempAudioService(context, false);
                         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
                             startFloatingService(context);
                             gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
+                            PrefUtils.setEnableTempAudioService(context, false);
                         }
                         //Toast.makeText(context,"backEnd",Toast.LENGTH_SHORT).show();
                         break;
                     case 24:  // xun hang
                         //PrefUtils.setEnableTempAudioService(context, false);
+                        Toast.makeText(context,"Backend Auto Map into cruising",Toast.LENGTH_SHORT).show();
                         break;
                     case 8: // start navi
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
-                        //PrefUtils.setEnableTempAudioService(context, false);
+                        PrefUtils.setEnableTempAudioService(context, false);
                         break;
                     case 10:
                        // Toast.makeText(context,"Heated Checked",Toast.LENGTH_SHORT).show();

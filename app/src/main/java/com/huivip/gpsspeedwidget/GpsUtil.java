@@ -380,6 +380,7 @@ public class GpsUtil implements AMapNaviListener {
     public int getCameraType() {
         return cameraType;
     }
+
     public String getCameraTypeName(){
         String name="限速";
         switch (cameraType){
@@ -783,12 +784,12 @@ public class GpsUtil implements AMapNaviListener {
      */
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
-        for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
+       /* for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
             //if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4 || info.getLimitSpeed() != 0) {
                 setCameraDistance(info.getDistance());
                 setCameraSpeed(info.getLimitSpeed());
            // }
-        }
+        }*/
 
     }
 
@@ -812,10 +813,11 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void onPlayRing(int status) {
-        /*if (status == AMapNaviRingType.RING_EDOG) {
-            limitSpeed = 0;
+        if (status == AMapNaviRingType.RING_EDOG) {
+            //limitSpeed = 0;
             limitDistance = 0F;
-            cameraLocation = null;
-        }*/
+            //cameraLocation = null;
+            ttsUtil.speak("已通过");
+        }
     }
 }
