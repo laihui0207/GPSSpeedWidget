@@ -110,6 +110,76 @@ public class BackupGPSHistoryActivity extends Activity {
 
             };
         });
+        Button dowloadButton=findViewById(R.id.button_download);
+        dowloadButton.setOnClickListener(new Button.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                result.setText("");
+                String address=ftpUrl.getText().toString();
+                String port=ftpPort.getText().toString();
+                String user=ftpUser.getText().toString();
+                String password=ftpPassword.getText().toString();
+                String remoteDir=ftpRemoteDir.getText().toString();
+
+                if(TextUtils.isEmpty(address)){
+                    result.setText("ftp地址不能为空！");
+                    return;
+                }
+                if(TextUtils.isEmpty(port)){
+                    result.setText("端口不能为空！");
+                    return;
+                }
+                if(TextUtils.isEmpty(remoteDir)){
+                    result.setText("存储路径不能为空！");
+                    return;
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        File dataDir=getDatabasePath("GPSHistory.db");
+                        String fileName="GPSHistory.db";
+                        //Log.d("huivip","File Path:"+dataDir.getAbsolutePath());
+                        FTPUtils ftp=FTPUtils.getInstance();
+                        boolean status=ftp.initFTPSetting(address,Integer.parseInt(port),user,password);
+                        if(!status){
+                            resultText=resultText+"FTP 连接失败！\n";
+                            handler.post(runnableUi);
+                            return;
+                        }
+                        else{
+                            resultText=resultText+"FTP 连接成功！";
+                            handler.post(runnableUi);
+                        }
+                        //status=ftp.uploadFile(remoteDir,dataDir.getAbsolutePath(),"GPSHistory.db");
+                        status=ftp.downLoadFile(remoteDir,dataDir.getAbsolutePath(),fileName);
+                        if(!status){
+                            resultText=resultText+"FTP下载失败";
+                            handler.post(runnableUi);
+                            return;
+                        }
+                        else {
+                            // save configure
+                            resultText=resultText+"FTP 下载成功！";
+                            handler.post(runnableUi);
+                            PrefUtils.setFtpUrl(getApplicationContext(),address);
+                            PrefUtils.setFtpPort(getApplicationContext(),port);
+                            PrefUtils.setFtpUser(getApplicationContext(),user);
+                            PrefUtils.setFtpPassword(getApplicationContext(),password);
+                            PrefUtils.setFtpPath(getApplicationContext(),remoteDir);
+                        }
+                    }
+                }).start();
+            }
+            Runnable   runnableUi=new  Runnable(){
+                @Override
+                public void run() {
+                    //更新界面
+                    result.setText("the Content is:"+resultText);
+                }
+
+            };
+        });
 
     }
 

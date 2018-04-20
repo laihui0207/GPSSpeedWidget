@@ -94,6 +94,10 @@
                 android:text="保存并立即备份"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/button_saveandbackup" android:layout_weight="1"/>
+        <Button
+                android:text="下载并覆盖本机数据"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/button_download"/>
         <CheckBox
                 android:text="自动备份历史数据"
                 android:layout_width="wrap_content"

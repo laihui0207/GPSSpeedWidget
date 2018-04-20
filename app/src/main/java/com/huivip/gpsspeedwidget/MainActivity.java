@@ -1,12 +1,16 @@
 package com.huivip.gpsspeedwidget;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
@@ -68,7 +72,7 @@ public class MainActivity extends Activity implements TraceListener {
         mMapView.onCreate(savedInstanceState);
         aMap = mMapView.getMap();
         mTraceClient = LBSTraceClient.getInstance(this.getApplicationContext());
-
+        initPermission();
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.interval(2000);
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
@@ -136,7 +140,7 @@ public class MainActivity extends Activity implements TraceListener {
                                 lastedPositionHandler.handleMessage(message);
                             }
                         } else {
-                            Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -264,7 +268,7 @@ public class MainActivity extends Activity implements TraceListener {
                                 lastedPositionHandler.handleMessage(message);
                             }
                         } else {
-                            Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).start();
@@ -352,7 +356,39 @@ public class MainActivity extends Activity implements TraceListener {
         };
         aMap.setOnMarkerClickListener(markerClickListener);
     }
+    private void initPermission() {
+        String[] permissions = {
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.WRITE_SETTINGS,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.CHANGE_WIFI_STATE,
+        };
 
+        ArrayList<String> toApplyList = new ArrayList<String>();
+
+        for (String perm : permissions) {
+            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, perm)) {
+                toApplyList.add(perm);
+                // 进入到这里代表没有权限.
+            }
+        }
+        String[] tmpList = new String[toApplyList.size()];
+        if (!toApplyList.isEmpty()) {
+            ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
+        }
+        //if(!Settings.System.canWrite(this)){
+           /* Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                    Uri.parse("package:" + getPackageName()));
+            intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivityForResult(intentWriteSetting, 124);*/
+        // }
+    }
     private void drawLineAndFixPoint(Message msg) {
         String dataResult = (String) msg.obj;
         lineDatas=new HashMap<>();

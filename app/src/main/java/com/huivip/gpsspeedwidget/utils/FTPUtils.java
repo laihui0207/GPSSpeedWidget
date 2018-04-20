@@ -133,7 +133,7 @@ public class FTPUtils {
      * @param FileName   远程FTP服务器上的那个文件的名字
      * @return   true为成功，false为失败
      */
-    public boolean downLoadFile(String FilePath, String FileName) {
+    public boolean downLoadFile(String remoteDir,String FilePath, String FileName) {
 
         if (!ftpClient.isConnected())
         {
@@ -145,14 +145,15 @@ public class FTPUtils {
 
         try {
             // 转到指定下载目录
-            ftpClient.changeWorkingDirectory("/data");
-
+            ftpClient.changeWorkingDirectory(remoteDir);
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+            ftpClient.enterLocalPassiveMode();
             // 列出该目录下所有文件
-            FTPFile[] files = ftpClient.listFiles();
+           // FTPFile[] files = ftpClient.listFiles();
 
             // 遍历所有文件，找到指定的文件
-            for (FTPFile file : files) {
-                if (file.getName().equals(FileName)) {
+            /*for (FTPFile file : files) {
+                if (file.getName().equals(FileName)) {*/
                     //根据绝对路径初始化文件
                     File localFile = new File(FilePath);
 
@@ -160,12 +161,12 @@ public class FTPUtils {
                     OutputStream outputStream = new FileOutputStream(localFile);
 
                     // 下载文件
-                    ftpClient.retrieveFile(file.getName(), outputStream);
+                    ftpClient.retrieveFile(FileName, outputStream);
 
                     //关闭流
                     outputStream.close();
-                }
-            }
+               /* }
+            }*/
 
             //退出登陆FTP，关闭ftpCLient的连接
             ftpClient.logout();
