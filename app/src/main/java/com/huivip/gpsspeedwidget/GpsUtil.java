@@ -663,14 +663,7 @@ public class GpsUtil implements AMapNaviListener {
         for (AMapNaviCameraInfo aMapNaviCameraInfo : aMapNaviCameraInfos) {
             cameraType = aMapNaviCameraInfo.getCameraType();
             setCameraDistance(aMapNaviCameraInfo.getCameraDistance());
-            if (aMapNaviCameraInfo.getCameraType() == CameraType.SPEED
-                    || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYSTART
-                    || aMapNaviCameraInfo.getCameraType() == CameraType.INTERVALVELOCITYEND
-                    || aMapNaviCameraInfo.getCameraType() == CameraType.BREAKRULE) {
-                cameraType = aMapNaviCameraInfo.getCameraType();
-                setCameraDistance(aMapNaviCameraInfo.getCameraDistance());
-            }
-            if(aMapNaviCameraInfo.getCameraSpeed()>0) {
+            if (aMapNaviCameraInfo.getCameraSpeed() > 0) {
                 setCameraSpeed(aMapNaviCameraInfo.getCameraSpeed());
             }
         }
@@ -796,8 +789,8 @@ public class GpsUtil implements AMapNaviListener {
         for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
             if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4 || info.getLimitSpeed() != 0) {
                 setCameraSpeed(info.getLimitSpeed());
+                setCameraDistance(info.getDistance());
             }
-            setCameraDistance(info.getDistance());
         }
 
     }
