@@ -51,6 +51,7 @@ public class ConfigurationActivity extends Activity {
     @BindView(R.id.enableOver)
     Button enableServiceButton;
     CheckBox enableFloatingWidnowCheckBox;
+    CheckBox enableNaviFloatingCheckBox;
     CheckBox enableShowFlattingOnDesktopCheckBox;
     EditText remoteUrlEditBox;
     RadioGroup floatingSelectGroup;
@@ -325,7 +326,7 @@ public class ConfigurationActivity extends Activity {
         audioVolumeEditText.setText(PrefUtils.getAudioVolume(getApplicationContext())+"");
         audioVolumeEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, 30)});
 
-        CheckBox enableNaviFloatingCheckBox=findViewById(R.id.checkBox_navfloatiing);
+        enableNaviFloatingCheckBox=findViewById(R.id.checkBox_navfloatiing);
         enableNaviFloatingCheckBox.setChecked(PrefUtils.isEnableNaviFloating(getApplicationContext()));
         enableNaviFloatingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -363,6 +364,7 @@ public class ConfigurationActivity extends Activity {
         boolean serviceEnabled = Utils.isAccessibilityServiceEnabled(this, AppDetectionService.class);
         PrefUtils.setEnableAccessibilityService(getApplicationContext(),serviceEnabled);
         enableFloatingWidnowCheckBox.setEnabled(overlayEnabled);
+        enableNaviFloatingCheckBox.setEnabled(overlayEnabled);
         enableFloatingButton.setEnabled(!overlayEnabled);
         enableServiceButton.setEnabled(overlayEnabled && !serviceEnabled);
         //enableShowFlattingOnDesktopCheckBox.setEnabled(enableFloatingWidnowCheckBox.isChecked());

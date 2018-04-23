@@ -281,7 +281,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(PREF_LIMITS, show).apply();
     }
     public static boolean isEnableNaviFloating(Context context) {
-        return getSharedPreferences(context).getBoolean(ENABLE_NAVI_FLOATING_WINDOWS, true);
+        return getSharedPreferences(context).getBoolean(ENABLE_NAVI_FLOATING_WINDOWS, false);
     }
 
     public static void setEnableNaviFloating(Context context, boolean show) {
