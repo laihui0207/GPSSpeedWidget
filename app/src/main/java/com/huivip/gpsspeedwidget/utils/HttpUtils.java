@@ -1,5 +1,10 @@
 package com.huivip.gpsspeedwidget.utils;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import com.huivip.gpsspeedwidget.LocationVO;
 import org.json.JSONArray;
@@ -18,7 +23,6 @@ public class HttpUtils {
         HttpURLConnection httpURLConnection=null;
         try {
             byte[] data = getRequestData(params, encode).toString().getBytes("UTF-8");
-            //String urlPath = "http://192.168.1.9:80/JJKSms/RecSms.php";
             URL url = new URL(strUrlPath);
 
             httpURLConnection = (HttpURLConnection)url.openConnection();
@@ -84,6 +88,68 @@ public class HttpUtils {
             e.printStackTrace();
         }
         return stringBuffer;
+    }
+    private static File downloadFile(String path,String appName ,ProgressDialog pd,String localPath) throws Exception {
+        // 如果相等的话表示当前的sdcard挂载在手机上并且是可用的
+       /* if (Environment.MEDIA_MOUNTED.equals(Environment
+                .getExternalStorageState())) {*/
+            URL url = new URL(path);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(5000);
+            // 获取到文件的大小
+            pd.setMax(conn.getContentLength());
+            InputStream is = conn.getInputStream();
+            String fileName =localPath+"/"+appName;
+            Log.d("huivip","download file:"+fileName);
+            File file = new File(fileName);
+            // 目录不存在创建目录
+            if (!file.getParentFile().exists())
+                file.getParentFile().mkdirs();
+            FileOutputStream fos = new FileOutputStream(file);
+            BufferedInputStream bis = new BufferedInputStream(is);
+            byte[] buffer = new byte[1024];
+            int len;
+            int total = 0;
+            while ((len = bis.read(buffer)) != -1) {
+                fos.write(buffer, 0, len);
+                total += len;
+                // 获取当前下载量
+                pd.setProgress(total);
+            }
+            fos.close();
+            bis.close();
+            is.close();
+            Log.d("huivip","Download finish!");
+            return file;
+      /*  } else {
+            throw new IOException("未发现有SD卡");
+        }*/
+    }
+    public static void downLoadApk(final Context mContext,final String downURL,final String appName ) {
+
+        final ProgressDialog pd; // 进度条对话框
+        pd = new ProgressDialog(mContext);
+        pd.setCancelable(true);// 必须一直下载完，不可取消
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        pd.setMessage("正在下载安装包，请稍后");
+        pd.setTitle("版本升级");
+        pd.show();
+        String localPath=FileUtil.createTmpDir(mContext);
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    File file = downloadFile(downURL,appName, pd,localPath);
+                    sleep(3000);
+                    Utils.installApk(mContext, file);
+                    // 结束掉进度条对话框
+                    pd.dismiss();
+                } catch (Exception e) {
+                    pd.dismiss();
+
+                }
+            }
+        }.start();
     }
 
     public static String dealResponseResult(InputStream inputStream) {

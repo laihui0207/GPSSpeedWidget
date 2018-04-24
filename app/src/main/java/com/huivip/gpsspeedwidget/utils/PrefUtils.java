@@ -35,6 +35,7 @@ public abstract class PrefUtils {
     public static final String GPS_REMOTE_URL="com.huivip.widget.remoteUrl";
     public static final String SHOW_FLATTING_ON="com.huivip.widget.showFlatingOn";
     public static final String FLOATTING_WINDOWS_AUTO_SOLT="com.huivip.wdiget.floatting.autoslot";
+    public static final String NAVI_FLOATTING_WINDOWS_AUTO_SOLT="com.huivip.wdiget.floatting.navi.autoslot";
     public static final String FLOATING_WINDWS_DIRECTION_horizontal="com.huivip.widget.Direction";
     public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
@@ -58,6 +59,7 @@ public abstract class PrefUtils {
     public static final String FTP_PATH="com.huivip.ftp.path";
     public static final String FTP_AUTO_BACKUP="com.huivip.ftp.auto.backup";
     static final String ENABLE_NAVI_FLOATING_WINDOWS="com.huivip.navi.floating";
+    static final String NAVI_MODE_NEW_DRIVER="com.huivip.navi.mode.newDriver";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -115,11 +117,23 @@ public abstract class PrefUtils {
     public static void setFloattingWindowsAutoSolt(Context context,boolean autoSolt){
         edit(context).putBoolean(FLOATTING_WINDOWS_AUTO_SOLT, autoSolt).apply();
     }
+    public static boolean isNaviFloattingAutoSolt(Context context){
+        return getSharedPreferences(context).getBoolean(NAVI_FLOATTING_WINDOWS_AUTO_SOLT, true);
+    }
+    public static void setNaviFloattingWindowsAutoSolt(Context context,boolean autoSolt){
+        edit(context).putBoolean(NAVI_FLOATTING_WINDOWS_AUTO_SOLT, autoSolt).apply();
+    }
     public static boolean isOnDesktop(Context context){
         return getSharedPreferences(context).getBoolean(ACTIVITY_ON_DESKTOP, true);
     }
     public static void setOnDesktop(Context context,boolean onDesktop){
         edit(context).putBoolean(ACTIVITY_ON_DESKTOP, onDesktop).apply();
+    }
+    public static boolean isNewDriverMode(Context context){
+        return getSharedPreferences(context).getBoolean(NAVI_MODE_NEW_DRIVER, false);
+    }
+    public static void setNewDriverMode(Context context,boolean newer){
+        edit(context).putBoolean(NAVI_MODE_NEW_DRIVER, newer).apply();
     }
     public static boolean isWidgetActived(Context context){
         return getSharedPreferences(context).getBoolean(WIDGET_ACTIVED, false);
@@ -229,10 +243,10 @@ public abstract class PrefUtils {
         return getSharedPreferences(context).getString(FLOATTING_WINDOW_XY, "0,0");
     }
     public static void setFloatingLocation(Context context, float screenYRatio, boolean left) {
-        edit(context).putString(PREF_NAVI_FLOATING_LOCATION, left + "," + screenYRatio).apply();
+        edit(context).putString(PREF_FLOATING_LOCATION, left + "," + screenYRatio).apply();
     }
     public static String getNaviFloatingSolidLocation(Context context) {
-        return getSharedPreferences(context).getString(FLOATTING_WINDOW_XY, "0,0");
+        return getSharedPreferences(context).getString(NAVI_FLOATTING_WINDOW_XY, "0,0");
     }
     public static void setNaviFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_NAVI_FLOATING_LOCATION, left + "," + screenYRatio).apply();

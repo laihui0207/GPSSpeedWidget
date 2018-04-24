@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.FloatingService;
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ public class AppDetectionService extends AccessibilityService {
     private static AppDetectionService INSTANCE;
 
     private Set<String> enabledApps;
-
+    private GpsUtil gpsUtil;
     public static AppDetectionService get() {
         return INSTANCE;
     }
@@ -66,7 +67,10 @@ public class AppDetectionService extends AccessibilityService {
            PrefUtils.setEnableTempAudioService(getApplicationContext(),false);
        }
        else {
-           PrefUtils.setEnableTempAudioService(getApplicationContext(),true);
+           gpsUtil=GpsUtil.getInstance(getApplicationContext());
+           if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) {
+               PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
+           }
        }
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());

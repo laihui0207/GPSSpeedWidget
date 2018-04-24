@@ -120,7 +120,7 @@ public class GpsSpeedService extends Service {
                 if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false)) {
                     intent.removeExtra(EXTRA_AUTOBOOT);
                 }
-                Toast.makeText(getApplicationContext(),"GPS服务开启",Toast.LENGTH_SHORT).show();
+
             } else {
                 serviceStoped = true;
 /*                if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext()) ) {*/

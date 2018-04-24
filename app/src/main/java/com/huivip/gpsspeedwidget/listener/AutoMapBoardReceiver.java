@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.widget.Toast;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.NaviFloatingService;
@@ -48,8 +47,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         break;
                     case 2: // auto map in end
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
-                    case 25:
-                    case 9:
+                        gpsUtil.setCurrentRoadName("");
+                    case 25:  // xunhang end
+                    case 9:  // navi end
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                     case 12:
                         stopFloatingService(context);
@@ -66,11 +66,13 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         break;
                     case 13:  // TTS speaking start
-                        //PrefUtils.setEnableTempAudioService(context, false);
+                        PrefUtils.setEnableTempAudioService(context, false);
                         //Toast.makeText(context,"speaking",Toast.LENGTH_SHORT).show();
                         break;
                     case 14:  // TTS Speak End
-                        //PrefUtils.setEnableTempAudioService(context, true);
+                        if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) {
+                            PrefUtils.setEnableTempAudioService(context, true);
+                        }
                         //Toast.makeText(context,"speaking End",Toast.LENGTH_SHORT).show();
                         break;
                 }

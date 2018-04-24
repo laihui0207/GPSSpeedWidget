@@ -2,12 +2,16 @@ var express = require('express');
 var qs = require('querystring');
 var NodeCache = require("node-cache");
 var moment = require('moment');
+var bodyParser = require('body-parser');
 var gpsCache = new NodeCache();
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('GPSHistory.db');
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
+
 db.serialize(function () {
     db.run("CREATE TABLE IF NOT EXISTS  GPS (id integer primary key autoincrement,deviceId varchar(50),lng varchar(20), " +
         "lat varchar(20),speed varchar(10), speedValue REAL,bearingValue REAL,createTime integer,lineId integer)");
+    db.run("CREATE TABLE IF NOT EXISTS feedback (id integer primary key autoincrement,name varchar(50),content varchar(500),createTime integer)");
 });
 
 var PORT = 8090;
@@ -174,6 +178,21 @@ app.get("/devices", function (req, res) {
     })
 });
 
-
+app.get("/feedback",function(req,res){
+  res.sendFile( __dirname + "/" + "feedback.html" );
+})
+app.post("/feedback",urlencodedParser,function(req,res){
+  var feedbacker=req.body.feedbacker_name;
+  var content=req.body.feedback_content;
+            db.serialize(function () {
+                db.run("insert into feedback(name,content) values(?,?)",
+                    [feedbacker,content]);
+            })
+  res.write("feedback saveed");
+  res.end();
+})
+app.get("/updateInfo",function(req,res){
+  res.sendFile(__dirname+"/"+"update.json");
+})
 
 

@@ -4,6 +4,12 @@
     android:layout_height="match_parent" >
 
    <CheckBox
+           android:text="自动靠边"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/checkBox_Navi_autoSolt" android:layout_alignBaseline="@+id/checkBox_navfloatiing"
+           android:layout_alignBottom="@+id/checkBox_navfloatiing" android:layout_toEndOf="@+id/checkBox_navfloatiing"/>
+   <CheckBox
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/autoStart"
@@ -32,7 +38,7 @@
               android:layout_height="wrap_content"
               android:inputType="textUri"
               android:text=""
-              android:hint="记录轨迹服务器地址"
+              android:hint="记录轨迹服务器地址,不填为空使用默认服务器但不保证数据长期保存"
               android:ems="10"
               android:id="@+id/editText_remoteURL" android:layout_weight="1"/>
 
@@ -71,7 +77,8 @@
            android:text="@string/str_btn_ok"
            android:layout_weight="1"
            android:elevation="21dp"
-           android:layout_below="@+id/editText_audioVolume" android:layout_alignEnd="@+id/enableOver"/>
+           android:layout_below="@+id/checkBox_navfloatiing" android:layout_alignStart="@+id/radioGroup_flatingSelect"
+           android:layout_marginTop="16dp"/>
    <Button
            android:text="1. 允许顶层显示功能"
            android:layout_width="wrap_content"
@@ -125,7 +132,8 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/textView"
-           android:layout_above="@+id/linearLayout" android:layout_toStartOf="@+id/editText_speedadjust"/>
+           android:layout_alignBaseline="@+id/recordGPS" android:layout_alignBottom="@+id/recordGPS"
+           android:layout_toStartOf="@+id/editText_speedadjust"/>
    <EditText
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
@@ -133,8 +141,8 @@
            android:ems="5"
            android:hint="0(-5,5)"
            android:id="@+id/editText_speedadjust"
-           android:layout_above="@+id/linearLayout" android:layout_alignStart="@+id/confirm"
-           android:layout_below="@+id/autoStart"/>
+           android:layout_alignBaseline="@+id/recordGPS" android:layout_alignBottom="@+id/recordGPS"
+           android:layout_alignEnd="@+id/checkBox_h_direction"/>
    <CheckBox
            android:text="显示限速窗口"
            android:layout_width="wrap_content"
@@ -146,12 +154,12 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content" android:layout_below="@+id/checkBox_showLimit"
            android:layout_alignStart="@+id/checkBox_showLimit" android:id="@+id/checkBox_showSpeed"/>
-    <TextView
-            android:text="启用1，2两项才能使用悬浮窗"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView_showmessage"
-            android:layout_alignParentBottom="true" android:layout_toEndOf="@+id/button_select_app"/>
+   <TextView
+           android:text="启用1，2两项才能使用悬浮窗"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/textView_showmessage"
+           android:layout_alignParentBottom="true" android:layout_alignParentStart="true"/>
   <!-- <EditText
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
@@ -183,8 +191,8 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:id="@+id/textView_audioVolume"
-           android:layout_alignBaseline="@+id/editText_audioVolume"
-           android:layout_alignBottom="@+id/editText_audioVolume" android:layout_alignParentStart="true"/>
+           android:layout_alignBaseline="@+id/checkBox_mix" android:layout_alignBottom="@+id/checkBox_mix"
+           android:layout_toEndOf="@+id/textView3" android:layout_marginStart="30dp"/>
    <EditText
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
@@ -192,7 +200,8 @@
            android:ems="6"
            android:hint="设置语音音量"
            android:id="@+id/editText_audioVolume"
-           android:layout_below="@+id/checkBox_navfloatiing" android:layout_toEndOf="@+id/textView_audioVolume"/>
+           android:layout_alignBaseline="@+id/checkBox_mix" android:layout_alignBottom="@+id/checkBox_mix"
+           android:layout_toEndOf="@+id/textView_audioVolume"/>
    <TextView
            android:text="作者QQ： 478722925"
            android:layout_width="wrap_content"
@@ -205,4 +214,25 @@
            android:layout_height="wrap_content"
            android:id="@+id/checkBox_navfloatiing" android:layout_below="@+id/radioGroup_flatingSelect"
            android:layout_toEndOf="@+id/button_select_app"/>
+   <TextView
+           android:text="TextView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/textView_appVersion"
+           android:layout_alignParentBottom="true" android:layout_alignStart="@+id/textView_audioVolume"/>
+   <CheckBox
+           android:text="新手模式"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" android:layout_below="@+id/editText_audioVolume"
+           android:layout_toEndOf="@+id/checkBox_Navi_autoSolt" android:id="@+id/checkBox_navi_mode"/>
+   <Button
+           android:text="检查更新"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" android:layout_alignTop="@+id/confirm"
+           android:layout_alignStart="@+id/textView" android:id="@+id/button_update"/>
+   <Button
+           android:text="反馈问题"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" android:layout_alignBottom="@+id/button_update"
+           android:layout_alignEnd="@+id/checkBox_Navi_autoSolt" android:id="@+id/button_feedback"/>
 </RelativeLayout>

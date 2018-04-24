@@ -4,18 +4,24 @@ import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
+
+import java.io.File;
 
 
 public abstract class Utils {
@@ -117,7 +123,26 @@ public abstract class Utils {
         return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE)
                 == PackageManager.PERMISSION_GRANTED;
     }
+    public static void installApk(Context mContext, File file) {
+        Uri fileUri = Uri.fromFile(file);
+        Intent it = new Intent();
+        it.setAction(Intent.ACTION_VIEW);
+        it.setDataAndType(fileUri, "application/vnd.android.package-archive");
+        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);// 防止打不开应用
+        mContext.startActivity(it);
+    }
+    public static String getLocalVersion(Context context) {
+        PackageManager manager = context.getPackageManager();
+        PackageInfo info = null;
+        try {
+            info = manager.getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("huivip", "获取应用程序版本失败，原因：" + e.getMessage());
+            return "";
+        }
 
+        return info.versionName;
+    }
     public static int levenshteinDistance(CharSequence lhs, CharSequence rhs) {
         int len0 = lhs.length() + 1;
         int len1 = rhs.length() + 1;

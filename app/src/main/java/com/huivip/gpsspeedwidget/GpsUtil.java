@@ -144,6 +144,7 @@ public class GpsUtil implements AMapNaviListener {
                 });
             }
         };
+        Toast.makeText(context,"GPS服务开启",Toast.LENGTH_SHORT).show();
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         if (Utils.isNetworkConnected(context)) {
             startAimlessNavi();
@@ -178,7 +179,11 @@ public class GpsUtil implements AMapNaviListener {
     private void startAimlessNavi() {
         if (PrefUtils.isEnableAutoNaviService(context) && !aimlessStatred) {
             aMapNavi = AMapNavi.getInstance(context);
-            aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
+            if(PrefUtils.isNewDriverMode(context)){
+                aMapNavi.setBroadcastMode(BroadcastMode.DETAIL);
+            } else {
+                aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
+            }
             aMapNavi.addAMapNaviListener(this);
             aMapNavi.getNaviSetting().setTrafficStatusUpdateEnabled(true);
             aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
@@ -380,34 +385,111 @@ public class GpsUtil implements AMapNaviListener {
     public int getCameraType() {
         return cameraType;
     }
-
+    /*
+       0：未知道路设施
+   4：测速摄像头、测速雷达
+   5：违章摄像头
+   10:请谨慎驾驶
+   11:有连续拍照
+   12：铁路道口
+   13：注意落石（左侧）
+   14：事故易发地段
+   15：易滑
+   16：村庄
+   18：前方学校
+   19：有人看管的铁路道口
+   20：无人看管的铁路道口
+   21：两侧变窄
+   22：向左急弯路
+   23：向右急弯路
+   24：反向弯路
+   25：连续弯路
+   26：左侧合流标识牌
+   27：右侧合流标识牌
+   28：监控摄像头
+   29：专用道摄像头
+   31：禁止超车
+   36：右侧变窄
+   37：左侧变窄
+   38：窄桥
+   39：左右绕行
+   40：左侧绕行
+   41：右侧绕行
+   42：注意落石（右侧）
+   43：傍山险路（左侧）
+   44：傍山险路（右侧）
+   47：上陡坡
+   48：下陡坡
+   49：过水路面
+   50：路面不平
+   52：慢行
+   53：注意危险
+   58：隧道
+   59：渡口
+   92:闯红灯
+   93:应急车道
+   94:非机动车道
+   100：不绑定电子眼高发地
+   101:车道违章
+   102:超速违章
+        */
     public String getCameraTypeName(){
         String name="限速";
-        switch (cameraType){
-            case 0:
-                name="限速";
-                break;
-            case 1:
-                name="监控";
-                break;
-            case 2:
-                name="红灯";
-                break;
-            case 3:
-                name="违章";
-                break;
-            case 4:
-                name="公交专用";
-                break;
-            case 5:
-                name="应急车道";
-                break;
-            case 8:
-                name="区间开始";
-                break;
-            case 9:
-                name="区间结束";
-                break;
+        if(getAutoNaviStatus()==Constant.Navi_Status_Started) {
+            switch (cameraType) {
+                case 0:
+                    name = "限速";
+                    break;
+                case 1:
+                    name = "监控拍照";
+                    break;
+                case 2:
+                    name = "红灯拍照";
+                    break;
+                case 3:
+                    name = "违章监控";
+                    break;
+                case 4:
+                    name = "公交专用";
+                    break;
+                case 5:
+                    name = "应急车道";
+                    break;
+                case 8:
+                    name = "区间开始";
+                    break;
+                case 9:
+                    name = "区间结束";
+                    break;
+            }
+        }
+        else {
+            switch (cameraType) {
+                case 4:
+                case 102:
+                    name = "限速";
+                    break;
+                case 11:
+                case 28:
+                case 29:
+                    name = "监控拍照";
+                    break;
+                case 92:
+                    name = "红灯拍照";
+                    break;
+                case 5:
+                case 101:
+                case 100:
+                    name = "违章监控";
+                    break;
+                case 93:
+                    name = "应急车道";
+                    break;
+                case 10:
+                    name="谨慎驾驶";
+                    break;
+
+            }
         }
         return name;
     }
@@ -736,61 +818,17 @@ public class GpsUtil implements AMapNaviListener {
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
     }
-    /*
-    0：未知道路设施
-4：测速摄像头、测速雷达
-5：违章摄像头
-10:请谨慎驾驶
-11:有连续拍照
-12：铁路道口
-13：注意落石（左侧）
-14：事故易发地段
-15：易滑
-16：村庄
-18：前方学校
-19：有人看管的铁路道口
-20：无人看管的铁路道口
-21：两侧变窄
-22：向左急弯路
-23：向右急弯路
-24：反向弯路
-25：连续弯路
-26：左侧合流标识牌
-27：右侧合流标识牌
-28：监控摄像头
-29：专用道摄像头
-31：禁止超车
-36：右侧变窄
-37：左侧变窄
-38：窄桥
-39：左右绕行
-40：左侧绕行
-41：右侧绕行
-42：注意落石（右侧）
-43：傍山险路（左侧）
-44：傍山险路（右侧）
-47：上陡坡
-48：下陡坡
-49：过水路面
-50：路面不平
-52：慢行
-53：注意危险
-58：隧道
-59：渡口
-92:闯红灯
-93:应急车道
-94:非机动车道
-100：不绑定电子眼高发地
-101:车道违章
-102:超速违章
-     */
+
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
         for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
-            if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4 || info.getLimitSpeed() != 0) {
-                setCameraSpeed(info.getLimitSpeed());
+            //if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4 || info.getLimitSpeed() != 0) {
+                cameraType=info.getBroadcastType();
                 setCameraDistance(info.getDistance());
-            }
+                if(info.getLimitSpeed()!=0) {
+                    setCameraSpeed(info.getLimitSpeed());
+                }
+           // }
         }
 
     }

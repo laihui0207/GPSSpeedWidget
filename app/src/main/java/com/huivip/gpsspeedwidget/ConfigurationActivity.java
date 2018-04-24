@@ -5,16 +5,17 @@ import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
+import android.os.*;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -27,17 +28,13 @@ import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
-import com.huivip.gpsspeedwidget.utils.FileUtil;
-import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.TTSUtil;
-import com.huivip.gpsspeedwidget.utils.Utils;
+import com.huivip.gpsspeedwidget.utils.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author sunlaihui
@@ -327,11 +324,155 @@ public class ConfigurationActivity extends Activity {
         audioVolumeEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, 30)});
 
         enableNaviFloatingCheckBox=findViewById(R.id.checkBox_navfloatiing);
+        CheckBox naviAutoSoltCheckBox=findViewById(R.id.checkBox_Navi_autoSolt);
         enableNaviFloatingCheckBox.setChecked(PrefUtils.isEnableNaviFloating(getApplicationContext()));
         enableNaviFloatingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setEnableNaviFloating(getApplicationContext(),buttonView.isChecked());
+                naviAutoSoltCheckBox.setEnabled(buttonView.isChecked());
+            }
+        });
+
+        naviAutoSoltCheckBox.setChecked(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()));
+        naviAutoSoltCheckBox.setEnabled(enableNaviFloatingCheckBox.isChecked());
+        naviAutoSoltCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
+                PrefUtils.setNaviFloattingWindowsAutoSolt(getApplicationContext(),checkBoxButton.isChecked());
+            }
+        });
+        CheckBox newDriverMode=findViewById(R.id.checkBox_navi_mode);
+        newDriverMode.setChecked(PrefUtils.isNewDriverMode(getApplicationContext()));
+        newDriverMode.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setNewDriverMode(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        TextView appVersion=findViewById(R.id.textView_appVersion);
+        appVersion.setText("当前版本："+BuildConfig.VERSION_NAME);
+        Button checkUpdateButton=findViewById(R.id.button_update);
+        final Handler AlterHandler=new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                if(msg.arg1==0) {
+                    AlertDialog.Builder  mDialog = new AlertDialog.Builder(ConfigurationActivity.this);
+                    mDialog.setTitle("版本检查");
+                    mDialog.setMessage("已是最新版本，无需更新！");
+                    mDialog.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,int id) {
+                            dialog.dismiss();
+                        }
+                    });
+                    mDialog.create().show();
+                }
+                else if (msg.arg1==1){
+                    AlertDialog.Builder  mDialog = new AlertDialog.Builder(ConfigurationActivity.this);
+                    try {
+                        JSONObject updateInfo=new JSONObject((String)msg.obj);
+                        JSONObject data= (JSONObject) updateInfo.get("data");
+                        mDialog.setTitle("版本升级");
+                        mDialog.setMessage(data.getString("upgradeinfo")).setCancelable(true);
+                        String updateUrl=data.getString("updateurl");
+                        String appName=data.getString("appname");
+                        mDialog.setPositiveButton("更新", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                HttpUtils.downLoadApk(ConfigurationActivity.this,updateUrl,appName);
+                            }
+                        }).setNegativeButton("不用了", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                   mDialog.create().show();
+                }
+            }
+        };
+        View.OnClickListener checkUpdateListener=new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+                        String updateInfo=HttpUtils.getData(Constant.LBSURL+"/updateInfo");
+                        try {
+                            if(!TextUtils.isEmpty(updateInfo) && !updateInfo.equalsIgnoreCase("-1")) {
+                                String currentVersion=Utils.getLocalVersion(getApplicationContext());
+                                JSONObject infoObj = new JSONObject(updateInfo);
+                                JSONObject data= (JSONObject) infoObj.get("data");
+                                String updateVersion=data.getString("serverVersion");
+                                Log.d("huivip","Current local Version:"+currentVersion+",Update Version:"+updateVersion);
+                                if(currentVersion.equalsIgnoreCase(updateVersion)){
+                                    Message message = Message.obtain();
+                                    message.obj ="";
+                                    message.arg1 = 0;
+                                    AlterHandler.handleMessage(message);
+                                } else {
+                                    Message message = Message.obtain();
+                                    message.obj =updateInfo;
+                                    message.arg1 = 1;
+                                    AlterHandler.handleMessage(message);
+                                }
+
+                            }
+                            else {
+                                Message message = Message.obtain();
+                                message.obj ="";
+                                message.arg1 = 0;
+                                AlterHandler.handleMessage(message);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Looper.loop();
+                    }
+                }).start();
+            }
+        };
+        checkUpdateButton.setOnClickListener(checkUpdateListener);
+        Button feedbackButton=findViewById(R.id.button_feedback);
+        feedbackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText inputText = new EditText(ConfigurationActivity.this);
+                DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
+                String deviceId=deviceUuidFactory.getDeviceUuid().toString();
+                new AlertDialog.Builder(ConfigurationActivity.this).setTitle("请输入反馈内容").setIcon(
+                        android.R.drawable.ic_dialog_info).setView(inputText).
+                        setPositiveButton("提交", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String content=inputText.getText().toString();
+                                if(!TextUtils.isEmpty(content.trim())){
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Map<String, String> params = new HashMap<String, String>();
+                                            params.put("feedback_content",content);
+                                            params.put("feedbacker_name",deviceId);
+                                            HttpUtils.submitPostData(Constant.LBSURL+"/feedback",params,"utf-8");
+                                        }
+                                    }).start();
+                                }
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
             }
         });
     }
