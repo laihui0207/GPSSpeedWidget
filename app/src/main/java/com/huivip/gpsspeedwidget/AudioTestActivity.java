@@ -150,7 +150,7 @@ public class AudioTestActivity extends Activity {
                 intent.putExtra("SOURCE_APP", "Third App");
                 sendBroadcast(intent);*/
                 //startActivity(new Intent(AudioTestActivity.this, HudDisplayActivity.class));
-                startService(floatService);
+                //startService(floatService);
             }
         });
     }

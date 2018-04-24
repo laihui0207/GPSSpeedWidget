@@ -22,6 +22,7 @@ import com.huivip.gpsspeedwidget.utils.TTSUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -818,19 +819,20 @@ public class GpsUtil implements AMapNaviListener {
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
     }
-
+    Integer[] broadcastTypes={4,5,10,11,28,29,93,92,100,101,102};
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
         for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
-            //if (info.getBroadcastType() == 102 || info.getBroadcastType() == 4 || info.getLimitSpeed() != 0) {
-                cameraType=info.getBroadcastType();
-                setCameraDistance(info.getDistance());
-                if(info.getLimitSpeed()!=0) {
+            if(Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
+                cameraType = info.getBroadcastType();
+                if(info.getDistance()>0) {
+                    setCameraDistance(info.getDistance());
+                }
+                if (info.getLimitSpeed()>0) {
                     setCameraSpeed(info.getLimitSpeed());
                 }
-           // }
+            }
         }
-
     }
 
     @Override
