@@ -21,7 +21,7 @@ public class TTSUtil {
     protected String appKey = "645OiDA3l2baAATnci6lTzC6";
     protected String secretKey = "222af7afd5d975f91d7247700de1ac99";
     protected TtsMode ttsMode = TtsMode.MIX;
-    protected String offlineVoice = OfflineResource.VOICE_MALE;
+    protected String offlineVoice = OfflineResource.VOICE_FEMALE;
     protected SpeechSynthesizer mSpeechSynthesizer;
     private static TTSUtil ttsUtil;
     AudioManager am;
@@ -34,7 +34,7 @@ public class TTSUtil {
 
     // 请确保该PATH下有这个文件 ，m15是离线男声
     private static final String MODEL_FILENAME =
-            TEMP_DIR + "/" + "bd_etts_common_speech_m15_mand_eng_high_am-mix_v3.0.0_20170505.dat";
+            TEMP_DIR + "/" + "bd_etts_common_speech_f7_mand_eng_high_am-mix_v3.0.0_20170512.dat";
     private TTSUtil(Context context) {
         this.context=context;
         initTTs();

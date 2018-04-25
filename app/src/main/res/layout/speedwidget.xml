@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools" android:gravity="center"
+                android:gravity="center"
                 android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-    <ImageView android:id="@id/ialtimetro" android:background="@drawable/widget_state"
+                android:layout_width="200dp"
+                android:layout_height="200dp">
+    <ImageView android:id="@id/ialtimetro"
                android:layout_width="match_parent"
                android:layout_height="match_parent"
                android:src="@drawable/base" android:layout_alignParentTop="true"
@@ -12,8 +12,7 @@
                android:layout_alignParentStart="true" android:paddingTop="10dp"/>
     <ImageView android:id="@id/ifreccia" android:layout_width="match_parent" android:layout_height="match_parent"
                android:src="@drawable/alt_0" android:scaleType="fitCenter"
-               android:layout_alignBottom="@+id/textView1_watch_speed" android:layout_alignParentStart="true"
-               android:layout_margin="10dp"/>
+               android:layout_centerHorizontal="true" android:layout_alignParentBottom="true" android:padding="10dp"/>
     <TextView android:textSize="20.0dip" android:textColor="#ffffffff" android:id="@+id/textView_watch_limit"
               android:layout_width="wrap_content" android:layout_height="wrap_content"
               android:layout_alignBottom="@id/ialtimetro"
@@ -25,18 +24,7 @@
               android:text="OFF"
               android:layout_marginBottom="8dp" android:layout_alignBottom="@+id/ialtimetro"
               android:layout_centerHorizontal="true"/>
-   <!-- <TextView android:textAppearance="?android:textAppearanceSmall" android:textSize="25.0dip"
-              android:textColor="#ffffffff" android:id="@id/textView1Mph" android:layout_width="match_parent"
-              android:layout_height="match_parent" android:text=""
-              android:layout_toRightOf="@id/textView1" android:layout_alignBaseline="@id/textView1"
-              android:layout_alignBottom="@id/textView1" android:layout_marginBottom="1.0dip"
-              android:layout_marginRight="1.0dip" android:visibility="gone"/>
-    <TextView android:textAppearance="?android:textAppearanceSmall" android:textSize="25.0dip"
-              android:textColor="#ffffffff" android:id="@id/textView1Kmh" android:layout_width="wrap_content"
-              android:layout_height="wrap_content" android:text="  OFF "
-              android:layout_toRightOf="@+id/textView1_1" android:layout_alignBaseline="@+id/textView1_1"
-              android:layout_alignBottom="@+id/textView1_1" android:layout_marginLeft="2.0dip"
-              android:layout_centerHorizontal="false" android:layout_alignParentTop="false" android:visibility="gone"/>-->
+
     <TextView
             android:text="北"
             android:layout_width="wrap_content"
@@ -44,7 +32,7 @@
             android:textColor="#fff"
             android:id="@+id/textView_watch_direction"
             android:textSize="20sp"
-            android:layout_marginTop="45dp" android:layout_below="@+id/textView_watch_limit"
+            android:layout_marginTop="40dp" android:layout_below="@+id/textView_watch_limit"
             android:layout_centerHorizontal="true"/>
     <RelativeLayout android:id="@+id/watch_limitLayout"
                     android:orientation="vertical"
