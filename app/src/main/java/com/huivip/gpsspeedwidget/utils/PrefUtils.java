@@ -39,7 +39,7 @@ public abstract class PrefUtils {
     public static final String FLOATING_WINDWS_DIRECTION_horizontal="com.huivip.widget.Direction";
     public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
-    public static final String NAVI_FLOATTING_WINDOW_XY="com.huivip.widget.xy";
+    public static final String NAVI_FLOATTING_WINDOW_XY="com.huivip.widget.navi.xy";
     public static final String SEPARATED_VOLUME ="com.huivip.widget.separated.volume";
     public static final String AUDIO_VOLUME="com.huivipo.widget.audio.volume";
     public static final String USER_CLOSED_SERVER="com.huivip.widget.Close.serviced";
