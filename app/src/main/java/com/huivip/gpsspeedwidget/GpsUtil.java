@@ -84,6 +84,7 @@ public class GpsUtil implements AMapNaviListener {
     String latedDirectionName="";
     int naviFloatingStatus=0; // 0 disabled 1 visible
     int autoNaviStatus=0; // 0 no started  1 started
+    NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location paramAnonymousLocation) {
@@ -254,7 +255,6 @@ public class GpsUtil implements AMapNaviListener {
         return speedometerPercentage;
     }
 
-    NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     private void updateLocationData(Location paramLocation) {
         if (paramLocation != null) {
             this.latitude = Double.toString(paramLocation.getLatitude());
@@ -307,7 +307,7 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     void computeAndShowData() {
-        localNumberFormat.setMaximumFractionDigits(1);
+
         mphSpeed = (int) (this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         kmhSpeed = (int) (this.speed.doubleValue() * 3.6D);
         if (speedAdjust != 0) {
@@ -319,13 +319,13 @@ public class GpsUtil implements AMapNaviListener {
             }
         }
         speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
-        mphSpeedStr = localNumberFormat.format(mphSpeed);
-        kmhSpeedStr = localNumberFormat.format(kmhSpeed);
-        if (limitDistance > 0) {
+        //mphSpeedStr = localNumberFormat.format(mphSpeed);
+        //kmhSpeedStr = localNumberFormat.format(kmhSpeed);
+       /* if (limitDistance > 0) {
             limitDistancePercentage = Math.round((300F - limitDistance) / 300 * 100);
         } else if (limitDistance <= 0 || limitSpeed == 0) {
             limitDistancePercentage = 0;
-        }
+        }*/
         // limit speak just say one times in one minutes
         if (limitSpeed > 0 && kmhSpeed > limitSpeed) {
             hasLimited = true;
@@ -347,6 +347,11 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     public int getLimitDistancePercentage() {
+        if (limitDistance > 0) {
+            limitDistancePercentage = Math.round((300F - limitDistance) / 300 * 100);
+        } else {
+            limitDistancePercentage = 0;
+        }
         return limitDistancePercentage;
     }
 
@@ -355,10 +360,14 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     public String getMphSpeedStr() {
+        localNumberFormat.setMaximumFractionDigits(1);
+        mphSpeedStr = localNumberFormat.format(mphSpeed);
         return mphSpeedStr;
     }
 
     public String getKmhSpeedStr() {
+        localNumberFormat.setMaximumFractionDigits(1);
+        kmhSpeedStr = localNumberFormat.format(kmhSpeed);
         return kmhSpeedStr;
     }
 
@@ -732,9 +741,7 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void onNaviInfoUpdate(NaviInfo naviInfo) {
-       /* if(!TextUtils.isEmpty(naviInfo.getCurrentRoadName())){
-            Toast.makeText(context, "当前道路:"+naviInfo.getCurrentRoadName() + "", Toast.LENGTH_SHORT).show();
-        }*/
+
     }
 
     @Override
@@ -798,7 +805,6 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void showLaneInfo(AMapLaneInfo aMapLaneInfo) {
-        Toast.makeText(context,"Get Lan info: count="+aMapLaneInfo.getLaneTypeIdArray().toString(),Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -819,16 +825,14 @@ public class GpsUtil implements AMapNaviListener {
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
     }
-    Integer[] broadcastTypes={4,5,10,11,28,29,93,92,100,101,102};
+    Integer[] broadcastTypes={4,5,11,28,29,93,92,101,102};
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
         for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
-            if(Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
+            if (Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
                 cameraType = info.getBroadcastType();
-                if(info.getDistance()>0) {
-                    setCameraDistance(info.getDistance());
-                }
-                if (info.getLimitSpeed()>0) {
+                setCameraDistance(info.getDistance());
+                if (info.getLimitSpeed() > 0) {
                     setCameraSpeed(info.getLimitSpeed());
                 }
             }
