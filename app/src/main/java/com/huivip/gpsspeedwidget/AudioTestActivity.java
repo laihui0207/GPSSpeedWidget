@@ -151,6 +151,8 @@ public class AudioTestActivity extends Activity {
                 sendBroadcast(intent);*/
                 //startActivity(new Intent(AudioTestActivity.this, HudDisplayActivity.class));
                 //startService(floatService);
+                startActivity(new Intent(getApplicationContext(),
+                        com.amap.api.maps.offlinemap.OfflineMapActivity.class));
             }
         });
     }

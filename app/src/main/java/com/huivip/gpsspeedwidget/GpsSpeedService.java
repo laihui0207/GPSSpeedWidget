@@ -73,29 +73,9 @@ public class GpsSpeedService extends Service {
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         if (intent != null) {
-            if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false)) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Set<String> autoApps = PrefUtils.getAutoLaunchApps(getApplicationContext());
-                        for (String packageName : autoApps) {
-                            Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-                            if (launchIntent != null) {
-                                startActivity(launchIntent);//null pointer check in case package name was not found
-                            }
-                        }
-                    }
-                }).start();
-                if (PrefUtils.isEnableFlatingWindow(getApplicationContext())
-                        && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
-                    Intent floatService = new Intent(this, FloatingService.class);
-                    startService(floatService);
-                }
-                autoBackUpGPSData();
-            }
-            if (!PrefUtils.isWidgetActived(getApplicationContext())) {
+           /* if (!PrefUtils.isWidgetActived(getApplicationContext())) {
                 return super.onStartCommand(intent, flags, startId);
-            }
+            }*/
             if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
                 serviceStoped = false;
                 /*                if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {*/
@@ -118,9 +98,9 @@ public class GpsSpeedService extends Service {
                     startService(floatService);
                 }
                 PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
-                if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false)) {
+                /*if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false)) {
                     intent.removeExtra(EXTRA_AUTOBOOT);
-                }
+                }*/
 
             } else {
                 serviceStoped = true;
@@ -150,6 +130,26 @@ public class GpsSpeedService extends Service {
                 PrefUtils.setUserManualClosedServer(getApplicationContext(), true);
                 Toast.makeText(getApplicationContext(), "GPS服务关闭", Toast.LENGTH_SHORT).show();
                 stopSelf();
+            }
+            if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false)) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Set<String> autoApps = PrefUtils.getAutoLaunchApps(getApplicationContext());
+                        for (String packageName : autoApps) {
+                            Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+                            if (launchIntent != null) {
+                                startActivity(launchIntent);//null pointer check in case package name was not found
+                            }
+                        }
+                    }
+                }).start();
+                if (PrefUtils.isEnableFlatingWindow(getApplicationContext())
+                        && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+                    Intent floatService = new Intent(this, FloatingService.class);
+                    startService(floatService);
+                }
+                autoBackUpGPSData();
             }
         }
 

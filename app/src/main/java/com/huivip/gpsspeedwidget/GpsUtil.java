@@ -179,6 +179,9 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     private void startAimlessNavi() {
+        if(!PrefUtils.isWidgetActived(context) && !PrefUtils.isEnableFlatingWindow(context)){
+            return;
+        }
         if (PrefUtils.isEnableAutoNaviService(context) && !aimlessStatred) {
             aMapNavi = AMapNavi.getInstance(context);
             if(PrefUtils.isNewDriverMode(context)){

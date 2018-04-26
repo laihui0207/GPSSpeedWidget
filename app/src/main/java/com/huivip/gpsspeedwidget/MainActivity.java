@@ -79,7 +79,9 @@ public class MainActivity extends Activity implements TraceListener {
         aMap.setMyLocationStyle(myLocationStyle);
         aMap.getUiSettings().setMyLocationButtonEnabled(true);
         aMap.setMyLocationEnabled(true);
-
+        aMap.setTrafficEnabled(true);
+        UiSettings mUiSettings=aMap.getUiSettings();
+        mUiSettings.setCompassEnabled(true);
         Button lastedPosition= (Button) findViewById(R.id.lastedBtn);
         final Handler lastedPositionHandler=new Handler(){
             @Override
