@@ -42,7 +42,11 @@
                 android:hint="选择日期" android:layout_weight="0.70" android:layout_height="wrap_content"
         />
         <Button android:layout_width="wrap_content" android:id="@+id/TrackBtn" android:layout_height="wrap_content"
-                android:text="行车轨迹"/>
+                android:text="行车轨迹" android:layout_weight="0.16"/>
+        <Button
+                android:text="打赏支持"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/button_paymain"/>
     </LinearLayout>
     <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
         <com.amap.api.maps.MapView

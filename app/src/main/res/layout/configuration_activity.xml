@@ -220,13 +220,17 @@
             <Button
                     android:text="检查更新"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_alignTop="@+id/confirm"
-                    android:layout_alignStart="@+id/textView" android:id="@+id/button_update"/>
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_update"
+                    android:layout_alignBaseline="@+id/confirm" android:layout_alignBottom="@+id/confirm"
+                    android:layout_toEndOf="@+id/confirm"/>
             <Button
                     android:text="反馈问题"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_alignBottom="@+id/button_update"
-                    android:layout_alignEnd="@+id/checkBox_Navi_autoSolt" android:id="@+id/button_feedback"/>
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_feedback"
+                    android:layout_alignBaseline="@+id/button_update" android:layout_alignBottom="@+id/button_update"
+                    android:layout_toEndOf="@+id/button_update"/>
             <TextView
                     android:text="启用顶层显示功能才能使用悬浮窗"
                     android:layout_width="wrap_content"
@@ -242,6 +246,12 @@
                     android:layout_alignBaseline="@+id/checkBox_h_direction"
                     android:layout_alignBottom="@+id/checkBox_h_direction"
                     android:layout_toEndOf="@+id/editText_speedadjust"/>
+            <Button
+                    android:text="打赏"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_pay" android:layout_alignBaseline="@+id/button_feedback"
+                    android:layout_alignBottom="@+id/button_feedback" android:layout_toEndOf="@+id/button_feedback"/>
         </RelativeLayout>
     </ScrollView>
     <TextView
@@ -263,4 +273,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/textView_uid"
             android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"/>
+    <FrameLayout
+            android:id="@+id/fl_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+    </FrameLayout>
 </RelativeLayout>

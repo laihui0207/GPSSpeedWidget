@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.widget.Toast;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.NaviFloatingService;
@@ -78,7 +79,8 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 }
             }
             if(key==13012){  // drive way information,but Just support pre-install version
-/*                String wayInfo=intent.getStringExtra("EXTRA_DRIVE_WAY");*/
+                String wayInfo=intent.getStringExtra("EXTRA_DRIVE_WAY");
+                //Toast.makeText(context,wayInfo,Toast.LENGTH_SHORT).show();
             }
             if(key==10001){  // navi information
                 String currentRoadName=intent.getStringExtra("CUR_ROAD_NAME");
@@ -148,13 +150,17 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
         }
     }
     private void startFloatingService(Context context){
-        Intent floatService=new Intent(context,NaviFloatingService.class);
-        context.startService(floatService);
-        PrefUtils.setEnableTempAudioService(context, false);
+        if(PrefUtils.isEnableNaviFloating(context)) {
+            Intent floatService = new Intent(context, NaviFloatingService.class);
+            context.startService(floatService);
+            PrefUtils.setEnableTempAudioService(context, false);
+        }
     }
     private void stopFloatingService(Context context){
-        Intent floatService=new Intent(context,NaviFloatingService.class);
-        floatService.putExtra(NaviFloatingService.EXTRA_CLOSE,true);
-        context.startService(floatService);
+        if(PrefUtils.isEnableNaviFloating(context)) {
+            Intent floatService = new Intent(context, NaviFloatingService.class);
+            floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
+            context.startService(floatService);
+        }
     }
 }

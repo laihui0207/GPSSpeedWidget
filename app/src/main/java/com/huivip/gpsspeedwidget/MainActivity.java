@@ -11,7 +11,9 @@ import android.os.Message;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
 import com.amap.api.maps.*;
@@ -278,6 +280,16 @@ public class MainActivity extends Activity implements TraceListener {
         };
         trackBtn.setOnClickListener(trackBtnListener);
         //setSystemUiVisibility(this,true);
+        Button buttonPay=findViewById(R.id.button_paymain);
+        buttonPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.dialog_pay,null);
+                new AlertDialog.Builder(MainActivity.this).setTitle("打赏随意，多少都是一种支持").setView(layout)
+                        .setPositiveButton("关闭", null).show();
+            }
+        });
     }
     private void saveDeviceIdString(String deviceString){
         String storedDevices=PrefUtils.getDeviceIdStorage(getApplicationContext());

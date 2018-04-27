@@ -12,11 +12,11 @@
                    android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
                    android:visibility="gone"/>
-        <ImageView android:id="@+id/imageview_red_day" android:background="@drawable/index_red_bg_day"
+   <!--     <ImageView android:id="@+id/imageview_red_day" android:background="@drawable/index_red_bg_day"
                    android:layout_width="match_parent"
                    android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
-                   android:visibility="gone"/>
+                   android:visibility="gone"/>-->
         <ImageView android:id="@+id/imageview_nomove_night" android:background="@drawable/index_bg_nomove_night"
                    android:layout_width="match_parent"
                    android:layout_height="match_parent"
@@ -25,8 +25,9 @@
         <TextView android:textSize="60sp"
                   android:id="@+id/SpeedText" android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:text="--"
-                  android:layout_below="@+id/imageview_red_night" android:layout_centerHorizontal="true"
-                  android:layout_marginTop="43dp" android:textStyle="bold" android:textColor="#000"/>
+                  android:textStyle="bold" android:textColor="#000"
+                  android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+                  android:layout_marginTop="43dp"/>
         <com.huivip.gpsspeedwidget.SpeedWheel android:id="@+id/imageView_pointer" android:layout_width="match_parent"
                                               android:layout_height="match_parent"
                                               android:layout_centerHorizontal="true"

@@ -20,7 +20,9 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 import butterknife.BindView;
 import com.bumptech.glide.Glide;
@@ -481,6 +483,16 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setEnableAutoNaviStyle(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        Button buttonPay=findViewById(R.id.button_pay);
+        buttonPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.dialog_pay,null);
+                new AlertDialog.Builder(ConfigurationActivity.this).setTitle("打赏随意，多少都是一种支持").setView(layout)
+                        .setPositiveButton("关闭", null).show();
             }
         });
     }
