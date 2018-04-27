@@ -52,6 +52,7 @@
         <activity android:name=".HudDisplayActivity"></activity>
         <receiver
                 android:name=".GpsSpeedWidget"
+                android:icon="@drawable/icon"
                 android:label="SpeedMeter">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -65,6 +66,7 @@
         </receiver>
         <receiver
                 android:name=".GpsSpeedNumberWidget"
+                android:icon="@drawable/icon_number"
                 android:label="SpeedNumber">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -92,6 +94,7 @@
         <service android:name=".FloatingService"/>
         <service android:name=".RecordGpsHistoryService"/>
         <service android:name=".NaviFloatingService"/>
+        <service android:name=".AutoNaviFloatingService"/>
         <service
                 android:name=".listener.AutoMapNotificationListener"
                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">

@@ -3,15 +3,15 @@ package com.huivip.gpsspeedwidget;
 import android.app.*;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
-import android.location.Location;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.opengl.Visibility;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -20,7 +20,6 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.io.File;
-import java.util.Date;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -78,6 +77,13 @@ public class GpsSpeedService extends Service {
             }*/
             if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
                 serviceStoped = false;
+                /*Bitmap bitmap =BitmapFactory.decodeResource(getResources(), R.drawable.alt_0_z);// ((BitmapDrawable)getResources().getDrawable(R.drawable.alt_0)).getBitmap();
+                Matrix matrix  = new Matrix();
+                // matrix.setRotate((float)(gpsUtil.getSpeedometerPercentage()/100d*270f));
+                matrix.setRotate(135.0f,178f,178f);
+                Log.d("huivip",bitmap.getWidth()+","+bitmap.getHeight());
+                Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
+                this.remoteViews.setImageViewBitmap(R.id.ifreccia,rotatedBitmap);*/
                 /*                if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {*/
                 this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "...");
                 this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
@@ -95,6 +101,9 @@ public class GpsSpeedService extends Service {
 
                 if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
                     Intent floatService = new Intent(this, FloatingService.class);
+                    if(PrefUtils.isEnableAutoNaviStyle(getApplicationContext())){
+                        floatService=new Intent(this,AutoNaviFloatingService.class);
+                    }
                     startService(floatService);
                 }
                 PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
@@ -125,6 +134,9 @@ public class GpsSpeedService extends Service {
                     this.locationTimer = null;
                 }
                 Intent floatService = new Intent(this, FloatingService.class);
+                if(PrefUtils.isEnableAutoNaviStyle(getApplicationContext())){
+                    floatService=new Intent(this,AutoNaviFloatingService.class);
+                }
                 floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
                 startService(floatService);
                 PrefUtils.setUserManualClosedServer(getApplicationContext(), true);
@@ -147,6 +159,9 @@ public class GpsSpeedService extends Service {
                 if (PrefUtils.isEnableFlatingWindow(getApplicationContext())
                         && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
                     Intent floatService = new Intent(this, FloatingService.class);
+                    if(PrefUtils.isEnableAutoNaviStyle(getApplicationContext())){
+                        floatService=new Intent(this,AutoNaviFloatingService.class);
+                    }
                     startService(floatService);
                 }
                 autoBackUpGPSData();
@@ -183,13 +198,13 @@ public class GpsSpeedService extends Service {
                 FTPUtils ftp = FTPUtils.getInstance();
                 boolean status = ftp.initFTPSetting(address, Integer.parseInt(port), user, password);
                 if (!status) {
-                    Toast.makeText(getApplicationContext(), "自动备份轨迹记录登录出错", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "自动备份轨迹记录登录出错", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
                 }
                 status = ftp.uploadFile(remoteDir, dataDir.getAbsolutePath(), "GPSHistory.db");
                 if (!status) {
-                    Toast.makeText(getApplicationContext(), "自动备份轨迹记录上传出错", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "自动备份轨迹记录上传出错", Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
@@ -221,7 +236,6 @@ public class GpsSpeedService extends Service {
     }
 
     void checkLocationData() {
-        //gpsUtil.checkLocationData();
         if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             if (gpsUtil.isGpsLocationChanged()) {
                 computeAndShowData();

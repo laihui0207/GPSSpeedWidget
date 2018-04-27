@@ -475,6 +475,14 @@ public class ConfigurationActivity extends Activity {
                         .show();
             }
         });
+        CheckBox floatingWindowStyleCheckbox=findViewById(R.id.checkBox_floating_style);
+        floatingWindowStyleCheckbox.setChecked(PrefUtils.isEnableAutoNaviStyle(getApplicationContext()));
+        floatingWindowStyleCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableAutoNaviStyle(getApplicationContext(),buttonView.isChecked());
+            }
+        });
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

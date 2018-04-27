@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"
+              xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="200dip"
+                    android:layout_height="200dip">
+        <ImageView android:id="@+id/imageview_speed" android:background="@drawable/index_bg_nomove_day"
+                   android:layout_width="match_parent" android:layout_height="match_parent"
+                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
+        />
+        <ImageView android:id="@+id/imageview_red_night" android:background="@drawable/index_red_bg_night"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
+                   android:visibility="gone"/>
+        <ImageView android:id="@+id/imageview_red_day" android:background="@drawable/index_red_bg_day"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
+                   android:visibility="gone"/>
+        <ImageView android:id="@+id/imageview_nomove_night" android:background="@drawable/index_bg_nomove_night"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
+        />
+        <TextView android:textSize="60sp"
+                  android:id="@+id/SpeedText" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="--"
+                  android:layout_below="@+id/imageview_red_night" android:layout_centerHorizontal="true"
+                  android:layout_marginTop="43dp" android:textStyle="bold" android:textColor="#000"/>
+        <com.huivip.gpsspeedwidget.SpeedWheel android:id="@+id/imageView_pointer" android:layout_width="match_parent"
+                                              android:layout_height="match_parent"
+                                              android:layout_centerHorizontal="true"
+                                              android:layout_centerVertical="true"/>
+        <TextView
+                android:text="km/h"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView6"
+                android:layout_marginTop="16dp" android:layout_below="@+id/SpeedText"
+                android:layout_centerHorizontal="true" android:textColor="#000"/>
+    </RelativeLayout>
+</LinearLayout>

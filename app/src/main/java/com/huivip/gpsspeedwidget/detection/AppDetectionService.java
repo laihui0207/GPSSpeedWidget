@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+import com.huivip.gpsspeedwidget.AutoNaviFloatingService;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.FloatingService;
 import com.huivip.gpsspeedwidget.GpsUtil;
@@ -75,17 +76,28 @@ public class AppDetectionService extends AccessibilityService {
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
         PrefUtils.setOnDesktop(getApplicationContext(),shouldStopService);
-        Intent floatService=new Intent(this, FloatingService.class);
+        Intent floatService = new Intent(this, FloatingService.class);
+        Intent AutoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
+
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
         } else if(shouldStopService && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP)){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
         } else if(!shouldStopService && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
-
+        if(PrefUtils.isEnableAutoNaviStyle(getApplicationContext())){
+            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+        }
+        else {
+            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+        }
         try {
             startService(floatService);
+            startService(AutoNavifloatService);
         } catch (Exception e) {
             Log.d("huivip","Start Floating server Failed"+e.getMessage());
         }

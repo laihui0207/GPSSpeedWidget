@@ -21,6 +21,7 @@ public abstract class PrefUtils {
     private static final String PREF_SPEEDOMETER = "pref_speedometer";
     private static final String PREF_LIMITS = "pref_limits";
     private static final String PREF_APPS = "pref_apps";
+    private static final String AUTO_NAVI_STYLE = "com.huivip.autoNavi.style";
     private static final String PREF_AUTO_LAUNCH_APPS = "pref_Auto_apps";
     private static final String PREF_TERMS_ACCEPTED = "pref_terms_accepted";
     public static final String AUTO_START_PREFS_NAME="AutoStart";
@@ -92,6 +93,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableAutoStart(Context context){
         return getSharedPreferences(context).getBoolean(AUTO_START_PREFS_NAME, true);
+    }
+    public static void setEnableAutoNaviStyle(Context context,boolean autoStart){
+        edit(context).putBoolean(AUTO_NAVI_STYLE, autoStart).apply();
+    }
+    public static boolean isEnableAutoNaviStyle(Context context){
+        return getSharedPreferences(context).getBoolean(AUTO_NAVI_STYLE, false);
     }
     public static void setShowFlattingOn(Context context,String show){
         edit(context).putString(SHOW_FLATTING_ON, show).apply();

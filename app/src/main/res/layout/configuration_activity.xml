@@ -234,6 +234,14 @@
                     android:id="@+id/textView_showmessage"
                     android:layout_alignBaseline="@+id/enableOver" android:layout_alignBottom="@+id/enableOver"
                     android:layout_toEndOf="@+id/enableOver"/>
+            <CheckBox
+                    android:text="高德样式"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox_floating_style"
+                    android:layout_alignBaseline="@+id/checkBox_h_direction"
+                    android:layout_alignBottom="@+id/checkBox_h_direction"
+                    android:layout_toEndOf="@+id/editText_speedadjust"/>
         </RelativeLayout>
     </ScrollView>
     <TextView
