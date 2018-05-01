@@ -39,5 +39,53 @@
                 android:id="@+id/textView6"
                 android:layout_marginTop="16dp" android:layout_below="@+id/SpeedText"
                 android:layout_centerHorizontal="true" android:textColor="#000"/>
+        <RelativeLayout android:id="@+id/autoNavi_limitLayout"
+                        android:layout_width="90dp"
+                        android:gravity="center"
+
+                        android:layout_gravity="center"
+                        android:layout_height="90dp"
+                        android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"
+                        android:visibility="gone">
+            <ProgressBar
+                    android:id="@+id/autoNavi_progressBarLimit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:indeterminate="false"
+                    android:progressDrawable="@drawable/circle_autonavi_limit_number"
+                    android:background="@drawable/speed_autonavi_limit_border"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:max="100"
+                    android:progress="30"/>
+            <TextView
+                    android:layout_width="match_parent"
+                    android:id="@+id/autoNavi_number_limit"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="none"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:fontFamily="sans-serif-thin"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:includeFontPadding="false"
+                    android:textSize="40sp"
+                    android:layout_alignParentStart="true" android:layout_alignParentBottom="true"
+                    android:textStyle="bold" android:layout_alignParentTop="true"/>
+            <TextView
+                    android:text="限速"
+                    android:layout_width="match_parent"
+                    android:textColor="#000"
+                    android:gravity="top|center_vertical|center_horizontal"
+                    android:layout_height="20dp" android:id="@+id/textView_autoNavi_limit_label"
+                    android:layout_alignParentBottom="true" android:layout_alignParentStart="true"
+                    android:textSize="12sp"/>
+            <TextView
+                    android:text="0米"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000"
+                    android:id="@+id/textView_autoNavi_distance"
+                    android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+                    android:layout_marginTop="11dp"/>
+        </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

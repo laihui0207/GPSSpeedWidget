@@ -114,6 +114,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 int leftDistance=intent.getIntExtra("ROUTE_REMAIN_DIS",0);
                 if(leftDistance>0){
                     gpsUtil.setTotalLeftDistance(leftDistance);
+                    if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Ended && gpsUtil.getNaviFloatingStatus()==Constant.Navi_Floating_Disabled){
+                        gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
+                        startFloatingService(context);
+                        gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
+                    }
                 }
                 else {
                     gpsUtil.setTotalLeftDistance(0);

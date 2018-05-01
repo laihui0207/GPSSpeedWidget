@@ -80,7 +80,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="none"
                         android:text="0"
-                        android:textColor="#000"
+                        android:textColor="#fff"
                         android:fontFamily="sans-serif-thin"
                         android:gravity="center_vertical|center_horizontal"
                         android:includeFontPadding="false"
@@ -90,7 +90,7 @@
                 <TextView
                         android:text="限速"
                         android:layout_width="match_parent"
-                        android:textColor="#000"
+                        android:textColor="#fff"
                         android:gravity="top|center_vertical|center_horizontal"
                         android:layout_height="20dp" android:id="@+id/textView_navi_limit_label"
                         android:textSize="13sp"
@@ -99,7 +99,7 @@
                         android:text="0米"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#000"
+                        android:textColor="#fff"
                         android:id="@+id/textView_navi_distance"
                         android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
                         android:layout_marginTop="11dp"/>

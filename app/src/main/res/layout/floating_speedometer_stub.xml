@@ -36,7 +36,7 @@
                 android:maxLines="1"
                 android:textSize="30sp"
                 android:text="--"
-                android:textColor="@android:color/background_dark"
+                android:textColor="#000"
                 app:autoSizeTextType="uniform"
                 android:layout_alignParentBottom="true" android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"/>
@@ -48,12 +48,12 @@
                 android:layout_gravity="center"
                 android:includeFontPadding="false"
                 android:gravity="center_vertical|center_horizontal"
-                android:textColor="?android:textColorPrimary"
+                android:textColor="#000"
                 android:textSize="15sp"
                 tools:text="km/h" android:text="km/h"
                 android:layout_alignParentBottom="true" android:layout_alignParentStart="true"/>
         <TextView
-                android:text="北"
+                android:text="北"  android:textColor="#000"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView_number_direction" android:layout_alignTop="@+id/speed"

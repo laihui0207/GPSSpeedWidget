@@ -17,7 +17,7 @@ import java.util.*;
  * @author sunlaihui
  */
 public class MessageReceiver extends BroadcastReceiver {
-    private int BULK_SIZE=2000;
+    private int BULK_SIZE=120;
     @Override
     public void onReceive(final Context context, Intent intent) {
         new Thread() {
@@ -34,7 +34,7 @@ public class MessageReceiver extends BroadcastReceiver {
                         int counter=locationVOList.size()/BULK_SIZE;
                         int leftSize=locationVOList.size()%BULK_SIZE;
                         for(int i=0;i<counter;i++) {
-                            List<LocationVO> tempList = locationVOList.subList(i*BULK_SIZE+1,i+BULK_SIZE);
+                            List<LocationVO> tempList = locationVOList.subList(i*BULK_SIZE+1,i*BULK_SIZE+1+BULK_SIZE);
                             Map<String, String> params = new HashMap<String, String>();
                             params.put("deviceId", deviceId);
                             params.put("t", "gps");
@@ -63,8 +63,6 @@ public class MessageReceiver extends BroadcastReceiver {
                             dbUtil.delete(now);
                         }
                     }
-
-
                 }
                 Log.d("huivip","Upload Data Finish");
             }

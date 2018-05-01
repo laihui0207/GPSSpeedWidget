@@ -321,7 +321,7 @@ public class GpsUtil implements AMapNaviListener {
                 }
             }
         }
-        speedometerPercentage = Math.round((float) kmhSpeed / 220 * 100);
+        speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
         //mphSpeedStr = localNumberFormat.format(mphSpeed);
         //kmhSpeedStr = localNumberFormat.format(kmhSpeed);
        /* if (limitDistance > 0) {
