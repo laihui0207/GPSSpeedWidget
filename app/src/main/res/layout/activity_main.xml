@@ -12,21 +12,20 @@
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="50dp" android:orientation="horizontal">
         <Button
-                android:text="车辆位置"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/lastedBtn" android:layout_marginLeft="2dip"
-                android:layout_marginTop="2dip" android:layout_weight="0.04"/>
-        <Button
                 android:text="备份行车记录"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/button_backup" android:layout_weight="0.04"/>
         <Button
                 android:text="测试语音"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/button_test"/>
+                android:layout_height="wrap_content" android:id="@+id/button_test" android:visibility="gone"/>
+        <Button
+                android:text="打赏支持"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/button_paymain" android:layout_weight="0.04"/>
 
     </LinearLayout>
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:weightSum="1">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:weightSum="4">
 
         <AutoCompleteTextView
                 android:layout_width="wrap_content"
@@ -34,19 +33,24 @@
                 android:inputType="textPersonName"
                 android:text=""
                 android:hint="本机ID"
-                android:ems="10"
-                android:id="@+id/editText_UID" android:layout_weight="0.16"/>
+                android:ems="8"
+                android:layout_weight="1"
+                android:id="@+id/editText_UID"/>
         <EditText
                 android:id="@+id/selectDate"
+                android:layout_weight="1"
                 android:clickable="true" android:layout_width="wrap_content"
-                android:hint="选择日期" android:layout_weight="0.70" android:layout_height="wrap_content"
+                android:hint="选择行车轨迹查询日期" android:layout_height="wrap_content"
         />
-        <Button android:layout_width="wrap_content" android:id="@+id/TrackBtn" android:layout_height="wrap_content"
-                android:text="行车轨迹" android:layout_weight="0.16"/>
+        <Button android:layout_width="wrap_content" android:id="@+id/TrackBtn"
+                android:layout_weight="1" android:layout_height="wrap_content"
+                android:text="行车轨迹"/>
         <Button
-                android:text="打赏支持"
+                android:text="车辆当前位置"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/button_paymain"/>
+                android:layout_height="wrap_content" android:id="@+id/lastedBtn" android:layout_marginLeft="2dip"
+                android:layout_marginTop="2dip"/>
     </LinearLayout>
     <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
         <com.amap.api.maps.MapView
