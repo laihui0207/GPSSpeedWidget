@@ -41,6 +41,8 @@ public class MeterFloatingService extends Service {
     TextView limitTextView;
     @BindView(R.id.textView_meter_limit_label)
     TextView limitTypeTextView;
+    @BindView(R.id.textView_meter_direction)
+    TextView meterDirection;
     @BindView(R.id.meter_progressBarLimit)
     ProgressBar limitProgressBar;
     TimerTask locationScanTask;
@@ -124,6 +126,7 @@ public class MeterFloatingService extends Service {
                 speedView.setText(gpsUtil.getKmhSpeedStr());
                 speedWheelView.setRotation((float)(gpsUtil.getSpeedometerPercentage()/100d*265f));
                 setSpeedOveral(gpsUtil.isHasLimited());
+                meterDirection.setText(gpsUtil.getDirection());
             }
         }
         else {
