@@ -7,6 +7,11 @@
                    android:layout_width="match_parent" android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
         />
+        <com.huivip.gpsspeedwidget.MeterWheel android:id="@+id/imageView_meter_pointer"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="match_parent"
+                                              android:layout_centerHorizontal="true"
+                                              android:layout_centerVertical="true" android:padding="10dp"/>
         <TextView android:textSize="40sp"
                   android:id="@+id/textview_meter_SpeedText" android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -14,11 +19,12 @@
                   android:textStyle="bold" android:textColor="#fff"
                   android:layout_alignParentBottom="true" android:layout_centerHorizontal="true"
                   android:layout_marginBottom="25dp"/>
-        <com.huivip.gpsspeedwidget.MeterWheel android:id="@+id/imageView_meter_pointer"
-                                              android:layout_width="match_parent"
-                                              android:layout_height="match_parent"
-                                              android:layout_centerHorizontal="true"
-                                              android:layout_centerVertical="true" android:padding="10dp"/>
+        <TextView
+                android:text="北"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" android:layout_marginTop="34dp"
+                android:id="@+id/textView_meter_direction" android:textColor="#fff"/>
         <RelativeLayout android:id="@+id/meter_limitLayout"
                         android:layout_width="90dp"
                         android:gravity="center"
@@ -67,11 +73,5 @@
                     android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
                     android:layout_marginTop="6dp"/>
         </RelativeLayout>
-        <TextView
-                android:text="北"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true" android:layout_marginTop="34dp"
-                android:id="@+id/textView_meter_direction" android:textColor="#fff"/>
     </RelativeLayout>
 </LinearLayout>

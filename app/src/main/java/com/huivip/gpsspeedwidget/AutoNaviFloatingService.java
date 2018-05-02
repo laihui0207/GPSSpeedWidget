@@ -3,13 +3,16 @@ package com.huivip.gpsspeedwidget;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
@@ -18,12 +21,15 @@ import android.view.*;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class AutoNaviFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
@@ -85,6 +91,14 @@ public class AutoNaviFloatingService extends Service {
     }
     @Override
     public void onCreate() {
+        if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
+            Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_SHORT).show();
+            try {
+                openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
+            } catch (ActivityNotFoundException ignored) {
+            }
+            return;
+        }
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -124,7 +138,8 @@ public class AutoNaviFloatingService extends Service {
     void checkLocationData() {
         if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
             if(gpsUtil.isGpsLocationChanged()){
-                setSpeed(gpsUtil.getKmhSpeedStr());
+                //setSpeed(gpsUtil.getKmhSpeedStr());
+                speedView.setText(gpsUtil.getKmhSpeedStr()+"");
                 speedWheelView.setRotation((float)(gpsUtil.getSpeedometerPercentage()/100d*280f));
                 setSpeedOveral(gpsUtil.isHasLimited());
             }
@@ -137,22 +152,28 @@ public class AutoNaviFloatingService extends Service {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
         int color = ContextCompat.getColor(this, colorRes);
         speedView.setTextColor(color);
-        speedOveralView.setVisibility(speeding ? View.VISIBLE : View.GONE);
+        speedOveralView.setVisibility(speeding || gpsUtil.getCameraDistance()>0 ? View.VISIBLE : View.GONE);
         limitTextView.setText(gpsUtil.getLimitSpeed()+"");
         limitDistanceTextView.setText(gpsUtil.getLimitDistance()+"");
         limitProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
         limitTypeTextView.setText(gpsUtil.getCameraTypeName());
         limitView.setVisibility(speeding ? View.VISIBLE : View.GONE);
     }
-    public void setSpeed(String speed) {
+   /* public void setSpeed(String speed) {
         if (PrefUtils.getShowSpeedometer(this) && speedView != null) {
            speedView.setText(speed);
         }
-    }
+    }*/
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
                 WindowManager.LayoutParams.TYPE_PHONE;
+    }
+    private void openSettings(String settingsAction, String packageName) {
+        Intent intent = new Intent(settingsAction);
+        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse("package:" + packageName));
+        startActivity(intent);
     }
     private void initMonitorPosition() {
         if (mFloatingView == null) {

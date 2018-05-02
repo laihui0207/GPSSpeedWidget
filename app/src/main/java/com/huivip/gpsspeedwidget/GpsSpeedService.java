@@ -154,6 +154,14 @@ public class GpsSpeedService extends Service {
                     @Override
                     public void run() {
                         Set<String> autoApps = PrefUtils.getAutoLaunchApps(getApplicationContext());
+                        int delayTime=PrefUtils.getDelayStartOtherApp(getApplicationContext());
+                        if(delayTime>0){
+                            try {
+                                Thread.sleep(delayTime*1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         for (String packageName : autoApps) {
                             Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
                             if (launchIntent != null) {

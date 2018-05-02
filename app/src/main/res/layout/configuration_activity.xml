@@ -273,6 +273,23 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/button_pay" android:layout_alignBaseline="@+id/button_feedback"
                     android:layout_alignBottom="@+id/button_feedback" android:layout_toEndOf="@+id/button_feedback"/>
+            <TextView
+                    android:text="延时"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_above="@+id/editText_speedadjust"
+                    android:layout_toEndOf="@+id/button_selectApp" android:id="@+id/textView7"/>
+            <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="2"
+                    android:layout_alignParentTop="true" android:layout_toEndOf="@+id/editText_speedadjust"
+                    android:id="@+id/editText_delay_started" android:text="0"/>
+            <TextView
+                    android:text="秒拉起第三方应用"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_alignTop="@+id/textView7"
+                    android:layout_toEndOf="@+id/button_pay" android:id="@+id/textView8"/>
         </RelativeLayout>
     </ScrollView>
     <TextView

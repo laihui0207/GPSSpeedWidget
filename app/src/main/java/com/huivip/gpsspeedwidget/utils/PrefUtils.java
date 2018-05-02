@@ -2,7 +2,9 @@ package com.huivip.gpsspeedwidget.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import com.huivip.gpsspeedwidget.Constant;
 
 import java.util.HashSet;
@@ -19,6 +21,7 @@ public abstract class PrefUtils {
     private static final String PREF_LIMITS = "pref_limits";
     private static final String PREF_APPS = "pref_apps";
     private static final String AUTO_FLOATTING_STYLE = "com.huivip.Floating.style";
+    private static final String PREF_DELAY_AUTO_START = "com.huivip.delay.started";
     private static final String PREF_AUTO_LAUNCH_APPS = "pref_Auto_apps";
     private static final String PREF_TERMS_ACCEPTED = "pref_terms_accepted";
     public static final String AUTO_START_PREFS_NAME="AutoStart";
@@ -201,7 +204,13 @@ public abstract class PrefUtils {
     public static int getSpeedAdjust(Context context) {
         return getSharedPreferences(context).getInt(PREF_GPS_SPEED_ADJUST, 0);
     }
+    public static void setDelayStartOtherApp( Context context, int value) {
+        edit(context).putInt(PREF_DELAY_AUTO_START, value).apply();
+    }
 
+    public static int getDelayStartOtherApp(Context context) {
+        return getSharedPreferences(context).getInt(PREF_DELAY_AUTO_START, 0);
+    }
     public static void setAudioVolume(Context context, int value) {
         edit(context).putInt(AUDIO_VOLUME, value).apply();
     }
@@ -358,5 +367,9 @@ public abstract class PrefUtils {
     }
     public static boolean isFTPAutoBackup(Context context){
         return getSharedPreferences(context).getBoolean(FTP_AUTO_BACKUP,false);
+    }
+    public static boolean isEnbleDrawOverFeature(Context context){
+        boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context);
+        return overlayEnabled;
     }
 }

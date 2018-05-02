@@ -266,6 +266,12 @@ public class ConfigurationActivity extends Activity {
                 if(adjustValue!=null && !adjustValue.equalsIgnoreCase("")){
                     PrefUtils.setSpeedAdjust(getApplicationContext(),Integer.parseInt(adjustValue));
                 }
+                EditText delayTimeEditText=findViewById(R.id.editText_delay_started);
+                String delayTimeValue=delayTimeEditText.getText().toString();
+                if(TextUtils.isEmpty(delayTimeValue)){
+                    delayTimeValue="0";
+                }
+                PrefUtils.setDelayStartOtherApp(getApplicationContext(),Integer.parseInt(delayTimeValue));
                 boolean serviceEnabled = Utils.isAccessibilityServiceEnabled(getApplicationContext(), AppDetectionService.class);
                 PrefUtils.setEnableAccessibilityService(getApplicationContext(),serviceEnabled);
                 EditText ttsVolume=findViewById(R.id.editText_audioVolume);

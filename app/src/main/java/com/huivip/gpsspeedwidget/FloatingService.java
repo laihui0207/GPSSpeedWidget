@@ -3,13 +3,16 @@ package com.huivip.gpsspeedwidget;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
@@ -18,6 +21,7 @@ import android.text.TextUtils;
 import android.view.*;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -26,6 +30,8 @@ import devlight.io.library.ArcProgressStackView;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Created by laisun on 28/02/2018.
@@ -95,6 +101,14 @@ public class FloatingService extends Service{
 
     @Override
     public void onCreate() {
+        if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
+            Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_SHORT).show();
+            try {
+                openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
+            } catch (ActivityNotFoundException ignored) {
+            }
+            return;
+        }
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -162,7 +176,12 @@ public class FloatingService extends Service{
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         super.onCreate();
     }
-
+    private void openSettings(String settingsAction, String packageName) {
+        Intent intent = new Intent(settingsAction);
+        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse("package:" + packageName));
+        startActivity(intent);
+    }
     void checkLocationData() {
         if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
             if(gpsUtil.isGpsLocationChanged()){
