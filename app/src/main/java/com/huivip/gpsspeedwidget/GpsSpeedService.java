@@ -101,8 +101,11 @@ public class GpsSpeedService extends Service {
 
                 if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
                     Intent floatService = new Intent(this, FloatingService.class);
-                    if(PrefUtils.isEnableAutoNaviStyle(getApplicationContext())){
+                    String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
+                    if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)){
                         floatService=new Intent(this,AutoNaviFloatingService.class);
+                    }else if (floatingStyle.equals(PrefUtils.FLOATING_METER)){
+                        floatService=new Intent(this,MeterFloatingService.class);
                     }
                     startService(floatService);
                 }
@@ -134,8 +137,11 @@ public class GpsSpeedService extends Service {
                     this.locationTimer = null;
                 }
                 Intent floatService = new Intent(this, FloatingService.class);
-                if(PrefUtils.isEnableAutoNaviStyle(getApplicationContext())){
+                String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
+                if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)){
                     floatService=new Intent(this,AutoNaviFloatingService.class);
+                }else if (floatingStyle.equals(PrefUtils.FLOATING_METER)){
+                    floatService=new Intent(this,MeterFloatingService.class);
                 }
                 floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
                 startService(floatService);
@@ -159,8 +165,11 @@ public class GpsSpeedService extends Service {
                 if (PrefUtils.isEnableFlatingWindow(getApplicationContext())
                         && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
                     Intent floatService = new Intent(this, FloatingService.class);
-                    if(PrefUtils.isEnableAutoNaviStyle(getApplicationContext())){
+                    String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
+                    if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)){
                         floatService=new Intent(this,AutoNaviFloatingService.class);
+                    }else if (floatingStyle.equals(PrefUtils.FLOATING_METER)){
+                        floatService=new Intent(this,MeterFloatingService.class);
                     }
                     startService(floatService);
                 }

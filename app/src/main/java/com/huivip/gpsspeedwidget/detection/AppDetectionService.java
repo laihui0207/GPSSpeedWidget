@@ -7,10 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
-import com.huivip.gpsspeedwidget.AutoNaviFloatingService;
-import com.huivip.gpsspeedwidget.Constant;
-import com.huivip.gpsspeedwidget.FloatingService;
-import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import java.util.Set;
 
@@ -78,26 +75,35 @@ public class AppDetectionService extends AccessibilityService {
         PrefUtils.setOnDesktop(getApplicationContext(),shouldStopService);
         Intent floatService = new Intent(this, FloatingService.class);
         Intent AutoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
-
+        Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
         } else if(shouldStopService && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP)){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
         } else if(!shouldStopService && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
-        if(PrefUtils.isEnableAutoNaviStyle(getApplicationContext())){
-            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        }
-        else {
+        String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
+        if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
+            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+        } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
+            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+        } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
+            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
         try {
             startService(floatService);
             startService(AutoNavifloatService);
+            startService(meterFloatingService);
         } catch (Exception e) {
             Log.d("huivip","Start Floating server Failed"+e.getMessage());
         }

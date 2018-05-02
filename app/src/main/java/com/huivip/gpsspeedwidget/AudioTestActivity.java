@@ -153,7 +153,7 @@ public class AudioTestActivity extends Activity {
                 //startService(floatService);
                 /*startActivity(new Intent(getApplicationContext(),
                         com.amap.api.maps.offlinemap.OfflineMapActivity.class));*/
-                Intent floatService=new Intent(AudioTestActivity.this, AutoNaviFloatingService.class);
+                Intent floatService=new Intent(AudioTestActivity.this, MeterFloatingService.class);
                 startService(floatService);
 
             }

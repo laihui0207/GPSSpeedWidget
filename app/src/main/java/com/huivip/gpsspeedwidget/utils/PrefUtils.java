@@ -3,11 +3,8 @@ package com.huivip.gpsspeedwidget.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.IntDef;
 import com.huivip.gpsspeedwidget.Constant;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -21,7 +18,7 @@ public abstract class PrefUtils {
     private static final String PREF_SPEEDOMETER = "pref_speedometer";
     private static final String PREF_LIMITS = "pref_limits";
     private static final String PREF_APPS = "pref_apps";
-    private static final String AUTO_NAVI_STYLE = "com.huivip.autoNavi.style";
+    private static final String AUTO_FLOATTING_STYLE = "com.huivip.Floating.style";
     private static final String PREF_AUTO_LAUNCH_APPS = "pref_Auto_apps";
     private static final String PREF_TERMS_ACCEPTED = "pref_terms_accepted";
     public static final String AUTO_START_PREFS_NAME="AutoStart";
@@ -53,6 +50,10 @@ public abstract class PrefUtils {
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
     public static final String SHOW_NO_DESKTOP="1";
+
+    public static final String FLOATING_DEFAULT="0";
+    public static final String FLOATING_METER="2";
+    public static final String FLOATING_AUTONAVI="1";
     public static final String FTP_URL="com.huivip.ftp.url";
     public static final String FTP_PORT="com.huivip.ftp.port";
     public static final String FTP_USER="com.huivip.ftp.user";
@@ -94,11 +95,11 @@ public abstract class PrefUtils {
     public static boolean isEnableAutoStart(Context context){
         return getSharedPreferences(context).getBoolean(AUTO_START_PREFS_NAME, true);
     }
-    public static void setEnableAutoNaviStyle(Context context,boolean autoStart){
-        edit(context).putBoolean(AUTO_NAVI_STYLE, autoStart).apply();
+    public static void setFloattingStyle(Context context,String style){
+        edit(context).putString(AUTO_FLOATTING_STYLE, style).apply();
     }
-    public static boolean isEnableAutoNaviStyle(Context context){
-        return getSharedPreferences(context).getBoolean(AUTO_NAVI_STYLE, false);
+    public static String getFloatingStyle(Context context){
+        return getSharedPreferences(context).getString(AUTO_FLOATTING_STYLE, FLOATING_DEFAULT);
     }
     public static void setShowFlattingOn(Context context,String show){
         edit(context).putString(SHOW_FLATTING_ON, show).apply();

@@ -54,6 +54,7 @@ public class ConfigurationActivity extends Activity {
     CheckBox enableShowFlattingOnDesktopCheckBox;
     EditText remoteUrlEditBox;
     RadioGroup floatingSelectGroup;
+    RadioGroup floatingStyleGroup;
     private static final int REQUEST_LOCATION = 105;
     private static  final int REQUEST_STORAGE=106;
     private static final int REQUEST_PHONE=107;
@@ -477,14 +478,46 @@ public class ConfigurationActivity extends Activity {
                         .show();
             }
         });
-        CheckBox floatingWindowStyleCheckbox=findViewById(R.id.checkBox_floating_style);
+       /* CheckBox floatingWindowStyleCheckbox=findViewById(R.id.checkBox_floating_style);
         floatingWindowStyleCheckbox.setChecked(PrefUtils.isEnableAutoNaviStyle(getApplicationContext()));
         floatingWindowStyleCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setEnableAutoNaviStyle(getApplicationContext(),buttonView.isChecked());
             }
+        });*/
+        floatingStyleGroup=findViewById(R.id.radioGroup_flattingStyleSelect);
+        floatingStyleGroup.setEnabled(enableFloatingWidnowCheckBox.isChecked());
+        floatingStyleGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int selectId=radioGroup.getCheckedRadioButtonId();
+                switch (selectId) {
+                    case R.id.radioButton_style_default:
+                        PrefUtils.setFloattingStyle(getApplicationContext(),PrefUtils.FLOATING_DEFAULT);
+                        break;
+                    case R.id.radioButton_style_autonavi:
+                        PrefUtils.setFloattingStyle(getApplicationContext(),PrefUtils.FLOATING_AUTONAVI);
+                        break;
+                    case R.id.radioButton_style_meter:
+                        PrefUtils.setFloattingStyle(getApplicationContext(),PrefUtils.FLOATING_METER);
+                        break;
+                    default:
+                        PrefUtils.setFloattingStyle(getApplicationContext(),PrefUtils.FLOATING_DEFAULT);
+                }
+            }
         });
+        RadioButton styleDeafult=findViewById(R.id.radioButton_style_default);
+        RadioButton styleAutoNavi=findViewById(R.id.radioButton_style_autonavi);
+        RadioButton styleMeter=findViewById(R.id.radioButton_style_meter);
+        String floatStyle=PrefUtils.getFloatingStyle(getApplicationContext());
+        if(floatStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
+            styleDeafult.setChecked(true);
+        } else if(floatStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)){
+            styleAutoNavi.setChecked(true);
+        } else if(floatStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
+            styleMeter.setChecked(true);
+        }
         Button buttonPay=findViewById(R.id.button_pay);
         buttonPay.setOnClickListener(new View.OnClickListener() {
             @Override

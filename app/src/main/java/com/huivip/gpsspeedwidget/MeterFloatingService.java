@@ -25,27 +25,23 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class AutoNaviFloatingService extends Service {
+public class MeterFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     private WindowManager mWindowManager;
     private View mFloatingView;
-    @BindView(R.id.imageView_pointer)
-    SpeedWheel speedWheelView;
-    @BindView(R.id.SpeedText)
+    @BindView(R.id.imageView_meter_pointer)
+    MeterWheel speedWheelView;
+    @BindView(R.id.textview_meter_SpeedText)
     TextView speedView;
-    @BindView(R.id.imageview_nomove_night)
-    ImageView moveImageView;
-    @BindView(R.id.imageview_red_night)
-    ImageView speedOveralView;
-    @BindView(R.id.autoNavi_limitLayout)
+    @BindView(R.id.meter_limitLayout)
     View limitView;
-    @BindView(R.id.textView_autoNavi_distance)
+    @BindView(R.id.textView_meter_distance)
     TextView limitDistanceTextView;
-    @BindView(R.id.autoNavi_number_limit)
+    @BindView(R.id.meter_number_limit)
     TextView limitTextView;
-    @BindView(R.id.textView_autoNavi_limit_label)
+    @BindView(R.id.textView_meter_limit_label)
     TextView limitTypeTextView;
-    @BindView(R.id.autoNavi_progressBarLimit)
+    @BindView(R.id.meter_progressBarLimit)
     ProgressBar limitProgressBar;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
@@ -88,7 +84,7 @@ public class AutoNaviFloatingService extends Service {
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        mFloatingView = inflater.inflate(R.layout.autonavi_speed_view, null);
+        mFloatingView = inflater.inflate(R.layout.meter_floatting, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -100,19 +96,20 @@ public class AutoNaviFloatingService extends Service {
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
-        //speedWheelView.setRotation((float)(50/100d*280f));
+        //speedWheelView.setRotation((float)(50/100d*265f));
+        //speedView.setText("134");
         initMonitorPosition();
         this.locationScanTask = new TimerTask()
         {
             @Override
             public void run()
             {
-                AutoNaviFloatingService.this.locationHandler.post(new Runnable()
+                MeterFloatingService.this.locationHandler.post(new Runnable()
                 {
                     @Override
                     public void run()
                     {
-                        AutoNaviFloatingService.this.checkLocationData();
+                        MeterFloatingService.this.checkLocationData();
                         //Log.d("huivip","Float Service Check Location");
                     }
                 });
@@ -124,8 +121,8 @@ public class AutoNaviFloatingService extends Service {
     void checkLocationData() {
         if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
             if(gpsUtil.isGpsLocationChanged()){
-                setSpeed(gpsUtil.getKmhSpeedStr());
-                speedWheelView.setRotation((float)(gpsUtil.getSpeedometerPercentage()/100d*280f));
+                speedView.setText(gpsUtil.getKmhSpeedStr());
+                speedWheelView.setRotation((float)(gpsUtil.getSpeedometerPercentage()/100d*265f));
                 setSpeedOveral(gpsUtil.isHasLimited());
             }
         }
@@ -137,17 +134,15 @@ public class AutoNaviFloatingService extends Service {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
         int color = ContextCompat.getColor(this, colorRes);
         speedView.setTextColor(color);
-        speedOveralView.setVisibility(speeding ? View.VISIBLE : View.GONE);
         limitTextView.setText(gpsUtil.getLimitSpeed()+"");
         limitDistanceTextView.setText(gpsUtil.getLimitDistance()+"");
         limitProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
         limitTypeTextView.setText(gpsUtil.getCameraTypeName());
         limitView.setVisibility(speeding ? View.VISIBLE : View.GONE);
     }
+
     public void setSpeed(String speed) {
-        if (PrefUtils.getShowSpeedometer(this) && speedView != null) {
-           speedView.setText(speed);
-        }
+        speedView.setText(speed);
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
