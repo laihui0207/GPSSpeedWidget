@@ -244,7 +244,7 @@ public class FloatingService extends Service{
                 String[] split = PrefUtils.getFloatingLocation(getApplicationContext()).split(",");
                 boolean left = Boolean.parseBoolean(split[0]);
                 float yRatio = Float.parseFloat(split[1]);
-                if(PrefUtils.isFloattingAutoSolt(getApplicationContext())) {
+                if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
                     Point screenSize = new Point();
                     mWindowManager.getDefaultDisplay().getSize(screenSize);
                     params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
@@ -275,7 +275,9 @@ public class FloatingService extends Service{
     private void animateViewToSideSlot() {
         Point screenSize = new Point();
         mWindowManager.getDefaultDisplay().getSize(screenSize);
-
+        if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())){
+            return;
+        }
         WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
         int endX;
         if (params.x + mFloatingView.getWidth() / 2 >= screenSize.x / 2) {
@@ -333,7 +335,10 @@ public class FloatingService extends Service{
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             final WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-
+            if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())){
+                PrefUtils.setFloatingSolidLocation(getApplicationContext(),params.x,params.y);
+                return true;
+            }
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mInitialTouchX = event.getRawX();
@@ -381,7 +386,7 @@ public class FloatingService extends Service{
                             fadeAnimator.start();
                         }
                     } else {
-                        if(PrefUtils.isFloattingAutoSolt(getApplicationContext())) {
+                        if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
                              animateViewToSideSlot();
                         } else {
                             PrefUtils.setFloatingSolidLocation(getApplicationContext(),params.x,params.y);

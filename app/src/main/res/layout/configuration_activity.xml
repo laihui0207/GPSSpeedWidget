@@ -14,7 +14,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_Navi_autoSolt" android:layout_alignBaseline="@+id/checkBox_navfloatiing"
                     android:layout_alignBottom="@+id/checkBox_navfloatiing"
-                    android:layout_toEndOf="@+id/checkBox_navfloatiing" android:padding="10dp"/>
+                    android:layout_toEndOf="@+id/checkBox_navfloatiing"/>
             <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -63,15 +63,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/enableAutoNavi"
-                    android:layout_alignBaseline="@+id/enableAudio" android:layout_alignBottom="@+id/enableAudio"
-                    android:layout_toEndOf="@+id/button_select_app"/>
+                    android:layout_above="@+id/textView_showmessage"
+                    android:layout_alignStart="@+id/button_select_app" android:visibility="gone"/>
             <CheckBox
                     android:text="开启语音功能"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/enableAudio"
                     android:checked="false"
-                    android:layout_below="@+id/linearLayout" android:layout_toEndOf="@+id/enableAutoNavi"/>
+                    android:layout_below="@+id/linearLayout" android:layout_toEndOf="@+id/enableAutoNavi"
+                    android:visibility="gone"/>
             <Button
                     android:text="Select maps"
                     android:layout_width="wrap_content"
@@ -93,8 +94,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/EnableFalting"
-                    android:layout_below="@+id/enableAutoNavi" android:layout_alignStart="@+id/enableAutoNavi"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" android:layout_below="@+id/linearLayout"
+                    android:layout_alignParentStart="true"/>
             <Button
                     android:text="2. 允许程序交互功能"
                     android:layout_width="wrap_content"
@@ -208,14 +209,15 @@
                     android:text="语音与音乐混合"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_below="@+id/linearLayout"
-                    android:layout_toEndOf="@+id/enableAudio" android:id="@+id/checkBox_mix"/>
+                    android:layout_toEndOf="@+id/enableAudio" android:id="@+id/checkBox_mix" android:visibility="gone"/>
             <TextView
                     android:text="语音音量:"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_audioVolume"
                     android:layout_marginStart="15dp" android:layout_alignBaseline="@+id/editText_audioVolume"
-                    android:layout_alignBottom="@+id/editText_audioVolume" android:layout_toEndOf="@+id/checkBox_mix"/>
+                    android:layout_alignBottom="@+id/editText_audioVolume" android:layout_toEndOf="@+id/checkBox_mix"
+                    android:visibility="gone"/>
             <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -224,7 +226,7 @@
                     android:hint="设置语音音量"
                     android:id="@+id/editText_audioVolume"
                     android:layout_alignBaseline="@+id/checkBox_mix" android:layout_alignBottom="@+id/checkBox_mix"
-                    android:layout_toEndOf="@+id/textView_audioVolume"/>
+                    android:layout_toEndOf="@+id/textView_audioVolume" android:visibility="gone"/>
             <CheckBox
                     android:text="导航进入后台时开启导航悬浮窗口"
                     android:layout_width="wrap_content"
@@ -290,6 +292,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_alignTop="@+id/textView7"
                     android:layout_toEndOf="@+id/button_pay" android:id="@+id/textView8"/>
+            <CheckBox
+                    android:text="固定位置"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_alignTop="@+id/checkBox_h_direction"
+                    android:layout_toEndOf="@+id/textView7" android:id="@+id/checkBox_speed_fixed_position"/>
+            <CheckBox
+                    android:text="固定位置"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_below="@+id/radioGroup_flattingStyleSelect"
+                    android:layout_toEndOf="@+id/checkBox_Navi_autoSolt"
+                    android:id="@+id/checkBox_navi_fixed_position"/>
         </RelativeLayout>
     </ScrollView>
     <TextView
