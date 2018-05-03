@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.Toast;
 import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.GpsSpeedService;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.NaviFloatingService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -22,6 +23,13 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 switch (status) {
                     case 0: // auto Map Started
                         //Toast.makeText(context,"Backend Auto Map Started",Toast.LENGTH_SHORT).show();
+                        Intent service = new Intent(context, GpsSpeedService.class);
+                        boolean start = PrefUtils.isEnableAutoStart(context);
+                        boolean widgetActived=PrefUtils.isWidgetActived(context);
+                        if(start && !widgetActived) {
+                            service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT,true);
+                            context.startService(service);
+                        }
                         break;
                     case 3: // auto map in frontend
                         if(gpsUtil.getNaviFloatingStatus()==Constant.Navi_Floating_Enabled) {
