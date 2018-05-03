@@ -25,7 +25,8 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         //Toast.makeText(context,"Backend Auto Map Started",Toast.LENGTH_SHORT).show();
                         Intent service = new Intent(context, GpsSpeedService.class);
                         boolean start = PrefUtils.isEnableAutoStart(context);
-                        if(start) {
+                        boolean widgetActived=PrefUtils.isWidgetActived(context);
+                        if(start && !widgetActived) {
                             service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT,true);
                             context.startService(service);
                         }

@@ -48,7 +48,7 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
-      <!--  <receiver
+        <receiver
                 android:name=".GpsSpeedWidget"
                 android:icon="@drawable/icon"
                 android:label="SpeedMeter">
@@ -61,7 +61,7 @@
             <meta-data
                     android:name="android.appwidget.provider"
                     android:resource="@xml/watch_widget_provider"/>
-        </receiver>-->
+        </receiver>
         <receiver
                 android:name=".GpsSpeedNumberWidget"
                 android:icon="@drawable/icon_number"

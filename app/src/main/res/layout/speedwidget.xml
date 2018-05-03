@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="200dp"
+                android:layout_height="200dp">
+    <ImageView android:id="@id/ialtimetro"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:src="@drawable/base" android:layout_alignParentTop="true"
+               android:layout_alignParentBottom="true" android:scaleType="fitCenter"
+               android:layout_alignParentStart="true" android:paddingTop="10dp"/>
+    <ImageView android:id="@id/ifreccia" android:layout_width="match_parent" android:layout_height="match_parent"
+               android:src="@drawable/alt_0" android:scaleType="fitCenter"
+               android:layout_centerHorizontal="true" android:layout_alignParentBottom="true" android:padding="10dp"/>
+    <TextView android:textSize="20.0dip" android:textColor="#ffffffff" android:id="@+id/textView_watch_limit"
+              android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:layout_alignBottom="@id/ialtimetro"
+              android:layout_centerHorizontal="true"
+              android:layout_centerInParent="false" android:layout_marginBottom="55.0dip"
+              android:visibility="gone"/>
+    <TextView android:textSize="35.0dip" android:textColor="#ffffffff" android:id="@+id/textView1_watch_speed"
+              android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:text="OFF"
+              android:layout_marginBottom="8dp" android:layout_alignBottom="@+id/ialtimetro"
+              android:layout_centerHorizontal="true"/>
+
+    <TextView
+            android:text="北"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:id="@+id/textView_watch_direction"
+            android:textSize="20sp"
+            android:layout_marginTop="40dp" android:layout_below="@+id/textView_watch_limit"
+            android:layout_centerHorizontal="true"/>
+    <RelativeLayout android:id="@+id/watch_limitLayout"
+                    android:orientation="vertical"
+                    android:layout_width="110dp"
+                    android:gravity="center"
+                    android:background="@drawable/circle_limit"
+                    android:layout_gravity="center"
+                    android:layout_height="110dp"
+                    android:layout_centerVertical="true" android:layout_centerHorizontal="true"
+                    android:visibility="gone">
+        <ProgressBar
+                android:id="@+id/watch_progressBarLimit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/circle_watch_limit_number"
+                android:background="@drawable/speed_watch_limit_border"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:max="100"
+                android:progress="0"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:id="@+id/watch_number_limit"
+                android:layout_height="wrap_content"
+                android:ellipsize="none"
+                android:text="0"
+                android:textColor="#000"
+                android:fontFamily="sans-serif-thin"
+                android:gravity="center_vertical|center_horizontal"
+                android:includeFontPadding="false"
+                android:textSize="70sp"
+                android:layout_alignParentStart="true" android:layout_alignParentBottom="true"
+                android:textStyle="bold" android:layout_alignParentTop="true"/>
+        <TextView
+                android:text="限速"
+                android:layout_width="match_parent"
+                android:textColor="#000"
+                android:gravity="top|center_vertical|center_horizontal"
+                android:layout_height="20dp" android:id="@+id/textView_watch_limit_label"
+                android:layout_alignParentBottom="true" android:layout_alignParentStart="true" android:textSize="12sp"/>
+        <TextView
+                android:text="0米"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:id="@+id/textView_watch_distance"
+                android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+                android:layout_marginTop="11dp"/>
+    </RelativeLayout>
+</RelativeLayout>
