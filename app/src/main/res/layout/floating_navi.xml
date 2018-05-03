@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content" android:id="@+id/textView_totalleft" android:layout_weight="1"
                     android:gravity="left|center_vertical" android:layout_alignBaseline="@+id/textView9"
                     android:layout_alignBottom="@+id/textView9" android:layout_toEndOf="@+id/textView_nextroadname"
-                    android:layout_alignParentEnd="true"/>
+                    android:layout_alignEnd="@+id/navi_limit_view"/>
             <RelativeLayout
                     android:layout_width="100dp"
                     android:layout_height="100dp" android:id="@+id/navi_limit_view"

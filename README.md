@@ -167,10 +167,17 @@ pm2 save
 6. 增加仪表样式悬浮窗
 7. 支持开机延时启动第三方应用
 
+### 打赏列表
+|打赏好友|方式|金额 |
+|:---:|:---:|:---:|
+|QQ: any|微信|10元|
+
+
 
 
 ## 捐赠
 如果感觉此软件好用 能在行车过程帮到你，使行车安全，欢迎捐助本软件更好的维护开发，多少随意
 
-![QR](https://github.com/laihui0207/GPSSpeedWidget/blob/master/app/src/main/res/drawable/qrcode.png "支付宝")
+![QR](https://github.com/laihui0207/GPSSpeedWidget/blob/master/app/src/main/res/drawable/qrcode_wechat.png "微信")
+![QR](https://github.com/laihui0207/GPSSpeedWidget/blob/master/app/src/main/res/drawable/qrcode_alipay.png "支付宝")
 

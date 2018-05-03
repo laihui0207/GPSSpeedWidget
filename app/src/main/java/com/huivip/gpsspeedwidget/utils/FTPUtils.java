@@ -99,6 +99,7 @@ public class FTPUtils {
         try {
 
             //设置存储路径
+            ftpClient.changeWorkingDirectory("/");
             ftpClient.makeDirectory(remoteDir);
             ftpClient.changeWorkingDirectory(remoteDir);
 

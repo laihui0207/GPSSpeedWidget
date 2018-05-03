@@ -26,6 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
+import java.text.NumberFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -148,7 +149,7 @@ public class MeterFloatingService extends Service {
         }
     }
     public void setSpeedOveral(boolean speeding) {
-        int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
+        int colorRes = speeding ? R.color.red500 : R.color.cardview_light_background;
         int color = ContextCompat.getColor(this, colorRes);
         speedView.setTextColor(color);
         limitTextView.setText(gpsUtil.getLimitSpeed()+"");
