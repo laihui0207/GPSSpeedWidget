@@ -184,7 +184,7 @@ public class MeterFloatingService extends Service {
                 String[] split = PrefUtils.getFloatingLocation(getApplicationContext()).split(",");
                 boolean left = Boolean.parseBoolean(split[0]);
                 float yRatio = Float.parseFloat(split[1]);
-                if(PrefUtils.isFloattingAutoSolt(getApplicationContext())) {
+                if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
                     Point screenSize = new Point();
                     mWindowManager.getDefaultDisplay().getSize(screenSize);
                     params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
@@ -317,7 +317,7 @@ public class MeterFloatingService extends Service {
                             fadeAnimator.start();
                         }
                     } else {
-                        if(PrefUtils.isFloattingAutoSolt(getApplicationContext())) {
+                        if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
                             animateViewToSideSlot();
                         } else {
                             PrefUtils.setFloatingSolidLocation(getApplicationContext(),params.x,params.y);

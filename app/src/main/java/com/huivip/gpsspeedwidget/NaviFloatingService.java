@@ -147,7 +147,7 @@ public class NaviFloatingService extends Service{
             nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
         }
         nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance()+"后");
-        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+"-"+gpsUtil.getTotalLeftTime());
+        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+" -- "+gpsUtil.getTotalLeftTime());
         if(gpsUtil.getNavi_turn_icon()>0) {
             naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
         }
@@ -260,7 +260,7 @@ public class NaviFloatingService extends Service{
                 String[] split = PrefUtils.getNaviFloatingLocation(getApplicationContext()).split(",");
                 boolean left = Boolean.parseBoolean(split[0]);
                 float yRatio = Float.parseFloat(split[1]);
-                if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext())) {
+                if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
                     Point screenSize = new Point();
                     mWindowManager.getDefaultDisplay().getSize(screenSize);
                     params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
@@ -394,7 +394,7 @@ public class NaviFloatingService extends Service{
                             fadeAnimator.start();
                         }
                     } else {
-                        if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext())) {
+                        if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
                              animateViewToSideSlot();
                         } else {
                             PrefUtils.setNaviFloatingSolidLocation(getApplicationContext(),params.x,params.y);
