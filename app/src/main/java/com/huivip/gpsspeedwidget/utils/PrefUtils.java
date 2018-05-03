@@ -65,6 +65,8 @@ public abstract class PrefUtils {
     public static final String FTP_AUTO_BACKUP="com.huivip.ftp.auto.backup";
     static final String ENABLE_NAVI_FLOATING_WINDOWS="com.huivip.navi.floating";
     static final String NAVI_MODE_NEW_DRIVER="com.huivip.navi.mode.newDriver";
+    static final String NAVI_FLOATTING_FIXED_POSITION="com.huivip.navi.fixed.position";
+    static final String SPEED_FLOATTING_FIXED_POSITION="com.huivip.speed.fixed.position";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -317,6 +319,21 @@ public abstract class PrefUtils {
 
     public static void setEnableNaviFloating(Context context, boolean show) {
         edit(context).putBoolean(ENABLE_NAVI_FLOATING_WINDOWS, show).apply();
+    }
+
+    public static boolean isEnableNaviFloatingFixed(Context context) {
+        return getSharedPreferences(context).getBoolean(NAVI_FLOATTING_FIXED_POSITION, false);
+    }
+
+    public static void setEnableNaviFloatingFixed(Context context, boolean show) {
+        edit(context).putBoolean(NAVI_FLOATTING_FIXED_POSITION, show).apply();
+    }
+    public static boolean isEnableSpeedFloatingFixed(Context context) {
+        return getSharedPreferences(context).getBoolean(SPEED_FLOATTING_FIXED_POSITION, false);
+    }
+
+    public static void setEnableSpeedFloatingFixed(Context context, boolean show) {
+        edit(context).putBoolean(SPEED_FLOATTING_FIXED_POSITION, show).apply();
     }
     public static Set<String> getApps(Context context) {
         return new HashSet<>(getSharedPreferences(context).getStringSet(PREF_APPS, new HashSet<String>()));

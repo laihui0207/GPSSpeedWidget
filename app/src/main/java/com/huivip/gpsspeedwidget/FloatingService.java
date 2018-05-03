@@ -333,7 +333,9 @@ public class FloatingService extends Service{
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             final WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-
+            if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())){
+                return true;
+            }
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mInitialTouchX = event.getRawX();

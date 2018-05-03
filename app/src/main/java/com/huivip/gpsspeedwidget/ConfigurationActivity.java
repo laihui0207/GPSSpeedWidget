@@ -534,6 +534,23 @@ public class ConfigurationActivity extends Activity {
                         .setPositiveButton("关闭", null).show();
             }
         });
+
+        CheckBox naviFloatingFixedCheckbox=findViewById(R.id.checkBox_navi_fixed_position);
+        naviFloatingFixedCheckbox.setChecked(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext()));
+        naviFloatingFixedCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableNaviFloatingFixed(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox speedFloatingFixedCheckBox=findViewById(R.id.checkBox_speed_fixed_position);
+        speedFloatingFixedCheckBox.setChecked(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext()));
+        speedFloatingFixedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),buttonView.isChecked());
+            }
+        });
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

@@ -14,7 +14,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_Navi_autoSolt" android:layout_alignBaseline="@+id/checkBox_navfloatiing"
                     android:layout_alignBottom="@+id/checkBox_navfloatiing"
-                    android:layout_toEndOf="@+id/checkBox_navfloatiing" android:padding="10dp"/>
+                    android:layout_toEndOf="@+id/checkBox_navfloatiing"/>
             <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -290,6 +290,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_alignTop="@+id/textView7"
                     android:layout_toEndOf="@+id/button_pay" android:id="@+id/textView8"/>
+            <CheckBox
+                    android:text="固定位置"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_alignTop="@+id/checkBox_h_direction"
+                    android:layout_toEndOf="@+id/textView7" android:id="@+id/checkBox_speed_fixed_position"/>
+            <CheckBox
+                    android:text="固定位置"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_below="@+id/radioGroup_flattingStyleSelect"
+                    android:layout_toEndOf="@+id/checkBox_Navi_autoSolt"
+                    android:id="@+id/checkBox_navi_fixed_position"/>
         </RelativeLayout>
     </ScrollView>
     <TextView
