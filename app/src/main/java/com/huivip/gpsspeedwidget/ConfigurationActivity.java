@@ -162,7 +162,7 @@ public class ConfigurationActivity extends Activity {
                 }
             }
         });
-        audidMixCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+       /* audidMixCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -171,7 +171,7 @@ public class ConfigurationActivity extends Activity {
                 ttsUtil.release();
                 ttsUtil.initTTs();
             }
-        });
+        });*/
         enableAutoNaviCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override

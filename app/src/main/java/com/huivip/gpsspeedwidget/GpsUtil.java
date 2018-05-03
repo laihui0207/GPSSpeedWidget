@@ -12,13 +12,13 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-import com.amap.api.navi.AMapNavi;
+/*import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.enums.*;
 import com.amap.api.navi.model.*;
-import com.autonavi.tbt.TrafficFacilityInfo;
+import com.autonavi.tbt.TrafficFacilityInfo;*/
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.TTSUtil;
+/*import com.huivip.gpsspeedwidget.utils.TTSUtil;*/
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.text.NumberFormat;
@@ -32,7 +32,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 /**
  * @author sunlaihui
  */
-public class GpsUtil implements AMapNaviListener {
+public class GpsUtil {
     Context context;
     private String latitude;
     private String longitude;
@@ -58,9 +58,8 @@ public class GpsUtil implements AMapNaviListener {
     boolean serviceStarted = false;
     TimerTask locationScanTask;
     Timer locationTimer;
-    AMapNavi aMapNavi;
     LocationManager locationManager;
-    TTSUtil ttsUtil;
+/*    TTSUtil ttsUtil;*/
     boolean limitSpeaked = false;
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
@@ -115,7 +114,7 @@ public class GpsUtil implements AMapNaviListener {
         this.context = context;
         Random random = new Random();
         c = random.nextInt();
-        ttsUtil = TTSUtil.getInstance(context);
+/*        ttsUtil = TTSUtil.getInstance(context);*/
         localNumberFormat.setMaximumFractionDigits(1);
     }
 
@@ -148,7 +147,7 @@ public class GpsUtil implements AMapNaviListener {
         };
         Toast.makeText(context,"GPS服务开启",Toast.LENGTH_SHORT).show();
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        if (Utils.isNetworkConnected(context)) {
+       /* if (Utils.isNetworkConnected(context)) {
             startAimlessNavi();
         } else {
             broadcastReceiver = new BroadcastReceiver() {
@@ -162,23 +161,23 @@ public class GpsUtil implements AMapNaviListener {
                         }
                         context.unregisterReceiver(broadcastReceiver);
                     }
-                   /* else {
+                   *//* else {
                         if(aimlessStatred){
                             stopAimlessNavi();
                         }
-                    }*/
+                    }*//*
                 }
             };
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             context.registerReceiver(broadcastReceiver, intentFilter);
-        }
+        }*/
         Intent recordService = new Intent(context, RecordGpsHistoryService.class);
         context.startService(recordService);
         serviceStarted = true;
     }
 
-    private void startAimlessNavi() {
+   /* private void startAimlessNavi() {
         if(!PrefUtils.isWidgetActived(context) && !PrefUtils.isEnableFlatingWindow(context)){
             return;
         }
@@ -203,7 +202,7 @@ public class GpsUtil implements AMapNaviListener {
             aMapNavi = null;
             aimlessStatred = false;
         }
-    }
+    }*/
 
     public void stopLocationService(boolean stop) {
         if (serviceStarted && ((!stop && !PrefUtils.isWidgetActived(context)) || (PrefUtils.isWidgetActived(context) && stop))) {
@@ -211,13 +210,13 @@ public class GpsUtil implements AMapNaviListener {
                 this.locationTimer.cancel();
                 this.locationTimer.purge();
             }
-            stopAimlessNavi();
+            //stopAimlessNavi();
             Intent recordService = new Intent(context, RecordGpsHistoryService.class);
             recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
             context.startService(recordService);
-            if (ttsUtil != null) {
+           /* if (ttsUtil != null) {
                 ttsUtil.stop();
-            }
+            }*/
             serviceStarted = false;
         }
 
@@ -336,7 +335,7 @@ public class GpsUtil implements AMapNaviListener {
             if (!limitSpeaked || limitCounter > 300) {
                 limitSpeaked = true;
                 limitCounter = 0;
-                ttsUtil.speak("您已超速");
+                //ttsUtil.speak("您已超速");
             }
         } else {
             hasLimited = false;
@@ -623,7 +622,7 @@ public class GpsUtil implements AMapNaviListener {
 
     String speakText = "";
 
-    @Override
+   /* @Override
     public void onInitNaviFailure() {
         aimlessStatred = false;
     }
@@ -649,7 +648,7 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-        /*if(latedDirectionName!=null && latedDirectionName.equals(getDirection())){
+        *//*if(latedDirectionName!=null && latedDirectionName.equals(getDirection())){
             isTurned=true;
             latedDirectionName=getDirection();
         } else {
@@ -689,7 +688,7 @@ public class GpsUtil implements AMapNaviListener {
             if(limitSpeed!=0){
                 limitSpeed=0;
             }
-        }*/
+        }*//*
     }
 
     @Override
@@ -855,9 +854,9 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {
-        /*if (!TextUtils.isEmpty(aimLessModeCongestionInfo.getRoadName())) {
+        *//*if (!TextUtils.isEmpty(aimLessModeCongestionInfo.getRoadName())) {
             Toast.makeText(context, aimLessModeCongestionInfo.getRoadName(), Toast.LENGTH_SHORT).show();
-        }*/
+        }*//*
     }
 
     @Override
@@ -868,5 +867,5 @@ public class GpsUtil implements AMapNaviListener {
             //cameraLocation = null;
             ttsUtil.speak("已通过");
         }
-    }
+    }*/
 }

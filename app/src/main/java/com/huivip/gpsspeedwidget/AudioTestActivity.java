@@ -102,14 +102,14 @@ public class AudioTestActivity extends Activity {
                 audioManager.setStreamVolume(AudioManager.STREAM_ACCESSIBILITY,Integer.parseInt(accEditText.getText().toString()),AudioManager.FLAG_SHOW_UI);
             }
         });*/
-        Button testButton=findViewById(R.id.button_testtts);
+      /*  Button testButton=findViewById(R.id.button_testtts);
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 TTSUtil ttsUtil=TTSUtil.getInstance(getApplicationContext());
                 ttsUtil.speak("你好，语音测试成功");
             }
-        });
+        });*/
 
         Button saveButton=findViewById(R.id.button_save);
         saveButton.setOnClickListener(new View.OnClickListener(){

@@ -53,13 +53,13 @@
                 android:layout_marginTop="2dip"/>
     </LinearLayout>
     <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
-        <com.amap.api.maps.MapView
+        <!--<com.amap.api.maps.MapView
                 android:id="@+id/map"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
 
-        </com.amap.api.maps.MapView>
+        </com.amap.api.maps.MapView>-->
     </RelativeLayout>
 
 

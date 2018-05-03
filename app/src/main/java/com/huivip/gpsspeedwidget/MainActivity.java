@@ -16,12 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
-import com.amap.api.maps.*;
+/*import com.amap.api.maps.*;
 import com.amap.api.maps.model.*;
 import com.amap.api.trace.LBSTraceClient;
 import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
-import com.amap.api.trace.TraceOverlay;
+import com.amap.api.trace.TraceOverlay;*/
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import org.json.JSONArray;
@@ -37,21 +37,21 @@ import java.util.*;
 /**
  * @author sunlaihui
  */
-public class MainActivity extends Activity implements TraceListener {
-    MapView mMapView = null;
-    LBSTraceClient mTraceClient=null;
+public class MainActivity extends Activity {
+   /* MapView mMapView = null;
+    LBSTraceClient mTraceClient=null;*/
     Calendar myCalendar = Calendar.getInstance();
     String selectDateStr="";
-    AMap aMap=null;
+/*    AMap aMap=null;*/
     String myFormat = "MM/dd/yyyy";
     DeviceUuidFactory deviceUuidFactory;
     SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CHINA);
     String format = "yyyy-MM-dd HH:mm:ss";
     SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.CHINA);
-    Map<String,List<TraceLocation>> lineDatas=new HashMap<>();
+/*    Map<String,List<TraceLocation>> lineDatas=new HashMap<>();*/
     int totalDistance=0;
-    List<TraceLocation> startPoints;
-    List<TraceLocation> endPoints;
+    /*List<TraceLocation> startPoints;
+    List<TraceLocation> endPoints;*/
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -70,12 +70,12 @@ public class MainActivity extends Activity implements TraceListener {
         super.onCreate(savedInstanceState);
         deviceUuidFactory = new DeviceUuidFactory(getApplicationContext());
         setContentView(R.layout.activity_main);
-        mMapView = (MapView) findViewById(R.id.map);
+        /*mMapView = (MapView) findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         aMap = mMapView.getMap();
-        mTraceClient = LBSTraceClient.getInstance(this.getApplicationContext());
+        mTraceClient = LBSTraceClient.getInstance(this.getApplicationContext());*/
         initPermission();
-        MyLocationStyle myLocationStyle = new MyLocationStyle();
+       /* MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.interval(2000);
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
         aMap.setMyLocationStyle(myLocationStyle);
@@ -99,8 +99,8 @@ public class MainActivity extends Activity implements TraceListener {
                     //drawLineAndFixPoint(msg);
                 }
             }
-        };
-        View.OnClickListener lastedButtonClickLister=new View.OnClickListener(){
+        };*/
+       /* View.OnClickListener lastedButtonClickLister=new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
@@ -151,7 +151,7 @@ public class MainActivity extends Activity implements TraceListener {
                 }).start();
             }
         };
-        lastedPosition.setOnClickListener(lastedButtonClickLister);
+        lastedPosition.setOnClickListener(lastedButtonClickLister);*/
         Button configButton=findViewById(R.id.button_config);
         configButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this,ConfigurationActivity.class)));
         EditText edittext= (EditText) findViewById(R.id.selectDate);
@@ -199,7 +199,7 @@ public class MainActivity extends Activity implements TraceListener {
             textUid.setText(deviceId_shortString);
         }
 
-        Button trackBtn= (Button) findViewById(R.id.TrackBtn);
+       /* Button trackBtn= (Button) findViewById(R.id.TrackBtn);
         View.OnClickListener trackBtnListener=new View.OnClickListener(){
 
             @Override
@@ -278,7 +278,7 @@ public class MainActivity extends Activity implements TraceListener {
                 }).start();
             }
         };
-        trackBtn.setOnClickListener(trackBtnListener);
+        trackBtn.setOnClickListener(trackBtnListener);*/
         //setSystemUiVisibility(this,true);
         Button buttonPay=findViewById(R.id.button_paymain);
         buttonPay.setOnClickListener(new View.OnClickListener() {
@@ -313,7 +313,7 @@ public class MainActivity extends Activity implements TraceListener {
             PrefUtils.setDeviceIDStorage(getApplicationContext(),deviceStr);
         }
     }
-    private void drawLine(Message msg){
+   /* private void drawLine(Message msg){
         List<LatLng> latLngs = new ArrayList<>();
         LatLng lastedLatLng=null;
         String lastedTime="";
@@ -369,7 +369,7 @@ public class MainActivity extends Activity implements TraceListener {
             }
         };
         aMap.setOnMarkerClickListener(markerClickListener);
-    }
+    }*/
     private void initPermission() {
         String[] permissions = {
                 Manifest.permission.INTERNET,
@@ -403,7 +403,7 @@ public class MainActivity extends Activity implements TraceListener {
             startActivityForResult(intentWriteSetting, 124);*/
         // }
     }
-    private void drawLineAndFixPoint(Message msg) {
+   /* private void drawLineAndFixPoint(Message msg) {
         String dataResult = (String) msg.obj;
         lineDatas=new HashMap<>();
         totalDistance=0;
@@ -513,14 +513,14 @@ public class MainActivity extends Activity implements TraceListener {
         if(mMapView!=null){
             mMapView.onDestroy();
         }
-    }
+    }*/
     private void updateLabel(String dateString) {
         EditText edittext= (EditText) findViewById(R.id.selectDate);
         selectDateStr=dateString;
         edittext.setText(dateString);
     }
 
-    @Override
+   /* @Override
     public void onRequestFailed(int i, String s) {
         Log.d("huivip","amp draw line failed:"+s);
     }
@@ -573,5 +573,5 @@ public class MainActivity extends Activity implements TraceListener {
             }
         }
         return  distance;
-    }
+    }*/
 }

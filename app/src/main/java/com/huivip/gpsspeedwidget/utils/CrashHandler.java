@@ -8,7 +8,6 @@ import android.os.Environment;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
-import com.alibaba.idst.nls.internal.utils.L;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -162,7 +161,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         }
         printWriter.close();
         String result = writer.toString();
-        L.d("Huivip Crash Log", result);
+/*        L.d("Huivip Crash Log", result);*/
         sb.append(result);
         try {
             long timestamp = System.currentTimeMillis();
