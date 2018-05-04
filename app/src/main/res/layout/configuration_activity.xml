@@ -279,24 +279,24 @@
                     android:text="延时"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_above="@+id/editText_speedadjust"
-                    android:layout_toEndOf="@+id/button_selectApp" android:id="@+id/textView7"/>
+                    android:layout_toEndOf="@+id/button_selectApp" android:id="@+id/textView_delaytext"/>
             <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:ems="2"
-                    android:layout_alignParentTop="true" android:layout_toEndOf="@+id/editText_speedadjust"
+                    android:layout_alignParentTop="true" android:layout_toEndOf="@id/textView_delaytext"
                     android:id="@+id/editText_delay_started" android:text="0"/>
             <TextView
                     android:text="秒拉起第三方应用"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_alignTop="@+id/textView7"
+                    android:layout_height="wrap_content" android:layout_alignTop="@+id/textView_delaytext"
                     android:layout_toEndOf="@+id/button_pay" android:id="@+id/textView8"/>
             <CheckBox
                     android:text="固定位置"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_alignTop="@+id/checkBox_h_direction"
-                    android:layout_toEndOf="@+id/textView7" android:id="@+id/checkBox_speed_fixed_position"/>
+                    android:layout_toEndOf="@+id/textView_delaytext" android:id="@+id/checkBox_speed_fixed_position"/>
             <CheckBox
                     android:text="固定位置"
                     android:layout_width="wrap_content"
