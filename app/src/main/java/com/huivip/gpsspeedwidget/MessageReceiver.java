@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import org.json.JSONArray;
@@ -24,6 +25,7 @@ public class MessageReceiver extends BroadcastReceiver {
             @Override
             public void run() {
                 DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
+                CrashHandler.getInstance().init(context);
                 String deviceId=deviceUuidFactory.getDeviceUuid().toString();
                 Log.d("GPSWidget","DeviceId:"+deviceId);
                 Date now = new Date();

@@ -16,7 +16,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/button_backup" android:layout_weight="0.04"/>
         <Button
-                android:text="测试语音"
+                android:text="测试功能"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/button_test" android:visibility="gone"/>
         <Button

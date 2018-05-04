@@ -192,7 +192,12 @@ app.post("/feedback",urlencodedParser,function(req,res){
   res.end();
 })
 app.get("/updateInfo",function(req,res){
-  res.sendFile(__dirname+"/"+"update.json");
+    var type=req.query.type;
+    if(type==="full"){
+        res.sendFile(__dirname+"/"+"update-full.json");
+    } else if(type === "mini"){
+        res.sendFile(__dirname+"/"+"update-mini.json");
+    }
 })
 
 

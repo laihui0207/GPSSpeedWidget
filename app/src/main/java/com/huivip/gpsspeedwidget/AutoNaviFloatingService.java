@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.Timer;
@@ -132,6 +133,7 @@ public class AutoNaviFloatingService extends Service {
                 });
             }
         };
+        CrashHandler.getInstance().init(getApplicationContext());
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         super.onCreate();
     }

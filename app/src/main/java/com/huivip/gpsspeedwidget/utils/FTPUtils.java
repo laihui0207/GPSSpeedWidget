@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
+import java.util.List;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -82,11 +83,11 @@ public class FTPUtils {
 
     /**
      * 上传文件
-     * @param FilePath    要上传文件所在SDCard的路径
+     * @param localFile    要上传文件所在SDCard的路径
      * @param FileName    要上传的文件的文件名(如：Sim唯一标识码)
      * @return    true为成功，false为失败
      */
-    public boolean uploadFile(String remoteDir,String FilePath, String FileName) {
+    public boolean uploadFile(String remoteDir,String localFile, String FileName) {
 
         if (!ftpClient.isConnected())
         {
@@ -110,12 +111,66 @@ public class FTPUtils {
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 
             //文件上传吧～
-            FileInputStream fileInputStream = new FileInputStream(FilePath);
+            FileInputStream fileInputStream = new FileInputStream(localFile);
             ftpClient.storeFile(FileName, fileInputStream);
 
             //关闭文件流
             fileInputStream.close();
 
+            //退出登陆FTP，关闭ftpCLient的连接
+            ftpClient.logout();
+            ftpClient.disconnect();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    /**
+     * 上传文件
+     * @param localFile    要上传文件所在SDCard的路径
+     * @param FileName    要上传的文件的文件名(如：Sim唯一标识码)
+     * @return    true为成功，false为失败
+     */
+    public boolean uploadDirectory(String remoteDir,String localDir) {
+
+        if (!ftpClient.isConnected())
+        {
+            if (!initFTPSetting(FTPUrl,  FTPPort,  UserName,  UserPassword))
+            {
+                return false;
+            }
+        }
+
+        try {
+
+            //设置存储路径
+            ftpClient.changeWorkingDirectory("/");
+            ftpClient.makeDirectory(remoteDir);
+            ftpClient.changeWorkingDirectory(remoteDir);
+
+            //设置上传文件需要的一些基本信息
+            ftpClient.setBufferSize(1024);
+            ftpClient.setControlEncoding("UTF-8");
+            ftpClient.enterLocalPassiveMode();
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+
+            //文件上传吧～
+            File dir=new File(localDir);
+            if(dir.isDirectory() && dir.exists()) {
+                File[] list=dir.listFiles();
+                if(list.length==0) return true;
+                for(File localFile:list) {
+                    String fileName=localFile.getName();
+                    FileInputStream fileInputStream = new FileInputStream(localFile);
+                    ftpClient.storeFile(fileName, fileInputStream);
+
+                    //关闭文件流
+                    fileInputStream.close();
+                }
+            }
             //退出登陆FTP，关闭ftpCLient的连接
             ftpClient.logout();
             ftpClient.disconnect();

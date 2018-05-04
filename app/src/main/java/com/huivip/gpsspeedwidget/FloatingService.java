@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import devlight.io.library.ArcProgressStackView;
 
@@ -174,6 +175,7 @@ public class FloatingService extends Service{
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
     private void openSettings(String settingsAction, String packageName) {
@@ -275,9 +277,7 @@ public class FloatingService extends Service{
     private void animateViewToSideSlot() {
         Point screenSize = new Point();
         mWindowManager.getDefaultDisplay().getSize(screenSize);
-        if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())){
-            return;
-        }
+
         WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
         int endX;
         if (params.x + mFloatingView.getWidth() / 2 >= screenSize.x / 2) {

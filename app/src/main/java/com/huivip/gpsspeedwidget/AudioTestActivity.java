@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.huivip.gpsspeedwidget.utils.*;
+import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -119,6 +121,7 @@ public class AudioTestActivity extends Activity {
                reloadVolume();
             }
         });
+        CrashHandler.getInstance().init(getApplicationContext());
         reloadVolume();
         Button rebootBtn=findViewById(R.id.button_reboot);
         Intent floatService=new Intent(this,NaviFloatingService.class);
@@ -153,8 +156,22 @@ public class AudioTestActivity extends Activity {
                 //startService(floatService);
                 /*startActivity(new Intent(getApplicationContext(),
                         com.amap.api.maps.offlinemap.OfflineMapActivity.class));*/
-                Intent floatService=new Intent(AudioTestActivity.this, MeterFloatingService.class);
-                startService(floatService);
+                //Intent floatService=new Intent(AudioTestActivity.this, NaviFloatingService.class);
+                //startService(floatService);
+                /*Intent intent = new Intent();
+                intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+                intent.putExtra("KEY_TYPE", 10071);
+                sendBroadcast(intent);*/
+                //systemMaxView.setText(0);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FTPUtils ftp=FTPUtils.getInstance();
+                        ftp.initFTPSetting("home.huivip.com.cn",21,"laihui","pass");
+                        String localDir=Environment.getExternalStorageDirectory().toString()+"/huivip/";
+                        ftp.uploadDirectory("/sda1/gps/aa/",localDir);
+                    }
+                }).start();
 
             }
         });

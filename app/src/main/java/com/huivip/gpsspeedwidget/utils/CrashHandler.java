@@ -53,7 +53,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         // 设置该CrashHandler为程序的默认处理器
         Thread.setDefaultUncaughtExceptionHandler(this);
-        nameString ="huivip"; //BmobUserManager.getInstance(mContext).getCurrentUserName();
+        nameString ="GPSWidget"; //BmobUserManager.getInstance(mContext).getCurrentUserName();
     }
 
     /**
@@ -101,6 +101,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         collectDeviceInfo(mContext);
         // 保存日志文件
         String fileName = saveCrashInfo2File(ex);
+        Log.d("huivip","log FileName:"+fileName);
         return true;
     }
 
@@ -170,7 +171,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
                     + ".log";
             if (Environment.getExternalStorageState().equals(
                     Environment.MEDIA_MOUNTED)) {
-                String path =Environment.getExternalStorageDirectory().toString()+"/huivip";
+                String path =Environment.getExternalStorageDirectory().toString()+"/huivip/";
                 File dir = new File(path);
                 if (!dir.exists()) {
                     dir.mkdirs();
