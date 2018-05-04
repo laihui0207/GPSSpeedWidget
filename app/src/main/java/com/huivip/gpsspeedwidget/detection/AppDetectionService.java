@@ -64,12 +64,12 @@ public class AppDetectionService extends AccessibilityService {
                || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)){
            PrefUtils.setEnableTempAudioService(getApplicationContext(),false);
        }
-       else {
+      /* else {
            gpsUtil=GpsUtil.getInstance(getApplicationContext());
            if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) {
                PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
            }
-       }
+       }*/
 
         boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
         PrefUtils.setOnDesktop(getApplicationContext(),shouldStopService);

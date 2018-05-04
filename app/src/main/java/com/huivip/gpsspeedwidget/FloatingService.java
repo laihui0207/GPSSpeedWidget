@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import devlight.io.library.ArcProgressStackView;
 
@@ -174,6 +175,7 @@ public class FloatingService extends Service{
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
     private void openSettings(String settingsAction, String packageName) {

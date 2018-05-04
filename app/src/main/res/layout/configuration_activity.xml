@@ -305,6 +305,11 @@
                     android:layout_height="wrap_content" android:layout_below="@+id/radioGroup_flattingStyleSelect"
                     android:layout_toEndOf="@+id/checkBox_Navi_autoSolt"
                     android:id="@+id/checkBox_navi_fixed_position"/>
+            <Button
+                    android:text="提交异常日志"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_alignTop="@+id/button_pay"
+                    android:layout_toEndOf="@+id/button_pay" android:id="@+id/button_uploadLog"/>
         </RelativeLayout>
     </ScrollView>
     <TextView

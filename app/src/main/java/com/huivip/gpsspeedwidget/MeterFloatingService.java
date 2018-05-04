@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.text.NumberFormat;
@@ -133,6 +134,7 @@ public class MeterFloatingService extends Service {
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
     void checkLocationData() {

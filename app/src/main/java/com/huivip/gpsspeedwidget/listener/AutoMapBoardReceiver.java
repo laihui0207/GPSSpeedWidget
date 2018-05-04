@@ -35,12 +35,15 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         if(gpsUtil.getNaviFloatingStatus()==Constant.Navi_Floating_Enabled) {
                             stopFloatingService(context);
                         }
+                        PrefUtils.setEnableTempAudioService(context, false);
                         break;
                     case 4: // auto map in backend
                         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
                             startFloatingService(context);
                             gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
                         }
+                        PrefUtils.setEnableTempAudioService(context, false);
+                        //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                         break;
                     case 24:  // xun hang
                         //PrefUtils.setEnableTempAudioService(context, false);
@@ -57,13 +60,13 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     case 2: // auto map in end
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         gpsUtil.setCurrentRoadName("");
+                        PrefUtils.setEnableTempAudioService(context, true);
                     case 25:  // xunhang end
                     case 9:  // navi end
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                     case 12:
                         stopFloatingService(context);
                         gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Disabled);
-                        PrefUtils.setEnableTempAudioService(context, true);
                         //Toast.makeText(context,"Ended",Toast.LENGTH_SHORT).show();
                         break;
                     case 40: // heart check
@@ -79,9 +82,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         //Toast.makeText(context,"speaking",Toast.LENGTH_SHORT).show();
                         break;
                     case 14:  // TTS Speak End
-                        if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) {
+                        /*if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) {
                             PrefUtils.setEnableTempAudioService(context, true);
-                        }
+                        }*/
                         //Toast.makeText(context,"speaking End",Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -160,6 +163,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     gpsUtil.setCameraSpeed(0);
                 }
             }
+            /*if(key==10072){  // return mute status
+                Toast.makeText(context,"静音状态:"+intent.getIntExtra("EXTRA_MUTE",-1)+",临时静音:"+
+                        intent.getIntExtra("EXTRA_CASUAL_MUTE",-1)
+                        ,Toast.LENGTH_SHORT).show();
+
+            }*/
         }
     }
     private void startFloatingService(Context context){

@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -41,6 +42,7 @@ public class BackupGPSHistoryActivity extends Activity {
                 PrefUtils.setFtpAutoBackup(getApplicationContext(),isChecked);
             }
         });
+        CrashHandler.getInstance().init(getApplicationContext());
         Button saveAndBackup=findViewById(R.id.button_saveandbackup);
         saveAndBackup.setOnClickListener(new View.OnClickListener(){
 

@@ -34,6 +34,7 @@ import com.huivip.gpsspeedwidget.utils.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -55,6 +56,8 @@ public class ConfigurationActivity extends Activity {
     EditText remoteUrlEditBox;
     RadioGroup floatingSelectGroup;
     RadioGroup floatingStyleGroup;
+    private Handler handler=null;
+    String resultText="";
     private static final int REQUEST_LOCATION = 105;
     private static  final int REQUEST_STORAGE=106;
     private static final int REQUEST_PHONE=107;
@@ -72,6 +75,7 @@ public class ConfigurationActivity extends Activity {
 
         }
         initPermission();
+        handler=new Handler();
         CheckBox autoStartCheckBox=(CheckBox)findViewById(R.id.autoStart);
         autoStartCheckBox.setChecked(PrefUtils.isEnableAutoStart(getApplicationContext()));
         CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
@@ -412,7 +416,7 @@ public class ConfigurationActivity extends Activity {
                     @Override
                     public void run() {
                         Looper.prepare();
-                        String updateInfo=HttpUtils.getData(Constant.LBSURL+"/updateInfo");
+                        String updateInfo=HttpUtils.getData(Constant.LBSURL+"/updateInfo?type=full");
                         try {
                             if(!TextUtils.isEmpty(updateInfo) && !updateInfo.equalsIgnoreCase("-1")) {
                                 String currentVersion=Utils.getLocalVersion(getApplicationContext());
@@ -550,6 +554,51 @@ public class ConfigurationActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),buttonView.isChecked());
             }
+        });
+        Button uploadLogButton=findViewById(R.id.button_uploadLog);
+        uploadLogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String logDir=Environment.getExternalStorageDirectory().toString()+"/huivip/";
+                File dir=new File(logDir);
+                if(!dir.exists()){
+                    Toast.makeText(getApplicationContext(),"没有异常日志需要上传！",Toast.LENGTH_SHORT).show();
+                } else if(dir.isDirectory()) {
+                    File[] files=dir.listFiles();
+                    if(files.length==0) {
+                        Toast.makeText(getApplicationContext(), "没有异常日志需要上传！", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            FTPUtils ftp=FTPUtils.getInstance();
+                            ftp.initFTPSetting("home.huivip.com.cn",21,"laihui","pass");
+                            ftp.uploadDirectory("/sda1/gps/"+deviceId.substring(0,deviceId.indexOf("-")),logDir);
+                            File dir=new File(logDir);
+                            if(dir.exists()){
+                                for(File file:dir.listFiles()){
+                                        if(file.exists()){
+                                            file.delete();
+                                        }
+                                }
+                                dir.delete();
+                            }
+                            resultText="日志上传成功，请联系作者查询问题，并提供本机Id:"+deviceId.substring(0,deviceId.indexOf("-"));
+                            handler.post(runnableUi);
+                        }
+                    }).start();
+                }
+
+            }
+            Runnable   runnableUi=new  Runnable(){
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),resultText,Toast.LENGTH_LONG).show();
+                }
+
+            };
         });
     }
     @Override

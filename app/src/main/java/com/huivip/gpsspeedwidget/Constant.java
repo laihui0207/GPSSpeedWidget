@@ -25,4 +25,6 @@ public class Constant {
     public static int LINE=1;
     public static int POINT=0;
 
+    public static String AUTONAVI_WEBSERVICE="http://restapi.amap.com/v3/autograsp?carid=%s&locations=%s&time=%s&direction=%s&speed=%s&output=json&key=%s";
+
 }

@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -63,6 +64,7 @@ public class GpsSpeedService extends Service {
                 });
             }
         };
+        CrashHandler.getInstance().init(getApplicationContext());
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         super.onCreate();
     }
@@ -98,7 +100,7 @@ public class GpsSpeedService extends Service {
                 /*  }*/
 
                 gpsUtil.startLocationService();
-
+                PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                 if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
                     Intent floatService = new Intent(this, FloatingService.class);
                     String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());

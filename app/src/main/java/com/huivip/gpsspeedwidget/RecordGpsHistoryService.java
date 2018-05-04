@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.Date;
@@ -33,6 +34,7 @@ public class RecordGpsHistoryService extends Service{
         this.lineId=System.currentTimeMillis();
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
         deviceId=deviceUuidFactory.getDeviceUuid().toString();
+        CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
 
