@@ -156,14 +156,14 @@ public class AudioTestActivity extends Activity {
                 //startService(floatService);
                 /*startActivity(new Intent(getApplicationContext(),
                         com.amap.api.maps.offlinemap.OfflineMapActivity.class));*/
-                //Intent floatService=new Intent(AudioTestActivity.this, NaviFloatingService.class);
-                //startService(floatService);
+                Intent floatService=new Intent(AudioTestActivity.this, NaviFloatingService.class);
+                startService(floatService);
                 /*Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
                 intent.putExtra("KEY_TYPE", 10071);
                 sendBroadcast(intent);*/
                 //systemMaxView.setText(0);
-                new Thread(new Runnable() {
+                /*new Thread(new Runnable() {
                     @Override
                     public void run() {
                         FTPUtils ftp=FTPUtils.getInstance();
@@ -171,7 +171,7 @@ public class AudioTestActivity extends Activity {
                         String localDir=Environment.getExternalStorageDirectory().toString()+"/huivip/";
                         ftp.uploadDirectory("/sda1/gps/aa/",localDir);
                     }
-                }).start();
+                }).start();*/
 
             }
         });

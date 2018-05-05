@@ -18,7 +18,7 @@
         <Button
                 android:text="测试功能"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/button_test" android:visibility="gone"/>
+                android:layout_height="wrap_content" android:id="@+id/button_test"/>
         <Button
                 android:text="打赏支持"
                 android:layout_width="wrap_content"
