@@ -67,6 +67,8 @@ public class NaviFloatingService extends Service{
     TextView cameraTypeNameTextView;
     @BindView(R.id.navi_limit_view)
     View naviCameraView;
+    @BindView(R.id.textView_autonavi_speedText)
+    TextView speedTextView;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -173,6 +175,7 @@ public class NaviFloatingService extends Service{
         else {
             naviCameraView.setVisibility(View.GONE);
         }
+        speedTextView.setText(gpsUtil.getKmhSpeedStr()+" km/h");
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
