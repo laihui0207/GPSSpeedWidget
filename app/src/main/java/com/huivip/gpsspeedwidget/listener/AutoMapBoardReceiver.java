@@ -5,10 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.Toast;
-import com.huivip.gpsspeedwidget.Constant;
-import com.huivip.gpsspeedwidget.GpsSpeedService;
-import com.huivip.gpsspeedwidget.GpsUtil;
-import com.huivip.gpsspeedwidget.NaviFloatingService;
+import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 public class AutoMapBoardReceiver extends BroadcastReceiver {
@@ -74,6 +71,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         break;
                     case 39:
                         stopFloatingService(context);
+                        stopSpeedFloatingService(context);
                         gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Disabled);
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         break;
@@ -185,4 +183,18 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             context.startService(floatService);
         }
     }
+    private void stopSpeedFloatingService(Context context){
+        if(PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)){
+            Intent defaultFloatingService=new Intent(context,FloatingService.class);
+            Intent AutoNavifloatService=new Intent(context,AutoNaviFloatingService.class);
+            Intent meterFloatingService=new Intent(context,MeterFloatingService.class);
+            defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE,true);
+            AutoNavifloatService.putExtra(AutoNaviFloatingService.EXTRA_CLOSE,true);
+            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+            context.startService(defaultFloatingService);
+            context.startService(AutoNavifloatService);
+            context.startService(meterFloatingService);
+        }
+    }
+
 }

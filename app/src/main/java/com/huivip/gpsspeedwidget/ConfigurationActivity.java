@@ -56,6 +56,9 @@ public class ConfigurationActivity extends Activity {
     EditText remoteUrlEditBox;
     RadioGroup floatingSelectGroup;
     RadioGroup floatingStyleGroup;
+    RadioButton onlyDesktopButton;
+    RadioButton noDesktopButton;
+    RadioButton onAutoNaviButton;
     private Handler handler=null;
     String resultText="";
     private static final int REQUEST_LOCATION = 105;
@@ -145,6 +148,18 @@ public class ConfigurationActivity extends Activity {
                 floatingSelectGroup.setEnabled(compoundButton.isChecked());
                 autoSoltCheckBox.setEnabled(compoundButton.isChecked());
                 PrefUtils.setFlatingWindow(getApplicationContext(),compoundButton.isChecked());
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(compoundButton.isChecked() ){
+                            startFloationgWindows(true);
+                        }
+                        else {
+                            startFloationgWindows(false);
+                        }
+                    }
+                }).start();
+
             }
         });
         /*enableShowFlattingOnDesktopCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
@@ -227,22 +242,45 @@ public class ConfigurationActivity extends Activity {
         floatingSelectGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                int selectId=radioGroup.getCheckedRadioButtonId();
+                int selectId = radioGroup.getCheckedRadioButtonId();
                 switch (selectId) {
                     case R.id.radioButton_all:
-                        PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_ALL);
+                        PrefUtils.setShowFlattingOn(getApplicationContext(), PrefUtils.SHOW_ALL);
                         break;
                     case R.id.radioButton_onlyHome:
-                        PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_ONLY_DESKTOP);
+                        PrefUtils.setShowFlattingOn(getApplicationContext(), PrefUtils.SHOW_ONLY_DESKTOP);
                         break;
                     case R.id.fradioButton_noHome:
-                        PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_NO_DESKTOP);
+                        PrefUtils.setShowFlattingOn(getApplicationContext(), PrefUtils.SHOW_NO_DESKTOP);
                         break;
-                        default:
-                            PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_NO_DESKTOP);
+                    case R.id.radioButton_autonavi:
+                        PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_ONLY_AUTONAVI);
+                   /* default:
+                        PrefUtils.setShowFlattingOn(getApplicationContext(), PrefUtils.SHOW_ALL);*/
                 }
             }
         });
+        RadioButton allShowButton=findViewById(R.id.radioButton_all);
+        onlyDesktopButton=findViewById(R.id.radioButton_onlyHome);
+        noDesktopButton=findViewById(R.id.fradioButton_noHome);
+        onAutoNaviButton=findViewById(R.id.radioButton_autonavi);
+        String floatShowOn=PrefUtils.getShowFlatingOn(getApplicationContext());
+        if(PrefUtils.isEnableAccessibilityService(getApplicationContext())) {
+            if (floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)) {
+                onlyDesktopButton.setChecked(true);
+            } else if (floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP)) {
+                noDesktopButton.setChecked(true);
+            } else if (floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+                allShowButton.setChecked(true);
+            } else if (floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)) {
+                onAutoNaviButton.setChecked(true);
+            }
+        } /*else {
+            allShowButton.setChecked(true);
+        }*/
+        onlyDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
+        noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
+        onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         Glide.get(this)
                 .register(AppInfo.class, InputStream.class, new AppInfoIconLoader.Factory());
         PrefUtils.setApps(getApplicationContext(), getDescktopPackageName());
@@ -294,18 +332,7 @@ public class ConfigurationActivity extends Activity {
         String deviceId=deviceUuidFactory.getDeviceUuid().toString();
         uidView.setText("本机ID: "+deviceId.substring(0,deviceId.indexOf("-")));
 
-        RadioButton allShowButton=findViewById(R.id.radioButton_all);
-        RadioButton onlyDesktopButton=findViewById(R.id.radioButton_onlyHome);
-        RadioButton noDesktopButton=findViewById(R.id.fradioButton_noHome);
 
-        String floatShowOn=PrefUtils.getShowFlatingOn(getApplicationContext());
-        if(floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
-            onlyDesktopButton.setChecked(true);
-        } else if(floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP)){
-            noDesktopButton.setChecked(true);
-        } else if(floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_ALL)){
-            allShowButton.setChecked(true);
-        }
         EditText speedAdjustEditText=findViewById(R.id.editText_speedadjust);
         speedAdjustEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(-5, 5)});
         if(PrefUtils.getSpeedAdjust(getApplicationContext())!=0){
@@ -515,6 +542,7 @@ public class ConfigurationActivity extends Activity {
                     default:
                         PrefUtils.setFloattingStyle(getApplicationContext(),PrefUtils.FLOATING_DEFAULT);
                 }
+                startFloationgWindows(true);
             }
         });
         RadioButton styleDeafult=findViewById(R.id.radioButton_style_default);
@@ -609,6 +637,37 @@ public class ConfigurationActivity extends Activity {
             invalidateStates();
         }
     }
+    private void startFloationgWindows(boolean enabled){
+        Intent defaultFloatingService=new Intent(this,FloatingService.class);
+        Intent AutoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
+        Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
+        if(enabled){
+            String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
+            if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
+                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
+                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            }
+
+        }
+        else {
+            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+        }
+        try {
+            startService(defaultFloatingService);
+            startService(AutoNavifloatService);
+            startService(meterFloatingService);
+        } catch (Exception e) {
+            Log.d("huivip","Start Floating server Failed"+e.getMessage());
+        }
+    }
     private void checkIfCanIncreaseMusic(){
         AudioManager audioManager= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         int systemVolume=audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
@@ -635,6 +694,9 @@ public class ConfigurationActivity extends Activity {
         enableServiceButton.setEnabled(overlayEnabled && !serviceEnabled);
         //enableShowFlattingOnDesktopCheckBox.setEnabled(enableFloatingWidnowCheckBox.isChecked());
         floatingSelectGroup.setEnabled(enableFloatingWidnowCheckBox.isChecked());
+        onlyDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
+        noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
+        onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         boolean serviceReady=Utils.isServiceReady(this);
         Button btnOk= (Button) findViewById(R.id.confirm);
         if(serviceReady){

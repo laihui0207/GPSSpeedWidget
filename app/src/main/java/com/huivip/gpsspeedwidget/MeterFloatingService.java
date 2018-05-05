@@ -269,9 +269,6 @@ public class MeterFloatingService extends Service {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             final WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-            if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())){
-                return true;
-            }
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mInitialTouchX = event.getRawX();
@@ -285,6 +282,9 @@ public class MeterFloatingService extends Service {
                     mIsClick = true;
                     return true;
                 case MotionEvent.ACTION_MOVE:
+                    if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())){
+                        return true;
+                    }
                     float dX = event.getRawX() - mInitialTouchX;
                     float dY = event.getRawY() - mInitialTouchY;
                     if ((mIsClick && (Math.abs(dX) > 10 || Math.abs(dY) > 10))
@@ -318,7 +318,12 @@ public class MeterFloatingService extends Service {
                             fadeAnimator.play(fadeOut).before(fadeIn);
                             fadeAnimator.start();
                         }
-                    } else {
+                    }
+                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 2000) {
+                        Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
+                        PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),false);
+                    }
+                    else {
                         if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
                             animateViewToSideSlot();
                         } else {

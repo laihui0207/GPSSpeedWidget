@@ -6,6 +6,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -53,6 +54,8 @@ public abstract class PrefUtils {
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
     public static final String SHOW_NO_DESKTOP="1";
+    public static final String SHOW_ONLY_AUTONAVI="3";
+
 
     public static final String FLOATING_DEFAULT="0";
     public static final String FLOATING_METER="2";
@@ -110,7 +113,7 @@ public abstract class PrefUtils {
         edit(context).putString(SHOW_FLATTING_ON, show).apply();
     }
     public static String getShowFlatingOn(Context context){
-        return getSharedPreferences(context).getString(SHOW_FLATTING_ON, SHOW_NO_DESKTOP);
+        return getSharedPreferences(context).getString(SHOW_FLATTING_ON, SHOW_ALL);
     }
     public static void setRecordGPSHistory(Context context,boolean recordHistory){
         edit(context).putBoolean(RECORD_GPS_HISTORY_PREFS_NAME, recordHistory).apply();
@@ -167,7 +170,8 @@ public abstract class PrefUtils {
         edit(context).putBoolean(USER_CLOSED_SERVER, closed).apply();
     }
     public static boolean isEnableAccessibilityService(Context context){
-        return getSharedPreferences(context).getBoolean(ENABLE_ACCESSIBILITY_SEVICE, false);
+        //return getSharedPreferences(context).getBoolean(ENABLE_ACCESSIBILITY_SEVICE, false);
+        return Utils.isAccessibilityServiceEnabled(context, AppDetectionService.class);
     }
     public static void setEnableAccessibilityService(Context context,boolean enable){
         edit(context).putBoolean(ENABLE_ACCESSIBILITY_SEVICE, enable).apply();

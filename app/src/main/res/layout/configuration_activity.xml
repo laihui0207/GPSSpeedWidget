@@ -124,10 +124,15 @@
                         android:layout_height="wrap_content" android:id="@+id/radioButton_onlyHome"
                         android:layout_weight="1"/>
                 <RadioButton
+                        android:text="只在导航时显示"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/radioButton_autonavi"
+                        android:layout_weight="1"/>
+                <RadioButton
                         android:text="一直显示"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/radioButton_all"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1" android:checked="true"/>
             </RadioGroup>
             <CheckBox
                     android:text="自动靠边"
@@ -226,7 +231,7 @@
                     android:layout_alignBaseline="@+id/checkBox_mix" android:layout_alignBottom="@+id/checkBox_mix"
                     android:layout_toEndOf="@+id/textView_audioVolume"/>
             <CheckBox
-                    android:text="导航进入后台时开启导航悬浮窗口"
+                    android:text="导航后台导航悬浮窗口"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_navfloatiing" android:layout_below="@+id/radioGroup_flatingSelect"
@@ -253,7 +258,7 @@
                     android:layout_alignBaseline="@+id/button_update" android:layout_alignBottom="@+id/button_update"
                     android:layout_toEndOf="@+id/button_update"/>
             <TextView
-                    android:text="启用顶层显示功能才能使用悬浮窗"
+                    android:text="长按悬浮窗 2秒取消位置固定"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_showmessage"
@@ -302,9 +307,11 @@
             <CheckBox
                     android:text="固定位置"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_below="@+id/radioGroup_flattingStyleSelect"
-                    android:layout_toEndOf="@+id/checkBox_Navi_autoSolt"
-                    android:id="@+id/checkBox_navi_fixed_position"/>
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox_navi_fixed_position"
+                    android:layout_alignBaseline="@+id/checkBox_Navi_autoSolt"
+                    android:layout_alignBottom="@+id/checkBox_Navi_autoSolt"
+                    android:layout_toEndOf="@+id/checkBox_Navi_autoSolt"/>
             <Button
                     android:text="提交异常日志"
                     android:layout_width="wrap_content"

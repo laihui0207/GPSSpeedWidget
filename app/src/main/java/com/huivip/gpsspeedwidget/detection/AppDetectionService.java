@@ -2,6 +2,7 @@ package com.huivip.gpsspeedwidget.detection;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -59,10 +60,13 @@ public class AppDetectionService extends AccessibilityService {
         if (!isActivity) {
             return;
         }
+        boolean onAutoNavi=false;
+        gpsUtil=GpsUtil.getInstance(getApplicationContext());
        // when in auto navi or auto navi lite app, temp disable audio service
        if(componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
                || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)){
            PrefUtils.setEnableTempAudioService(getApplicationContext(),false);
+           onAutoNavi=true;
        }
       /* else {
            gpsUtil=GpsUtil.getInstance(getApplicationContext());
@@ -88,7 +92,13 @@ public class AppDetectionService extends AccessibilityService {
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+        } else if (!shouldStopService && gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started && !onAutoNavi &&
+                PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)){
+            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
+
         String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
         if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
             meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
