@@ -32,12 +32,14 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     case 3: // auto map in frontend
                         if(gpsUtil.getNaviFloatingStatus()==Constant.Navi_Floating_Enabled) {
                             stopFloatingService(context);
+                            lanuchSpeedFloationWindows(context,true);
                         }
                         PrefUtils.setEnableTempAudioService(context, false);
                         break;
                     case 4: // auto map in backend
                         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
                             startFloatingService(context);
+                            lanuchSpeedFloationWindows(context,false);
                             gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
                         }
                         PrefUtils.setEnableTempAudioService(context, false);
