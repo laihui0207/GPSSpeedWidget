@@ -55,9 +55,9 @@
                     android:text="320公里-3小时29分钟" android:textColor="#fff"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/textView_totalleft" android:layout_weight="1"
-                    android:gravity="left|center_vertical" android:layout_alignBaseline="@+id/textView9"
-                    android:layout_alignBottom="@+id/textView9" android:layout_toEndOf="@+id/textView_nextroadname"
-                    android:layout_alignEnd="@+id/navi_limit_view" android:textSize="13dp"/>
+                    android:gravity="left|center_vertical"
+                    android:textSize="13dp" android:layout_alignParentBottom="true"
+                    android:layout_toEndOf="@+id/textView9" android:layout_alignEnd="@+id/navi_limit_view"/>
             <RelativeLayout
                     android:layout_width="100dp"
                     android:layout_height="100dp" android:id="@+id/navi_limit_view"
