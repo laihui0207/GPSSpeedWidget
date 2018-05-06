@@ -290,6 +290,38 @@ public class MainActivity extends Activity {
                         .setPositiveButton("关闭", null).show();
             }
         });
+        startFloationgWindows(true);
+    }
+    private void startFloationgWindows(boolean enabled){
+        Intent defaultFloatingService=new Intent(this,FloatingService.class);
+        Intent AutoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
+        Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
+        if(enabled){
+            String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
+            if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
+                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
+                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            }
+
+        }
+        else {
+            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+        }
+        try {
+            startService(defaultFloatingService);
+            startService(AutoNavifloatService);
+            startService(meterFloatingService);
+        } catch (Exception e) {
+            Log.d("huivip","Start Floating server Failed"+e.getMessage());
+        }
     }
     private void saveDeviceIdString(String deviceString){
         String storedDevices=PrefUtils.getDeviceIdStorage(getApplicationContext());

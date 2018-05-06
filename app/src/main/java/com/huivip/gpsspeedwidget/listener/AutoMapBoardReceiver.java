@@ -4,11 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
-import com.huivip.gpsspeedwidget.Constant;
-import com.huivip.gpsspeedwidget.GpsSpeedService;
-import com.huivip.gpsspeedwidget.GpsUtil;
-import com.huivip.gpsspeedwidget.NaviFloatingService;
+import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 public class AutoMapBoardReceiver extends BroadcastReceiver {
@@ -34,12 +32,14 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     case 3: // auto map in frontend
                         if(gpsUtil.getNaviFloatingStatus()==Constant.Navi_Floating_Enabled) {
                             stopFloatingService(context);
+                            lanuchSpeedFloationWindows(context,true);
                         }
                         PrefUtils.setEnableTempAudioService(context, false);
                         break;
                     case 4: // auto map in backend
                         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
                             startFloatingService(context);
+                            lanuchSpeedFloationWindows(context,false);
                             gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
                         }
                         PrefUtils.setEnableTempAudioService(context, false);
@@ -51,10 +51,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         break;
                     case 8: // start navi
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
+                        lanuchSpeedFloationWindows(context,true);
                         break;
                     case 10:  // simulate navi
                        // Toast.makeText(context,"Heated Checked",Toast.LENGTH_SHORT).show();
                         startFloatingService(context);
+                        lanuchSpeedFloationWindows(context,true);
                         gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
                         break;
                     case 2: // auto map in end
@@ -66,6 +68,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                     case 12:
                         stopFloatingService(context);
+                        lanuchSpeedFloationWindows(context,false);
                         gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Disabled);
                         //Toast.makeText(context,"Ended",Toast.LENGTH_SHORT).show();
                         break;
@@ -74,6 +77,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         break;
                     case 39:
                         stopFloatingService(context);
+                        lanuchSpeedFloationWindows(context,false);
                         gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Disabled);
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         break;
@@ -183,6 +187,40 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             Intent floatService = new Intent(context, NaviFloatingService.class);
             floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
             context.startService(floatService);
+        }
+    }
+    private void lanuchSpeedFloationWindows(Context context,boolean enabled){
+        Intent defaultFloatingService=new Intent(context,FloatingService.class);
+        Intent AutoNavifloatService=new Intent(context,AutoNaviFloatingService.class);
+        Intent meterFloatingService=new Intent(context,MeterFloatingService.class);
+        if(!PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)){
+            return;
+        }
+        if(enabled){
+            String floatingStyle=PrefUtils.getFloatingStyle(context);
+            if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
+                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
+                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            }
+
+        }
+        else {
+            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+        }
+        try {
+            context.startService(defaultFloatingService);
+            context.startService(AutoNavifloatService);
+            context.startService(meterFloatingService);
+        } catch (Exception e) {
+            Log.d("huivip","Start Floating server Failed"+e.getMessage());
         }
     }
 }

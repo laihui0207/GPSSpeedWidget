@@ -93,7 +93,7 @@ public class AutoNaviFloatingService extends Service {
     @Override
     public void onCreate() {
         if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
-            Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_LONG).show();
             try {
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
             } catch (ActivityNotFoundException ignored) {
@@ -154,12 +154,12 @@ public class AutoNaviFloatingService extends Service {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
         int color = ContextCompat.getColor(this, colorRes);
         speedView.setTextColor(color);
-        speedOveralView.setVisibility(speeding || gpsUtil.getCameraDistance()>0 ? View.VISIBLE : View.GONE);
+        speedOveralView.setVisibility(speeding ? View.VISIBLE : View.GONE);
         limitTextView.setText(gpsUtil.getLimitSpeed()+"");
         limitDistanceTextView.setText(gpsUtil.getLimitDistance()+"");
         limitProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
         limitTypeTextView.setText(gpsUtil.getCameraTypeName());
-        limitView.setVisibility(speeding ? View.VISIBLE : View.GONE);
+        limitView.setVisibility(speeding || gpsUtil.getCameraDistance()>0  ? View.VISIBLE : View.GONE);
     }
    /* public void setSpeed(String speed) {
         if (PrefUtils.getShowSpeedometer(this) && speedView != null) {
@@ -271,9 +271,6 @@ public class AutoNaviFloatingService extends Service {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             final WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-            if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())){
-                return true;
-            }
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mInitialTouchX = event.getRawX();
@@ -287,6 +284,9 @@ public class AutoNaviFloatingService extends Service {
                     mIsClick = true;
                     return true;
                 case MotionEvent.ACTION_MOVE:
+                    if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())){
+                        return true;
+                    }
                     float dX = event.getRawX() - mInitialTouchX;
                     float dY = event.getRawY() - mInitialTouchY;
                     if ((mIsClick && (Math.abs(dX) > 10 || Math.abs(dY) > 10))
@@ -320,7 +320,12 @@ public class AutoNaviFloatingService extends Service {
                             fadeAnimator.play(fadeOut).before(fadeIn);
                             fadeAnimator.start();
                         }
-                    } else {
+                    }
+                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 2000) {
+                        Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
+                        PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),false);
+                    }
+                    else {
                         if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
                             animateViewToSideSlot();
                         } else {

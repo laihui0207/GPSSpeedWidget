@@ -173,7 +173,7 @@ public class GpsSpeedService extends Service {
                     }
                 }).start();
                 if (PrefUtils.isEnableFlatingWindow(getApplicationContext())
-                        && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+                        && !PrefUtils.isEnableAccessibilityService(getApplicationContext())) {
                     Intent floatService = new Intent(this, FloatingService.class);
                     String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
                     if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)){

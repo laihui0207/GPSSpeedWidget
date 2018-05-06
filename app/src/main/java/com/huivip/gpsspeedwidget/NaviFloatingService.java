@@ -67,6 +67,8 @@ public class NaviFloatingService extends Service{
     TextView cameraTypeNameTextView;
     @BindView(R.id.navi_limit_view)
     View naviCameraView;
+    @BindView(R.id.textView_autonavi_speedText)
+    TextView speedTextView;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -97,7 +99,7 @@ public class NaviFloatingService extends Service{
     @Override
     public void onCreate() {
         if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
-            Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_LONG).show();
             try {
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
             } catch (ActivityNotFoundException ignored) {
@@ -173,6 +175,7 @@ public class NaviFloatingService extends Service{
         else {
             naviCameraView.setVisibility(View.GONE);
         }
+        speedTextView.setText(gpsUtil.getKmhSpeedStr()+" km/h");
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
@@ -346,9 +349,7 @@ public class NaviFloatingService extends Service{
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             final WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-            if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())){
-                return true;
-            }
+
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mInitialTouchX = event.getRawX();
@@ -362,6 +363,9 @@ public class NaviFloatingService extends Service{
                     mIsClick = true;
                     return true;
                 case MotionEvent.ACTION_MOVE:
+                    if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())){
+                        return true;
+                    }
                     float dX = event.getRawX() - mInitialTouchX;
                     float dY = event.getRawY() - mInitialTouchY;
                     if ((mIsClick && (Math.abs(dX) > 10 || Math.abs(dY) > 10))
@@ -395,7 +399,12 @@ public class NaviFloatingService extends Service{
                             fadeAnimator.play(fadeOut).before(fadeIn);
                             fadeAnimator.start();
                         }
-                    } else {
+                    }
+                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 2000) {
+                        Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
+                        PrefUtils.setEnableNaviFloatingFixed(getApplicationContext(),false);
+                    }
+                    else {
                         if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
                              animateViewToSideSlot();
                         } else {

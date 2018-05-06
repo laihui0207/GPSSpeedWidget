@@ -2,6 +2,7 @@ package com.huivip.gpsspeedwidget.detection;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -59,10 +60,13 @@ public class AppDetectionService extends AccessibilityService {
         if (!isActivity) {
             return;
         }
+        boolean onAutoNavi=false;
+        gpsUtil=GpsUtil.getInstance(getApplicationContext());
        // when in auto navi or auto navi lite app, temp disable audio service
        if(componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
                || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)){
            PrefUtils.setEnableTempAudioService(getApplicationContext(),false);
+           onAutoNavi=true;
        }
       /* else {
            gpsUtil=GpsUtil.getInstance(getApplicationContext());
@@ -71,8 +75,8 @@ public class AppDetectionService extends AccessibilityService {
            }
        }*/
 
-        boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
-        PrefUtils.setOnDesktop(getApplicationContext(),shouldStopService);
+        boolean onDesktop = enabledApps.contains(componentName.getPackageName());
+        PrefUtils.setOnDesktop(getApplicationContext(),onDesktop);
         Intent floatService = new Intent(this, FloatingService.class);
         Intent AutoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
@@ -80,15 +84,26 @@ public class AppDetectionService extends AccessibilityService {
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        } else if(shouldStopService && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP)){
-            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        } else if(!shouldStopService && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
+        }
+
+        if(PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP) && onDesktop){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
+
+        if(!onDesktop && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
+            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+        }
+        if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
+                gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started){
+            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+        }
+
         String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
         if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
             meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
