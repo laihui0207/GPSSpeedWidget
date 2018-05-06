@@ -325,7 +325,8 @@ public class ConfigurationActivity extends Activity {
                 finish();
             }
         };
-
+        EditText delayTimeEditText=findViewById(R.id.editText_delay_started);
+        delayTimeEditText.setText(PrefUtils.getDelayStartOtherApp(getApplicationContext())+"");
         btnOk.setOnClickListener(confirmListener);
         TextView uidView=findViewById(R.id.textView_uid);
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());

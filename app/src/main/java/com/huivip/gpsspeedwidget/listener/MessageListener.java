@@ -68,10 +68,9 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         if(PrefUtils.isSeparatedVolume(context) && !PrefUtils.isEnableAudioMixService(context)){
             Log.d("huivip","increase music");
             am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
-            am.setSpeakerphoneOn(true);
+            //am.setSpeakerphoneOn(true);
             am.setStreamVolume(AudioManager.STREAM_SYSTEM,audioVolume,0);
-        }
-        if(!PrefUtils.isEnableAudioMixService(context)){
+        } else if(!PrefUtils.isEnableAudioMixService(context)){
             am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,audioVolume,0);
         }
 

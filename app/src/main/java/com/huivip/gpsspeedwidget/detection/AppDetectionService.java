@@ -75,8 +75,8 @@ public class AppDetectionService extends AccessibilityService {
            }
        }*/
 
-        boolean shouldStopService = enabledApps.contains(componentName.getPackageName());
-        PrefUtils.setOnDesktop(getApplicationContext(),shouldStopService);
+        boolean onDesktop = enabledApps.contains(componentName.getPackageName());
+        PrefUtils.setOnDesktop(getApplicationContext(),onDesktop);
         Intent floatService = new Intent(this, FloatingService.class);
         Intent AutoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
@@ -84,16 +84,21 @@ public class AppDetectionService extends AccessibilityService {
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        } else if(shouldStopService && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP)){
+        }
+
+        if(PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP) && onDesktop){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        } else if(!shouldStopService && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
+        }
+
+        if(!onDesktop && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        } else if (!shouldStopService && gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started && !onAutoNavi &&
-                PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)){
+        }
+        if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
+                gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
