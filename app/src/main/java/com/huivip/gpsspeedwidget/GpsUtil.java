@@ -115,7 +115,7 @@ public class GpsUtil implements AMapNaviListener {
         this.context = context;
         Random random = new Random();
         c = random.nextInt();
-        ttsUtil = TTSUtil.getInstance(context);
+       // ttsUtil = TTSUtil.getInstance(context);
         localNumberFormat.setMaximumFractionDigits(1);
     }
 

@@ -132,12 +132,12 @@ public class FloatingService extends Service{
         if(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext())) {
             RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
             speedLayout.addRule(RelativeLayout.RIGHT_OF, R.id.limit);
-            speedLayout.removeRule(RelativeLayout.BELOW);
+            //speedLayout.removeRule(RelativeLayout.BELOW);
             mSpeedometerView.setLayoutParams(speedLayout);
         } else {
             RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
             speedLayout.addRule(RelativeLayout.BELOW, R.id.limit);
-            speedLayout.removeRule(RelativeLayout.RIGHT_OF);
+            //speedLayout.removeRule(RelativeLayout.RIGHT_OF);
             mSpeedometerView.setLayoutParams(speedLayout);
         }
         initMonitorPosition();
