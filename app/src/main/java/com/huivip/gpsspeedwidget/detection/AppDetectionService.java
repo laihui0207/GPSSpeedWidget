@@ -98,7 +98,7 @@ public class AppDetectionService extends AccessibilityService {
             meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
         if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
-                gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started){
+                (gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started || !onAutoNavi)){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);

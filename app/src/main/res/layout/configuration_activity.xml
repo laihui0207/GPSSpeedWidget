@@ -14,19 +14,22 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_Navi_autoSolt" android:layout_alignBaseline="@+id/checkBox_navfloatiing"
                     android:layout_alignBottom="@+id/checkBox_navfloatiing"
-                    android:layout_toEndOf="@+id/checkBox_navfloatiing"/>
+                    android:layout_toEndOf="@+id/checkBox_navfloatiing" android:layout_toRightOf="@+id/checkBox_navfloatiing"/>
             <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/autoStart"
                     android:text="开机自动启动"
-                    android:layout_below="@+id/button_select_app" android:layout_toEndOf="@+id/button_select_app"/>
+                    android:layout_below="@+id/button_select_app"
+                    android:layout_toEndOf="@+id/button_select_app"
+                    android:layout_toRightOf="@+id/button_select_app"/>
             <CheckBox
                     android:text="记录GPS轨迹"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/recordGPS" android:layout_below="@+id/autoStart"
                     android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
                     android:layout_marginTop="13dp"/>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -37,7 +40,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/uploadGPSData"
-                        android:layout_below="@+id/recordGPS" android:layout_alignStart="@+id/recordGPS"/>
+                        android:layout_below="@+id/recordGPS"
+                        android:layout_alignLeft="@+id/recordGPS"
+                        android:layout_alignStart="@+id/recordGPS"/>
                 <Space
                         android:layout_width="10dp"
                         android:layout_height="wrap_content"/>
@@ -57,13 +62,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/enableFloatingWindow"
-                    android:layout_below="@+id/enableOver" android:layout_alignStart="@+id/linearLayout"/>
+                    android:layout_below="@+id/enableOver"
+                    android:layout_alignLeft="@+id/linearLayout"
+                    android:layout_alignStart="@+id/linearLayout"/>
             <CheckBox
                     android:text="开启智能巡航"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/enableAutoNavi"
                     android:layout_alignBaseline="@+id/enableAudio" android:layout_alignBottom="@+id/enableAudio"
+                    android:layout_toRightOf="@+id/button_select_app"
                     android:layout_toEndOf="@+id/button_select_app"/>
             <CheckBox
                     android:text="开启语音功能"
@@ -71,7 +79,9 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/enableAudio"
                     android:checked="false"
-                    android:layout_below="@+id/linearLayout" android:layout_toEndOf="@+id/enableAutoNavi"/>
+                    android:layout_below="@+id/linearLayout"
+                    android:layout_toRightOf="@+id/enableAutoNavi"
+                    android:layout_toEndOf="@+id/enableAutoNavi"/>
             <Button
                     android:text="Select maps"
                     android:layout_width="wrap_content"
@@ -87,13 +97,16 @@
                     android:elevation="21dp"
                     android:layout_below="@+id/checkBox_navfloatiing"
                     android:layout_alignStart="@+id/radioGroup_flatingSelect"
+                    android:layout_alignLeft="@+id/radioGroup_flatingSelect"
                     android:layout_marginTop="16dp"/>
             <Button
                     android:text="1. 允许顶层显示功能"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/EnableFalting"
-                    android:layout_below="@+id/enableAutoNavi" android:layout_alignStart="@+id/enableAutoNavi"
+                    android:layout_below="@+id/enableAutoNavi"
+                    android:layout_alignLeft="@+id/enableAutoNavi"
+                    android:layout_alignStart="@+id/enableAutoNavi"
                     android:layout_weight="1"/>
             <Button
                     android:text="2. 允许程序交互功能"
@@ -101,17 +114,21 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/enableOver"
                     android:layout_weight="1" android:layout_below="@+id/enableAudio"
-                    android:layout_toEndOf="@+id/EnableFalting"/>
+                    android:layout_toEndOf="@+id/EnableFalting"
+                    android:layout_toRightOf="@+id/EnableFalting"/>
             <CheckBox
                     android:text="桌面也显示悬浮窗口"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_below="@+id/enableFloatingWindow"
                     android:id="@+id/checkBox_showondescktop" android:layout_toEndOf="@+id/button_select_app"
+                    android:layout_toRightOf="@+id/button_select_app"
                     android:visibility="gone"/>
             <RadioGroup
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_below="@+id/checkBox_showondescktop"
+                    android:layout_toRightOf="@+id/button_select_app"
                     android:layout_toEndOf="@+id/button_select_app" android:layout_marginStart="15dp"
+                    android:layout_marginLeft="15dp"
                     android:id="@+id/radioGroup_flatingSelect">
                 <RadioButton
                         android:text="不在桌面显示"
@@ -138,11 +155,15 @@
                     android:text="自动靠边"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_above="@+id/radioGroup_flatingSelect"
-                    android:layout_toEndOf="@+id/enableFloatingWindow" android:id="@+id/checkBox_autoSolt"/>
+                    android:layout_toEndOf="@+id/enableFloatingWindow"
+                    android:layout_toRightOf="@+id/enableFloatingWindow"
+                    android:id="@+id/checkBox_autoSolt"/>
             <RadioGroup
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/checkBox_showLimit"
                     android:layout_toEndOf="@+id/checkBox_showLimit" android:layout_marginStart="15dp"
+                    android:layout_marginLeft="15dp"
                     android:id="@+id/radioGroup_flattingStyleSelect"
                     android:layout_below="@+id/checkBox_speed_fixed_position">
                 <RadioButton
@@ -167,7 +188,9 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/textView"
                     android:layout_alignBaseline="@+id/editText_speedadjust"
-                    android:layout_alignBottom="@+id/editText_speedadjust" android:layout_toEndOf="@+id/EnableFalting"/>
+                    android:layout_alignBottom="@+id/editText_speedadjust"
+                    android:layout_toRightOf="@+id/EnableFalting"
+                    android:layout_toEndOf="@+id/EnableFalting"/>
             <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -175,18 +198,23 @@
                     android:ems="5"
                     android:hint="0(-5,5)"
                     android:id="@+id/editText_speedadjust"
-                    android:layout_above="@+id/linearLayout" android:layout_toEndOf="@+id/textView"/>
+                    android:layout_above="@+id/linearLayout"
+                    android:layout_toRightOf="@+id/textView"
+                    android:layout_toEndOf="@+id/textView"/>
             <CheckBox
                     android:text="显示限速窗口"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_showLimit" android:layout_below="@+id/checkBox_autoSolt"
+                    android:layout_toRightOf="@+id/radioGroup_flatingSelect" android:layout_marginLeft="14dp"
                     android:layout_toEndOf="@+id/radioGroup_flatingSelect" android:layout_marginStart="14dp"/>
             <CheckBox
                     android:text="显示速度窗口"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_below="@+id/checkBox_showLimit"
-                    android:layout_alignStart="@+id/checkBox_showLimit" android:id="@+id/checkBox_showSpeed"/>
+                    android:layout_alignStart="@+id/checkBox_showLimit"
+                    android:layout_alignLeft="@+id/checkBox_showLimit"
+                    android:id="@+id/checkBox_showSpeed"/>
             <!-- <EditText
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
@@ -200,25 +228,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_h_direction"
-                    android:layout_below="@+id/checkBox_showSpeed" android:layout_alignStart="@+id/checkBox_showSpeed"/>
+                    android:layout_below="@+id/checkBox_showSpeed"
+                    android:layout_alignLeft="@+id/checkBox_showSpeed"
+                    android:layout_alignStart="@+id/checkBox_showSpeed" />
             <Button
                     android:text="启动其它应用"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/button_selectApp"
                     android:layout_alignBaseline="@+id/autoStart" android:layout_alignBottom="@+id/autoStart"
+                    android:layout_toLeftOf="@+id/editText_speedadjust"
                     android:layout_toStartOf="@+id/editText_speedadjust"/>
             <CheckBox
                     android:text="语音与音乐混合"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_below="@+id/linearLayout"
+                    android:layout_toRightOf="@+id/enableAudio"
                     android:layout_toEndOf="@+id/enableAudio" android:id="@+id/checkBox_mix"/>
             <TextView
                     android:text="语音音量:"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_audioVolume"
+                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp" android:layout_alignBaseline="@+id/editText_audioVolume"
+                    android:layout_toRightOf="@+id/checkBox_mix"
                     android:layout_alignBottom="@+id/editText_audioVolume" android:layout_toEndOf="@+id/checkBox_mix"/>
             <EditText
                     android:layout_width="wrap_content"
@@ -228,12 +262,14 @@
                     android:hint="设置语音音量"
                     android:id="@+id/editText_audioVolume"
                     android:layout_alignBaseline="@+id/checkBox_mix" android:layout_alignBottom="@+id/checkBox_mix"
+                    android:layout_toRightOf="@+id/textView_audioVolume"
                     android:layout_toEndOf="@+id/textView_audioVolume"/>
             <CheckBox
                     android:text="导航后台导航悬浮窗口"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_navfloatiing" android:layout_below="@+id/radioGroup_flatingSelect"
+                    android:layout_toRightOf="@+id/button_select_app"
                     android:layout_toEndOf="@+id/button_select_app"/>
             <CheckBox
                     android:text="新手模式"
@@ -241,6 +277,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_navi_mode"
                     android:layout_above="@+id/checkBox_h_direction"
+                    android:layout_toLeftOf="@+id/editText_audioVolume"
                     android:layout_toStartOf="@+id/editText_audioVolume" android:visibility="gone"/>
             <Button
                     android:text="检查更新"
@@ -248,6 +285,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/button_update"
                     android:layout_alignBaseline="@+id/confirm" android:layout_alignBottom="@+id/confirm"
+                    android:layout_toRightOf="@+id/confirm"
                     android:layout_toEndOf="@+id/confirm"/>
             <Button
                     android:text="反馈问题"
@@ -255,6 +293,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/button_feedback"
                     android:layout_alignBaseline="@+id/button_update" android:layout_alignBottom="@+id/button_update"
+                    android:layout_toRightOf="@+id/button_update"
                     android:layout_toEndOf="@+id/button_update"/>
             <TextView
                     android:text="长按悬浮窗 2秒取消位置固定"
@@ -262,6 +301,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_showmessage"
                     android:layout_alignBaseline="@+id/enableOver" android:layout_alignBottom="@+id/enableOver"
+                    android:layout_toRightOf="@+id/enableOver"
                     android:layout_toEndOf="@+id/enableOver"/>
             <CheckBox
                     android:text="高德样式"
@@ -270,17 +310,21 @@
                     android:id="@+id/checkBox_floating_style"
                     android:layout_alignBaseline="@+id/checkBox_h_direction"
                     android:layout_alignBottom="@+id/checkBox_h_direction"
+                    android:layout_toRightOf="@+id/editText_speedadjust"
                     android:layout_toEndOf="@+id/editText_speedadjust" android:visibility="gone"/>
             <Button
                     android:text="打赏"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/button_pay"
-                    android:layout_alignParentBottom="true" android:layout_toEndOf="@+id/button_uploadLog"/>
+                    android:layout_alignParentBottom="true"
+                    android:layout_toRightOf="@+id/button_uploadLog"
+                    android:layout_toEndOf="@+id/button_uploadLog"/>
             <TextView
                     android:text="延时"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_above="@+id/editText_speedadjust"
+                    android:layout_toRightOf="@+id/button_selectApp"
                     android:layout_toEndOf="@+id/button_selectApp" android:id="@+id/textView_delaytext"/>
             <EditText
                     android:layout_width="wrap_content"
@@ -289,12 +333,14 @@
                     android:ems="2"
                     android:id="@+id/editText_delay_started" android:text="0"
                     android:layout_alignBottom="@+id/button_selectApp"
+                    android:layout_toRightOf="@+id/textView_delaytext"
                     android:layout_toEndOf="@+id/textView_delaytext"/>
             <TextView
                     android:text="秒拉起第三方应用"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView8" android:layout_above="@+id/editText_speedadjust"
+                    android:layout_toRightOf="@+id/editText_delay_started"
                     android:layout_toEndOf="@+id/editText_delay_started"/>
             <CheckBox
                     android:text="固定位置"
@@ -303,6 +349,7 @@
                     android:id="@+id/checkBox_speed_fixed_position"
                     android:layout_alignBaseline="@+id/checkBox_autoSolt"
                     android:layout_alignBottom="@+id/checkBox_autoSolt"
+                    android:layout_toRightOf="@+id/checkBox_autoSolt"
                     android:layout_toEndOf="@+id/checkBox_autoSolt"/>
             <CheckBox
                     android:text="固定位置"
@@ -311,12 +358,14 @@
                     android:id="@+id/checkBox_navi_fixed_position"
                     android:layout_alignBaseline="@+id/checkBox_Navi_autoSolt"
                     android:layout_alignBottom="@+id/checkBox_Navi_autoSolt"
+                    android:layout_toRightOf="@+id/checkBox_Navi_autoSolt"
                     android:layout_toEndOf="@+id/checkBox_Navi_autoSolt"/>
             <Button
                     android:text="提交异常日志"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/button_uploadLog"
+                    android:layout_toRightOf="@+id/button_feedback"
                     android:layout_alignParentBottom="true" android:layout_toEndOf="@+id/button_feedback"/>
         </RelativeLayout>
     </ScrollView>
@@ -325,6 +374,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView3"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true" android:layout_alignParentStart="true"/>
     <TextView
             android:text="TextView"
@@ -332,12 +382,15 @@
             android:layout_height="wrap_content"
             android:id="@+id/textView_appVersion"
             android:layout_alignParentBottom="true" android:layout_toEndOf="@+id/textView3"
+            android:layout_toRightOf="@+id/textView3"
+            android:layout_marginLeft="52dp"
             android:layout_marginStart="52dp"/>
     <TextView
             android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView_uid"
+            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"/>
     <FrameLayout
             android:id="@+id/fl_container"

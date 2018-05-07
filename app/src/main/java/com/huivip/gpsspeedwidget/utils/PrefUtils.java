@@ -80,7 +80,11 @@ public abstract class PrefUtils {
     }
 
     public static String getGPSRemoteUrl(Context context){
-        return getSharedPreferences(context).getString(GPS_REMOTE_URL,Constant.LBSURL);
+        String url=getSharedPreferences(context).getString(GPS_REMOTE_URL,Constant.LBSURL);
+        if(!url.startsWith("http")){
+            url="http://"+url;
+        }
+        return url;
     }
     public static void setGpsRemoteUrl(Context context,String url){
         edit(context).putString(GPS_REMOTE_URL,url).apply();

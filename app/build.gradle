@@ -5,10 +5,10 @@ android {
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.huivip.gpsspeedwidget"
-        minSdkVersion 17
+        minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
-        versionName "1.7.3"
+        versionName "1.7.3.1"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {

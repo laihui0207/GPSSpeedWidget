@@ -36,14 +36,14 @@
                 android:name="com.amap.api.v2.apikey"
                 android:value="6d91e53ca05dee32ec58c9d257224e7b"/>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ConfigurationActivity">
+        <activity android:name=".ConfigurationActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>

@@ -304,6 +304,11 @@ public class AutoNaviFloatingService extends Service {
                         }
                     }
                     return true;
+                case MotionEvent.ACTION_POINTER_UP:
+                    Toast.makeText(getApplicationContext(),"双指单击关闭悬浮窗",Toast.LENGTH_SHORT).show();
+                    onStop();
+                    stopSelf();
+                    return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
                         if (fadeAnimator != null && fadeAnimator.isStarted()) {
