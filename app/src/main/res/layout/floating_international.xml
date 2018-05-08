@@ -25,8 +25,9 @@
             android:id="@+id/limit"
             android:layout_width="120dp"
             android:layout_height="120dp"
-
-            android:elevation="2dp" android:layout_marginBottom="5dp" android:visibility="gone">
+            android:background="@drawable/circle_limit"
+            android:visibility="gone"
+            android:elevation="2dp" android:layout_marginBottom="5dp">
 
         <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/limit_text"
@@ -40,7 +41,7 @@
                 android:textSize="30dp"
                 app:autoSizeTextType="uniform"
                 android:layout_alignParentBottom="true" android:layout_alignParentTop="true" android:padding="12dp"
-                android:layout_alignParentStart="true"/>
+                android:layout_alignParentStart="true" android:layout_alignParentLeft="true"/>
         <TextView
                 android:id="@+id/limit_show"
                 android:layout_width="match_parent"
@@ -51,7 +52,9 @@
                 android:textColor="#000"
                 android:textSize="15dp"
                 tools:text="限速" android:text="限速"
-                android:layout_alignParentBottom="true" android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_marginBottom="5dp"/>
         <TextView
                 android:text="0米"

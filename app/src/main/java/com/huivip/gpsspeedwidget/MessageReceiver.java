@@ -24,47 +24,53 @@ public class MessageReceiver extends BroadcastReceiver {
         new Thread() {
             @Override
             public void run() {
-                DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
-                CrashHandler.getInstance().init(context);
-                String deviceId=deviceUuidFactory.getDeviceUuid().toString();
-                Log.d("GPSWidget","DeviceId:"+deviceId);
-                Date now = new Date();
-                DBUtil dbUtil = new DBUtil(context);
-                List<LocationVO> locationVOList = dbUtil.getFromDate(now);
-                if (null != locationVOList && locationVOList.size() > 0) {
-                    if(locationVOList.size()>=BULK_SIZE){
-                        int counter=locationVOList.size()/BULK_SIZE;
-                        int leftSize=locationVOList.size()%BULK_SIZE;
-                        for(int i=0;i<counter;i++) {
-                            List<LocationVO> tempList = locationVOList.subList(i*BULK_SIZE+1,i*BULK_SIZE+1+BULK_SIZE);
+                try {
+                    DeviceUuidFactory deviceUuidFactory = new DeviceUuidFactory(context);
+                    CrashHandler.getInstance().init(context);
+                    String deviceId = deviceUuidFactory.getDeviceUuid().toString();
+                    Log.d("GPSWidget", "DeviceId:" + deviceId);
+                    Date now = new Date();
+                    DBUtil dbUtil = new DBUtil(context);
+                    List<LocationVO> locationVOList = dbUtil.getFromDate(now);
+                    if (null != locationVOList && locationVOList.size() > 0) {
+                        if (locationVOList.size() >= BULK_SIZE) {
+                            int counter = locationVOList.size() / BULK_SIZE;
+                            int leftSize = locationVOList.size() % BULK_SIZE;
+                            String result="";
+                            for (int i = 0; i < counter; i++) {
+                                List<LocationVO> tempList = locationVOList.subList(i * BULK_SIZE + 1, i * BULK_SIZE + 1 + BULK_SIZE);
+                                Map<String, String> params = new HashMap<String, String>();
+                                params.put("deviceId", deviceId);
+                                params.put("t", "gps");
+                                params.put("data", jsonStringFromList(tempList));
+                                result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context) + Constant.LBSPOSTGPSURL, params, "utf-8");
+                            }
+                            if(leftSize>0) {
+                                List<LocationVO> tempList = locationVOList.subList(counter * BULK_SIZE + 1, counter * BULK_SIZE + leftSize);
+                                Map<String, String> params = new HashMap<String, String>();
+                                params.put("deviceId", deviceId);
+                                params.put("t", "gps");
+                                params.put("data", jsonStringFromList(tempList));
+                                result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context) + Constant.LBSPOSTGPSURL, params, "utf-8");
+                                Log.d("GPSWidget", "Upload Data Result:" + result);
+                            }
+                            if (result != null && result.equalsIgnoreCase("Success")) {
+                                dbUtil.delete(now);
+                            }
+                        } else {
                             Map<String, String> params = new HashMap<String, String>();
                             params.put("deviceId", deviceId);
                             params.put("t", "gps");
-                            params.put("data", jsonStringFromList(tempList));
-                            String result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context)+Constant.LBSPOSTGPSURL, params, "utf-8");
-                        }
-                        List<LocationVO> tempList = locationVOList.subList(counter*BULK_SIZE+1,counter*BULK_SIZE+leftSize);
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("deviceId", deviceId);
-                        params.put("t", "gps");
-                        params.put("data", jsonStringFromList(tempList));
-                        String result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context)+Constant.LBSPOSTGPSURL, params, "utf-8");
-                        Log.d("GPSWidget","Upload Data Result:"+result);
-                        if(result!=null && result.equalsIgnoreCase("Success")) {
-                            dbUtil.delete(now);
+                            params.put("data", jsonStringFromList(locationVOList));
+                            String result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context) + Constant.LBSPOSTGPSURL, params, "utf-8");
+                            Log.d("GPSWidget", "Upload Data Result:" + result);
+                            if (result != null && result.equalsIgnoreCase("Success")) {
+                                dbUtil.delete(now);
+                            }
                         }
                     }
-                    else {
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("deviceId", deviceId);
-                        params.put("t", "gps");
-                        params.put("data", jsonStringFromList(locationVOList));
-                        String result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context)+Constant.LBSPOSTGPSURL, params, "utf-8");
-                        Log.d("GPSWidget","Upload Data Result:"+result);
-                        if(result!=null && result.equalsIgnoreCase("Success")) {
-                            dbUtil.delete(now);
-                        }
-                    }
+                }catch (Exception e){
+                    Log.d("huivip","upload data Error:"+e.getLocalizedMessage());
                 }
                 Log.d("huivip","Upload Data Finish");
             }

@@ -16,6 +16,7 @@
                     android:layout_width="100dp"
                     android:layout_height="90dp" android:src="@drawable/sou20_night"
                     android:id="@+id/imageView_turnicon"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true" android:layout_alignParentStart="true"/>
             <TextView
                     android:text="翡翠路" android:textColor="#fff"
@@ -23,7 +24,9 @@
                     android:layout_height="wrap_content" android:id="@+id/textView_currentroad"
                     android:gravity="center_vertical|center_horizontal"
                     android:textSize="20dp"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true" android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:layout_below="@+id/imageView_turnicon"/>
         </RelativeLayout>
 
@@ -36,13 +39,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/textView_nextroadname"
                     android:textSize="20dp"
-                    android:layout_below="@+id/textView_nextdistance" android:layout_alignParentStart="true"/>
+                    android:layout_below="@+id/textView_nextdistance" android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"/>
             <TextView
                     android:text="300米后" android:textColor="#fff"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/textView_nextdistance"
                     android:layout_weight="1"
                     android:textSize="30dp"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true" android:layout_alignParentStart="true"/>
             <TextView
                     android:text="剩余：" android:textColor="#fff"
@@ -50,6 +55,7 @@
                     android:layout_height="wrap_content" android:id="@+id/textView9" android:layout_weight="1"
                     android:gravity="right|center_vertical"
                     android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentBottom="true" android:textSize="13dp"/>
             <TextView
                     android:text="320公里-3小时29分钟" android:textColor="#fff"
@@ -57,11 +63,13 @@
                     android:layout_height="wrap_content" android:id="@+id/textView_totalleft" android:layout_weight="1"
                     android:gravity="left|center_vertical"
                     android:textSize="13dp" android:layout_alignParentBottom="true"
-                    android:layout_toEndOf="@+id/textView9" android:layout_alignEnd="@+id/navi_limit_view"/>
+                    android:layout_toRightOf="@+id/textView9"
+                    android:layout_toEndOf="@+id/textView9"/>
             <RelativeLayout
                     android:layout_width="100dp"
                     android:layout_height="100dp" android:id="@+id/navi_limit_view"
                     android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/textView_nextdistance"
                     android:layout_toEndOf="@+id/textView_nextdistance">
                 <ProgressBar
                         android:id="@+id/navi_progressBarLimit"
@@ -85,6 +93,7 @@
                         android:includeFontPadding="false"
                         android:textSize="40dp"
                         android:textStyle="bold"
+                        android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true" android:layout_alignParentStart="true"/>
                 <TextView
                         android:text="限速"
@@ -93,6 +102,7 @@
                         android:gravity="top|center_vertical|center_horizontal"
                         android:layout_height="20dp" android:id="@+id/textView_navi_limit_label"
                         android:textSize="13dp"
+                        android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true" android:layout_below="@+id/navi_number_limit"/>
                 <TextView
                         android:text="0米"
@@ -110,6 +120,7 @@
                     android:id="@+id/textView_autonavi_speedText"
                     android:textSize="24dp"
                     android:textColor="#fff" android:layout_below="@+id/textView_nextroadname"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"/>
         </RelativeLayout>
     </LinearLayout>

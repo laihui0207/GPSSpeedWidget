@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -607,7 +608,14 @@ public class ConfigurationActivity extends Activity {
                             ftp.uploadDirectory("/sda1/gps/"+deviceId.substring(0,deviceId.indexOf("-")),logDir);
                             File dir=new File(logDir);
                             if(dir.exists()){
-                                for(File file:dir.listFiles()){
+                                FileFilter filter = new FileFilter() {
+                                    @Override
+                                    public boolean accept(File pathname) {
+                                        return pathname.isFile() && pathname.getName().indexOf(".log")>-1;
+                                    }
+                                };
+
+                                for(File file:dir.listFiles(filter)){
                                         if(file.exists()){
                                             file.delete();
                                         }
