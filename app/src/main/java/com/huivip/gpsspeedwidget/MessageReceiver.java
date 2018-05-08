@@ -18,7 +18,7 @@ import java.util.*;
  * @author sunlaihui
  */
 public class MessageReceiver extends BroadcastReceiver {
-    private int BULK_SIZE=2000;
+    private int BULK_SIZE=120;
     @Override
     public void onReceive(final Context context, Intent intent) {
         new Thread() {
