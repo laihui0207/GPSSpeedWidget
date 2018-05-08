@@ -31,6 +31,8 @@ import java.util.TimerTask;
 public class GpsSpeedService extends Service {
     static final int MAX_VELOCITA_NUMBER = 140;
     public static final String EXTRA_AUTOBOOT = "com.huivip.gpsspeedwidget.EXTRA_AUTOBOOT";
+    public static final String EXTRA_AUTONAVI_AUTOBOOT = "com.huivip.gpsspeedwidget.EXTRA_AUTONAVI_AUTOBOOT";
+
     GpsUtil gpsUtil;
     AppWidgetManager manager;
 
@@ -77,7 +79,7 @@ public class GpsSpeedService extends Service {
            /* if (!PrefUtils.isWidgetActived(getApplicationContext())) {
                 return super.onStartCommand(intent, flags, startId);
             }*/
-            if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
+            if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped || (intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT,false) && serviceStoped)) {
                 serviceStoped = false;
                 /*Bitmap bitmap =BitmapFactory.decodeResource(getResources(), R.drawable.alt_0_z);// ((BitmapDrawable)getResources().getDrawable(R.drawable.alt_0)).getBitmap();
                 Matrix matrix  = new Matrix();
@@ -112,10 +114,6 @@ public class GpsSpeedService extends Service {
                     startService(floatService);
                 }
                 PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
-                /*if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false)) {
-                    intent.removeExtra(EXTRA_AUTOBOOT);
-                }*/
-
             } else {
                 serviceStoped = true;
                 /*                if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext()) ) {*/
@@ -172,17 +170,6 @@ public class GpsSpeedService extends Service {
                         }
                     }
                 }).start();
-                if (PrefUtils.isEnableFlatingWindow(getApplicationContext())
-                        && !PrefUtils.isEnableAccessibilityService(getApplicationContext())) {
-                    Intent floatService = new Intent(this, FloatingService.class);
-                    String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
-                    if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)){
-                        floatService=new Intent(this,AutoNaviFloatingService.class);
-                    }else if (floatingStyle.equals(PrefUtils.FLOATING_METER)){
-                        floatService=new Intent(this,MeterFloatingService.class);
-                    }
-                    startService(floatService);
-                }
                 autoBackUpGPSData();
             }
         }

@@ -25,7 +25,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         boolean start = PrefUtils.isEnableAutoStart(context);
                         boolean widgetActived=PrefUtils.isWidgetActived(context);
                         if(start && !widgetActived) {
-                            service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT,true);
+                            service.putExtra(GpsSpeedService.EXTRA_AUTONAVI_AUTOBOOT,true);
                             context.startService(service);
                         }
                         break;
