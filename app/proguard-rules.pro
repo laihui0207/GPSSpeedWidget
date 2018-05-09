@@ -103,19 +103,5 @@
 }
 #----------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------
-#glide
--keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public class org.apache.** { *;}
--keep public class com.bumptech.** { *;}
--keep public class devlight.io.** { *;}
--keep public class com.github.bumptech.glide.** { *;}
--keep public class com.jakewharton:butterknif.** { *;}
--keep public class com.jakewharton.** { *;}
--keep public class io.reactivex.** { *;}
--keep public class com.github.pluscubed.** { *;}
--keep public class com.jakewharton:butterknife-compiler.** { *;}
 
--keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
-  **[] $VALUES;
-  public *;
-}
