@@ -79,41 +79,54 @@ public class GpsSpeedService extends Service {
            /* if (!PrefUtils.isWidgetActived(getApplicationContext())) {
                 return super.onStartCommand(intent, flags, startId);
             }*/
-            if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped || (intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT,false) && serviceStoped)) {
-                serviceStoped = false;
-                /*Bitmap bitmap =BitmapFactory.decodeResource(getResources(), R.drawable.alt_0_z);// ((BitmapDrawable)getResources().getDrawable(R.drawable.alt_0)).getBitmap();
-                Matrix matrix  = new Matrix();
-                // matrix.setRotate((float)(gpsUtil.getSpeedometerPercentage()/100d*270f));
-                matrix.setRotate(135.0f,178f,178f);
-                Log.d("huivip",bitmap.getWidth()+","+bitmap.getHeight());
-                Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
-                this.remoteViews.setImageViewBitmap(R.id.ifreccia,rotatedBitmap);*/
-                /*                if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {*/
-                this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "...");
-                this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
-                this.remoteViews = null;
-               /* }
-                if(PrefUtils.isEnabledNumberWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {*/
-                this.numberRemoteViews.setTextViewText(R.id.number_speed, "...");
-                this.numberRemoteViews.setTextViewText(R.id.number_limit, "...");
-                this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, 0, false);
-                this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
-                this.numberRemoteViews = null;
-                /*  }*/
-
-                gpsUtil.startLocationService();
-                PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
-                if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
-                    Intent floatService = new Intent(this, FloatingService.class);
-                    String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
-                    if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)){
-                        floatService=new Intent(this,AutoNaviFloatingService.class);
-                    }else if (floatingStyle.equals(PrefUtils.FLOATING_METER)){
-                        floatService=new Intent(this,MeterFloatingService.class);
+            if ((intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT,false)) && serviceStoped) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Set<String> autoApps = PrefUtils.getAutoLaunchApps(getApplicationContext());
+                        int delayTime=PrefUtils.getDelayStartOtherApp(getApplicationContext());
+                        if(delayTime>0){
+                            try {
+                                Thread.sleep(delayTime*1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        for (String packageName : autoApps) {
+                            Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+                            if (launchIntent != null) {
+                                startActivity(launchIntent);//null pointer check in case package name was not found
+                            }
+                        }
                     }
-                    startService(floatService);
+                }).start();
+                autoBackUpGPSData();
+            }
+            if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped || intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT, false)) {
+                if (serviceStoped) {
+                    serviceStoped = false;
+                    this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "...");
+                    this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
+                    this.remoteViews = null;
+                    this.numberRemoteViews.setTextViewText(R.id.number_speed, "...");
+                    this.numberRemoteViews.setTextViewText(R.id.number_limit, "...");
+                    this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, 0, false);
+                    this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
+                    this.numberRemoteViews = null;
+                    gpsUtil.startLocationService();
+                    PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
+                    if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+                        Intent floatService = new Intent(this, FloatingService.class);
+                        String floatingStyle = PrefUtils.getFloatingStyle(getApplicationContext());
+                        if (floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
+                            floatService = new Intent(this, AutoNaviFloatingService.class);
+                        } else if (floatingStyle.equals(PrefUtils.FLOATING_METER)) {
+                            floatService = new Intent(this, MeterFloatingService.class);
+                        }
+                        startService(floatService);
+                    }
+                    PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
                 }
-                PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
             } else {
                 serviceStoped = true;
                 /*                if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext()) ) {*/
@@ -149,29 +162,7 @@ public class GpsSpeedService extends Service {
                 Toast.makeText(getApplicationContext(), "GPS服务关闭", Toast.LENGTH_SHORT).show();
                 stopSelf();
             }
-            if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false)) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Set<String> autoApps = PrefUtils.getAutoLaunchApps(getApplicationContext());
-                        int delayTime=PrefUtils.getDelayStartOtherApp(getApplicationContext());
-                        if(delayTime>0){
-                            try {
-                                Thread.sleep(delayTime*1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        for (String packageName : autoApps) {
-                            Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-                            if (launchIntent != null) {
-                                startActivity(launchIntent);//null pointer check in case package name was not found
-                            }
-                        }
-                    }
-                }).start();
-                autoBackUpGPSData();
-            }
+
         }
 
         return Service.START_REDELIVER_INTENT; // super.onStartCommand(intent,Service.START_FLAG_REDELIVERY,startId);

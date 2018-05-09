@@ -14,6 +14,15 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         GpsUtil gpsUtil=GpsUtil.getInstance(context);
+        if(intent.getAction().equalsIgnoreCase(Intent.ACTION_REBOOT)){
+            Intent service = new Intent(context, GpsSpeedService.class);
+            boolean start = PrefUtils.isEnableAutoStart(context);
+            boolean widgetActived=PrefUtils.isWidgetActived(context);
+            if(start && !widgetActived) {
+                service.putExtra(GpsSpeedService.EXTRA_AUTONAVI_AUTOBOOT,true);
+                context.startService(service);
+            }
+        }
         if( intent!=null && !TextUtils.isEmpty(intent.getAction()) && intent.getAction().equalsIgnoreCase(Constant.AMAP_SEND_ACTION)){
             int key=intent.getIntExtra("KEY_TYPE",-1);
             if(key==10019){
