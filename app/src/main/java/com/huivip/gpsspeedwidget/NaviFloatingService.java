@@ -175,7 +175,10 @@ public class NaviFloatingService extends Service{
         else {
             naviCameraView.setVisibility(View.GONE);
         }
-        speedTextView.setText(gpsUtil.getKmhSpeedStr()+" km/h");
+        speedTextView.setText(gpsUtil.getKmhSpeedStr() + " km/h");
+        int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
+        int color = ContextCompat.getColor(this, colorRes);
+        speedTextView.setTextColor(color);
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
