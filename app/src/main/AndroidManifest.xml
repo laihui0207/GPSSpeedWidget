@@ -57,6 +57,7 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="GPS_WIDGET_UPDATE"/>
             </intent-filter>
 
@@ -71,6 +72,7 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="GPS_WIDGET_UPDATE"/>
             </intent-filter>
 
@@ -81,6 +83,7 @@
         <receiver android:name=".MessageReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="com.huivip.recordGpsHistory.start"/>
             </intent-filter>
         </receiver>

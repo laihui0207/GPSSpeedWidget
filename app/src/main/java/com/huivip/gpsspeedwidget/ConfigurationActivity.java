@@ -760,12 +760,14 @@ public class ConfigurationActivity extends Activity {
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-        //if(!Settings.System.canWrite(this)){
-           /* Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
-                    Uri.parse("package:" + getPackageName()));
-            intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityForResult(intentWriteSetting, 124);*/
-       // }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!Settings.System.canWrite(this)){
+                Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                        Uri.parse("package:" + getPackageName()));
+                intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivityForResult(intentWriteSetting, 124);
+            }
+        }
     }
     private void askForPermission(String permission, Integer requestCode) {
         if (ContextCompat.checkSelfPermission(ConfigurationActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
