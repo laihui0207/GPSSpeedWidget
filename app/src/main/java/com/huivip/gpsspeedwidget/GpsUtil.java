@@ -32,7 +32,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 /**
  * @author sunlaihui
  */
-public class GpsUtil  {
+public class GpsUtil implements AMapNaviListener {
     Context context;
     private String latitude;
     private String longitude;
@@ -84,7 +84,6 @@ public class GpsUtil  {
     String latedDirectionName="";
     int naviFloatingStatus=0; // 0 disabled 1 visible
     int autoNaviStatus=0; // 0 no started  1 started
-    AutoNaviListener autoNaviListener;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     LocationListener locationListener = new LocationListener() {
         @Override
@@ -134,7 +133,6 @@ public class GpsUtil  {
     public void startLocationService() {
         if (serviceStarted) return;
         this.locationTimer = new Timer();
-        autoNaviListener=new AutoNaviListener();
         speedAdjust = PrefUtils.getSpeedAdjust(context);
         this.locationScanTask = new TimerTask() {
             @Override
@@ -191,7 +189,7 @@ public class GpsUtil  {
             } else {
                 aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
             }
-            aMapNavi.addAMapNaviListener(autoNaviListener);
+            aMapNavi.addAMapNaviListener(this);
             aMapNavi.getNaviSetting().setTrafficStatusUpdateEnabled(true);
             aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
         }
@@ -200,7 +198,7 @@ public class GpsUtil  {
     private void stopAimlessNavi() {
         if (aMapNavi != null) {
             aMapNavi.stopAimlessMode();
-            aMapNavi.removeAMapNaviListener(autoNaviListener);
+            aMapNavi.removeAMapNaviListener(this);
             aMapNavi.destroy();
             aMapNavi = null;
             aimlessStatred = false;
@@ -324,13 +322,6 @@ public class GpsUtil  {
             }
         }
         speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
-        //mphSpeedStr = localNumberFormat.format(mphSpeed);
-        //kmhSpeedStr = localNumberFormat.format(kmhSpeed);
-       /* if (limitDistance > 0) {
-            limitDistancePercentage = Math.round((300F - limitDistance) / 300 * 100);
-        } else if (limitDistance <= 0 || limitSpeed == 0) {
-            limitDistancePercentage = 0;
-        }*/
         // limit speak just say one times in one minutes
         if (limitSpeed > 0 && kmhSpeed > limitSpeed) {
             hasLimited = true;
@@ -625,7 +616,7 @@ public class GpsUtil  {
 
     String speakText = "";
 
-    public class AutoNaviListener implements AMapNaviListener {
+
         @Override
         public void onInitNaviFailure () {
         aimlessStatred = false;
@@ -871,6 +862,5 @@ public class GpsUtil  {
             //cameraLocation = null;
             ttsUtil.speak("已通过");
         }
-    }
     }
 }

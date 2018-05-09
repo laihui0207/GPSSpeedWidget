@@ -42,12 +42,11 @@
         <RelativeLayout android:id="@+id/autoNavi_limitLayout"
                         android:layout_width="90dp"
                         android:gravity="center"
-                        android:background="@drawable/circle_watch_limit_number"
                         android:layout_gravity="center"
                         android:layout_height="90dp"
                         android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
-                        android:visibility="gone">
+        >
             <ProgressBar
                     android:id="@+id/autoNavi_progressBarLimit"
                     android:layout_width="match_parent"
