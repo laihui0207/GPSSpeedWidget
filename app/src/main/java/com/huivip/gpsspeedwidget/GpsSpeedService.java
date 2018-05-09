@@ -79,7 +79,7 @@ public class GpsSpeedService extends Service {
            /* if (!PrefUtils.isWidgetActived(getApplicationContext())) {
                 return super.onStartCommand(intent, flags, startId);
             }*/
-            if ((intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT,false) && serviceStoped)) {
+            if ((intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT,false)) && serviceStoped) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
