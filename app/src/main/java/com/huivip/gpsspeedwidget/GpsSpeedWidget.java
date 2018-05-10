@@ -21,13 +21,14 @@ public class GpsSpeedWidget extends AppWidgetProvider {
         Intent service = new Intent(context, GpsSpeedService.class);
         views.setOnClickPendingIntent(R.id.ifreccia, PendingIntent.getService(context, 0,
                 service, 0));
-        if(paramIntent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)){
+        /*if(paramIntent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)
+                || paramIntent.getAction().equalsIgnoreCase("android.intent.action.QUICKBOOT_POWERON")){
             boolean start = PrefUtils.isEnableAutoStart(context);
             if(start) {
                 service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT,true);
                 context.startService(service);
             }
-        }
+        }*/
 
         ComponentName localComponentName = new ComponentName(context, GpsSpeedWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);

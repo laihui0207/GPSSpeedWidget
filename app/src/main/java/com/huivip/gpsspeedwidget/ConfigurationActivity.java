@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -607,7 +608,14 @@ public class ConfigurationActivity extends Activity {
                             ftp.uploadDirectory("/sda1/gps/"+deviceId.substring(0,deviceId.indexOf("-")),logDir);
                             File dir=new File(logDir);
                             if(dir.exists()){
-                                for(File file:dir.listFiles()){
+                                FileFilter filter = new FileFilter() {
+                                    @Override
+                                    public boolean accept(File pathname) {
+                                        return pathname.isFile() && pathname.getName().indexOf(".log")>-1;
+                                    }
+                                };
+
+                                for(File file:dir.listFiles(filter)){
                                         if(file.exists()){
                                             file.delete();
                                         }
@@ -752,12 +760,14 @@ public class ConfigurationActivity extends Activity {
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-        //if(!Settings.System.canWrite(this)){
-           /* Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
-                    Uri.parse("package:" + getPackageName()));
-            intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityForResult(intentWriteSetting, 124);*/
-       // }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!Settings.System.canWrite(this)){
+                Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                        Uri.parse("package:" + getPackageName()));
+                intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivityForResult(intentWriteSetting, 124);
+            }
+        }
     }
     private void askForPermission(String permission, Integer requestCode) {
         if (ContextCompat.checkSelfPermission(ConfigurationActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {

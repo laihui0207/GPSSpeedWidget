@@ -132,12 +132,16 @@ public class FloatingService extends Service{
         if(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext())) {
             RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
             speedLayout.addRule(RelativeLayout.RIGHT_OF, R.id.limit);
-            //speedLayout.removeRule(RelativeLayout.BELOW);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                speedLayout.removeRule(RelativeLayout.BELOW);
+            }
             mSpeedometerView.setLayoutParams(speedLayout);
         } else {
             RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
             speedLayout.addRule(RelativeLayout.BELOW, R.id.limit);
-            //speedLayout.removeRule(RelativeLayout.RIGHT_OF);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                speedLayout.removeRule(RelativeLayout.RIGHT_OF);
+            }
             mSpeedometerView.setLayoutParams(speedLayout);
         }
         initMonitorPosition();
@@ -264,13 +268,15 @@ public class FloatingService extends Service{
 
                 mFloatingView.setVisibility(View.VISIBLE);
 
-                mFloatingView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mFloatingView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
             }
         });
     }
 
     public void setSpeeding(boolean speeding) {
-        int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
+        int colorRes = speeding ? R.color.red500 : R.color.cardview_light_background;
         int color = ContextCompat.getColor(this, colorRes);
         mSpeedometerText.setTextColor(color);
     }
@@ -308,6 +314,8 @@ public class FloatingService extends Service{
         private int mInitialX;
         private int mInitialY;
         private long mStartClickTime;
+        private long mPointClickTime;
+        private boolean mIsPointClick;
         private boolean mIsClick;
 
         private AnimatorSet fadeAnimator;
@@ -369,6 +377,11 @@ public class FloatingService extends Service{
                         } catch (IllegalArgumentException ignore) {
                         }
                     }
+                    return true;
+                case MotionEvent.ACTION_POINTER_UP:
+                        Toast.makeText(getApplicationContext(),"双指单击关闭悬浮窗",Toast.LENGTH_SHORT).show();
+                        onStop();
+                        stopSelf();
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {

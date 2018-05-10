@@ -98,27 +98,28 @@ public class AppDetectionService extends AccessibilityService {
             meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
         if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
-                gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started){
+                (gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started || !onAutoNavi)){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
 
-        String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
-        if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
-            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-        } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        }
+
         try {
-            startService(floatService);
-            startService(AutoNavifloatService);
-            startService(meterFloatingService);
+            String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
+            if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
+               /* meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);*/
+                startService(floatService);
+            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
+               /* floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);*/
+                startService(AutoNavifloatService);
+            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
+               /* AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                floatService.putExtra(FloatingService.EXTRA_CLOSE, true);*/
+                startService(meterFloatingService);
+            }
         } catch (Exception e) {
             Log.d("huivip","Start Floating server Failed"+e.getMessage());
         }

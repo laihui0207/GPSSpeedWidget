@@ -25,7 +25,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         boolean start = PrefUtils.isEnableAutoStart(context);
                         boolean widgetActived=PrefUtils.isWidgetActived(context);
                         if(start && !widgetActived) {
-                            service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT,true);
+                            service.putExtra(GpsSpeedService.EXTRA_AUTONAVI_AUTOBOOT,true);
                             context.startService(service);
                         }
                         break;
@@ -104,6 +104,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 }
                 else {
                     gpsUtil.setCurrentRoadName("");
+                }
+                int limitSpeed=intent.getIntExtra("LIMITED_SPEED",0);
+                if(limitSpeed!=-1) {
+                    gpsUtil.setCameraSpeed(limitSpeed);
                 }
                 String nextRoadName=intent.getStringExtra("NEXT_ROAD_NAME");
                 if(!TextUtils.isEmpty(nextRoadName)){
