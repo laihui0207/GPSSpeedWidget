@@ -153,23 +153,23 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 if(cameraType>-1){
                     gpsUtil.setCameraType(cameraType);
                 }
-                else {
+               /* else {
                     gpsUtil.setCameraType(-1);
-                }
+                }*/
                 int cameraDistance=intent.getIntExtra("CAMERA_DIST",0);
                 if(cameraDistance>0){
                     gpsUtil.setCameraDistance(cameraDistance);
                 }
-                else {
+                /*else {
                     gpsUtil.setCameraDistance(0);
-                }
+                }*/
                 int cameraSpeed=intent.getIntExtra("CAMERA_SPEED",0);
                 if(cameraSpeed>0){
                     gpsUtil.setCameraSpeed(cameraSpeed);
                 }
-                else {
+               /* else {
                     gpsUtil.setCameraSpeed(0);
-                }
+                }*/
             }
             /*if(key==10072){  // return mute status
                 Toast.makeText(context,"静音状态:"+intent.getIntExtra("EXTRA_MUTE",-1)+",临时静音:"+

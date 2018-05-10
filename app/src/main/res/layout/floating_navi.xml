@@ -69,8 +69,8 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp" android:id="@+id/navi_limit_view"
                     android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/textView_nextdistance"
-                    android:layout_toEndOf="@+id/textView_nextdistance">
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="false">
                 <ProgressBar
                         android:id="@+id/navi_progressBarLimit"
                         android:layout_width="match_parent"

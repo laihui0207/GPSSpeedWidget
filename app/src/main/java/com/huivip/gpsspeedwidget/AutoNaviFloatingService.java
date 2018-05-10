@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -80,7 +81,12 @@ public class AutoNaviFloatingService extends Service {
     }
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
-            mWindowManager.removeView(mFloatingView);
+            try {
+                mWindowManager.removeView(mFloatingView);
+            }catch (Exception e){
+                Log.d("huivip",e.getLocalizedMessage());
+                e.printStackTrace();
+            }
         }
         if(locationTimer!=null){
             locationTimer.cancel();

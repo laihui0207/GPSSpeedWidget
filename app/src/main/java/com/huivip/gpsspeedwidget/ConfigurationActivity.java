@@ -385,59 +385,18 @@ public class ConfigurationActivity extends Activity {
             }
         });
         CheckBox newDriverMode=findViewById(R.id.checkBox_navi_mode);
-        newDriverMode.setChecked(PrefUtils.isNewDriverMode(getApplicationContext()));
+        newDriverMode.setChecked(PrefUtils.isOldDriverMode(getApplicationContext()));
         newDriverMode.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                PrefUtils.setNewDriverMode(getApplicationContext(),buttonView.isChecked());
+                PrefUtils.setOldDriverMode(getApplicationContext(),buttonView.isChecked());
             }
         });
         TextView appVersion=findViewById(R.id.textView_appVersion);
         appVersion.setText("当前版本："+BuildConfig.VERSION_NAME);
         Button checkUpdateButton=findViewById(R.id.button_update);
-        final Handler AlterHandler=new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                if(msg.arg1==0) {
-                    AlertDialog.Builder  mDialog = new AlertDialog.Builder(ConfigurationActivity.this);
-                    mDialog.setTitle("版本检查");
-                    mDialog.setMessage("已是最新版本，无需更新！");
-                    mDialog.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {
-                            dialog.dismiss();
-                        }
-                    });
-                    mDialog.create().show();
-                }
-                else if (msg.arg1==1){
-                    AlertDialog.Builder  mDialog = new AlertDialog.Builder(ConfigurationActivity.this);
-                    try {
-                        JSONObject updateInfo=new JSONObject((String)msg.obj);
-                        JSONObject data= (JSONObject) updateInfo.get("data");
-                        mDialog.setTitle("版本升级");
-                        mDialog.setMessage(data.getString("upgradeinfo")).setCancelable(true);
-                        String updateUrl=data.getString("updateurl");
-                        String appName=data.getString("appname");
-                        mDialog.setPositiveButton("更新", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                HttpUtils.downLoadApk(ConfigurationActivity.this,updateUrl,appName);
-                            }
-                        }).setNegativeButton("不用了", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
 
-                   mDialog.create().show();
-                }
-            }
-        };
         View.OnClickListener checkUpdateListener=new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -448,7 +407,7 @@ public class ConfigurationActivity extends Activity {
                         String updateInfo=HttpUtils.getData(Constant.LBSURL+"/updateInfo?type=mini");
                         try {
                             if(!TextUtils.isEmpty(updateInfo) && !updateInfo.equalsIgnoreCase("-1")) {
-                                String currentVersion=Utils.getLocalVersion(getApplicationContext());
+                                String currentVersion=Utils.getLocalVersion(ConfigurationActivity.this);
                                 JSONObject infoObj = new JSONObject(updateInfo);
                                 JSONObject data= (JSONObject) infoObj.get("data");
                                 String updateVersion=data.getString("serverVersion");
@@ -479,6 +438,48 @@ public class ConfigurationActivity extends Activity {
                     }
                 }).start();
             }
+            final Handler AlterHandler=new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    if(msg.arg1==0) {
+                        AlertDialog.Builder  mDialog = new AlertDialog.Builder(ConfigurationActivity.this);
+                        mDialog.setTitle("版本检查");
+                        mDialog.setMessage("已是最新版本，无需更新！");
+                        mDialog.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                        mDialog.create().show();
+                    }
+                    else if (msg.arg1==1){
+                        AlertDialog.Builder  mDialog = new AlertDialog.Builder(ConfigurationActivity.this);
+                        try {
+                            JSONObject updateInfo=new JSONObject((String)msg.obj);
+                            JSONObject data= (JSONObject) updateInfo.get("data");
+                            mDialog.setTitle("版本升级");
+                            mDialog.setMessage(data.getString("upgradeinfo")).setCancelable(true);
+                            String updateUrl=data.getString("updateurl");
+                            String appName=data.getString("appname");
+                            mDialog.setPositiveButton("更新", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    HttpUtils.downLoadApk(ConfigurationActivity.this,updateUrl,appName);
+                                }
+                            }).setNegativeButton("不用了", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        mDialog.create().show();
+                    }
+                }
+            };
         };
         checkUpdateButton.setOnClickListener(checkUpdateListener);
         Button feedbackButton=findViewById(R.id.button_feedback);
@@ -760,12 +761,14 @@ public class ConfigurationActivity extends Activity {
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-        //if(!Settings.System.canWrite(this)){
-           /* Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
-                    Uri.parse("package:" + getPackageName()));
-            intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityForResult(intentWriteSetting, 124);*/
-       // }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!Settings.System.canWrite(this)){
+                Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                        Uri.parse("package:" + getPackageName()));
+                intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivityForResult(intentWriteSetting, 124);
+            }
+        }
     }
     private void askForPermission(String permission, Integer requestCode) {
         if (ContextCompat.checkSelfPermission(ConfigurationActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
