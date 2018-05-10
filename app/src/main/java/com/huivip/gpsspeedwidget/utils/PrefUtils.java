@@ -149,10 +149,10 @@ public abstract class PrefUtils {
     public static void setOnDesktop(Context context,boolean onDesktop){
         edit(context).putBoolean(ACTIVITY_ON_DESKTOP, onDesktop).apply();
     }
-    public static boolean isNewDriverMode(Context context){
+    public static boolean isOldDriverMode(Context context){
         return getSharedPreferences(context).getBoolean(NAVI_MODE_NEW_DRIVER, false);
     }
-    public static void setNewDriverMode(Context context,boolean newer){
+    public static void setOldDriverMode(Context context, boolean newer){
         edit(context).putBoolean(NAVI_MODE_NEW_DRIVER, newer).apply();
     }
     public static boolean isWidgetActived(Context context){

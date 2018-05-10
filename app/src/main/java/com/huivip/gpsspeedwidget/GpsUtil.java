@@ -184,14 +184,16 @@ public class GpsUtil implements AMapNaviListener {
         }
         if (PrefUtils.isEnableAutoNaviService(context) && !aimlessStatred) {
             aMapNavi = AMapNavi.getInstance(context);
-            if(PrefUtils.isNewDriverMode(context)){
-                aMapNavi.setBroadcastMode(BroadcastMode.DETAIL);
-            } else {
+            if(PrefUtils.isOldDriverMode(context)){
                 aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
+                aMapNavi.startAimlessMode(AimLessMode.CAMERA_DETECTED);
+            } else {
+                aMapNavi.setBroadcastMode(BroadcastMode.DETAIL);
+                aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
             }
             aMapNavi.addAMapNaviListener(this);
             aMapNavi.getNaviSetting().setTrafficStatusUpdateEnabled(true);
-            aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
+
         }
     }
 

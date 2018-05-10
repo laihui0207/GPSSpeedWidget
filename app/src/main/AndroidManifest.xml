@@ -115,9 +115,9 @@
                     android:resource="@xml/accessibility_service"/>
         </service>
 
-        <activity android:name=".AudioTestActivity">
+        <activity android:name=".AudioTestActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
         </activity>
-        <activity android:name=".BackupGPSHistoryActivity"></activity>
+        <activity android:name=".BackupGPSHistoryActivity" android:windowSoftInputMode="stateHidden|stateUnchanged"></activity>
         <activity android:name=".appselection.AppSelectionActivity"></activity>
     </application>
 
