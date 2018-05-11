@@ -4,20 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.os.Environment;
-import android.os.PowerManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.huivip.gpsspeedwidget.speech.SpeechFactory;
+import com.huivip.gpsspeedwidget.speech.TTS;
+import com.huivip.gpsspeedwidget.speech.XFTTS;
 import com.huivip.gpsspeedwidget.utils.*;
-import org.apache.commons.net.ftp.FTPClient;
-
-import java.io.File;
-import java.io.IOException;
 
 public class AudioTestActivity extends Activity {
     AudioManager audioManager;
@@ -108,8 +103,12 @@ public class AudioTestActivity extends Activity {
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TTSUtil ttsUtil=TTSUtil.getInstance(getApplicationContext());
-                ttsUtil.speak("你好，语音测试成功");
+                //BDTTS BDTTS=BDTTS.getInstance(getApplicationContext());
+                //BDTTS.speak("你好，语音测试成功");
+                //SpeechUtils speechUtils=SpeechUtils.getInstance(getApplicationContext());
+                //speechUtils.speakText("你好，语音测试成功");
+                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.XUNFEITTS);
+                tts.speak("你好，语音测试成功");
             }
         });
 

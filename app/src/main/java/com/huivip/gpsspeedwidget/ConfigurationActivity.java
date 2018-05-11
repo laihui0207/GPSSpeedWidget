@@ -29,6 +29,7 @@ import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
+import com.huivip.gpsspeedwidget.speech.BDTTS;
 import com.huivip.gpsspeedwidget.utils.*;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -186,9 +187,9 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 PrefUtils.setEnableAudioMixService(getApplicationContext(),compoundButton.isChecked());
-                TTSUtil ttsUtil=TTSUtil.getInstance(getApplicationContext());
-                ttsUtil.release();
-                ttsUtil.initTTs();
+                BDTTS bdtts =BDTTS.getInstance(getApplicationContext());
+                bdtts.release();
+                bdtts.initTTS();
             }
         });
         enableAutoNaviCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){

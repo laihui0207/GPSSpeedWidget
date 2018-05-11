@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget.utils;
+package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -9,13 +9,14 @@ import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
 import com.huivip.gpsspeedwidget.listener.MessageListener;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TTSUtil {
+public class BDTTS  implements  TTS {
     Context context;
     protected String appId = "10875643";
     protected String appKey = "645OiDA3l2baAATnci6lTzC6";
@@ -23,7 +24,7 @@ public class TTSUtil {
     protected TtsMode ttsMode = TtsMode.MIX;
     protected String offlineVoice = OfflineResource.VOICE_FEMALE;
     protected SpeechSynthesizer mSpeechSynthesizer;
-    private static TTSUtil ttsUtil;
+    private static BDTTS BDTTS;
     AudioManager am;
     boolean inited=false;
     // ================选择TtsMode.ONLINE  不需要设置以下参数; 选择TtsMode.MIX 需要设置下面2个离线资源文件的路径
@@ -35,29 +36,29 @@ public class TTSUtil {
     // 请确保该PATH下有这个文件 ，m15是离线男声
     private static final String MODEL_FILENAME =
             TEMP_DIR + "/" + "bd_etts_common_speech_f7_mand_eng_high_am-mix_v3.0.0_20170512.dat";
-    private TTSUtil(Context context) {
+    private BDTTS(Context context) {
         this.context=context;
-        initTTs();
+        initTTS();
         //am=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 
     }
 
-    public static TTSUtil getInstance(Context context) {
-        if (ttsUtil == null) {
-            synchronized (TTSUtil.class) {
-                if(ttsUtil==null) {
-                    ttsUtil = new TTSUtil(context);
+    public static BDTTS getInstance(Context context) {
+        if (BDTTS == null) {
+            synchronized (BDTTS.class) {
+                if(BDTTS ==null) {
+                    BDTTS = new BDTTS(context);
                 }
             }
         }
-        return ttsUtil;
+        return BDTTS;
     }
-
+    @Override
     public void speak(String text) {
         if (PrefUtils.isEnableAudioService(context) && PrefUtils.isEnableTempAudioService(context) && mSpeechSynthesizer!=null) {
             if(!inited){
                 release();
-                initTTs();
+                initTTS();
             }
             int result = mSpeechSynthesizer.speak(text);
             if(result!=0){
@@ -77,7 +78,8 @@ public class TTSUtil {
             mSpeechSynthesizer=null;
         }
     }
-    public void initTTs() {
+    @Override
+    public void initTTS() {
         LoggerProxy.printable(true); // 日志打印在logcat中
         boolean isMix = ttsMode.equals(TtsMode.MIX);
         boolean isSuccess;

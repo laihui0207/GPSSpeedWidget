@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
+import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -55,6 +56,7 @@ public abstract class PrefUtils {
     public static final String SHOW_ONLY_DESKTOP="2";
     public static final String SHOW_NO_DESKTOP="1";
     public static final String SHOW_ONLY_AUTONAVI="3";
+    public static final String TTS_ENGINE="com.huivip.TTS.Type";
 
 
     public static final String FLOATING_DEFAULT="0";
@@ -106,6 +108,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableAutoStart(Context context){
         return getSharedPreferences(context).getBoolean(AUTO_START_PREFS_NAME, true);
+    }
+    public static void setTTSEngineType(Context context,String style){
+        edit(context).putString(TTS_ENGINE, style).apply();
+    }
+    public static String getTtsEngine(Context context){
+        return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.BAIDUTTS);
     }
     public static void setFloattingStyle(Context context,String style){
         edit(context).putString(AUTO_FLOATTING_STYLE, style).apply();

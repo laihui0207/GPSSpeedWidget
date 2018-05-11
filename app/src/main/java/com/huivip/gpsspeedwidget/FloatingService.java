@@ -196,7 +196,7 @@ public class FloatingService extends Service{
     }
     void checkLocationData() {
         if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
-            if(gpsUtil.isGpsLocationChanged()){
+            //if(gpsUtil.isGpsLocationChanged()){
                 setSpeed(gpsUtil.getKmhSpeedStr(),gpsUtil.getSpeedometerPercentage());
                 mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
                 setSpeeding(gpsUtil.isHasLimited());
@@ -214,7 +214,7 @@ public class FloatingService extends Service{
                 else {
                     speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
                 }
-            }
+           // }
         }
         else {
            mSpeedometerText.setText("--");

@@ -17,8 +17,9 @@ import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.enums.*;
 import com.amap.api.navi.model.*;
 import com.autonavi.tbt.TrafficFacilityInfo;
+import com.huivip.gpsspeedwidget.speech.SpeechFactory;
+import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.TTSUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.text.NumberFormat;
@@ -60,7 +61,7 @@ public class GpsUtil implements AMapNaviListener {
     Timer locationTimer;
     AMapNavi aMapNavi;
     LocationManager locationManager;
-    TTSUtil ttsUtil;
+    TTS tts;
     boolean limitSpeaked = false;
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
@@ -115,7 +116,7 @@ public class GpsUtil implements AMapNaviListener {
         this.context = context;
         Random random = new Random();
         c = random.nextInt();
-        ttsUtil = TTSUtil.getInstance(context);
+        tts = SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
         localNumberFormat.setMaximumFractionDigits(1);
     }
 
@@ -217,8 +218,8 @@ public class GpsUtil implements AMapNaviListener {
             Intent recordService = new Intent(context, RecordGpsHistoryService.class);
             recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
             context.startService(recordService);
-            if (ttsUtil != null) {
-                ttsUtil.stop();
+            if (tts != null) {
+                tts.stop();
             }
             serviceStarted = false;
         }
@@ -331,7 +332,7 @@ public class GpsUtil implements AMapNaviListener {
             if (!limitSpeaked || limitCounter > 300) {
                 limitSpeaked = true;
                 limitCounter = 0;
-                ttsUtil.speak("您已超速");
+                tts.speak("您已超速");
             }
         } else {
             hasLimited = false;
@@ -626,7 +627,7 @@ public class GpsUtil implements AMapNaviListener {
 
         @Override
         public void onInitNaviSuccess () {
-        // ttsUtil.speak("智能巡航服务开启");
+        // BDTTS.speak("智能巡航服务开启");
         aimlessStatred = true;
         Toast.makeText(context, "智能巡航服务开启", Toast.LENGTH_SHORT).show();
     }
@@ -698,7 +699,7 @@ public class GpsUtil implements AMapNaviListener {
         if (PrefUtils.isEnableAudioService(context)) {
             if (!speakText.equalsIgnoreCase(s)) {
                 speakText = s;
-                ttsUtil.speak(s);
+                tts.speak(s);
             }
         }
     }
@@ -749,19 +750,19 @@ public class GpsUtil implements AMapNaviListener {
 
         @Override
         public void updateCameraInfo (AMapNaviCameraInfo[]aMapNaviCameraInfos){
-        for (AMapNaviCameraInfo aMapNaviCameraInfo : aMapNaviCameraInfos) {
+       /* for (AMapNaviCameraInfo aMapNaviCameraInfo : aMapNaviCameraInfos) {
             cameraType = aMapNaviCameraInfo.getCameraType();
             setCameraDistance(aMapNaviCameraInfo.getCameraDistance());
             if (aMapNaviCameraInfo.getCameraSpeed() > 0) {
                 setCameraSpeed(aMapNaviCameraInfo.getCameraSpeed());
             }
-        }
+        }*/
     }
 
         @Override
         public void updateIntervalCameraInfo (AMapNaviCameraInfo aMapNaviCameraInfo, AMapNaviCameraInfo
         aMapNaviCameraInfo1,int status){
-        if (status == CarEnterCameraStatus.ENTER) {
+        /*if (status == CarEnterCameraStatus.ENTER) {
             setCameraType(aMapNaviCameraInfo.getCameraType());
             setCameraSpeed(aMapNaviCameraInfo.getCameraSpeed());
             setCameraDistance(aMapNaviCameraInfo.getCameraDistance());
@@ -769,7 +770,7 @@ public class GpsUtil implements AMapNaviListener {
             setCameraType(aMapNaviCameraInfo1.getCameraType());
             setCameraSpeed(aMapNaviCameraInfo1.getCameraSpeed());
             setCameraDistance(aMapNaviCameraInfo1.getCameraDistance());
-        }
+        }*/
     }
 
         @Override
@@ -860,9 +861,9 @@ public class GpsUtil implements AMapNaviListener {
         public void onPlayRing ( int status){
         if (status == AMapNaviRingType.RING_EDOG) {
             //limitSpeed = 0;
-            limitDistance = 0F;
+            //limitDistance = 0F;
             //cameraLocation = null;
-            ttsUtil.speak("已通过");
+            tts.speak("已通过");
         }
     }
 }

@@ -1,8 +1,9 @@
-package com.huivip.gpsspeedwidget.utils;
+package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 
 import java.io.IOException;
 

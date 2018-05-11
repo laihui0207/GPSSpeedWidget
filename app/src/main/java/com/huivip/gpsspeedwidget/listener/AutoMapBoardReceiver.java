@@ -106,7 +106,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     gpsUtil.setCurrentRoadName("");
                 }
                 int limitSpeed=intent.getIntExtra("LIMITED_SPEED",0);
-                if(limitSpeed!=-1) {
+                if(limitSpeed>0) {
                     gpsUtil.setCameraSpeed(limitSpeed);
                 }
                 String nextRoadName=intent.getStringExtra("NEXT_ROAD_NAME");

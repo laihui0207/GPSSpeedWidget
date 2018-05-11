@@ -21,7 +21,11 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-<!--    <uses-permission android:name="android.permission.SHUTDOWN"/>-->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-feature android:name="android.hardware.location.gps"/>
 
     <application
@@ -69,9 +73,6 @@
                 android:label="SpeedNumber">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="android.intent.action.REBOOT" />
                 <action android:name="GPS_WIDGET_UPDATE"/>
             </intent-filter>
 
@@ -88,6 +89,13 @@
             <intent-filter>
                 <action android:name="AUTONAVI_STANDARD_BROADCAST_SEND"/>
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".listener.BootStartReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.REBOOT"/>
             </intent-filter>
         </receiver>
         <service android:name=".GpsSpeedService"/>

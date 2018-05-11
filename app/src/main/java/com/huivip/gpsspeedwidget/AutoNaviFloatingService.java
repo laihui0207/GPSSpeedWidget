@@ -145,12 +145,12 @@ public class AutoNaviFloatingService extends Service {
     }
     void checkLocationData() {
         if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
-            if(gpsUtil.isGpsLocationChanged()){
+            //if(gpsUtil.isGpsLocationChanged()){
                 //setSpeed(gpsUtil.getKmhSpeedStr());
                 speedView.setText(gpsUtil.getKmhSpeedStr()+"");
                 speedWheelView.setRotation((float)(gpsUtil.getSpeedometerPercentage()/100d*280f));
                 setSpeedOveral(gpsUtil.isHasLimited());
-            }
+            //}
         }
         else {
             speedView.setText("...");
@@ -161,11 +161,11 @@ public class AutoNaviFloatingService extends Service {
         int color = ContextCompat.getColor(this, colorRes);
         speedView.setTextColor(color);
         speedOveralView.setVisibility(speeding ? View.VISIBLE : View.GONE);
+        limitView.setVisibility(speeding || gpsUtil.getCameraDistance()>0  ? View.VISIBLE : View.GONE);
         limitTextView.setText(gpsUtil.getLimitSpeed()+"");
         limitDistanceTextView.setText(gpsUtil.getLimitDistance()+"");
         limitProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
         limitTypeTextView.setText(gpsUtil.getCameraTypeName());
-        limitView.setVisibility(speeding || gpsUtil.getCameraDistance()>0  ? View.VISIBLE : View.GONE);
     }
    /* public void setSpeed(String speed) {
         if (PrefUtils.getShowSpeedometer(this) && speedView != null) {
