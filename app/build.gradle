@@ -5,15 +5,15 @@ android {
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.huivip.gpsspeedwidget"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
-        versionName "1.7.3.3-4.1"
+        versionName "1.7.3.4-android4.1"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
-            abiFilters  "armeabi-v7a","x86"
+            abiFilters  "armeabi-v7a"
         }
     }
     lintOptions {
@@ -41,6 +41,7 @@ android {
             enabled true
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

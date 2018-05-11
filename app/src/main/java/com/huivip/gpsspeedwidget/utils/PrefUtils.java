@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
+import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -55,6 +56,7 @@ public abstract class PrefUtils {
     public static final String SHOW_ONLY_DESKTOP="2";
     public static final String SHOW_NO_DESKTOP="1";
     public static final String SHOW_ONLY_AUTONAVI="3";
+    public static final String TTS_ENGINE="com.huivip.TTS.Type";
 
 
     public static final String FLOATING_DEFAULT="0";
@@ -107,6 +109,12 @@ public abstract class PrefUtils {
     public static boolean isEnableAutoStart(Context context){
         return getSharedPreferences(context).getBoolean(AUTO_START_PREFS_NAME, true);
     }
+    public static void setTTSEngineType(Context context,String style){
+        edit(context).putString(TTS_ENGINE, style).apply();
+    }
+    public static String getTtsEngine(Context context){
+        return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.XUNFEITTS);
+    }
     public static void setFloattingStyle(Context context,String style){
         edit(context).putString(AUTO_FLOATTING_STYLE, style).apply();
     }
@@ -149,10 +157,10 @@ public abstract class PrefUtils {
     public static void setOnDesktop(Context context,boolean onDesktop){
         edit(context).putBoolean(ACTIVITY_ON_DESKTOP, onDesktop).apply();
     }
-    public static boolean isNewDriverMode(Context context){
+    public static boolean isOldDriverMode(Context context){
         return getSharedPreferences(context).getBoolean(NAVI_MODE_NEW_DRIVER, false);
     }
-    public static void setNewDriverMode(Context context,boolean newer){
+    public static void setOldDriverMode(Context context, boolean newer){
         edit(context).putBoolean(NAVI_MODE_NEW_DRIVER, newer).apply();
     }
     public static boolean isWidgetActived(Context context){

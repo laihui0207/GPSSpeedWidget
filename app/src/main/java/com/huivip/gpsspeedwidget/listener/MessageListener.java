@@ -96,7 +96,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
-        am.setSpeakerphoneOn(false);
+        //am.setSpeakerphoneOn(false);
         am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,currentVoiceCallVolume,0);
         am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
         am.setStreamVolume(AudioManager.STREAM_SYSTEM,currentSystemVolume,0);

@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -80,7 +81,12 @@ public class AutoNaviFloatingService extends Service {
     }
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
-            mWindowManager.removeView(mFloatingView);
+            try {
+                mWindowManager.removeView(mFloatingView);
+            }catch (Exception e){
+                Log.d("huivip",e.getLocalizedMessage());
+                e.printStackTrace();
+            }
         }
         if(locationTimer!=null){
             locationTimer.cancel();
@@ -139,12 +145,12 @@ public class AutoNaviFloatingService extends Service {
     }
     void checkLocationData() {
         if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
-            if(gpsUtil.isGpsLocationChanged()){
+            //if(gpsUtil.isGpsLocationChanged()){
                 //setSpeed(gpsUtil.getKmhSpeedStr());
                 speedView.setText(gpsUtil.getKmhSpeedStr()+"");
                 speedWheelView.setRotation((float)(gpsUtil.getSpeedometerPercentage()/100d*280f));
                 setSpeedOveral(gpsUtil.isHasLimited());
-            }
+            //}
         }
         else {
             speedView.setText("...");
@@ -155,11 +161,11 @@ public class AutoNaviFloatingService extends Service {
         int color = ContextCompat.getColor(this, colorRes);
         speedView.setTextColor(color);
         speedOveralView.setVisibility(speeding ? View.VISIBLE : View.GONE);
+        limitView.setVisibility(speeding || gpsUtil.getCameraDistance()>0  ? View.VISIBLE : View.GONE);
         limitTextView.setText(gpsUtil.getLimitSpeed()+"");
         limitDistanceTextView.setText(gpsUtil.getLimitDistance()+"");
         limitProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
         limitTypeTextView.setText(gpsUtil.getCameraTypeName());
-        limitView.setVisibility(speeding || gpsUtil.getCameraDistance()>0  ? View.VISIBLE : View.GONE);
     }
    /* public void setSpeed(String speed) {
         if (PrefUtils.getShowSpeedometer(this) && speedView != null) {
