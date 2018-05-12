@@ -161,7 +161,7 @@ public class AutoNaviFloatingService extends Service {
         int color = ContextCompat.getColor(this, colorRes);
         speedView.setTextColor(color);
         speedOveralView.setVisibility(speeding ? View.VISIBLE : View.GONE);
-        limitView.setVisibility(speeding || gpsUtil.getCameraDistance()>0  ? View.VISIBLE : View.GONE);
+        limitView.setVisibility(gpsUtil.getCameraDistance()>0  ? View.VISIBLE : View.GONE);
         limitTextView.setText(gpsUtil.getLimitSpeed()+"");
         limitDistanceTextView.setText(gpsUtil.getLimitDistance()+"");
         limitProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());

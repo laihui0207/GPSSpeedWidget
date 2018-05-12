@@ -113,7 +113,7 @@ public abstract class PrefUtils {
         edit(context).putString(TTS_ENGINE, style).apply();
     }
     public static String getTtsEngine(Context context){
-        return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.XUNFEITTS);
+        return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.BAIDUTTS);
     }
     public static void setFloattingStyle(Context context,String style){
         edit(context).putString(AUTO_FLOATTING_STYLE, style).apply();

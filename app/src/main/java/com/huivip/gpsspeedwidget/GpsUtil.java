@@ -832,8 +832,12 @@ public class GpsUtil implements AMapNaviListener {
             if (Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
                 cameraType = info.getBroadcastType();
                 setCameraDistance(info.getDistance());
-                if (info.getLimitSpeed() > 0) {
+                if (info.getLimitSpeed() > 0 && info.getDistance()>0) {
                     setCameraSpeed(info.getLimitSpeed());
+                }
+                else {
+                    setCameraSpeed(0);
+                    setCameraDistance(0);
                 }
             }
         }
@@ -860,8 +864,8 @@ public class GpsUtil implements AMapNaviListener {
         @Override
         public void onPlayRing ( int status){
         if (status == AMapNaviRingType.RING_EDOG) {
-            //limitSpeed = 0;
-            //limitDistance = 0F;
+            limitSpeed = 0;
+            limitDistance = 0F;
             //cameraLocation = null;
             tts.speak("已通过");
         }
