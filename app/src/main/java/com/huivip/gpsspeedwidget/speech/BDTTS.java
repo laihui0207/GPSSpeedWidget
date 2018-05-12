@@ -8,7 +8,6 @@ import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
-import com.huivip.gpsspeedwidget.listener.MessageListener;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
@@ -94,7 +93,7 @@ public class BDTTS  implements  TTS {
             }
         }
         // 日志更新在UI中，可以换成MessageListener，在logcat中查看日志
-        SpeechSynthesizerListener listener = new MessageListener(context);
+        SpeechSynthesizerListener listener = new BDTTSMessageListener(context);
 
         // 1. 获取实例
         mSpeechSynthesizer = SpeechSynthesizer.getInstance();

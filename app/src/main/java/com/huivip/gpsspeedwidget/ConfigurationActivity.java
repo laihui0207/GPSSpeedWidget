@@ -177,9 +177,9 @@ public class ConfigurationActivity extends Activity {
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
                 audidMixCheckBox.setEnabled(checkBoxButton.isChecked());
                 PrefUtils.setEnableAudioService(getApplicationContext(),checkBoxButton.isChecked());
-                if(checkBoxButton.isChecked()) {
+                /*if(checkBoxButton.isChecked()) {
                     checkIfCanIncreaseMusic();
-                }
+                }*/
             }
         });
         audidMixCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){

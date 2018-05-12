@@ -272,13 +272,14 @@
                     android:layout_toRightOf="@+id/button_select_app"
                     android:layout_toEndOf="@+id/button_select_app"/>
             <CheckBox
-                    android:text="新手模式"
+                    android:text="老司机模式"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_navi_mode"
-                    android:layout_above="@+id/checkBox_h_direction"
-                    android:layout_toLeftOf="@+id/editText_audioVolume"
-                    android:layout_toStartOf="@+id/editText_audioVolume" android:visibility="gone"/>
+                    android:layout_alignBaseline="@+id/checkBox_speed_fixed_position"
+                    android:layout_alignBottom="@+id/checkBox_speed_fixed_position"
+                    android:layout_toRightOf="@+id/checkBox_speed_fixed_position"
+                    android:layout_toEndOf="@+id/checkBox_speed_fixed_position"/>
             <Button
                     android:text="检查更新"
                     android:layout_width="wrap_content"

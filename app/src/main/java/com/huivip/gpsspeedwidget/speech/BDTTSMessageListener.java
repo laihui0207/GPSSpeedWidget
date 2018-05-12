@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget.listener;
+package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -13,8 +13,8 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
  * Created by fujiayi on 2017/5/19.
  */
 
-public class MessageListener implements SpeechSynthesizerListener, MainHandlerConstant {
-    private static final String TAG = "MessageListener";
+public class BDTTSMessageListener implements SpeechSynthesizerListener, MainHandlerConstant {
+    private static final String TAG = "BDTTSMessageListener";
     Context context;
     AudioManager am;
     int currentSystemVolume;
@@ -30,7 +30,7 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         sendMessage("准备开始合成,序列号:" + utteranceId);
     }
 
-    public MessageListener(Context context) {
+    public BDTTSMessageListener(Context context) {
         this.context = context;
         am= (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
@@ -65,12 +65,18 @@ public class MessageListener implements SpeechSynthesizerListener, MainHandlerCo
         currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
         int audioVolume=PrefUtils.getAudioVolume(context);
 
-        if(PrefUtils.isSeparatedVolume(context) && !PrefUtils.isEnableAudioMixService(context)){
+        /*if(PrefUtils.isSeparatedVolume(context) && !PrefUtils.isEnableAudioMixService(context)){
             Log.d("huivip","increase music");
             am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
             //am.setSpeakerphoneOn(true);
             am.setStreamVolume(AudioManager.STREAM_SYSTEM,audioVolume,0);
         } else if(!PrefUtils.isEnableAudioMixService(context)){
+            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,audioVolume,0);
+        }*/
+        if(PrefUtils.isEnableAudioMixService(context)){
+            am.setStreamVolume(AudioManager.STREAM_MUSIC,audioVolume,0);
+        }
+        else {
             am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,audioVolume,0);
         }
 
