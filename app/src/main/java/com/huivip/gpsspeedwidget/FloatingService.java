@@ -274,13 +274,15 @@ public class FloatingService extends Service{
 
                 mFloatingView.setVisibility(View.VISIBLE);
 
-                mFloatingView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mFloatingView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
             }
         });
     }
 
     public void setSpeeding(boolean speeding) {
-        int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
+        int colorRes = speeding ? R.color.red500 : R.color.cardview_light_background;
         int color = ContextCompat.getColor(this, colorRes);
         mSpeedometerText.setTextColor(color);
     }

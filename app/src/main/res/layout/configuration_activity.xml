@@ -230,7 +230,7 @@
                     android:id="@+id/checkBox_h_direction"
                     android:layout_below="@+id/checkBox_showSpeed"
                     android:layout_alignLeft="@+id/checkBox_showSpeed"
-                    android:layout_alignStart="@+id/checkBox_showSpeed" />
+                    android:layout_alignStart="@+id/checkBox_showSpeed" android:visibility="gone"/>
             <Button
                     android:text="启动其它应用"
                     android:layout_width="wrap_content"

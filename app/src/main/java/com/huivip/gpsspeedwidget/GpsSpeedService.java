@@ -115,8 +115,7 @@ public class GpsSpeedService extends Service {
                     this.numberRemoteViews = null;
                     gpsUtil.startLocationService();
                     PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
-                    if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)
-                            || !PrefUtils.isEnableAccessibilityService(getApplicationContext())) {
+                    if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
                         Intent floatService = new Intent(this, FloatingService.class);
                         String floatingStyle = PrefUtils.getFloatingStyle(getApplicationContext());
                         if (floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {

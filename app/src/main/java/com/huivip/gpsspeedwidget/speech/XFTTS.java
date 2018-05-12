@@ -156,7 +156,7 @@ public class XFTTS implements TTS {
     @Override
     public void initTTS() {
         //设置发音人
-        mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan");
+        mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaomei");
         //设置语速,值范围：[0, 100],默认值：50
         mTts.setParameter(SpeechConstant.SPEED, "55");
         //设置音量
