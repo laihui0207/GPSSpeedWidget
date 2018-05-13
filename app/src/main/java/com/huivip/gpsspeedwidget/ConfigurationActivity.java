@@ -602,6 +602,9 @@ public class ConfigurationActivity extends Activity {
                     PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.BAIDUTTS);
                     speakText="使用百度语音";
                 }
+                EditText ttsVolume=findViewById(R.id.editText_audioVolume);
+                String setedVolume=ttsVolume.getText().toString();
+                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(setedVolume));
                 TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
                 tts.speak(speakText);
             }

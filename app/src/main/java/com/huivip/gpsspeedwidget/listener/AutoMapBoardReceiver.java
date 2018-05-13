@@ -98,6 +98,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 //Toast.makeText(context,wayInfo,Toast.LENGTH_SHORT).show();
             }
             if(key==10001){  // navi information
+                //Toast.makeText(context,intent.getExtras().toString(),Toast.LENGTH_LONG).show();
                 String currentRoadName=intent.getStringExtra("CUR_ROAD_NAME");
                 if(!TextUtils.isEmpty(currentRoadName)){
                     gpsUtil.setCurrentRoadName(currentRoadName);
@@ -153,16 +154,16 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 if(cameraType>-1){
                     gpsUtil.setCameraType(cameraType);
                 }
-               /* else {
+                else {
                     gpsUtil.setCameraType(-1);
-                }*/
+                }
                 int cameraDistance=intent.getIntExtra("CAMERA_DIST",0);
                 if(cameraDistance>0){
                     gpsUtil.setCameraDistance(cameraDistance);
                 }
-                /*else {
+                else {
                     gpsUtil.setCameraDistance(0);
-                }*/
+                }
                 int cameraSpeed=intent.getIntExtra("CAMERA_SPEED",0);
                 if(cameraSpeed>0){
                     gpsUtil.setCameraSpeed(cameraSpeed);

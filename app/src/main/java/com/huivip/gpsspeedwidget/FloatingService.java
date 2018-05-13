@@ -282,7 +282,7 @@ public class FloatingService extends Service{
     }
 
     public void setSpeeding(boolean speeding) {
-        int colorRes = speeding ? R.color.red500 : R.color.cardview_light_background;
+        int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
         int color = ContextCompat.getColor(this, colorRes);
         mSpeedometerText.setTextColor(color);
     }
@@ -320,8 +320,6 @@ public class FloatingService extends Service{
         private int mInitialX;
         private int mInitialY;
         private long mStartClickTime;
-        private long mPointClickTime;
-        private boolean mIsPointClick;
         private boolean mIsClick;
 
         private AnimatorSet fadeAnimator;
