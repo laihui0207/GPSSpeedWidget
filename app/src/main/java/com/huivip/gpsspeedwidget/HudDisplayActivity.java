@@ -267,4 +267,19 @@ public class HudDisplayActivity extends Activity implements AMapHudViewListener,
     public void onPlayRing(int i) {
 
     }
+
+    @Override
+    public void onCalculateRouteSuccess(AMapCalcRouteResult aMapCalcRouteResult) {
+
+    }
+
+    @Override
+    public void onCalculateRouteFailure(AMapCalcRouteResult aMapCalcRouteResult) {
+
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
 }

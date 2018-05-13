@@ -230,7 +230,7 @@
                     android:id="@+id/checkBox_h_direction"
                     android:layout_below="@+id/checkBox_showSpeed"
                     android:layout_alignLeft="@+id/checkBox_showSpeed"
-                    android:layout_alignStart="@+id/checkBox_showSpeed" android:visibility="gone"/>
+                    android:layout_alignStart="@+id/checkBox_showSpeed" />
             <Button
                     android:text="启动其它应用"
                     android:layout_width="wrap_content"
@@ -250,10 +250,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_audioVolume"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginStart="15dp" android:layout_alignBaseline="@+id/editText_audioVolume"
-                    android:layout_toRightOf="@+id/checkBox_mix"
-                    android:layout_alignBottom="@+id/editText_audioVolume" android:layout_toEndOf="@+id/checkBox_mix"/>
+                    android:layout_alignBottom="@+id/editText_audioVolume" android:layout_toRightOf="@+id/checkBox_xftts"
+                    android:layout_toEndOf="@+id/checkBox_xftts" android:layout_below="@+id/linearLayout"
+                    android:gravity="fill_vertical"/>
             <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -368,6 +367,13 @@
                     android:id="@+id/button_uploadLog"
                     android:layout_toRightOf="@+id/button_feedback"
                     android:layout_alignParentBottom="true" android:layout_toEndOf="@+id/button_feedback"/>
+            <CheckBox
+                    android:text="讯飞语音"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox_xftts"
+                    android:layout_alignBaseline="@+id/checkBox_mix" android:layout_alignBottom="@+id/checkBox_mix"
+                    android:layout_toRightOf="@+id/checkBox_mix" android:layout_toEndOf="@+id/checkBox_mix"/>
         </RelativeLayout>
     </ScrollView>
     <TextView

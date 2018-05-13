@@ -1,12 +1,14 @@
 package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.amap.api.navi.AMapNavi;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
@@ -37,6 +39,7 @@ public class XFTTS implements TTS {
     private LinkedList<String> wordList = new LinkedList();
     private final int TTS_PLAY = 1;
     private final int CHECK_TTS_PLAY = 2;
+    AudioManager am;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -50,11 +53,11 @@ public class XFTTS implements TTS {
                             if (mTts == null) {
                                 createSynthesizer();
                             }
-                            initTTS();
+
                             mTts.startSpeaking(playtts, new SynthesizerListener() {
                                 @Override
                                 public void onCompleted(SpeechError arg0) {
-                                    //AMapNavi.setTtsPlaying(isPlaying = false);
+                                    AMapNavi.setTtsPlaying(isPlaying = false);
                                     handler.obtainMessage(1).sendToTarget();
                                 }
 
@@ -71,7 +74,15 @@ public class XFTTS implements TTS {
                                 @Override
                                 public void onSpeakBegin() {
                                     //开始播放
-                                    //AMapNavi.setTtsPlaying(isPlaying = true);
+                                    initTTS();
+                                    int audioVolume=PrefUtils.getAudioVolume(mContext);
+/*                                    if(PrefUtils.isEnableAudioMixService(mContext)){*/
+                                        am.setStreamVolume(AudioManager.STREAM_MUSIC,audioVolume,0);
+                                   /* }
+                                    else {
+                                        am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,audioVolume,0);
+                                    }*/
+                                    AMapNavi.setTtsPlaying(isPlaying = true);
                                 }
 
                                 @Override
@@ -112,6 +123,7 @@ public class XFTTS implements TTS {
             Log.d("huvip","create Speed utility");
             createSynthesizer();
         }
+        am= (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
     }
 
     private void createSynthesizer() {
@@ -156,13 +168,19 @@ public class XFTTS implements TTS {
     @Override
     public void initTTS() {
         //设置发音人
-        mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaomei");
+        mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan");
         //设置语速,值范围：[0, 100],默认值：50
         mTts.setParameter(SpeechConstant.SPEED, "55");
         //设置音量
         mTts.setParameter(SpeechConstant.VOLUME, "tts_volume");
         //设置语调
         mTts.setParameter(SpeechConstant.PITCH, "tts_pitch");
+        /*if(!PrefUtils.isEnableAudioMixService(mContext)){
+            Log.d("huivip","Audio use voice Call");
+            mTts.setParameter(SpeechConstant.STREAM_TYPE,"AudioManager.STREAM_VOICE_CALL");
+        } else {
+            mTts.setParameter(SpeechConstant.STREAM_TYPE,"AudioManager.STREAM_MUSIC");
+        }*/
     }
 
     @Override

@@ -103,11 +103,7 @@ public class AudioTestActivity extends Activity {
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //BDTTS BDTTS=BDTTS.getInstance(getApplicationContext());
-                //BDTTS.speak("你好，语音测试成功");
-                //SpeechUtils speechUtils=SpeechUtils.getInstance(getApplicationContext());
-                //speechUtils.speakText("你好，语音测试成功");
-                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.XUNFEITTS);
+                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
                 tts.speak("你好，语音测试成功");
             }
         });

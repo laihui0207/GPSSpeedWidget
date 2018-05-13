@@ -74,7 +74,7 @@ public class BDTTS  implements  TTS {
         if(PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null) {
             mSpeechSynthesizer.release();
             inited=false;
-            mSpeechSynthesizer=null;
+            //mSpeechSynthesizer=null;
         }
     }
     @Override
@@ -142,7 +142,7 @@ public class BDTTS  implements  TTS {
         } else {
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         }
-        mSpeechSynthesizer.setStereoVolume(1.0f,1.0f);
+       // mSpeechSynthesizer.setStereoVolume(1.0f,1.0f);
         //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_ALARM);
        // mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
 

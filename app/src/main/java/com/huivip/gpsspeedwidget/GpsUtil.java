@@ -116,7 +116,7 @@ public class GpsUtil implements AMapNaviListener {
         this.context = context;
         Random random = new Random();
         c = random.nextInt();
-        tts = SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
+
         localNumberFormat.setMaximumFractionDigits(1);
     }
 
@@ -134,6 +134,7 @@ public class GpsUtil implements AMapNaviListener {
     public void startLocationService() {
         if (serviceStarted) return;
         this.locationTimer = new Timer();
+        tts = SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
         speedAdjust = PrefUtils.getSpeedAdjust(context);
         this.locationScanTask = new TimerTask() {
             @Override
@@ -219,7 +220,7 @@ public class GpsUtil implements AMapNaviListener {
             recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
             context.startService(recordService);
             if (tts != null) {
-                tts.stop();
+                tts.release();
             }
             serviceStarted = false;
         }
@@ -697,10 +698,10 @@ public class GpsUtil implements AMapNaviListener {
         @Override
         public void onGetNavigationText (String s){
         if (PrefUtils.isEnableAudioService(context)) {
-            if (!speakText.equalsIgnoreCase(s)) {
-                speakText = s;
+          /*  if (!speakText.equalsIgnoreCase(s)) {
+                speakText = s;*/
                 tts.speak(s);
-            }
+           /* }*/
         }
     }
 
@@ -736,7 +737,7 @@ public class GpsUtil implements AMapNaviListener {
 
         @Override
         public void onGpsOpenStatus ( boolean b){
-        gpsEnabled = true;
+        gpsEnabled = b;
     }
 
         @Override
@@ -750,19 +751,19 @@ public class GpsUtil implements AMapNaviListener {
 
         @Override
         public void updateCameraInfo (AMapNaviCameraInfo[]aMapNaviCameraInfos){
-       /* for (AMapNaviCameraInfo aMapNaviCameraInfo : aMapNaviCameraInfos) {
+        for (AMapNaviCameraInfo aMapNaviCameraInfo : aMapNaviCameraInfos) {
             cameraType = aMapNaviCameraInfo.getCameraType();
             setCameraDistance(aMapNaviCameraInfo.getCameraDistance());
-            if (aMapNaviCameraInfo.getCameraSpeed() > 0) {
+            if (aMapNaviCameraInfo.getCameraSpeed() > 0 && aMapNaviCameraInfo.getCameraDistance()>0) {
                 setCameraSpeed(aMapNaviCameraInfo.getCameraSpeed());
             }
-        }*/
+        }
     }
 
         @Override
         public void updateIntervalCameraInfo (AMapNaviCameraInfo aMapNaviCameraInfo, AMapNaviCameraInfo
         aMapNaviCameraInfo1,int status){
-        /*if (status == CarEnterCameraStatus.ENTER) {
+        if (status == CarEnterCameraStatus.ENTER) {
             setCameraType(aMapNaviCameraInfo.getCameraType());
             setCameraSpeed(aMapNaviCameraInfo.getCameraSpeed());
             setCameraDistance(aMapNaviCameraInfo.getCameraDistance());
@@ -770,7 +771,7 @@ public class GpsUtil implements AMapNaviListener {
             setCameraType(aMapNaviCameraInfo1.getCameraType());
             setCameraSpeed(aMapNaviCameraInfo1.getCameraSpeed());
             setCameraDistance(aMapNaviCameraInfo1.getCameraDistance());
-        }*/
+        }
     }
 
         @Override
@@ -863,11 +864,21 @@ public class GpsUtil implements AMapNaviListener {
 
         @Override
         public void onPlayRing ( int status){
-        if (status == AMapNaviRingType.RING_EDOG) {
+        if (status == AMapNaviRingType.RING_EDOG || status== AMapNaviRingType.RING_CAMERA) {
             limitSpeed = 0;
             limitDistance = 0F;
             //cameraLocation = null;
             tts.speak("已通过");
         }
+    }
+
+    @Override
+    public void onCalculateRouteSuccess(AMapCalcRouteResult aMapCalcRouteResult) {
+
+    }
+
+    @Override
+    public void onCalculateRouteFailure(AMapCalcRouteResult aMapCalcRouteResult) {
+
     }
 }

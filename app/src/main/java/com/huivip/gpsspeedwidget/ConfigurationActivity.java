@@ -30,6 +30,8 @@ import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.speech.BDTTS;
+import com.huivip.gpsspeedwidget.speech.SpeechFactory;
+import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.*;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -584,6 +586,24 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox ttsEngineCheckBox=findViewById(R.id.checkBox_xftts);
+        ttsEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.XUNFEITTS));
+        ttsEngineCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String speakText="";
+                if(buttonView.isChecked()){
+                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.XUNFEITTS);
+                    speakText="使用讯飞语音";
+                }
+                else {
+                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.BAIDUTTS);
+                    speakText="使用百度语音";
+                }
+                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+                tts.speak(speakText);
             }
         });
         Button uploadLogButton=findViewById(R.id.button_uploadLog);
