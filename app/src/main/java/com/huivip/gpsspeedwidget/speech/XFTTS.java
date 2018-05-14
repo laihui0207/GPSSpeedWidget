@@ -1,6 +1,7 @@
 package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +41,10 @@ public class XFTTS implements TTS {
     private final int TTS_PLAY = 1;
     private final int CHECK_TTS_PLAY = 2;
     AudioManager am;
+    int currentSystemVolume;
+    int currentVoiceCallVolume;
+    int currentMusicVolume;
+    Intent audioFocusService;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -59,6 +64,10 @@ public class XFTTS implements TTS {
                                 public void onCompleted(SpeechError arg0) {
                                     AMapNavi.setTtsPlaying(isPlaying = false);
                                     handler.obtainMessage(1).sendToTarget();
+                                   // mContext.stopService(audioFocusService);
+                                    am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
+                                    am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,currentVoiceCallVolume,0);
+
                                 }
 
                                 @Override
@@ -74,14 +83,22 @@ public class XFTTS implements TTS {
                                 @Override
                                 public void onSpeakBegin() {
                                     //开始播放
-                                    initTTS();
+                                    currentSystemVolume=am.getStreamVolume(AudioManager.STREAM_SYSTEM);
+                                    currentVoiceCallVolume=am.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+                                    currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
                                     int audioVolume=PrefUtils.getAudioVolume(mContext);
-/*                                    if(PrefUtils.isEnableAudioMixService(mContext)){*/
-                                        am.setStreamVolume(AudioManager.STREAM_MUSIC,audioVolume,0);
-                                   /* }
+                                  /*  audioFocusService=new Intent(mContext,AudioFocusService.class);
+                                    mContext.startService(audioFocusService);*/
+                                    initTTS();
+                                    //am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,audioVolume,0);
+                                    //am.setStreamVolume(AudioManager.STREAM_MUSIC,audioVolume,0);
+                                    if(PrefUtils.isEnableAudioMixService(mContext)){
+                                        //am.setStreamVolume(AudioManager.STREAM_MUSIC,audioVolume,0);
+                                   }
                                     else {
+                                       // am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
                                         am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,audioVolume,0);
-                                    }*/
+                                    }
                                     AMapNavi.setTtsPlaying(isPlaying = true);
                                 }
 
@@ -175,9 +192,14 @@ public class XFTTS implements TTS {
         mTts.setParameter(SpeechConstant.VOLUME, "99");
         //设置语调
         mTts.setParameter(SpeechConstant.PITCH, "tts_pitch");
-        if(PrefUtils.isEnableAudioMixService(mContext)){
-            mTts.setParameter(SpeechConstant.KEY_REQUEST_FOCUS,"false");
-        }
+        mTts.setParameter(SpeechConstant.KEY_REQUEST_FOCUS,"false");
+        mTts.setParameter(SpeechConstant.STREAM_TYPE,"AudioManager.STREAM_VOICE_CALL");
+       /* if(PrefUtils.isEnableAudioMixService(mContext)){
+            mTts.setParameter(SpeechConstant.STREAM_TYPE,"AudioManager.STREAM_MUSIC");
+        } else {
+            mTts.setParameter(SpeechConstant.STREAM_TYPE,"AudioManager.STREAM_VOICE_CALL");
+        }*/
+
     }
 
     @Override

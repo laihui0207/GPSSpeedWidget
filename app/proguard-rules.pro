@@ -119,7 +119,8 @@
 -keep public class io.reactivex.** { *;}
 -keep public class com.github.pluscubed.** { *;}
 -keep public class com.jakewharton:butterknife-compiler.** { *;}
-
+-keep class com.baidu.tts.**{*;}
+-keep class com.baidu.speechsynthesizer.**{*;}
 -keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
   **[] $VALUES;
   public *;

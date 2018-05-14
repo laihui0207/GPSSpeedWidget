@@ -24,7 +24,10 @@ public abstract class PrefUtils {
     private static final String PREF_APPS = "pref_apps";
     private static final String AUTO_FLOATTING_STYLE = "com.huivip.Floating.style";
     private static final String PREF_DELAY_AUTO_START = "com.huivip.delay.started";
+    private static final String PREF_DELAY_AUTO_START_INDEX= "com.huivip.delay.started.index";
+    private static final String PREF_DELAY_AUTO_START_GOHOME= "com.huivip.delay.started.goToHome";
     private static final String PREF_AUTO_LAUNCH_APPS = "pref_Auto_apps";
+    private static final String PREF_AUTO_LAUNCH_APPS_NAME = "pref_Auto_apps_Names";
     private static final String PREF_TERMS_ACCEPTED = "pref_terms_accepted";
     public static final String AUTO_START_PREFS_NAME="AutoStart";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
@@ -229,6 +232,20 @@ public abstract class PrefUtils {
     public static int getDelayStartOtherApp(Context context) {
         return getSharedPreferences(context).getInt(PREF_DELAY_AUTO_START, 0);
     }
+
+    public static void setOtherAppIndex( Context context, int value) {
+        edit(context).putInt(PREF_DELAY_AUTO_START_INDEX, value).apply();
+    }
+
+    public static int getOtherAppIndex(Context context) {
+        return getSharedPreferences(context).getInt(PREF_DELAY_AUTO_START_INDEX, 0);
+    }
+    public static boolean isGoToHomeAfterAutoLanuch(Context context){
+        return getSharedPreferences(context).getBoolean(PREF_DELAY_AUTO_START_GOHOME, false);
+    }
+    public static void setGoToHomeAfterAutoLanuch(Context context,boolean closed){
+        edit(context).putBoolean(PREF_DELAY_AUTO_START_GOHOME, closed).apply();
+    }
     public static void setAudioVolume(Context context, int value) {
         edit(context).putInt(AUDIO_VOLUME, value).apply();
     }
@@ -364,6 +381,13 @@ public abstract class PrefUtils {
 
     public static void setAutoLaunchApps(Context context, Set<String> packageNames) {
         edit(context).putStringSet(PREF_AUTO_LAUNCH_APPS, packageNames).apply();
+    }
+    public static Set<String> getAutoLaunchAppsName(Context context) {
+        return new HashSet<>(getSharedPreferences(context).getStringSet(PREF_AUTO_LAUNCH_APPS_NAME, new HashSet<String>()));
+    }
+
+    public static void setAutoLaunchAppsName(Context context, Set<String> packageNames) {
+        edit(context).putStringSet(PREF_AUTO_LAUNCH_APPS_NAME, packageNames).apply();
     }
     public static void setFtpUrl(Context context,String url){
         edit(context).putString(FTP_URL,url).apply();

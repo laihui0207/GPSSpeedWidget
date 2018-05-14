@@ -2,6 +2,7 @@ package com.huivip.gpsspeedwidget;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
 import android.appwidget.AppWidgetManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -63,6 +64,7 @@ public class ConfigurationActivity extends Activity {
     RadioButton noDesktopButton;
     RadioButton onAutoNaviButton;
     private Handler handler=null;
+    private Set<String> mAppList;
     String resultText="";
     private static final int REQUEST_LOCATION = 105;
     private static  final int REQUEST_STORAGE=106;
@@ -104,7 +106,9 @@ public class ConfigurationActivity extends Activity {
         CheckBox audidMixCheckBox=findViewById(R.id.checkBox_mix);
         audidMixCheckBox.setChecked(PrefUtils.isEnableAudioMixService(getApplicationContext()));
         audidMixCheckBox.setEnabled(enableAudioCheckBox.isChecked());
-
+        CheckBox ttsEngineCheckBox=findViewById(R.id.checkBox_xftts);
+        ttsEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.XUNFEITTS));
+        ttsEngineCheckBox.setEnabled(enableAudioCheckBox.isChecked());
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         enableAutoNaviCheckBox.setChecked(PrefUtils.isEnableAutoNaviService(getApplicationContext()));
         remoteUrlEditBox.setEnabled(uploadGPSCheckBox.isChecked());
@@ -178,6 +182,7 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
                 audidMixCheckBox.setEnabled(checkBoxButton.isChecked());
+                ttsEngineCheckBox.setEnabled(checkBoxButton.isChecked());
                 PrefUtils.setEnableAudioService(getApplicationContext(),checkBoxButton.isChecked());
                 /*if(checkBoxButton.isChecked()) {
                     checkIfCanIncreaseMusic();
@@ -192,6 +197,27 @@ public class ConfigurationActivity extends Activity {
                 BDTTS bdtts =BDTTS.getInstance(getApplicationContext());
                 bdtts.release();
                 bdtts.initTTS();
+            }
+        });
+
+        ttsEngineCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String speakText="";
+                if(buttonView.isChecked()){
+                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.XUNFEITTS);
+                    speakText="使用讯飞语音";
+                }
+                else {
+                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.BAIDUTTS);
+                    speakText="使用百度语音";
+                }
+                EditText ttsVolume=findViewById(R.id.editText_audioVolume);
+                String setedVolume=ttsVolume.getText().toString();
+                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(setedVolume));
+                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+                tts.speak(speakText);
+                GpsUtil.getInstance(getApplicationContext()).setTts(tts);
             }
         });
         enableAutoNaviCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
@@ -588,25 +614,13 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),buttonView.isChecked());
             }
         });
-        CheckBox ttsEngineCheckBox=findViewById(R.id.checkBox_xftts);
-        ttsEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.XUNFEITTS));
-        ttsEngineCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        CheckBox goToHomeCheckBox=findViewById(R.id.checkBox_gotoHome);
+        goToHomeCheckBox.setChecked(PrefUtils.isGoToHomeAfterAutoLanuch(getApplicationContext()));
+        goToHomeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String speakText="";
-                if(buttonView.isChecked()){
-                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.XUNFEITTS);
-                    speakText="使用讯飞语音";
-                }
-                else {
-                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.BAIDUTTS);
-                    speakText="使用百度语音";
-                }
-                EditText ttsVolume=findViewById(R.id.editText_audioVolume);
-                String setedVolume=ttsVolume.getText().toString();
-                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(setedVolume));
-                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
-                tts.speak(speakText);
+                PrefUtils.setGoToHomeAfterAutoLanuch(getApplicationContext(),buttonView.isChecked());
             }
         });
         Button uploadLogButton=findViewById(R.id.button_uploadLog);
@@ -661,6 +675,7 @@ public class ConfigurationActivity extends Activity {
 
             };
         });
+
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -731,6 +746,14 @@ public class ConfigurationActivity extends Activity {
         noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         boolean serviceReady=Utils.isServiceReady(this);
+
+        mAppList = PrefUtils.getAutoLaunchAppsName(getApplicationContext());
+        String selectApps = "";
+        if (mAppList != null && mAppList.size() > 0) {
+            selectApps=mAppList.toString();
+        }
+        TextView selectAppsTextView = findViewById(R.id.textView_selectApps);
+        selectAppsTextView.setText("已选择:"+selectApps);
         Button btnOk= (Button) findViewById(R.id.confirm);
         if(serviceReady){
             btnOk.setEnabled(true);

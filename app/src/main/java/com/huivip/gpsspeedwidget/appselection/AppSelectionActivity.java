@@ -40,6 +40,7 @@ import rx.subscriptions.CompositeSubscription;
 public class AppSelectionActivity extends AppCompatActivity {
 
     public static final String STATE_SELECTED_APPS = "state_selected_apps";
+    public static final String STATE_SELECTED_APPS_NAME = "state_selected_apps_name";
     public static final String STATE_APPS = "state_apps";
     //public static final String STATE_MAP_APPS = "state_map_apps";
     //public static final String STATE_MAPS_ONLY = "state_maps_only";
@@ -49,6 +50,7 @@ public class AppSelectionActivity extends AppCompatActivity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private Set<String> mSelectedApps;
+    private Set<String> mSelectedAppsName;
     private List<AppInfo> mAppList;
     //private List<AppInfo> mMapApps;
 
@@ -96,6 +98,8 @@ public class AppSelectionActivity extends AppCompatActivity {
            // mMapApps = savedInstanceState.getParcelableArrayList(STATE_MAP_APPS);
             //mMapsOnly = false;// savedInstanceState.getBoolean(STATE_MAPS_ONLY);
             mSelectedApps = new HashSet<>(savedInstanceState.getStringArrayList(STATE_SELECTED_APPS));
+            mSelectedAppsName = new HashSet<>(savedInstanceState.getStringArrayList(STATE_SELECTED_APPS_NAME));
+
         }
 
         /*if (mMapApps == null) {
@@ -125,6 +129,7 @@ public class AppSelectionActivity extends AppCompatActivity {
         mLoadingAppList = true;
         mSwipeRefreshLayout.setRefreshing(true);
         mSelectedApps = new HashSet<>(PrefUtils.getAutoLaunchApps(this));
+        mSelectedAppsName=new HashSet<>(PrefUtils.getAutoLaunchAppsName(this));
         Subscription subscription = SelectedAppDatabase.getInstalledApps(this)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleSubscriber<List<AppInfo>>() {
@@ -218,8 +223,10 @@ public class AppSelectionActivity extends AppCompatActivity {
         if (appInfo.packageName != null && !appInfo.packageName.isEmpty()) {
             if (checked) {
                 mSelectedApps.add(appInfo.packageName);
+                mSelectedAppsName.add(appInfo.name);
             } else {
                 mSelectedApps.remove(appInfo.packageName);
+                mSelectedAppsName.remove(appInfo.name);
             }
 
             SingleSubscriber<Object> subscriber = new SingleSubscriber<Object>() {
@@ -236,6 +243,7 @@ public class AppSelectionActivity extends AppCompatActivity {
                 }
             };
             PrefUtils.setAutoLaunchApps(this, mSelectedApps);
+            PrefUtils.setAutoLaunchAppsName(this,mSelectedAppsName);
             if (AppDetectionService.get() != null) {
                 AppDetectionService.get().updateSelectedApps();
             }
@@ -248,6 +256,7 @@ public class AppSelectionActivity extends AppCompatActivity {
         //outState.putParcelableArrayList(STATE_MAP_APPS, (ArrayList<AppInfo>) mMapApps);
         //outState.putBoolean(STATE_MAPS_ONLY, mMapsOnly);
         outState.putStringArrayList(STATE_SELECTED_APPS, new ArrayList<>(mSelectedApps));
+        outState.putStringArrayList(STATE_SELECTED_APPS_NAME,new ArrayList<>(mSelectedAppsName));
         super.onSaveInstanceState(outState);
     }
 

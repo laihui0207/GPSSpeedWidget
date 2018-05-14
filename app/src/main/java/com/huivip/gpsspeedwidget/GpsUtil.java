@@ -116,7 +116,6 @@ public class GpsUtil implements AMapNaviListener {
         this.context = context;
         Random random = new Random();
         c = random.nextInt();
-
         localNumberFormat.setMaximumFractionDigits(1);
     }
 
@@ -374,6 +373,10 @@ public class GpsUtil implements AMapNaviListener {
 
     public Integer getLimitSpeed() {
         return limitSpeed;
+    }
+
+    public void setTts(TTS tts) {
+        this.tts = tts;
     }
 
     public Float getLimitDistance() {

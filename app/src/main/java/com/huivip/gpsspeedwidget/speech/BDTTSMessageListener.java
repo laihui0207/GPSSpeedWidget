@@ -1,6 +1,7 @@
 package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.util.Log;
 import com.baidu.tts.client.SpeechError;
@@ -64,20 +65,11 @@ public class BDTTSMessageListener implements SpeechSynthesizerListener, MainHand
         currentVoiceCallVolume=am.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
         currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
         int audioVolume=PrefUtils.getAudioVolume(context);
-
-        /*if(PrefUtils.isSeparatedVolume(context) && !PrefUtils.isEnableAudioMixService(context)){
-            Log.d("huivip","increase music");
-            am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
-            //am.setSpeakerphoneOn(true);
-            am.setStreamVolume(AudioManager.STREAM_SYSTEM,audioVolume,0);
-        } else if(!PrefUtils.isEnableAudioMixService(context)){
-            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,audioVolume,0);
-        }*/
-        if(PrefUtils.isEnableAudioMixService(context)){
-            am.setStreamVolume(AudioManager.STREAM_MUSIC,audioVolume,0);
-        }
-        else {
-            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,audioVolume,0);
+        if (PrefUtils.isEnableAudioMixService(context)) {
+            //am.setStreamVolume(AudioManager.STREAM_MUSIC, audioVolume, 0);
+        } else {
+            //am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
+            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, audioVolume, 0);
         }
 
         sendMessage("播放开始回调, 序列号:" + utteranceId);

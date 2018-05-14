@@ -77,7 +77,7 @@ public class GpsSpeedService extends Service {
                 return super.onStartCommand(intent, flags, startId);
             }*/
             if ((intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT,false)) && serviceStoped) {
-                new Thread(new Runnable() {
+               /* new Thread(new Runnable() {
                     @Override
                     public void run() {
                         Set<String> autoApps = PrefUtils.getAutoLaunchApps(getApplicationContext());
@@ -96,7 +96,7 @@ public class GpsSpeedService extends Service {
                             }
                         }
                     }
-                }).start();
+                }).start();*/
                 autoBackUpGPSData();
             }
             if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped || intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT, false)) {

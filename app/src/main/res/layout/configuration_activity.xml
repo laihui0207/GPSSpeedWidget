@@ -28,10 +28,9 @@
                     android:text="记录GPS轨迹"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/recordGPS" android:layout_below="@+id/autoStart"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginTop="13dp"/>
+                    android:id="@+id/recordGPS"
+                    android:layout_below="@+id/textView_delaytext" android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                           android:id="@+id/linearLayout"
@@ -181,14 +180,12 @@
                         android:layout_weight="1"/>
             </RadioGroup>
             <TextView
-                    android:text="GPS速度调整:"
+                    android:text="    GPS速度调整:"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView"
-                    android:layout_alignBaseline="@+id/editText_speedadjust"
-                    android:layout_alignBottom="@+id/editText_speedadjust"
-                    android:layout_toRightOf="@+id/EnableFalting"
-                    android:layout_toEndOf="@+id/EnableFalting"/>
+                    android:layout_alignBaseline="@+id/recordGPS" android:layout_alignBottom="@+id/recordGPS"
+                    android:layout_toRightOf="@+id/recordGPS" android:layout_toEndOf="@+id/recordGPS"/>
             <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -234,9 +231,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/button_selectApp"
-                    android:layout_alignBaseline="@+id/autoStart" android:layout_alignBottom="@+id/autoStart"
-                    android:layout_toLeftOf="@+id/editText_speedadjust"
-                    android:layout_toStartOf="@+id/editText_speedadjust"/>
+                    android:layout_above="@+id/checkBox_gotoHome" android:layout_toRightOf="@+id/autoStart"
+                    android:layout_toEndOf="@+id/autoStart"/>
             <CheckBox
                     android:text="语音与音乐混合"
                     android:layout_width="wrap_content"
@@ -320,25 +316,29 @@
             <TextView
                     android:text="延时"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_above="@+id/editText_speedadjust"
-                    android:layout_toRightOf="@+id/button_selectApp"
-                    android:layout_toEndOf="@+id/button_selectApp" android:id="@+id/textView_delaytext"/>
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_delaytext"
+                    android:layout_alignBottom="@+id/editText_delay_started" android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center_vertical" android:layout_below="@+id/autoStart"/>
             <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:ems="2"
                     android:id="@+id/editText_delay_started" android:text="0"
-                    android:layout_alignBottom="@+id/button_selectApp"
-                    android:layout_toRightOf="@+id/textView_delaytext"
-                    android:layout_toEndOf="@+id/textView_delaytext"/>
+                    android:layout_below="@+id/autoStart" android:layout_toRightOf="@+id/textView_delaytext"
+                    android:layout_toEndOf="@+id/textView_delaytext"
+            />
             <TextView
-                    android:text="秒拉起第三方应用"
+                    android:text="秒依次启动"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textView8" android:layout_above="@+id/editText_speedadjust"
+                    android:id="@+id/textView8"
                     android:layout_toRightOf="@+id/editText_delay_started"
-                    android:layout_toEndOf="@+id/editText_delay_started"/>
+                    android:layout_toEndOf="@+id/editText_delay_started"
+                    android:layout_alignBottom="@+id/editText_delay_started"
+                    android:gravity="center_vertical" android:layout_below="@+id/autoStart"/>
             <CheckBox
                     android:text="固定位置"
                     android:layout_width="wrap_content"
@@ -371,6 +371,22 @@
                     android:id="@+id/checkBox_xftts"
                     android:layout_alignBaseline="@+id/enableAudio" android:layout_alignBottom="@+id/enableAudio"
                     android:layout_toRightOf="@+id/enableAudio" android:layout_toEndOf="@+id/enableAudio"/>
+            <CheckBox
+                    android:text="启动后返回桌面"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox_gotoHome"
+                    android:layout_alignBaseline="@+id/editText_delay_started"
+                    android:layout_alignBottom="@+id/editText_delay_started"
+                    android:layout_toRightOf="@+id/enableFloatingWindow"
+                    android:layout_toEndOf="@+id/enableFloatingWindow"/>
+            <TextView
+                    android:text="已选择："
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_above="@+id/textView8"
+                    android:layout_toRightOf="@+id/button_selectApp" android:layout_toEndOf="@+id/button_selectApp"
+                    android:id="@+id/textView_selectApps" android:layout_alignParentTop="true"
+                    android:gravity="center_vertical"/>
         </RelativeLayout>
     </ScrollView>
     <TextView
