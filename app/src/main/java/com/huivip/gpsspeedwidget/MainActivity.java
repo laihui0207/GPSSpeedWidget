@@ -173,7 +173,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,AudioTestActivity.class));
+/*                startActivity(new Intent(MainActivity.this,AudioTestActivity.class));*/
             }
         });
         Button backupButton=(Button)findViewById(R.id.button_backup);

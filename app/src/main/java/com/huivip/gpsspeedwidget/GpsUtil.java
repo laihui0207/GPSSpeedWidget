@@ -3,31 +3,18 @@ package com.huivip.gpsspeedwidget;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.location.*;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
-/*import com.amap.api.navi.AMapNavi;
-import com.amap.api.navi.AMapNaviListener;
-import com.amap.api.navi.enums.*;
-import com.amap.api.navi.model.*;
-import com.autonavi.tbt.TrafficFacilityInfo;*/
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-/*import com.huivip.gpsspeedwidget.utils.TTSUtil;*/
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static android.content.Context.CONNECTIVITY_SERVICE;
 
 /**
  * @author sunlaihui
