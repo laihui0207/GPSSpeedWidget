@@ -6,9 +6,12 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -428,12 +431,14 @@ public class MainActivity extends Activity {
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-        //if(!Settings.System.canWrite(this)){
-           /* Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
-                    Uri.parse("package:" + getPackageName()));
-            intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityForResult(intentWriteSetting, 124);*/
-        // }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!Settings.System.canWrite(this)){
+                Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                        Uri.parse("package:" + getPackageName()));
+                intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivityForResult(intentWriteSetting, 124);
+             }
+        }
     }
    /* private void drawLineAndFixPoint(Message msg) {
         String dataResult = (String) msg.obj;

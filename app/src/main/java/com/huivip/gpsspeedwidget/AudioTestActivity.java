@@ -4,20 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.os.Environment;
-import android.os.PowerManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.huivip.gpsspeedwidget.utils.*;
-import org.apache.commons.net.ftp.FTPClient;
-
-import java.io.File;
-import java.io.IOException;
 
 public class AudioTestActivity extends Activity {
     AudioManager audioManager;
@@ -104,14 +96,14 @@ public class AudioTestActivity extends Activity {
                 audioManager.setStreamVolume(AudioManager.STREAM_ACCESSIBILITY,Integer.parseInt(accEditText.getText().toString()),AudioManager.FLAG_SHOW_UI);
             }
         });*/
-      /*  Button testButton=findViewById(R.id.button_testtts);
+        Button testButton=findViewById(R.id.button_testtts);
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TTSUtil ttsUtil=TTSUtil.getInstance(getApplicationContext());
-                ttsUtil.speak("你好，语音测试成功");
+               /* TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+                tts.speak("你好，语音测试成功");*/
             }
-        });*/
+        });
 
         Button saveButton=findViewById(R.id.button_save);
         saveButton.setOnClickListener(new View.OnClickListener(){
@@ -154,16 +146,16 @@ public class AudioTestActivity extends Activity {
                 sendBroadcast(intent);*/
                 //startActivity(new Intent(AudioTestActivity.this, HudDisplayActivity.class));
                 //startService(floatService);
-                /*startActivity(new Intent(getApplicationContext(),
+               /* startActivity(new Intent(getApplicationContext(),
                         com.amap.api.maps.offlinemap.OfflineMapActivity.class));*/
-                //Intent floatService=new Intent(AudioTestActivity.this, NaviFloatingService.class);
-                //startService(floatService);
+                /*Intent floatService=new Intent(AudioTestActivity.this, NaviFloatingService.class);
+                startService(floatService);*/
                 /*Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
                 intent.putExtra("KEY_TYPE", 10071);
                 sendBroadcast(intent);*/
                 //systemMaxView.setText(0);
-                new Thread(new Runnable() {
+                /*new Thread(new Runnable() {
                     @Override
                     public void run() {
                         FTPUtils ftp=FTPUtils.getInstance();
@@ -171,7 +163,7 @@ public class AudioTestActivity extends Activity {
                         String localDir=Environment.getExternalStorageDirectory().toString()+"/huivip/";
                         ftp.uploadDirectory("/sda1/gps/aa/",localDir);
                     }
-                }).start();
+                }).start();*/
 
             }
         });

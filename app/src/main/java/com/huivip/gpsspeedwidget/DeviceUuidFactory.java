@@ -1,5 +1,6 @@
 package com.huivip.gpsspeedwidget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings.Secure;
@@ -39,7 +40,7 @@ public class DeviceUuidFactory {
                             if (!"9774d56d682e549c".equals(androidId)) {
                                 uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8"));
                             } else {
-                                final String deviceId = ((TelephonyManager) context.getSystemService( Context.TELEPHONY_SERVICE )).getDeviceId();
+                                @SuppressLint("MissingPermission") final String deviceId = ((TelephonyManager) context.getSystemService( Context.TELEPHONY_SERVICE )).getDeviceId();
                                 uuid = deviceId!=null ? UUID.nameUUIDFromBytes(deviceId.getBytes("utf8")) : UUID.randomUUID();
                             }
                         } catch (UnsupportedEncodingException e) {

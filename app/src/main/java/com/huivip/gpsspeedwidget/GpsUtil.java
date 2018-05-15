@@ -249,10 +249,12 @@ public class GpsUtil {
     public Double getSpeed() {
         return speed;
     }
-    public String getDistance(){
+
+    public String getDistance() {
         localNumberFormat.setMaximumFractionDigits(1);
-        return localNumberFormat.format(distance/1000)+"km";
+        return localNumberFormat.format(distance / 1000) + "km";
     }
+
     public Integer getSpeedometerPercentage() {
         return speedometerPercentage;
     }
@@ -269,10 +271,10 @@ public class GpsUtil {
                 this.velocitaString = localNumberFormat.format(this.speed);
                 this.bearing = paramLocation.getBearing();
             }
-            if(preLocation!=null){
-                distance+=preLocation.distanceTo(paramLocation);
+            if (preLocation != null) {
+                distance += preLocation.distanceTo(paramLocation);
             }
-            preLocation=paramLocation;
+            preLocation = paramLocation;
         } else {
 
             this.velocitaString = null;
@@ -313,7 +315,7 @@ public class GpsUtil {
         mphSpeed = (int) (this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         kmhSpeed = (int) (this.speed.doubleValue() * 3.6D);
         if (speedAdjust != 0) {
-            if(kmhSpeed>0) {
+            if (kmhSpeed > 0) {
                 kmhSpeed += speedAdjust;
                 if (kmhSpeed < 0) {
                     kmhSpeed = 0;
@@ -321,13 +323,6 @@ public class GpsUtil {
             }
         }
         speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
-        //mphSpeedStr = localNumberFormat.format(mphSpeed);
-        //kmhSpeedStr = localNumberFormat.format(kmhSpeed);
-       /* if (limitDistance > 0) {
-            limitDistancePercentage = Math.round((300F - limitDistance) / 300 * 100);
-        } else if (limitDistance <= 0 || limitSpeed == 0) {
-            limitDistancePercentage = 0;
-        }*/
         // limit speak just say one times in one minutes
         if (limitSpeed > 0 && kmhSpeed > limitSpeed) {
             hasLimited = true;
@@ -473,9 +468,10 @@ public class GpsUtil {
                 case 9:
                     name = "区间结束";
                     break;
+                default:
+                    name = "限速";
             }
-        }
-        else {
+        } else {
             switch (cameraType) {
                 case 4:
                 case 102:
@@ -498,13 +494,16 @@ public class GpsUtil {
                     name = "应急车道";
                     break;
                 case 10:
-                    name="谨慎驾驶";
+                    name = "谨慎驾驶";
                     break;
+                default:
+                    name = "限速";
 
             }
         }
         return name;
     }
+
     public void setCameraType(int cameraType) {
         this.cameraType = cameraType;
     }
@@ -515,7 +514,7 @@ public class GpsUtil {
 
     public void setCameraDistance(int cameraDistance) {
         this.cameraDistance = cameraDistance;
-        this.limitDistance=cameraDistance*1.0F;
+        this.limitDistance = cameraDistance * 1.0F;
     }
 
     public int getCameraSpeed() {
@@ -524,12 +523,12 @@ public class GpsUtil {
 
     public void setCameraSpeed(int cameraSpeed) {
         this.cameraSpeed = cameraSpeed;
-        this.limitSpeed=cameraSpeed;
+        this.limitSpeed = cameraSpeed;
     }
 
     public String getCurrentRoadName() {
-        if(!TextUtils.isEmpty(currentRoadName) && currentRoadName.length()>4){
-            return currentRoadName.substring(0,4);
+        if (!TextUtils.isEmpty(currentRoadName) && currentRoadName.length() > 4) {
+            return currentRoadName.substring(0, 4);
         }
         return currentRoadName;
     }
@@ -548,10 +547,10 @@ public class GpsUtil {
 
     public String getNextRoadDistance() {
         localNumberFormat.setMaximumFractionDigits(1);
-        if(nextRoadDistance>1000){
-            return localNumberFormat.format(nextRoadDistance/1000)+"公里";
+        if (nextRoadDistance > 1000) {
+            return localNumberFormat.format(nextRoadDistance / 1000) + "公里";
         }
-        return localNumberFormat.format(nextRoadDistance)+"米";
+        return localNumberFormat.format(nextRoadDistance) + "米";
     }
 
     public void setNextRoadDistance(float nextRoadDistance) {
@@ -560,10 +559,10 @@ public class GpsUtil {
 
     public String getTotalLeftDistance() {
         localNumberFormat.setMaximumFractionDigits(1);
-        if(totalLeftDistance>1000){
-            return localNumberFormat.format(totalLeftDistance/1000)+"公里";
+        if (totalLeftDistance > 1000) {
+            return localNumberFormat.format(totalLeftDistance / 1000) + "公里";
         }
-        return localNumberFormat.format(totalLeftDistance)+"米";
+        return localNumberFormat.format(totalLeftDistance) + "米";
     }
 
     public void setTotalLeftDistance(float totalLeftDistance) {
@@ -572,12 +571,12 @@ public class GpsUtil {
 
     public String getTotalLeftTime() {
         localNumberFormat.setMaximumFractionDigits(0);
-        if(totalLeftTime>3600){
-            int hours=(int)totalLeftTime/3600;
-            int minutes=(int)((totalLeftTime-hours*3600)/60);
-            return hours+"小时"+minutes+"分钟";
+        if (totalLeftTime > 3600) {
+            int hours = (int) totalLeftTime / 3600;
+            int minutes = (int) ((totalLeftTime - hours * 3600) / 60);
+            return hours + "小时" + minutes + "分钟";
         }
-        return localNumberFormat.format(totalLeftTime/60)+"分钟";
+        return localNumberFormat.format(totalLeftTime / 60) + "分钟";
     }
 
     public void setTotalLeftTime(float totalLeftTime) {

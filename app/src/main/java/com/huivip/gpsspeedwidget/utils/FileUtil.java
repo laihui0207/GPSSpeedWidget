@@ -70,4 +70,7 @@ public class FileUtil {
             }
         }
     }
+    public static void uploadCrashLog(String logPath,String deviceId){
+
+    }
 }

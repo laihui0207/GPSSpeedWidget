@@ -2,6 +2,7 @@ package com.huivip.gpsspeedwidget;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
 import android.appwidget.AppWidgetManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -22,7 +23,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
 import butterknife.BindView;
 import com.bumptech.glide.Glide;
@@ -61,6 +61,7 @@ public class ConfigurationActivity extends Activity {
     RadioButton noDesktopButton;
     RadioButton onAutoNaviButton;
     private Handler handler=null;
+    private Set<String> mAppList;
     String resultText="";
     private static final int REQUEST_LOCATION = 105;
     private static  final int REQUEST_STORAGE=106;
@@ -100,9 +101,11 @@ public class ConfigurationActivity extends Activity {
         CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
         enableAudioCheckBox.setChecked(PrefUtils.isEnableAudioService(getApplicationContext()));
         CheckBox audidMixCheckBox=findViewById(R.id.checkBox_mix);
-        audidMixCheckBox.setChecked(PrefUtils.isEnableAudioMixService(getApplicationContext()));
+       /* audidMixCheckBox.setChecked(PrefUtils.isEnableAudioMixService(getApplicationContext()));
         audidMixCheckBox.setEnabled(enableAudioCheckBox.isChecked());
-
+        CheckBox ttsEngineCheckBox=findViewById(R.id.checkBox_xftts);
+        ttsEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.XUNFEITTS));
+        ttsEngineCheckBox.setEnabled(enableAudioCheckBox.isChecked());*/
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         enableAutoNaviCheckBox.setChecked(PrefUtils.isEnableAutoNaviService(getApplicationContext()));
         remoteUrlEditBox.setEnabled(uploadGPSCheckBox.isChecked());
@@ -176,10 +179,11 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
                 audidMixCheckBox.setEnabled(checkBoxButton.isChecked());
+                //ttsEngineCheckBox.setEnabled(checkBoxButton.isChecked());
                 PrefUtils.setEnableAudioService(getApplicationContext(),checkBoxButton.isChecked());
-                if(checkBoxButton.isChecked()) {
+                /*if(checkBoxButton.isChecked()) {
                     checkIfCanIncreaseMusic();
-                }
+                }*/
             }
         });
        /* audidMixCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
@@ -187,9 +191,9 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 PrefUtils.setEnableAudioMixService(getApplicationContext(),compoundButton.isChecked());
-                TTSUtil ttsUtil=TTSUtil.getInstance(getApplicationContext());
-                ttsUtil.release();
-                ttsUtil.initTTs();
+                BDTTS bdtts =BDTTS.getInstance(getApplicationContext());
+                bdtts.release();
+                bdtts.initTTS();
             }
         });*/
         enableAutoNaviCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
@@ -586,6 +590,15 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),buttonView.isChecked());
             }
         });
+
+        CheckBox goToHomeCheckBox=findViewById(R.id.checkBox_gotoHome);
+        goToHomeCheckBox.setChecked(PrefUtils.isGoToHomeAfterAutoLanuch(getApplicationContext()));
+        goToHomeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setGoToHomeAfterAutoLanuch(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         Button uploadLogButton=findViewById(R.id.button_uploadLog);
         uploadLogButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -638,6 +651,7 @@ public class ConfigurationActivity extends Activity {
 
             };
         });
+
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -708,6 +722,14 @@ public class ConfigurationActivity extends Activity {
         noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         boolean serviceReady=Utils.isServiceReady(this);
+
+        mAppList = PrefUtils.getAutoLaunchAppsName(getApplicationContext());
+        String selectApps = "";
+        if (mAppList != null && mAppList.size() > 0) {
+            selectApps=mAppList.toString();
+        }
+        TextView selectAppsTextView = findViewById(R.id.textView_selectApps);
+        selectAppsTextView.setText("已选择:"+selectApps);
         Button btnOk= (Button) findViewById(R.id.confirm);
         if(serviceReady){
             btnOk.setEnabled(true);

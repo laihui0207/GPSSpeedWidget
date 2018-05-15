@@ -196,7 +196,7 @@ public class FloatingService extends Service{
     }
     void checkLocationData() {
         if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
-            if(gpsUtil.isGpsLocationChanged()){
+            //if(gpsUtil.isGpsLocationChanged()){
                 setSpeed(gpsUtil.getKmhSpeedStr(),gpsUtil.getSpeedometerPercentage());
                 mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
                 setSpeeding(gpsUtil.isHasLimited());
@@ -214,7 +214,7 @@ public class FloatingService extends Service{
                 else {
                     speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
                 }
-            }
+           // }
         }
         else {
            mSpeedometerText.setText("--");
@@ -274,7 +274,9 @@ public class FloatingService extends Service{
 
                 mFloatingView.setVisibility(View.VISIBLE);
 
-                mFloatingView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mFloatingView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
             }
         });
     }
