@@ -20,12 +20,15 @@ public class BootStartReceiver extends BroadcastReceiver {
                     Intent service = new Intent(context, GpsSpeedService.class);
                     service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT, true);
                     context.startService(service);
+
+                    int delayTime=PrefUtils.getDelayStartOtherApp(context);
+                    AlarmManager alarm=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+                    PendingIntent thirdIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,ThirdSoftLaunchReceiver.class), 0);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + (delayTime * 1000 + 300), thirdIntent);
+                    PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,AutoLaunchSystemConfigReceiver.class), 0);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,5000L,autoLaunchIntent);
                 }
             }
-            int delayTime=PrefUtils.getDelayStartOtherApp(context);
-            AlarmManager alarm=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-            PendingIntent thirdIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,ThirdSoftLaunchReceiver.class), 0);
-            alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + (delayTime * 1000 + 300), thirdIntent);
         }
     }
 }

@@ -389,6 +389,14 @@
                     android:layout_toRightOf="@+id/button_selectApp" android:layout_toEndOf="@+id/button_selectApp"
                     android:id="@+id/textView_selectApps" android:layout_alignParentTop="true"
                     android:gravity="center_vertical"/>
+            <CheckBox
+                    android:text="自动打开移动热点"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox_autoWifi"
+                    android:layout_alignBaseline="@+id/checkBox_gotoHome"
+                    android:layout_alignBottom="@+id/checkBox_gotoHome"
+                    android:layout_toRightOf="@+id/checkBox_gotoHome" android:layout_toEndOf="@+id/checkBox_gotoHome"/>
         </RelativeLayout>
     </ScrollView>
     <TextView

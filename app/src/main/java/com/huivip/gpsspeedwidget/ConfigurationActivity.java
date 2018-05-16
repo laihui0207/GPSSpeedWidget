@@ -338,7 +338,14 @@ public class ConfigurationActivity extends Activity {
         String deviceId=deviceUuidFactory.getDeviceUuid().toString();
         uidView.setText("本机ID: "+deviceId.substring(0,deviceId.indexOf("-")));
 
-
+        CheckBox autoLaunchHotSpotCheckBox=findViewById(R.id.checkBox_autoWifi);
+        autoLaunchHotSpotCheckBox.setChecked(PrefUtils.isAutoLauchHotSpot(getApplicationContext()));
+        autoLaunchHotSpotCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setAutoLaunchHotSpot(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         EditText speedAdjustEditText=findViewById(R.id.editText_speedadjust);
         speedAdjustEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(-5, 5)});
         if(PrefUtils.getSpeedAdjust(getApplicationContext())!=0){

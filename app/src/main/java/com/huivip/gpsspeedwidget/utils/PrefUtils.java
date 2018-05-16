@@ -29,6 +29,7 @@ public abstract class PrefUtils {
     private static final String PREF_AUTO_LAUNCH_APPS_NAME = "pref_Auto_apps_Names";
     private static final String PREF_TERMS_ACCEPTED = "pref_terms_accepted";
     public static final String AUTO_START_PREFS_NAME="AutoStart";
+    public static final String PREF_AUTO_LAUNCH_WIFI_HOTSPOT="AutoStart.Wifi.hotspot";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
     public static final String ENABLE_FLATING_WINDOW="com.huivip.Enable.fating.History";
@@ -158,6 +159,12 @@ public abstract class PrefUtils {
     }
     public static void setOnDesktop(Context context,boolean onDesktop){
         edit(context).putBoolean(ACTIVITY_ON_DESKTOP, onDesktop).apply();
+    }
+    public static boolean isAutoLauchHotSpot(Context context){
+        return getSharedPreferences(context).getBoolean(PREF_AUTO_LAUNCH_WIFI_HOTSPOT, false);
+    }
+    public static void setAutoLaunchHotSpot(Context context,boolean enable){
+        edit(context).putBoolean(PREF_AUTO_LAUNCH_WIFI_HOTSPOT, enable).apply();
     }
     public static boolean isOldDriverMode(Context context){
         return getSharedPreferences(context).getBoolean(NAVI_MODE_NEW_DRIVER, false);

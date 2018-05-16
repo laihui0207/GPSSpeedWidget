@@ -7,7 +7,7 @@ import android.net.wifi.WifiManager;
 import java.lang.reflect.Method;
 
 public class WifiUtils {
-    private boolean switchWifiHotspot(Context context, String WIFI_HOTSPOT_SSID, String password,boolean enable) {
+    public static boolean switchWifiHotspot(Context context, String WIFI_HOTSPOT_SSID, String password,boolean enable) {
         WifiManager wifiManager= (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         if (wifiManager.isWifiEnabled()) {
             //如果wifi处于打开状态，则关闭wifi,
