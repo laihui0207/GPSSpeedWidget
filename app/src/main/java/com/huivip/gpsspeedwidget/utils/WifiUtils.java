@@ -9,14 +9,15 @@ import java.lang.reflect.Method;
 public class WifiUtils {
     public static boolean switchWifiHotspot(Context context, String WIFI_HOTSPOT_SSID, String password,boolean enable) {
         WifiManager wifiManager= (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        if (wifiManager.isWifiEnabled()) {
+        if (wifiManager.isWifiEnabled() && enable) {
             //如果wifi处于打开状态，则关闭wifi,
             wifiManager.setWifiEnabled(false);
         }
+
         WifiConfiguration config = new WifiConfiguration();
         config.SSID = WIFI_HOTSPOT_SSID;
         config.preSharedKey = password;
-        config.hiddenSSID = true;
+        config.hiddenSSID = false;
         config.allowedAuthAlgorithms
                 .set(WifiConfiguration.AuthAlgorithm.OPEN);//开放系统认证
         config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
@@ -31,10 +32,15 @@ public class WifiUtils {
         try {
             Method method = wifiManager.getClass().getMethod(
                     "setWifiApEnabled", WifiConfiguration.class, Boolean.TYPE);
-            return (Boolean) method.invoke(wifiManager, config, enable);
+           boolean result=(Boolean) method.invoke(wifiManager, config, enable);
+           if(!enable){
+               wifiManager.setWifiEnabled(true);
+           }
+           return result;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 }
+

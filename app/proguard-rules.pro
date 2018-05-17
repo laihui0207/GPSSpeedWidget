@@ -83,6 +83,9 @@
     java.lang.Object writeReplace();
     java.lang.Object readResolve();
 }
+-keepnames class * implements com.amap.api.navi.AMapNaviListener {
+    *;
+}
 -keep class **.R$* {
  *;
 }
@@ -90,6 +93,10 @@
     void *(**On*Event);
 }
 #----------------------------------------------------------------------------
+-libraryjars libs/AMap3DMap_6.2.0_AMapNavi_6.1.0_AMapSearch_6.1.0_AMapLocation_4.0.1_20180427.jar
+-libraryjars libs/com.baidu.tts_2.3.1.20170808_e39ea89.jar
+-libraryjars libs/Msc.jar
+-libraryjars libs/Sunflower.jar
 #---------------------------------webview------------------------------------
 -keepclassmembers class fqcn.of.javascript.interface.for.Webview {
    public *;
@@ -102,6 +109,35 @@
     public void *(android.webkit.WebView, jav.lang.String);
 }
 #----------------------------------------------------------------------------
+#aMap
+-keep   class com.amap.api.maps.**{*;}
+-keep   class com.autonavi.**{*;}
+-keep   class com.amap.api.trace.**{*;}
+-keep class com.amap.api.location.**{*;}
+-keep   class com.amap.api.services.**{*;}
+-keep class com.amap.api.fence.**{*;}
+-keep class com.autonavi.aps.amapapi.model.**{*;}
+-keep class com.amap.api.navi.**{*;}
+-keep class com.autonavi.**{*;}
+# baidu tts
+-keep class com.baidu.speech.**{*;}
+-keep class com.baidu.tts.**{*;}
+-keep class com.baidu.speechsynthesizer.**{*;}
+# ify
+-keep class com.iflytek.**{*;}
 #---------------------------------------------------------------------------------------------------
+#glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public class org.apache.** { *;}
-
+-keep public class com.huivip.gpsspeedwidget.GPSUtil.AutoNaviListener.** { *;}
+-keep public class devlight.io.** { *;}
+-keep public class com.github.bumptech.glide.** { *;}
+-keep public class com.jakewharton:butterknif.** { *;}
+-keep public class com.jakewharton.** { *;}
+-keep public class io.reactivex.** { *;}
+-keep public class com.github.pluscubed.** { *;}
+-keep public class com.jakewharton:butterknife-compiler.** { *;}
+-keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
