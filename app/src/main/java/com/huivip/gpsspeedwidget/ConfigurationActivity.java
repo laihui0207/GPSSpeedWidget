@@ -367,7 +367,26 @@ public class ConfigurationActivity extends Activity {
         autoLaunchHotSpotCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                PrefUtils.setAutoLaunchHotSpot(getApplicationContext(),buttonView.isChecked());
+                if(buttonView.isChecked()){
+                    boolean enabled=WifiUtils.switchWifiHotspot(getApplicationContext(),"gpswifi","012345678",true);
+                    if(enabled){
+                        PrefUtils.setAutoLaunchHotSpot(getApplicationContext(),buttonView.isChecked());
+                        Toast.makeText(getApplicationContext(),"移动热点已启动:gpswifi,密码: 012345678",Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(),"移动热点启动失败！",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    boolean enabled=WifiUtils.switchWifiHotspot(getApplicationContext(),"gpswifi","012345678",false);
+                    if(enabled){
+                        Toast.makeText(getApplicationContext(),"移动热点已关闭！",Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(),"移动热点关闭失败！",Toast.LENGTH_SHORT).show();
+                    }
+                    PrefUtils.setAutoLaunchHotSpot(getApplicationContext(),buttonView.isChecked());
+                }
             }
         });
         EditText speedAdjustEditText=findViewById(R.id.editText_speedadjust);
@@ -396,9 +415,10 @@ public class ConfigurationActivity extends Activity {
                 startActivity(new Intent(ConfigurationActivity.this,AppSelectionActivity.class));
             }
         });
+        AudioManager audioManager= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         EditText audioVolumeEditText=findViewById(R.id.editText_audioVolume);
         audioVolumeEditText.setText(PrefUtils.getAudioVolume(getApplicationContext())+"");
-        audioVolumeEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, 30)});
+        audioVolumeEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL))});
 
         enableNaviFloatingCheckBox=findViewById(R.id.checkBox_navfloatiing);
         CheckBox naviAutoSoltCheckBox=findViewById(R.id.checkBox_Navi_autoSolt);

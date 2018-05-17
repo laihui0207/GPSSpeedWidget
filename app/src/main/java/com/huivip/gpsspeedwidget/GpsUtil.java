@@ -649,49 +649,22 @@ public class GpsUtil implements AMapNaviListener {
     public void onTrafficStatusUpdate() {
 
     }
-
+    int pre_camera_distance =0;
+    int locationUpdateCount=0;
     @Override
     public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-        /*if(latedDirectionName!=null && latedDirectionName.equals(getDirection())){
-            isTurned=true;
-            latedDirectionName=getDirection();
-        } else {
-            isTurned=false;
+        if(cameraDistance>0 && pre_camera_distance == cameraDistance
+                && aMapNaviLocation.getSpeed()>15 && locationUpdateCount>30){
+            setCameraDistance(0);
+            setCameraSpeed(0);
+            locationUpdateCount=0;
         }
-        if (cameraLocation != null) {
-            bearing = aMapNaviLocation.getBearing();
-            Location location = new Location("");
-            location.setLatitude(aMapNaviLocation.getCoord().getLatitude());
-            location.setLongitude(aMapNaviLocation.getCoord().getLongitude());
-            float betweenBearing = location.bearingTo(cameraLocation);
-            if (Math.abs(bearing - betweenBearing) > 50) {
-                directionCheckCounter++;
-                if (directionCheckCounter > 50 && kmhSpeed > 0) {
-                    isTurned = true;
-                    directionCheckCounter = 0;
-                    limitSpeed = 0;
-                }
-            } else {
-                limitDistance = Float.parseFloat(localNumberFormat.format(location.distanceTo(cameraLocation)));
-                isTurned = false;
-            }
-
-        } else {
-            directionCheckCounter = 0;
-            limitDistance = 0F;
-        }
-        if (limitDistance <= 5 || limitDistance > 300 || isTurned) {
-            limitDistance = 0F;
-            if (isTurned || limitSpeed == 0) {
-                cameraLocation = null;
-            }
-        }
-
-        if(isTurned){
-            currentRoadName="";
-            if(limitSpeed!=0){
-                limitSpeed=0;
-            }
+        else  if(cameraDistance>0) {
+            pre_camera_distance = cameraDistance;
+            locationUpdateCount++;
+        } /*else {
+            pre_camera_distance=0;
+            locationUpdateCount=0;
         }*/
     }
 

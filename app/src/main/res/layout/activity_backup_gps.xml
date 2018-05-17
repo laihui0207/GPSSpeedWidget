@@ -103,6 +103,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/checkBox_autobackup" android:layout_weight="1"
         />
+        <TextView
+                android:text="如使用自动备份，请不要勾选 上传行车轨迹功能"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"
