@@ -346,8 +346,11 @@ public class ConfigurationActivity extends Activity {
                 boolean serviceEnabled = Utils.isAccessibilityServiceEnabled(getApplicationContext(), AppDetectionService.class);
                 PrefUtils.setEnableAccessibilityService(getApplicationContext(),serviceEnabled);
                 EditText ttsVolume=findViewById(R.id.editText_audioVolume);
-                String setedVolume=ttsVolume.getText().toString();
-                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(setedVolume));
+                String setAudioVolume=ttsVolume.getText().toString();
+                if(TextUtils.isEmpty(setAudioVolume)){
+                    setAudioVolume="5";
+                }
+                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(setAudioVolume));
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);

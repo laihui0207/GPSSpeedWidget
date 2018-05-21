@@ -51,7 +51,6 @@
             </intent-filter>
         </activity>
         <activity android:name="com.amap.api.maps.offlinemap.OfflineMapActivity"/>
-        <activity android:name=".HudDisplayActivity"></activity>
         <receiver
                 android:name=".GpsSpeedWidget"
                 android:icon="@drawable/icon"

@@ -158,6 +158,7 @@ public class MeterFloatingService extends Service {
     }
     public void setSpeedOveral(boolean speeding) {
         int colorRes = speeding ? R.color.red500 : R.color.cardview_light_background;
+
         int color = ContextCompat.getColor(this, colorRes);
         speedView.setTextColor(color);
         limitView.setVisibility(( gpsUtil.getLimitDistance()>0 || gpsUtil.getLimitSpeed() > 0) ? View.VISIBLE : View.GONE);

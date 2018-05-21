@@ -283,6 +283,9 @@ public class FloatingService extends Service{
 
     public void setSpeeding(boolean speeding) {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN){
+            colorRes = speeding ? R.color.red500 : R.color.cardview_light_background;
+        }
         int color = ContextCompat.getColor(this, colorRes);
         mSpeedometerText.setTextColor(color);
     }

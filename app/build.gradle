@@ -28,12 +28,14 @@ android {
             keyPassword "huivip"
         }
     }
+
     buildTypes {
         release {
             signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
     }
     defaultConfig {
 
@@ -73,6 +75,7 @@ dependencies {
         transitive = true;
     }
     /*    compile 'com.github.gigamole.arcprogressstackview:library:1.0.3'*/
+    //noinspection GradleCompatible
     compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.android.support:support-v4:27.0.2'
     compile 'com.android.support:support-v13:27.0.2'

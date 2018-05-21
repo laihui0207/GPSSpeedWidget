@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/speedometer"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/limit"
+                android:background="@drawable/circle"
+                android:elevation="2dp">
+
+    <devlight.io.library.ArcProgressStackView
+            android:id="@+id/arcview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:apsv_animated="true"
+            app:apsv_animation_duration="100"
+            app:apsv_draw_width="4dp"
+            app:apsv_model_bg_enabled="true"
+            app:apsv_shadowed="false"
+            app:apsv_start_angle="135"
+            app:apsv_sweep_angle="270"
+            tools:visibility="gone"/>
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:orientation="vertical" android:padding="8dp">
+        <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/speed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textSize="30dp"
+                android:text="--"
+                android:textColor="#fff"
+                app:autoSizeTextType="uniform"
+                android:layout_alignParentBottom="true" android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"/>
+
+        <TextView
+                android:id="@+id/speedUnits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:includeFontPadding="false"
+                android:gravity="center_vertical|center_horizontal"
+                android:textColor="#fff"
+                android:textSize="15dp"
+                tools:text="km/h" android:text="km/h"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"/>
+        <TextView
+                android:text="北" android:textColor="#fff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView_number_direction" android:layout_alignTop="@+id/speed"
+                android:layout_centerHorizontal="true" android:textSize="15dp"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
