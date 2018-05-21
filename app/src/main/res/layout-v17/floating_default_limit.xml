@@ -62,5 +62,5 @@
                 android:layout_centerHorizontal="true" android:id="@+id/textView_floating_distance"
                 android:layout_marginTop="10dp" android:textSize="13dp"/>
     </RelativeLayout>
-    <include layout="@layout/floating_speedometer_stub"/>
+    <include layout="@layout/floating_default_speed"/>
 </RelativeLayout>

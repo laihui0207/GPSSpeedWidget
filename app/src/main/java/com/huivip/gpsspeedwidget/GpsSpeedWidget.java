@@ -17,7 +17,7 @@ public class GpsSpeedWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent paramIntent) {
         super.onReceive(context, paramIntent);
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.speedwidget);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.speedmeterwidget);
         Intent service = new Intent(context, GpsSpeedService.class);
         views.setOnClickPendingIntent(R.id.ifreccia, PendingIntent.getService(context, 0,
                 service, 0));

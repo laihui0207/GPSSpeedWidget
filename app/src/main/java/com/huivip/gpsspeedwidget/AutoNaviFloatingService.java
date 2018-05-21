@@ -55,6 +55,8 @@ public class AutoNaviFloatingService extends Service {
     TextView limitTypeTextView;
     @BindView(R.id.autoNavi_progressBarLimit)
     ProgressBar limitProgressBar;
+    @BindView(R.id.textView_autonavi_direction)
+    TextView directionTextView;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
@@ -109,7 +111,7 @@ public class AutoNaviFloatingService extends Service {
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        mFloatingView = inflater.inflate(R.layout.autonavi_speed_view, null);
+        mFloatingView = inflater.inflate(R.layout.floating_autonavi, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -150,6 +152,7 @@ public class AutoNaviFloatingService extends Service {
                 speedView.setText(gpsUtil.getKmhSpeedStr()+"");
                 speedWheelView.setRotation((float)(gpsUtil.getSpeedometerPercentage()/100d*280f));
                 setSpeedOveral(gpsUtil.isHasLimited());
+            directionTextView.setText(gpsUtil.getDirection()+"");
             //}
         }
         else {

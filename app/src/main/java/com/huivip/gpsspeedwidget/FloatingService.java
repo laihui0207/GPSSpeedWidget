@@ -119,7 +119,7 @@ public class FloatingService extends Service{
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        mFloatingView = inflater.inflate(R.layout.floating_international, null);
+        mFloatingView = inflater.inflate(R.layout.floating_default_limit, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
