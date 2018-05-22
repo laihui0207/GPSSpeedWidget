@@ -2,6 +2,7 @@ package com.huivip.gpsspeedwidget;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.app.ActivityManager;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -30,6 +31,7 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import devlight.io.library.ArcProgressStackView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 

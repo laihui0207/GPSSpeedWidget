@@ -649,18 +649,15 @@ public class GpsUtil implements AMapNaviListener {
     public void onTrafficStatusUpdate() {
 
     }
-    int pre_camera_distance =0;
     int locationUpdateCount=0;
     @Override
     public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-        if(cameraDistance>0 && pre_camera_distance == cameraDistance
-                && aMapNaviLocation.getSpeed()>15 && locationUpdateCount>40){
+        if(cameraDistance>0 && aMapNaviLocation.getSpeed()>15 && locationUpdateCount>40){
             setCameraDistance(0);
             setCameraSpeed(0);
             locationUpdateCount=0;
         }
-        else  if(cameraDistance>0 &&  pre_camera_distance != cameraDistance) {
-            pre_camera_distance = cameraDistance;
+        else  if(cameraDistance>0 && aMapNaviLocation.getSpeed()>15 ) {
             locationUpdateCount++;
         } /*else {
             pre_camera_distance=0;

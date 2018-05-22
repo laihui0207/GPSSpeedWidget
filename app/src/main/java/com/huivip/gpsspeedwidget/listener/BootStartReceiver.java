@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.util.Log;
-import com.huivip.gpsspeedwidget.GpsSpeedService;
+import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 public class BootStartReceiver extends BroadcastReceiver {
@@ -20,9 +20,24 @@ public class BootStartReceiver extends BroadcastReceiver {
                 Log.d("huivip","get Action:"+intent.getAction());
                 boolean start = PrefUtils.isEnableAutoStart(context);
                 if(start) {
-                    Intent service = new Intent(context, GpsSpeedService.class);
-                    service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT, true);
-                    context.startService(service);
+                    GpsUtil.getInstance(context).startLocationService();
+                    if(PrefUtils.isWidgetActived(context)) {
+                        Intent service = new Intent(context, GpsSpeedService.class);
+                        service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT, true);
+                        context.startService(service);
+                    }
+
+                    PrefUtils.setEnableTempAudioService(context, true);
+                    if (PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+                        Intent floatService = new Intent(context, FloatingService.class);
+                        String floatingStyle = PrefUtils.getFloatingStyle(context);
+                        if (floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
+                            floatService = new Intent(context, AutoNaviFloatingService.class);
+                        } else if (floatingStyle.equals(PrefUtils.FLOATING_METER)) {
+                            floatService = new Intent(context, MeterFloatingService.class);
+                        }
+                        context.startService(floatService);
+                    }
 
                     int delayTime=PrefUtils.getDelayStartOtherApp(context);
                     AlarmManager alarm=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
@@ -30,6 +45,9 @@ public class BootStartReceiver extends BroadcastReceiver {
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + (delayTime * 1000 + 300), thirdIntent);
                     PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,AutoLaunchSystemConfigReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,5000L,autoLaunchIntent);
+
+                    PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,AutoFTPBackupReceiver.class), 0);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,120000L,autoFtpBackupIntent);
                 }
             }
         }

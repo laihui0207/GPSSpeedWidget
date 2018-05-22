@@ -72,11 +72,8 @@ public class GpsSpeedService extends Service {
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedmeterwidget);
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         if (intent != null) {
-           /* if (!PrefUtils.isWidgetActived(getApplicationContext())) {
-                return super.onStartCommand(intent, flags, startId);
-            }*/
-            if ((intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT,false)) && serviceStoped) {
-               /* new Thread(new Runnable() {
+            /*if ((intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT,false)) && serviceStoped) {
+               *//* new Thread(new Runnable() {
                     @Override
                     public void run() {
                         Set<String> autoApps = PrefUtils.getAutoLaunchApps(getApplicationContext());
@@ -95,9 +92,9 @@ public class GpsSpeedService extends Service {
                             }
                         }
                     }
-                }).start();*/
+                }).start();*//*
                 autoBackUpGPSData();
-            }
+            }*/
             if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped || intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT, false)) {
                 if (serviceStoped) {
                     serviceStoped = false;
@@ -111,33 +108,32 @@ public class GpsSpeedService extends Service {
                     this.numberRemoteViews = null;
                     gpsUtil.startLocationService();
                     PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
-                    if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
-                        Intent floatService = new Intent(this, FloatingService.class);
-                        String floatingStyle = PrefUtils.getFloatingStyle(getApplicationContext());
-                        if (floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                            floatService = new Intent(this, AutoNaviFloatingService.class);
-                        } else if (floatingStyle.equals(PrefUtils.FLOATING_METER)) {
-                            floatService = new Intent(this, MeterFloatingService.class);
-                        }
-                        startService(floatService);
+                    if(PrefUtils.isUserManualClosedService(getApplicationContext())) {
+                        //if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+                            Intent floatService = new Intent(this, FloatingService.class);
+                            String floatingStyle = PrefUtils.getFloatingStyle(getApplicationContext());
+                            if (floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
+                                floatService = new Intent(this, AutoNaviFloatingService.class);
+                            } else if (floatingStyle.equals(PrefUtils.FLOATING_METER)) {
+                                floatService = new Intent(this, MeterFloatingService.class);
+                            }
+                            startService(floatService);
+                        //}
+                        PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
                     }
-                    PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
                 }
             } else {
                 serviceStoped = true;
-                /*                if(PrefUtils.isEnabledWatchWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext()) ) {*/
                 this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "关");
                 this.remoteViews.setImageViewResource(R.id.ialtimetro, R.drawable.base);
                 this.remoteViews.setImageViewResource(R.id.ifreccia, R.drawable.alt_0);
                 this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
                 this.remoteViews = null;
-              /*  }
-                if(PrefUtils.isEnabledNumberWidget(getApplicationContext()) && PrefUtils.isOnDesktop(getApplicationContext())) {*/
+
                 this.numberRemoteViews.setTextViewText(R.id.number_speed, "关");
                 this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, 0, false);
                 this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
                 this.numberRemoteViews = null;
-                /*}*/
 
                 gpsUtil.stopLocationService(true);
                 if (this.locationTimer != null) {
@@ -174,7 +170,7 @@ public class GpsSpeedService extends Service {
         super.onDestroy();
     }
 
-    private void autoBackUpGPSData() {
+   /* private void autoBackUpGPSData() {
         if (!PrefUtils.isFTPAutoBackup(getApplicationContext())) {
             return;
         }
@@ -222,7 +218,7 @@ public class GpsSpeedService extends Service {
             getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
         }
     }
-
+*/
     @Override
     public IBinder onBind(Intent intent) {
         return null;

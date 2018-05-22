@@ -722,28 +722,52 @@ public class ConfigurationActivity extends Activity {
         if(enabled){
             String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
             if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
-                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-                autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
+                    meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                    startService(meterFloatingService);
+                }
+                if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
+                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    startService(autoNavifloatService);
+                }
+                startService(defaultFloatingService);
+
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
+                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    startService(defaultFloatingService);
+                }
+                if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
+                    meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                    startService(meterFloatingService);
+                }
+                startService(autoNavifloatService);
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-                autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
+                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    startService(defaultFloatingService);
+                }
+                if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
+                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    startService(autoNavifloatService);
+                }
+                startService(meterFloatingService);
             }
 
         }
         else {
-            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-            autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        }
-        try {
-            startService(defaultFloatingService);
-            startService(autoNavifloatService);
-            startService(meterFloatingService);
-        } catch (Exception e) {
-            Log.d("huivip","Start Floating server Failed"+e.getMessage());
+            if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                startService(defaultFloatingService);
+            }
+            if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
+                autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                startService(autoNavifloatService);
+            }
+            if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
+                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                startService(meterFloatingService);
+            }
         }
     }
     private void checkIfCanIncreaseMusic(){
