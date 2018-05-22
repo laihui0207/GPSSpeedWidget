@@ -19,7 +19,6 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.Log;
 import android.view.*;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +27,6 @@ import butterknife.ButterKnife;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
-import java.text.NumberFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -108,7 +106,7 @@ public class MeterFloatingService extends Service {
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        mFloatingView = inflater.inflate(R.layout.meter_floatting, null);
+        mFloatingView = inflater.inflate(R.layout.floatting_meter, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -158,6 +156,7 @@ public class MeterFloatingService extends Service {
     }
     public void setSpeedOveral(boolean speeding) {
         int colorRes = speeding ? R.color.red500 : R.color.cardview_light_background;
+
         int color = ContextCompat.getColor(this, colorRes);
         speedView.setTextColor(color);
         limitView.setVisibility(( gpsUtil.getLimitDistance()>0 || gpsUtil.getLimitSpeed() > 0) ? View.VISIBLE : View.GONE);

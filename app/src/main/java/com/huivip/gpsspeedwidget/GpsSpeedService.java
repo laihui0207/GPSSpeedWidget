@@ -18,7 +18,6 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.io.File;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -70,7 +69,7 @@ public class GpsSpeedService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
+        this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedmeterwidget);
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         if (intent != null) {
            /* if (!PrefUtils.isWidgetActived(getApplicationContext())) {
@@ -255,7 +254,7 @@ public class GpsSpeedService extends Service {
     }
 
     void computeAndShowData() {
-        this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedwidget);
+        this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedmeterwidget);
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         int mphNumber = gpsUtil.getMphSpeed().intValue();
         setSpeeding(gpsUtil.isHasLimited());

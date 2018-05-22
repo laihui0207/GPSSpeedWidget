@@ -24,9 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import devlight.io.library.ArcProgressStackView;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -109,7 +107,7 @@ public class NaviFloatingService extends Service{
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        mFloatingView = inflater.inflate(R.layout.floating_navi, null);
+        mFloatingView = inflater.inflate(R.layout.floating_backend_navi, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -150,7 +148,7 @@ public class NaviFloatingService extends Service{
         if(!TextUtils.isEmpty(gpsUtil.getNextRoadName())){
             nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
         }
-        nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance()+"后");
+        nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
         naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+" -- "+gpsUtil.getTotalLeftTime());
         if(gpsUtil.getNavi_turn_icon()>0) {
             naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
@@ -175,7 +173,7 @@ public class NaviFloatingService extends Service{
         else {
             naviCameraView.setVisibility(View.GONE);
         }
-        speedTextView.setText(gpsUtil.getKmhSpeedStr() + " km/h");
+        speedTextView.setText(gpsUtil.getKmhSpeedStr());
         int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
         int color = ContextCompat.getColor(this, colorRes);
         speedTextView.setTextColor(color);

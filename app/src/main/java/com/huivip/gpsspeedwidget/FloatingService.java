@@ -119,7 +119,7 @@ public class FloatingService extends Service{
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        mFloatingView = inflater.inflate(R.layout.floating_international, null);
+        mFloatingView = inflater.inflate(R.layout.floating_default_limit, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -283,6 +283,9 @@ public class FloatingService extends Service{
 
     public void setSpeeding(boolean speeding) {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN){
+            colorRes = speeding ? R.color.red500 : R.color.cardview_light_background;
+        }
         int color = ContextCompat.getColor(this, colorRes);
         mSpeedometerText.setTextColor(color);
     }

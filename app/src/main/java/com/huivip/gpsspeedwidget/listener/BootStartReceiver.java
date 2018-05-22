@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
+import android.util.Log;
 import com.huivip.gpsspeedwidget.GpsSpeedService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -14,7 +15,9 @@ public class BootStartReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if(intent!=null){
             if(intent.getAction().equalsIgnoreCase(Intent.ACTION_REBOOT)
-                    || intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)){
+                    || intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)
+                    || intent.getAction().equalsIgnoreCase(Intent.ACTION_MEDIA_MOUNTED)){
+                Log.d("huivip","get Action:"+intent.getAction());
                 boolean start = PrefUtils.isEnableAutoStart(context);
                 if(start) {
                     Intent service = new Intent(context, GpsSpeedService.class);

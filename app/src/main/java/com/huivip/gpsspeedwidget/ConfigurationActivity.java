@@ -322,8 +322,11 @@ public class ConfigurationActivity extends Activity {
                 boolean serviceEnabled = Utils.isAccessibilityServiceEnabled(getApplicationContext(), AppDetectionService.class);
                 PrefUtils.setEnableAccessibilityService(getApplicationContext(),serviceEnabled);
                 EditText ttsVolume=findViewById(R.id.editText_audioVolume);
-                String setedVolume=ttsVolume.getText().toString();
-                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(setedVolume));
+                String setAudioVolume=ttsVolume.getText().toString();
+                if(TextUtils.isEmpty(setAudioVolume)){
+                    setAudioVolume="5";
+                }
+                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(setAudioVolume));
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
@@ -391,9 +394,10 @@ public class ConfigurationActivity extends Activity {
                 startActivity(new Intent(ConfigurationActivity.this,AppSelectionActivity.class));
             }
         });
+        AudioManager audioManager= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         EditText audioVolumeEditText=findViewById(R.id.editText_audioVolume);
         audioVolumeEditText.setText(PrefUtils.getAudioVolume(getApplicationContext())+"");
-        audioVolumeEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, 30)});
+        audioVolumeEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL))});
 
         enableNaviFloatingCheckBox=findViewById(R.id.checkBox_navfloatiing);
         CheckBox naviAutoSoltCheckBox=findViewById(R.id.checkBox_Navi_autoSolt);
@@ -689,30 +693,30 @@ public class ConfigurationActivity extends Activity {
     }
     private void startFloationgWindows(boolean enabled){
         Intent defaultFloatingService=new Intent(this,FloatingService.class);
-        Intent AutoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
+        Intent autoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
         if(enabled){
             String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
             if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
                 meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
                 defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
                 meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
                 defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
             }
 
         }
         else {
             meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
         }
         try {
             startService(defaultFloatingService);
-            startService(AutoNavifloatService);
+            startService(autoNavifloatService);
             startService(meterFloatingService);
         } catch (Exception e) {
             Log.d("huivip","Start Floating server Failed"+e.getMessage());

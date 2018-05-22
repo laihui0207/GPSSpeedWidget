@@ -4,7 +4,7 @@
 
    <!-- <item
         android:id="@+id/menu_app_selection_maps"
-        android:icon="@drawable/ic_map_white_24dp"
+        android:icon="@drawable-v17/ic_map_white_24dp"
         android:title="显示程序"
         app:showAsAction="ifRoom" />-->
 

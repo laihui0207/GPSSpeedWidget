@@ -192,12 +192,12 @@ public class AppSelectionActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_app_selection, menu);
        // MenuItem item = menu.findItem(R.id.menu_app_selection_maps);
-      /*  Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.ic_map_white_24dp).mutate();
-        drawable = DrawableCompat.wrap(drawable);*/
+      /*  Drawable drawable-v17 = AppCompatResources.getDrawable(this, R.drawable-v17.ic_map_white_24dp).mutate();
+        drawable-v17 = DrawableCompat.wrap(drawable-v17);*/
        /* if (mMapsOnly) {
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.colorAccent));
+            DrawableCompat.setTint(drawable-v17, ContextCompat.getColor(this, R.color.colorAccent));
         }*/
-       // item.setIcon(drawable);
+       // item.setIcon(drawable-v17);
         return true;
     }
 
