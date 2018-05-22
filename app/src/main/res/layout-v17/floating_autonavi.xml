@@ -36,7 +36,7 @@
                 android:text="北"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:layout_below="@+id/imageview_red_night"
-                android:layout_centerHorizontal="true" android:layout_marginTop="35dp"
+                android:layout_centerHorizontal="true" android:layout_marginTop="25dp"
                 android:id="@+id/textView_autonavi_direction" android:textColor="#000" android:textSize="20dp"/>
         <TextView
                 android:text="km/h"

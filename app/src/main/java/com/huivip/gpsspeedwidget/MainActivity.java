@@ -349,46 +349,96 @@ public class MainActivity extends Activity implements TraceListener {
         }
     }
     private void drawLine(Message msg){
-        List<LatLng> latLngs = new ArrayList<>();
+
         LatLng lastedLatLng=null;
         String lastedTime="";
         String firstTime="";
         LatLng firstLatLng=null;
         String dataResult=(String)msg.obj;
+        lineDatas=new HashMap<>();
+        List<LatLng> totalDatas=new ArrayList<>();
+        Map<String,List<TraceLocation>> tempMap=new HashMap<>();
         try {
             if (dataResult != "-1") {
                 CoordinateConverter converter = new CoordinateConverter(getApplicationContext());
                 converter.from(CoordinateConverter.CoordType.GPS);
                 JSONArray datas = new JSONArray(dataResult);
-                for(int i=0;i<datas.length();i++){
-                    JSONObject data=datas.getJSONObject(i);
+
+                List<TraceLocation> latLngs = new ArrayList<>();
+                for (int i = 0; i < datas.length(); i++) {
+                    JSONObject data = datas.getJSONObject(i);
+                    String lineId=data.getString("lineId");
+                    if(tempMap.containsKey(lineId)){
+                        latLngs=tempMap.get(lineId);
+                    }
+                    else {
+                        latLngs=new ArrayList<>();
+                    }
+
+                    TraceLocation location = new TraceLocation();
                     LatLng latLng=new LatLng(data.getDouble("lat"),data.getDouble("lng"));
                     converter.coord(latLng);
                     lastedLatLng=converter.convert();
-                    if(i==0){
-                        firstLatLng=lastedLatLng;
-                        firstTime=data.getString("createTime");
+                    totalDatas.add(lastedLatLng);
+                    location.setLatitude(lastedLatLng.latitude);
+                    location.setLongitude(lastedLatLng.longitude);
+                    if(!data.isNull("speedValue")){
+                        location.setSpeed(data.getLong("speedValue")*3.6F);
                     }
-                    latLngs.add(lastedLatLng);
-                    lastedTime=data.getString("createTime");
+                    if(!data.isNull("bearValue")){
+                        location.setBearing(data.getLong("bearingValue"));
+                    }
+                    location.setTime(dateFormat.parse(data.getString("createTime")).getTime());
+                    latLngs.add(location);
+                    tempMap.put(lineId,latLngs);
                 }
+
+                if(tempMap!=null && tempMap.size()>0){
+                    int i=0;
+                    for(String key:tempMap.keySet()){
+                        lineDatas.put(i+"",tempMap.get(key));
+                        i++;
+                    }
+                }
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+        float totalDistance=getDistance(totalDatas);
         aMap.clear();
-        TraceOverlay mTraceOverlay = new TraceOverlay(aMap, latLngs);
-        mTraceOverlay.setProperCamera(latLngs);
-        mTraceOverlay.zoopToSpan();
-        localNumberFormat.setMaximumFractionDigits(1);
-        Marker endMarker=aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.end))
-                .snippet("车辆最后的位置\n时间:"+lastedTime+"\n行程:"+localNumberFormat.format(getDistance(latLngs)/1000) +"公里"));
-        endMarker.setClickable(true);
-        endMarker.showInfoWindow();
-        aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.start)).snippet("车辆开始的位置\n时间："+firstTime));
-        CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng,13,0,0));
-        aMap.moveCamera(mCameraUpdate);
+        for(String key:lineDatas.keySet()) {
+            List<TraceLocation> locationList=lineDatas.get(key);
+            List<LatLng> dataList=new ArrayList<>();
+            int i=0;
+            for(TraceLocation location: locationList){
+                lastedLatLng=new LatLng(location.getLatitude(),location.getLongitude());
+                lastedTime=dateFormat.format(location.getTime());
+                if(i==0){
+                    firstTime=lastedTime;
+                    firstLatLng=lastedLatLng;
+                }
+                dataList.add(lastedLatLng);
+                i++;
+                //aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置").snippet("时间：" + lastedTime+"\n速度："+location.getSpeed()/3.6F+"km/h").alpha(30F)).hideInfoWindow();
+
+            }
+            TraceOverlay mTraceOverlay = new TraceOverlay(aMap, dataList);
+            mTraceOverlay.setProperCamera(dataList);
+            mTraceOverlay.zoopToSpan();
+            localNumberFormat.setMaximumFractionDigits(1);
+            Marker endMarker = aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.end))
+                    .snippet("车辆停驶的位置\n时间:" + lastedTime + "\n此段行程:" + localNumberFormat.format(getDistance(dataList) / 1000) + "公里\n当天总行程："+localNumberFormat.format(totalDistance/1000)+"公里"));
+            endMarker.setClickable(true);
+            endMarker.showInfoWindow();
+            aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.start)).snippet("车辆开始的位置\n时间：" + firstTime));
+            CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, 13, 0, 0));
+            aMap.moveCamera(mCameraUpdate);
+
+        }
         AMap.OnMarkerClickListener markerClickListener = new AMap.OnMarkerClickListener() {
             // marker 对象被点击时回调的接口
             // 返回 true 则表示接口已响应事件，否则返回false
@@ -404,6 +454,27 @@ public class MainActivity extends Activity implements TraceListener {
             }
         };
         aMap.setOnMarkerClickListener(markerClickListener);
+
+       /* MultiPointOverlayOptions overlayOptions = new MultiPointOverlayOptions();
+        //overlayOptions.icon(bitmapDescriptor);//设置图标
+        overlayOptions.anchor(0.5f,0.5f); //设置锚点
+        MultiPointOverlay multiPointOverlay = aMap.addMultiPointOverlay(overlayOptions);
+        List<MultiPointItem> list = new ArrayList<MultiPointItem>();
+        for(LatLng latLng: totalDatas){
+            MultiPointItem multiPointItem = new MultiPointItem(latLng);
+            list.add(multiPointItem);
+        }
+        multiPointOverlay.setItems(list);//将规范化的点集交给海量点管理对象设置，待加载完毕即可看到海量点信息
+        AMap.OnMultiPointClickListener multiPointClickListener = new AMap.OnMultiPointClickListener() {
+            // 海量点中某一点被点击时回调的接口
+            // 返回 true 则表示接口已响应事件，否则返回false
+            @Override
+            public boolean onPointClick(MultiPointItem pointItem) {
+                return false;
+            }
+        };
+        // 绑定海量点点击事件
+        aMap.setOnMultiPointClickListener(multiPointClickListener);*/
     }
     private void initPermission() {
         String[] permissions = {
@@ -523,6 +594,7 @@ public class MainActivity extends Activity implements TraceListener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        aMap.clear();
         aMap.setMyLocationEnabled(false);
         if (lat != 0 && lng != 0) {
             LatLng latLng = new LatLng(lat, lng);

@@ -148,7 +148,7 @@ public class NaviFloatingService extends Service{
         if(!TextUtils.isEmpty(gpsUtil.getNextRoadName())){
             nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
         }
-        nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance()+"后");
+        nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
         naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+" -- "+gpsUtil.getTotalLeftTime());
         if(gpsUtil.getNavi_turn_icon()>0) {
             naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
@@ -173,7 +173,7 @@ public class NaviFloatingService extends Service{
         else {
             naviCameraView.setVisibility(View.GONE);
         }
-        speedTextView.setText(gpsUtil.getKmhSpeedStr() + " km/h");
+        speedTextView.setText(gpsUtil.getKmhSpeedStr());
         int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
         int color = ContextCompat.getColor(this, colorRes);
         speedTextView.setTextColor(color);

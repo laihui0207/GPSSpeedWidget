@@ -125,10 +125,12 @@
             <TextView
                     android:text="km/h"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_alignBottom="@+id/textView_autonavi_speedText"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView7"
+                    android:textColor="#fff" android:layout_alignBaseline="@+id/textView_autonavi_speedText"
+                    android:layout_alignBottom="@+id/textView_autonavi_speedText"
                     android:layout_toRightOf="@+id/textView_autonavi_speedText"
-                    android:layout_toEndOf="@+id/textView_autonavi_speedText" android:id="@+id/textView7"
-                    android:textColor="#fff"/>
+                    android:layout_toEndOf="@+id/textView_autonavi_speedText"/>
             <TextView
                     android:text="后"
                     android:layout_width="wrap_content"
