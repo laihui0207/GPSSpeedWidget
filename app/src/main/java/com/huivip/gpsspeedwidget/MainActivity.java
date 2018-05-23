@@ -27,6 +27,7 @@ import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;*/
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -297,33 +298,57 @@ public class MainActivity extends Activity {
     }
     private void startFloationgWindows(boolean enabled){
         Intent defaultFloatingService=new Intent(this,FloatingService.class);
-        Intent AutoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
+        Intent autoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
         if(enabled){
             String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
             if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
-                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
+                    meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                    startService(meterFloatingService);
+                }
+                if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
+                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    startService(autoNavifloatService);
+                }
+                startService(defaultFloatingService);
+
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
+                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    startService(defaultFloatingService);
+                }
+                if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
+                    meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                    startService(meterFloatingService);
+                }
+                startService(autoNavifloatService);
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
+                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    startService(defaultFloatingService);
+                }
+                if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
+                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    startService(autoNavifloatService);
+                }
+                startService(meterFloatingService);
             }
 
         }
         else {
-            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        }
-        try {
-            startService(defaultFloatingService);
-            startService(AutoNavifloatService);
-            startService(meterFloatingService);
-        } catch (Exception e) {
-            Log.d("huivip","Start Floating server Failed"+e.getMessage());
+            if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                startService(defaultFloatingService);
+            }
+            if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
+                autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                startService(autoNavifloatService);
+            }
+            if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
+                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                startService(meterFloatingService);
+            }
         }
     }
     private void saveDeviceIdString(String deviceString){

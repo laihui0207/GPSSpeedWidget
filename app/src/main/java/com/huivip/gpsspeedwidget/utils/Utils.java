@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget.utils;
 import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -22,6 +23,7 @@ import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
 
 import java.io.File;
+import java.util.List;
 
 
 public abstract class Utils {
@@ -103,7 +105,17 @@ public abstract class Utils {
             context.startService(intent);
         }
     }*/
-
+  public static boolean isServiceRunning(Context context, String serviceClassName){
+      final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+      final List<ActivityManager.RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE); //这个value取任意大于1的值，但返回的列表大小可能比这个值小。
+      for (ActivityManager.RunningServiceInfo runningServiceInfo : services) {
+          String name = runningServiceInfo.service.getClassName();
+          if (name.equals(serviceClassName)){
+              return true;
+          }
+      }
+      return false;
+  }
     public static boolean isServiceReady(Context context) {
         boolean permissionGranted =
                 isLocationPermissionGranted(context);
