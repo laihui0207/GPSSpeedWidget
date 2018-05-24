@@ -38,6 +38,7 @@ public class GpsUtil implements AMapNaviListener {
     private String latitude;
     private String longitude;
     private float bearing;
+    private double altitude=0.0D;
     private boolean isTurned = false;
     private String velocitaString = null;
     private Integer velocitaNumber;
@@ -77,6 +78,7 @@ public class GpsUtil implements AMapNaviListener {
     int cameraDistance = 0;
     int cameraSpeed = 0;
     String currentRoadName = "";
+    int currentRoadType=-1;
     String nextRoadName = "";
     float nextRoadDistance = 0F;
     float totalLeftDistance = 0F;
@@ -262,6 +264,7 @@ public class GpsUtil implements AMapNaviListener {
         if (paramLocation != null) {
             this.latitude = Double.toString(paramLocation.getLatitude());
             this.longitude = Double.toString(paramLocation.getLongitude());
+            this.altitude=paramLocation.getAltitude();
             this.velocitaString = null;
             if (paramLocation.hasSpeed()) {
                 this.velocitaNumber = Integer.valueOf((int) paramLocation.getSpeed());
@@ -507,7 +510,61 @@ public class GpsUtil implements AMapNaviListener {
         }
         return name;
     }
-
+    public void setRoadType(int roadType){
+        this.currentRoadType=roadType;
+    }
+    /*
+    //0：高速公路
+//1：国道
+//2：省道
+//3：县道
+//4：乡公路
+//5：县乡村内部道路
+//6：主要大街、城市快速道
+//7：主要道路
+//8：次要道路
+//9：普通道路
+//10：非导航道路
+     */
+    public String getRoadTypeName(){
+        String roadTypeName="";
+        switch(currentRoadType) {
+            case 0:
+                roadTypeName="高速公路";
+                break;
+            case 1:
+                roadTypeName="国道";
+                break;
+            case 2:
+                roadTypeName="省道";
+                break;
+            case 3:
+                roadTypeName="县道";
+                break;
+            case 4:
+                roadTypeName="乡公路";
+                break;
+            case 5:
+                roadTypeName="县乡村内部道路";
+                break;
+            case 6:
+                roadTypeName="主要大街、城市快速道";
+                break;
+            case 7:
+                roadTypeName="主要道路";
+                break;
+            case 8:
+                roadTypeName="次要道路";
+                break;
+            case 9:
+                roadTypeName="普通道路";
+                break;
+            case 10:
+                roadTypeName="非导航道路";
+                break;
+        }
+        return roadTypeName;
+    }
     public void setCameraType(int cameraType) {
         this.cameraType = cameraType;
     }
@@ -524,7 +581,9 @@ public class GpsUtil implements AMapNaviListener {
     public int getCameraSpeed() {
         return cameraSpeed;
     }
-
+    public double getAltitude(){
+        return altitude;
+    }
     public void setCameraSpeed(int cameraSpeed) {
         this.cameraSpeed = cameraSpeed;
         this.limitSpeed = cameraSpeed;

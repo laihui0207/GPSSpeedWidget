@@ -135,7 +135,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(RECORD_GPS_HISTORY_PREFS_NAME, recordHistory).apply();
     }
     public static boolean isEnableRecordGPSHistory(Context context){
-        return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, false);
+        return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, true);
     }
     public static void setUploadGPSHistory(Context context,boolean uploadHistory){
         edit(context).putBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, uploadHistory).apply();
@@ -205,7 +205,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(FLOATING_WINDWS_DIRECTION_horizontal, value).apply();
     }
     public static boolean isEnableAudioService(Context context){
-        return getSharedPreferences(context).getBoolean(ENABLE_AUDIO_SERVICE, false);
+        return getSharedPreferences(context).getBoolean(ENABLE_AUDIO_SERVICE, true);
     }
     public static void setEnableAudioService(Context context,boolean enableService){
         edit(context).putBoolean(ENABLE_AUDIO_SERVICE, enableService).apply();

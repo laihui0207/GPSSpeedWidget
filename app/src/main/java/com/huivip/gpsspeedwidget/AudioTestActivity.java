@@ -135,10 +135,10 @@ public class AudioTestActivity extends Activity {
                 manager.reboot("重新启动系统");*/
                 /*String appName= getString(R.string.app_name);
                 openMapOperation("androidauto://rootmap?sourceApplication=" + appName);*/
-              /*  Intent intent = new Intent();
+                Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
                 intent.putExtra("KEY_TYPE", 10029);
-                sendBroadcast(intent);*/
+                sendBroadcast(intent);
                /* Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
                 intent.putExtra("KEY_TYPE", 10039);
@@ -150,8 +150,8 @@ public class AudioTestActivity extends Activity {
                 sendBroadcast(intent);*/
                 //startActivity(new Intent(AudioTestActivity.this, HudDisplayActivity.class));
                 //startService(floatService);
-                startActivity(new Intent(getApplicationContext(),
-                        com.amap.api.maps.offlinemap.OfflineMapActivity.class));
+               /* startActivity(new Intent(getApplicationContext(),
+                        com.amap.api.maps.offlinemap.OfflineMapActivity.class));*/
                 /*Intent floatService=new Intent(AudioTestActivity.this, NaviFloatingService.class);
                 startService(floatService);*/
                 /*Intent intent = new Intent();

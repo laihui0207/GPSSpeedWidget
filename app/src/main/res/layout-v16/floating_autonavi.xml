@@ -49,6 +49,12 @@
                 android:id="@+id/textView6"
                 android:layout_centerHorizontal="true" android:textColor="#000" android:textSize="10dp"
                 android:layout_below="@+id/SpeedText"/>
+        <TextView
+                android:text="海拔: 0米"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_alignParentBottom="true"
+                android:id="@+id/textView_autonavi_altitude"
+                android:layout_centerHorizontal="true" android:textSize="10dp" android:textColor="#000"/>
         <RelativeLayout android:id="@+id/autoNavi_limitLayout"
                         android:layout_width="44dp"
                         android:gravity="center"
@@ -99,6 +105,7 @@
                     android:id="@+id/textView_autoNavi_distance"
                     android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp" android:textSize="6dp"/>
+
         </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

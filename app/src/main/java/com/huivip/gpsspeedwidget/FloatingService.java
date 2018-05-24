@@ -410,8 +410,13 @@ public class FloatingService extends Service{
                         }
                     }
                     else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 2000) {
-                       Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
-                       PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),false);
+                        if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
+                            Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
+                            PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
+                        }
+                        Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
+                        configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(configActivity);
                     }
                     else {
                         if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {

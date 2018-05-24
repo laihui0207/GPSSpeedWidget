@@ -76,7 +76,7 @@ public class RecordGpsHistoryService extends Service{
                     });
                 }
             };
-            this.recordGPSTimer.schedule(this.recordGPSTask, 0L, 2000L);
+            this.recordGPSTimer.schedule(this.recordGPSTask, 0L, 1000L);
         }
         return super.onStartCommand(intent, flags, startId);
     }

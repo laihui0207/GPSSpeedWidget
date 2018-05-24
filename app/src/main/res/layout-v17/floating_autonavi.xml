@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"
               xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="150dip"
-                    android:layout_height="150dip">
+    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="180dip"
+                    android:layout_height="180dip">
         <ImageView android:id="@+id/imageview_speed" android:background="@drawable/index_bg_nomove_day"
                    android:layout_width="match_parent" android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
@@ -22,9 +22,9 @@
                    android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
         />
-        <TextView android:textSize="50dp"
+        <TextView android:textSize="55dp"
                   android:id="@+id/SpeedText" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:text="--"
+                  android:text="80"
                   android:textStyle="bold" android:textColor="#000"
                   android:layout_alignParentTop="false" android:layout_centerHorizontal="true"
                   android:layout_centerVertical="true" android:layout_centerInParent="true"/>
@@ -36,8 +36,8 @@
                 android:text="北"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:layout_below="@+id/imageview_red_night"
-                android:layout_centerHorizontal="true" android:layout_marginTop="25dp"
-                android:id="@+id/textView_autonavi_direction" android:textColor="#000" android:textSize="20dp"/>
+                android:layout_centerHorizontal="true" android:layout_marginTop="30dp"
+                android:id="@+id/textView_autonavi_direction" android:textColor="#000" android:textSize="25dp"/>
         <TextView
                 android:text="km/h"
                 android:layout_width="wrap_content"
@@ -45,12 +45,19 @@
                 android:id="@+id/textView6"
                 android:textColor="#000" android:textSize="15dp" android:layout_below="@+id/SpeedText"
                 android:layout_centerHorizontal="true"/>
+        <TextView
+                android:text="海拔: 0米"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView_autonavi_altitude"
+                android:layout_centerHorizontal="true" android:textSize="15dp" android:textColor="#000"
+                android:layout_alignParentBottom="true"/>
         <RelativeLayout android:id="@+id/autoNavi_limitLayout"
-                        android:layout_width="70dp"
+                        android:layout_width="80dp"
                         android:gravity="center"
                         android:background="@drawable/circle_autonavi_limit"
                         android:layout_gravity="center"
-                        android:layout_height="70dp"
+                        android:layout_height="80dp"
                         android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:visibility="gone">

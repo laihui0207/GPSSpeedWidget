@@ -13,11 +13,18 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 public class BootStartReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("huivip","Boot receiver");
         if(intent!=null){
+            Log.d("huivip","get Action:"+intent.getAction());
             if(intent.getAction().equalsIgnoreCase(Intent.ACTION_REBOOT)
                     || intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)
-                    || intent.getAction().equalsIgnoreCase(Intent.ACTION_MEDIA_MOUNTED)){
-                Log.d("huivip","get Action:"+intent.getAction());
+                    || intent.getAction().equalsIgnoreCase(Intent.ACTION_MEDIA_MOUNTED)
+                    || intent.getAction().equalsIgnoreCase("android.intent.action.QUICKBOOT_POWERON")
+                    || intent.getAction().equalsIgnoreCase("android.intent.action.QUICKBOOT_POWEROFF")
+                    || intent.getAction().equalsIgnoreCase("android.net.conn.CONNECTIVITY_CHANGE")
+                    /*|| intent.getAction().equalsIgnoreCase("android.net.wifi.WIFI_STATE_CHANGED")
+                    || intent.getAction().equalsIgnoreCase("android.net.wifi.STATE_CHANGE")
+                    || intent.getAction().equalsIgnoreCase("android.net.nsd.STATE_CHANGED")*/){
                 boolean start = PrefUtils.isEnableAutoStart(context);
                 if(start) {
                     GpsUtil.getInstance(context).startLocationService();
