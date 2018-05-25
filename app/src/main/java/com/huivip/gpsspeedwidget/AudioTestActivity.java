@@ -135,10 +135,10 @@ public class AudioTestActivity extends Activity {
                 manager.reboot("重新启动系统");*/
                 /*String appName= getString(R.string.app_name);
                 openMapOperation("androidauto://rootmap?sourceApplication=" + appName);*/
-                Intent intent = new Intent();
+              /*  Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
                 intent.putExtra("KEY_TYPE", 10029);
-                sendBroadcast(intent);
+                sendBroadcast(intent);*/
                /* Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
                 intent.putExtra("KEY_TYPE", 10039);
@@ -175,6 +175,8 @@ public class AudioTestActivity extends Activity {
                 else {
                     Toast.makeText(getApplicationContext(),"移动热点启动失败！",Toast.LENGTH_SHORT).show();
                 }*/
+
+                       WeatherService.getInstance(getApplicationContext()).getLocationCityWeather(true);
             }
         });
     }

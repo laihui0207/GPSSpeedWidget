@@ -55,6 +55,11 @@ public class BootStartReceiver extends BroadcastReceiver {
 
                     PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,AutoFTPBackupReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,120000L,autoFtpBackupIntent);
+
+                    if(intent.getAction().equalsIgnoreCase("android.net.conn.CONNECTIVITY_CHANGE")){
+                        PendingIntent dateChangeIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,DateChangeReceiver.class), 0);
+                        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,60000L,dateChangeIntent);
+                    }
                 }
             }
         }
