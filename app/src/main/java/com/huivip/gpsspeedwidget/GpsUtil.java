@@ -63,6 +63,7 @@ public class GpsUtil implements AMapNaviListener {
     AMapNavi aMapNavi;
     LocationManager locationManager;
     TTS tts;
+    WeatherService weatherService;
     boolean limitSpeaked = false;
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
@@ -119,6 +120,7 @@ public class GpsUtil implements AMapNaviListener {
         Random random = new Random();
         c = random.nextInt();
         localNumberFormat.setMaximumFractionDigits(1);
+
     }
 
     public static GpsUtil getInstance(Context context) {
@@ -174,6 +176,8 @@ public class GpsUtil implements AMapNaviListener {
         Intent recordService = new Intent(context, RecordGpsHistoryService.class);
         context.startService(recordService);
         serviceStarted = true;
+        weatherService=WeatherService.getInstance(context);
+        weatherService.getLocationCityWeather(false);
     }
 
     private void startAimlessNavi() {
@@ -219,6 +223,7 @@ public class GpsUtil implements AMapNaviListener {
                 tts.release();
             }
             serviceStarted = false;
+            weatherService.stopLocation();
         }
 
     }

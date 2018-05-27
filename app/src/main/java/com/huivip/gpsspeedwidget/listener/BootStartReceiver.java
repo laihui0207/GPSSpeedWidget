@@ -52,14 +52,15 @@ public class BootStartReceiver extends BroadcastReceiver {
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + (delayTime * 1000 + 300), thirdIntent);
                     PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,AutoLaunchSystemConfigReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,5000L,autoLaunchIntent);
-
-                    PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,AutoFTPBackupReceiver.class), 0);
-                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,120000L,autoFtpBackupIntent);
-
-                    if(intent.getAction().equalsIgnoreCase("android.net.conn.CONNECTIVITY_CHANGE")){
-                        PendingIntent dateChangeIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,DateChangeReceiver.class), 0);
-                        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,60000L,dateChangeIntent);
+                    if (intent.getAction().equalsIgnoreCase("android.net.conn.CONNECTIVITY_CHANGE")) {
+                        PendingIntent weatcherServiceIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, WeatherServiceReceiver.class), 0);
+                        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 60000L, weatcherServiceIntent);
+                        PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,AutoFTPBackupReceiver.class), 0);
+                        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,120000L,autoFtpBackupIntent);
                     }
+
+
+
                 }
             }
         }

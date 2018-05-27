@@ -87,6 +87,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+        <service android:name="com.amap.api.location.APSService"></service>
         <receiver android:name=".listener.AutoFTPBackupReceiver"/>
         <receiver android:name=".listener.AutoLaunchSystemConfigReceiver"/>
         <receiver android:name=".listener.BootStartReceiver" android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
@@ -103,6 +104,8 @@
         </receiver>
         <receiver android:name=".listener.ThirdSoftLaunchReceiver"/>
         <receiver android:name=".listener.GoToHomeReceiver"/>
+        <receiver android:name=".listener.WeatherServiceReceiver"/>
+        <receiver android:name=".listener.DateChangeReceiver"/>
         <service android:name=".GpsSpeedService"/>
         <service android:name=".FloatingService"/>
         <service android:name=".RecordGpsHistoryService"/>

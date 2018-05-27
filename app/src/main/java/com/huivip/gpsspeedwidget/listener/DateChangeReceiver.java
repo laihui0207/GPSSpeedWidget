@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import com.huivip.gpsspeedwidget.WeatherService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
@@ -16,9 +17,17 @@ public class DateChangeReceiver extends BroadcastReceiver {
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int min = cal.get(Calendar.MINUTE);
-        if(hour==0 && min==0){
+        Log.d("huvivip","Get Time Tick:"+min);
+        if(min==0 || min==30){
             TTS tts=SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
-            tts.speak("现在时间"+hour+"整");
+            String text="";
+            if(min==0){
+                text="整点报时：当前时间:"+hour+"点整";
+            }
+            else {
+                text="半点报时：当前时间:"+hour+"点"+min+"分";
+            }
+            tts.speak(text);
             WeatherService.getInstance(context).getLocationCityWeather(true);
         }
     }
