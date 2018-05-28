@@ -177,7 +177,6 @@ public class GpsUtil implements AMapNaviListener {
         context.startService(recordService);
         serviceStarted = true;
         weatherService=WeatherService.getInstance(context);
-        weatherService.getLocationCityWeather(false);
     }
 
     private void startAimlessNavi() {

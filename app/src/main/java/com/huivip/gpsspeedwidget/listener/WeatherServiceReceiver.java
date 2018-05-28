@@ -14,6 +14,6 @@ public class WeatherServiceReceiver extends BroadcastReceiver {
         Log.d("huivip","Register Time tick!");
         context.getApplicationContext().registerReceiver(receiver,new IntentFilter(Intent.ACTION_TIME_TICK));
 
-       WeatherService.getInstance(context).getLocationCityWeather(true);
+       WeatherService.getInstance(context).searchWeather();
     }
 }

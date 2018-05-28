@@ -35,22 +35,29 @@ public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMa
         mLocationClient = new AMapLocationClient(context);
         mLocationClient.setLocationListener(this);
         gpsUtil=GpsUtil.getInstance(context);
+        AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
+        mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
+        mLocationClient.setLocationOption(mLocationOption);
+        mLocationClient.startLocation();
+        isLocationStarted = true;
+        if (android.os.Build.VERSION.SDK_INT >= 27) {
+            mLocationClient.enableBackgroundLocation(2001, buildNotification());
+        }
     }
     public static WeatherService getInstance(Context context){
         if(instance==null){
             instance=new WeatherService(context);
-            instance.getLocationCityWeather(false);
         }
         return instance;
     }
     public void setCityName(String cityName){
         this.cityName=cityName;
         Toast.makeText(context,"当前所在:"+cityName,Toast.LENGTH_SHORT).show();
-        //searchWeather();
+        searchWeather();
     }
     public void searchWeather(){
         if(TextUtils.isEmpty(cityName)){
-            getLocationCityWeather(true);
+            return;
         }
         WeatherSearchQuery mquery = new WeatherSearchQuery(cityName, WeatherSearchQuery.WEATHER_TYPE_LIVE);
         WeatherSearch mWeatherSearch=new WeatherSearch(context.getApplicationContext());
@@ -63,18 +70,7 @@ public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMa
     public void getLocationCityWeather(boolean sameSearchWeather){
         locationAndWeatherSametime=sameSearchWeather;
         //Toast.makeText(context, "查询天气", Toast.LENGTH_SHORT).show();
-        if(!isLocationStarted || TextUtils.isEmpty(cityName)) {
-            AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
-            mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
-            mLocationClient.setLocationOption(mLocationOption);
-            mLocationClient.startLocation();
-            isLocationStarted = true;
-            if (android.os.Build.VERSION.SDK_INT >= 27) {
-                mLocationClient.enableBackgroundLocation(2001, buildNotification());
-            }
-        } else if(sameSearchWeather && !TextUtils.isEmpty(cityName)){
-            searchWeather();
-        }
+        searchWeather();
     }
     public void stopLocation(){
         mLocationClient.stopLocation();
@@ -104,7 +100,6 @@ public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMa
 
     }
 
-
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null) {
@@ -112,15 +107,10 @@ public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMa
                 Log.d("huivip",aMapLocation.toString());
                 if(!TextUtils.isEmpty(aMapLocation.getCity())) {
                     cityName=aMapLocation.getCity();
-                    if (locationAndWeatherSametime) {
-                        searchWeather();
-                        locationAndWeatherSametime = false;
-                    }
                 }
                 if(!TextUtils.isEmpty(aMapLocation.getStreet())){
                     gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
                 }
-
             }else {
                 //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
                 Log.e("AmapError","location Error, ErrCode:"

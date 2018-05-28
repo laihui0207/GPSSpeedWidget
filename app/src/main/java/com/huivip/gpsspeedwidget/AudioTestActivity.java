@@ -176,7 +176,7 @@ public class AudioTestActivity extends Activity {
                     Toast.makeText(getApplicationContext(),"移动热点启动失败！",Toast.LENGTH_SHORT).show();
                 }*/
 
-                       WeatherService.getInstance(getApplicationContext()).getLocationCityWeather(true);
+                       WeatherService.getInstance(getApplicationContext()).searchWeather();
             }
         });
     }
