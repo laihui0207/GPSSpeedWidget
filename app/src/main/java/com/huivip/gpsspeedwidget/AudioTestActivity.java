@@ -117,6 +117,15 @@ public class AudioTestActivity extends Activity {
                reloadVolume();
             }
         });
+        Button returnButton=findViewById(R.id.button_return);
+        returnButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         CrashHandler.getInstance().init(getApplicationContext());
         reloadVolume();
         Button rebootBtn=findViewById(R.id.button_reboot);

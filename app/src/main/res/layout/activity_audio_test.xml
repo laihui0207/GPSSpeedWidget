@@ -153,5 +153,9 @@
                 android:text="Test Audio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/button_testtts" android:layout_weight="1"/>
+        <Button
+                android:text="返回"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/button_return"/>
     </LinearLayout>
 </LinearLayout>
