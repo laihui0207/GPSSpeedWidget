@@ -585,8 +585,9 @@ public class GpsUtil implements AMapNaviListener {
     public int getCameraSpeed() {
         return cameraSpeed;
     }
-    public double getAltitude(){
-        return altitude;
+    public String getAltitude(){
+        localNumberFormat.setMaximumFractionDigits(1);
+        return localNumberFormat.format(altitude);
     }
     public void setCameraSpeed(int cameraSpeed) {
         this.cameraSpeed = cameraSpeed;
