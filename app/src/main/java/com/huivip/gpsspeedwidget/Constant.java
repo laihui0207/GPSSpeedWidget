@@ -9,6 +9,7 @@ public class Constant {
     public static final String LBSGETLASTEDPOSTIONURL="/lasted?deviceId=%s";
     public static final String LBSGETDATADATEURL="/dates?deviceId=%s";
     public static final String LBSGETDATA="/data?deviceId=%s&startTime=%s&endTime=%s";
+    public static final String LBSREGISTER="/register?deviceId=%s&regTime=%s&lng=%s&lat=%s&city=%s";
     public static final String CrashLogDir="";
 
     public static final String AMAPAUTOPACKAGENAME="com.autonavi.amapauto";
@@ -25,6 +26,6 @@ public class Constant {
     public static int LINE=1;
     public static int POINT=0;
 
-    public static String AUTONAVI_WEBSERVICE="http://restapi.amap.com/v3/autograsp?carid=%s&locations=%s&time=%s&direction=%s&speed=%s&output=json&key=%s";
+    public static String AUTONAVI_CATCH_ROAD_WEBSERVICE="http://restapi.amap.com/v3/autograsp?carid=%s&locations=%s&time=%s&direction=%s&speed=%s&output=json&key=%s";
 
 }

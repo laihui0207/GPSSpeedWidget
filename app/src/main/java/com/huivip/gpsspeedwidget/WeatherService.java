@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.TextureView;
 import android.widget.Toast;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -16,11 +17,18 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.services.weather.*;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
+import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMapLocationListener {
     String cityName;
+    String district;
+    String pre_district;
+    double lat;
+    double lng;
+    long locationTime;
+    String deviceId;
     Context context;
     AMapLocationClient mLocationClient = null;
     GpsUtil gpsUtil;
@@ -36,13 +44,16 @@ public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMa
         mLocationClient.setLocationListener(this);
         gpsUtil=GpsUtil.getInstance(context);
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
-        mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
+        //mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
         mLocationClient.setLocationOption(mLocationOption);
         mLocationClient.startLocation();
         isLocationStarted = true;
         if (android.os.Build.VERSION.SDK_INT >= 27) {
             mLocationClient.enableBackgroundLocation(2001, buildNotification());
         }
+        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
+        deviceId=deviceUuidFactory.getDeviceUuid().toString();
     }
     public static WeatherService getInstance(Context context){
         if(instance==null){
@@ -93,6 +104,8 @@ public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMa
                 tts.speak(result);
             }
         }
+        String registerUrl=Constant.LBSURL+Constant.LBSREGISTER;
+        HttpUtils.getData(String.format(registerUrl,deviceId,Long.toString(locationTime),lng,lat,cityName));
     }
 
     @Override
@@ -108,6 +121,19 @@ public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMa
                 if(!TextUtils.isEmpty(aMapLocation.getCity())) {
                     cityName=aMapLocation.getCity();
                 }
+                if(!TextUtils.isEmpty(aMapLocation.getDistrict())){
+                    district=aMapLocation.getDistrict();
+                    if(TextUtils.isEmpty(pre_district)){
+                        pre_district=district;
+                    } else if (!district.equalsIgnoreCase(pre_district)){
+                        //searchWeather();
+                        pre_district=district;
+                    }
+                    lat=aMapLocation.getLatitude();
+                    lng=aMapLocation.getLongitude();
+                    locationTime=aMapLocation.getTime();
+                }
+                //Toast.makeText(context,aMapLocation.toString(),Toast.LENGTH_SHORT).show();
                 if(!TextUtils.isEmpty(aMapLocation.getStreet())){
                     gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
                 }
