@@ -18,6 +18,11 @@ import java.util.Date;
 public class AutoFTPBackupReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        GpsUtil gpsUtil=GpsUtil.getInstance(context);
+        String registUrl=Constant.LBSURL+Constant.LBSREGISTER;
+        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
+        String deviceId=deviceUuidFactory.getDeviceUuid().toString();
+        HttpUtils.getData(String.format(registUrl,deviceId,(new Date()).getTime(),gpsUtil.getLatitude(),gpsUtil.getLongitude(),""));
         if (!PrefUtils.isFTPAutoBackup(context)) {
             return;
         }
@@ -44,10 +49,6 @@ public class AutoFTPBackupReceiver extends BroadcastReceiver {
             }
         });
         backupThread.start();
-        GpsUtil gpsUtil=GpsUtil.getInstance(context);
-        String registUrl=Constant.LBSURL+Constant.LBSREGISTER;
-        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
-        String deviceId=deviceUuidFactory.getDeviceUuid().toString();
-        HttpUtils.getData(String.format(registUrl,deviceId,(new Date()).getTime(),gpsUtil.getLatitude(),gpsUtil.getLongitude(),""));
+
     }
 }
