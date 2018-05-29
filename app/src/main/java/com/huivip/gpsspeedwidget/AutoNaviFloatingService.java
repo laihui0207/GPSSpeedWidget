@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
@@ -57,6 +58,10 @@ public class AutoNaviFloatingService extends Service {
     ProgressBar limitProgressBar;
     @BindView(R.id.textView_autonavi_direction)
     TextView directionTextView;
+    @BindView(R.id.textView_autonavi_altitude)
+    TextView altitudeTextView;
+    @BindView(R.id.textView_autonavi_speedUnit)
+    TextView speedUnitTextView;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
@@ -146,16 +151,18 @@ public class AutoNaviFloatingService extends Service {
         super.onCreate();
     }
     void checkLocationData() {
-        if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
-            //if(gpsUtil.isGpsLocationChanged()){
-                //setSpeed(gpsUtil.getKmhSpeedStr());
-                speedView.setText(gpsUtil.getKmhSpeedStr()+"");
-                speedWheelView.setRotation((float)(gpsUtil.getSpeedometerPercentage()/100d*280f));
-                setSpeedOveral(gpsUtil.isHasLimited());
-            directionTextView.setText(gpsUtil.getDirection()+"");
-            //}
-        }
-        else {
+        if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
+            speedView.setText(gpsUtil.getKmhSpeedStr() + "");
+            speedWheelView.setRotation((float) (gpsUtil.getSpeedometerPercentage() / 100d * 280f));
+            setSpeedOveral(gpsUtil.isHasLimited());
+            directionTextView.setText(gpsUtil.getDirection() + "");
+            altitudeTextView.setText("海拔： " + gpsUtil.getAltitude() + "米");
+            if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
+                speedUnitTextView.setText("km/h");
+            } else {
+                speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
+            }
+        } else {
             speedView.setText("...");
         }
     }
@@ -336,8 +343,13 @@ public class AutoNaviFloatingService extends Service {
                         }
                     }
                     else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 2000) {
-                        Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
-                        PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),false);
+                        if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
+                            Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
+                            PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
+                        }
+                        Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
+                        configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(configActivity);
                     }
                     else {
                         if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {

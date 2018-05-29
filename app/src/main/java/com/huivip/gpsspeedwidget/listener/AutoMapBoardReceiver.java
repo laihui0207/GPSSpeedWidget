@@ -97,6 +97,15 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 String wayInfo=intent.getStringExtra("EXTRA_DRIVE_WAY");
                 //Toast.makeText(context,wayInfo,Toast.LENGTH_SHORT).show();
             }
+            if(key==10056){  // current navi path information
+                String iformationJsonString=intent.getStringExtra("EXTRA_ROAD_INFO");
+
+            }
+            if(key==10030){
+                String cityName=intent.getStringExtra("CITY_NAME");
+                //Log.d("huivip","city:"+cityName);
+                //Toast.makeText(context,"city:"+cityName,Toast.LENGTH_LONG).show();
+            }
             if(key==10001){  // navi information
                 //Toast.makeText(context,intent.getExtras().toString(),Toast.LENGTH_LONG).show();
                 String currentRoadName=intent.getStringExtra("CUR_ROAD_NAME");
@@ -110,6 +119,25 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 if(limitSpeed>0) {
                     gpsUtil.setCameraSpeed(limitSpeed);
                 }
+                /*
+                //当前道路类型，对应的值为int类型
+                //0：高速公路
+                //1：国道
+                //2：省道
+                //3：县道
+                //4：乡公路
+                //5：县乡村内部道路
+                //6：主要大街、城市快速道
+                //7：主要道路
+                //8：次要道路
+                //9：普通道路
+                //10：非导航道路
+                 */
+                int roadType=intent.getIntExtra("ROAD_TYPE",-1);
+                if(roadType!=-1){
+                    gpsUtil.setRoadType(roadType);
+                }
+
                 String nextRoadName=intent.getStringExtra("NEXT_ROAD_NAME");
                 if(!TextUtils.isEmpty(nextRoadName)){
                     gpsUtil.setNextRoadName(nextRoadName);

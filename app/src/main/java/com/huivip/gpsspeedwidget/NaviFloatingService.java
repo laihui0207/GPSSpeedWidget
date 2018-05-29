@@ -149,7 +149,7 @@ public class NaviFloatingService extends Service{
             nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
         }
         nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
-        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+" -- "+gpsUtil.getTotalLeftTime());
+        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+"/"+gpsUtil.getTotalLeftTime());
         if(gpsUtil.getNavi_turn_icon()>0) {
             naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
         }

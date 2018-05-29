@@ -24,6 +24,7 @@ public class GpsUtil {
     private String latitude;
     private String longitude;
     private float bearing;
+    private double altitude=0.0D;
     private boolean isTurned = false;
     private String velocitaString = null;
     private Integer velocitaNumber;
@@ -46,11 +47,9 @@ public class GpsUtil {
     TimerTask locationScanTask;
     Timer locationTimer;
     LocationManager locationManager;
-/*    TTSUtil ttsUtil;*/
     boolean limitSpeaked = false;
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
-    boolean aimlessStatred = false;
     final Handler locationHandler = new Handler();
     BroadcastReceiver broadcastReceiver;
     int directionCheckCounter = 0;
@@ -62,6 +61,7 @@ public class GpsUtil {
     int cameraDistance=0;
     int cameraSpeed=0;
     String currentRoadName="";
+    int currentRoadType=-1;
     String nextRoadName="";
     float nextRoadDistance=0F;
     float totalLeftDistance=0F;
@@ -134,63 +134,10 @@ public class GpsUtil {
         };
         Toast.makeText(context,"GPS服务开启",Toast.LENGTH_SHORT).show();
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-       /* if (Utils.isNetworkConnected(context)) {
-            startAimlessNavi();
-        } else {
-            broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    ConnectivityManager connectMgr = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
-                    NetworkInfo activeNetwork = connectMgr.getActiveNetworkInfo();
-                    if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                        if (!aimlessStatred && serviceStarted) {
-                            startAimlessNavi();
-                        }
-                        context.unregisterReceiver(broadcastReceiver);
-                    }
-                   *//* else {
-                        if(aimlessStatred){
-                            stopAimlessNavi();
-                        }
-                    }*//*
-                }
-            };
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-            context.registerReceiver(broadcastReceiver, intentFilter);
-        }*/
         Intent recordService = new Intent(context, RecordGpsHistoryService.class);
         context.startService(recordService);
         serviceStarted = true;
     }
-
-   /* private void startAimlessNavi() {
-        if(!PrefUtils.isWidgetActived(context) && !PrefUtils.isEnableFlatingWindow(context)){
-            return;
-        }
-        if (PrefUtils.isEnableAutoNaviService(context) && !aimlessStatred) {
-            aMapNavi = AMapNavi.getInstance(context);
-            if(PrefUtils.isNewDriverMode(context)){
-                aMapNavi.setBroadcastMode(BroadcastMode.DETAIL);
-            } else {
-                aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
-            }
-            aMapNavi.addAMapNaviListener(this);
-            aMapNavi.getNaviSetting().setTrafficStatusUpdateEnabled(true);
-            aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
-        }
-    }
-
-    private void stopAimlessNavi() {
-        if (aMapNavi != null) {
-            aMapNavi.stopAimlessMode();
-            aMapNavi.removeAMapNaviListener(this);
-            aMapNavi.destroy();
-            aMapNavi = null;
-            aimlessStatred = false;
-        }
-    }*/
-
     public void stopLocationService(boolean stop) {
         if (serviceStarted && ((!stop && !PrefUtils.isWidgetActived(context)) || (PrefUtils.isWidgetActived(context) && stop))) {
             if (this.locationTimer != null) {
@@ -250,6 +197,7 @@ public class GpsUtil {
         if (paramLocation != null) {
             this.latitude = Double.toString(paramLocation.getLatitude());
             this.longitude = Double.toString(paramLocation.getLongitude());
+            this.altitude=paramLocation.getAltitude();
             this.velocitaString = null;
             if (paramLocation.hasSpeed()) {
                 this.velocitaNumber = Integer.valueOf((int) paramLocation.getSpeed());
@@ -490,7 +438,61 @@ public class GpsUtil {
         }
         return name;
     }
-
+    public void setRoadType(int roadType){
+        this.currentRoadType=roadType;
+    }
+    /*
+    //0：高速公路
+//1：国道
+//2：省道
+//3：县道
+//4：乡公路
+//5：县乡村内部道路
+//6：主要大街、城市快速道
+//7：主要道路
+//8：次要道路
+//9：普通道路
+//10：非导航道路
+     */
+    public String getRoadTypeName(){
+        String roadTypeName="";
+        switch(currentRoadType) {
+            case 0:
+                roadTypeName="高速公路";
+                break;
+            case 1:
+                roadTypeName="国道";
+                break;
+            case 2:
+                roadTypeName="省道";
+                break;
+            case 3:
+                roadTypeName="县道";
+                break;
+            case 4:
+                roadTypeName="乡公路";
+                break;
+            case 5:
+                roadTypeName="县乡村内部道路";
+                break;
+            case 6:
+                roadTypeName="主要大街、城市快速道";
+                break;
+            case 7:
+                roadTypeName="主要道路";
+                break;
+            case 8:
+                roadTypeName="次要道路";
+                break;
+            case 9:
+                roadTypeName="普通道路";
+                break;
+            case 10:
+                roadTypeName="非导航道路";
+                break;
+        }
+        return roadTypeName;
+    }
     public void setCameraType(int cameraType) {
         this.cameraType = cameraType;
     }
@@ -507,7 +509,9 @@ public class GpsUtil {
     public int getCameraSpeed() {
         return cameraSpeed;
     }
-
+    public double getAltitude(){
+        return altitude;
+    }
     public void setCameraSpeed(int cameraSpeed) {
         this.cameraSpeed = cameraSpeed;
         this.limitSpeed = cameraSpeed;
@@ -606,252 +610,4 @@ public class GpsUtil {
         this.autoNaviStatus = autoNaviStatus;
     }
 
-    String speakText = "";
-
-   /* @Override
-    public void onInitNaviFailure() {
-        aimlessStatred = false;
-    }
-
-    @Override
-    public void onInitNaviSuccess() {
-        // ttsUtil.speak("智能巡航服务开启");
-        aimlessStatred = true;
-        Toast.makeText(context, "智能巡航服务开启", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onStartNavi(int naviType) {
-        if (naviType == NaviType.CRUISE) {
-            Log.d("huivip", "巡航模式开启");
-        }
-    }
-
-    @Override
-    public void onTrafficStatusUpdate() {
-
-    }
-
-    @Override
-    public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-        *//*if(latedDirectionName!=null && latedDirectionName.equals(getDirection())){
-            isTurned=true;
-            latedDirectionName=getDirection();
-        } else {
-            isTurned=false;
-        }
-        if (cameraLocation != null) {
-            bearing = aMapNaviLocation.getBearing();
-            Location location = new Location("");
-            location.setLatitude(aMapNaviLocation.getCoord().getLatitude());
-            location.setLongitude(aMapNaviLocation.getCoord().getLongitude());
-            float betweenBearing = location.bearingTo(cameraLocation);
-            if (Math.abs(bearing - betweenBearing) > 50) {
-                directionCheckCounter++;
-                if (directionCheckCounter > 50 && kmhSpeed > 0) {
-                    isTurned = true;
-                    directionCheckCounter = 0;
-                    limitSpeed = 0;
-                }
-            } else {
-                limitDistance = Float.parseFloat(localNumberFormat.format(location.distanceTo(cameraLocation)));
-                isTurned = false;
-            }
-
-        } else {
-            directionCheckCounter = 0;
-            limitDistance = 0F;
-        }
-        if (limitDistance <= 5 || limitDistance > 300 || isTurned) {
-            limitDistance = 0F;
-            if (isTurned || limitSpeed == 0) {
-                cameraLocation = null;
-            }
-        }
-
-        if(isTurned){
-            currentRoadName="";
-            if(limitSpeed!=0){
-                limitSpeed=0;
-            }
-        }*//*
-    }
-
-    @Override
-    public void onGetNavigationText(int i, String s) {
-
-    }
-
-    @Override
-    public void onGetNavigationText(String s) {
-        if (PrefUtils.isEnableAudioService(context)) {
-            if (!speakText.equalsIgnoreCase(s)) {
-                speakText = s;
-                ttsUtil.speak(s);
-            }
-        }
-    }
-
-    @Override
-    public void onEndEmulatorNavi() {
-
-    }
-
-    @Override
-    public void onArriveDestination() {
-
-    }
-
-    @Override
-    public void onCalculateRouteFailure(int i) {
-
-    }
-
-    @Override
-    public void onReCalculateRouteForYaw() {
-
-    }
-
-    @Override
-    public void onReCalculateRouteForTrafficJam() {
-
-    }
-
-    @Override
-    public void onArrivedWayPoint(int i) {
-
-    }
-
-    @Override
-    public void onGpsOpenStatus(boolean b) {
-        gpsEnabled=true;
-    }
-
-    @Override
-    public void onNaviInfoUpdate(NaviInfo naviInfo) {
-
-    }
-
-    @Override
-    public void onNaviInfoUpdated(AMapNaviInfo aMapNaviInfo) {
-    }
-
-    @Override
-    public void updateCameraInfo(AMapNaviCameraInfo[] aMapNaviCameraInfos) {
-        for (AMapNaviCameraInfo aMapNaviCameraInfo : aMapNaviCameraInfos) {
-            cameraType = aMapNaviCameraInfo.getCameraType();
-            setCameraDistance(aMapNaviCameraInfo.getCameraDistance());
-            if (aMapNaviCameraInfo.getCameraSpeed() > 0) {
-                setCameraSpeed(aMapNaviCameraInfo.getCameraSpeed());
-            }
-        }
-    }
-
-    @Override
-    public void updateIntervalCameraInfo(AMapNaviCameraInfo aMapNaviCameraInfo, AMapNaviCameraInfo aMapNaviCameraInfo1, int status) {
-        if (status == CarEnterCameraStatus.ENTER) {
-            setCameraType(aMapNaviCameraInfo.getCameraType());
-            setCameraSpeed(aMapNaviCameraInfo.getCameraSpeed());
-            setCameraDistance(aMapNaviCameraInfo.getCameraDistance());
-        }
-        else if(status == CarEnterCameraStatus.LEAVE){
-            setCameraType(aMapNaviCameraInfo1.getCameraType());
-            setCameraSpeed(aMapNaviCameraInfo1.getCameraSpeed());
-            setCameraDistance(aMapNaviCameraInfo1.getCameraDistance());
-        }
-    }
-
-    @Override
-    public void onServiceAreaUpdate(AMapServiceAreaInfo[] aMapServiceAreaInfos) {
-
-    }
-
-    @Override
-    public void showCross(AMapNaviCross aMapNaviCross) {
-
-    }
-
-    @Override
-    public void hideCross() {
-
-    }
-
-    @Override
-    public void showModeCross(AMapModelCross aMapModelCross) {
-
-    }
-
-    @Override
-    public void hideModeCross() {
-
-    }
-
-    @Override
-    public void showLaneInfo(AMapLaneInfo[] aMapLaneInfos, byte[] bytes, byte[] bytes1) {
-
-    }
-
-    @Override
-    public void showLaneInfo(AMapLaneInfo aMapLaneInfo) {
-    }
-
-    @Override
-    public void hideLaneInfo() {
-
-    }
-
-    @Override
-    public void onCalculateRouteSuccess(int[] ints) {
-
-    }
-
-    @Override
-    public void notifyParallelRoad(int i) {
-
-    }
-
-    @Override
-    public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
-    }
-    Integer[] broadcastTypes={4,5,11,28,29,93,92,101,102};
-    @Override
-    public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
-        for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
-            if (Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
-                cameraType = info.getBroadcastType();
-                setCameraDistance(info.getDistance());
-                if (info.getLimitSpeed() > 0) {
-                    setCameraSpeed(info.getLimitSpeed());
-                }
-            }
-        }
-    }
-
-    @Override
-    public void OnUpdateTrafficFacility(TrafficFacilityInfo trafficFacilityInfo) {
-
-    }
-
-    @Override
-    public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
-        Log.d("huivip", "Time:" + aimLessModeStat.getAimlessModeTime() + ",Distance:" + aimLessModeStat.getAimlessModeDistance());
-
-    }
-
-    @Override
-    public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {
-        *//*if (!TextUtils.isEmpty(aimLessModeCongestionInfo.getRoadName())) {
-            Toast.makeText(context, aimLessModeCongestionInfo.getRoadName(), Toast.LENGTH_SHORT).show();
-        }*//*
-    }
-
-    @Override
-    public void onPlayRing(int status) {
-        if (status == AMapNaviRingType.RING_EDOG) {
-            //limitSpeed = 0;
-            limitDistance = 0F;
-            //cameraLocation = null;
-            ttsUtil.speak("已通过");
-        }
-    }*/
 }

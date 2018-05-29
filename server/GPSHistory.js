@@ -11,11 +11,13 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 db.serialize(function () {
     db.run("CREATE TABLE IF NOT EXISTS  GPS (id integer primary key autoincrement,deviceId varchar(50), deviceId_short varchar(50),lng varchar(20), " +
         "lat varchar(20),speed varchar(10), speedValue REAL,bearingValue REAL,createTime integer,lineId integer)");
-    db.run("create index deviceId on GPS(deviceId)");
-    db.run("create index deviceId_short on GPS(deviceId_short)");
-    db.run("create index deviceId_short_date on GPS(deviceId_short,createtime)");
-    db.run("create index deviceId_short_date_lineId on GPS(deviceId_short,createtime,lineId)");
+    db.run("create index IF NOT EXISTS deviceId on GPS(deviceId)");
+    db.run("create index IF NOT EXISTS deviceId_short on GPS(deviceId_short)");
+    db.run("create index IF NOT EXISTS deviceId_short_date on GPS(deviceId_short,createtime)");
+    db.run("create index IF NOT EXISTS deviceId_short_date_lineId on GPS(deviceId_short,createtime,lineId)");
     db.run("CREATE TABLE IF NOT EXISTS feedback (id integer primary key autoincrement,name varchar(50),content varchar(500),createTime integer)");
+    db.run("CREATE TABLE IF NOT EXISTS devices(id integer primary key autoincrement,deviceId varchar(50),registerTime integer,updateTime integer,lat varchar(20),lng varchar(20))");
+    db.run("create index IF NOT EXISTS deviceId on devices(deviceId)");
 });
 
 var PORT = 8090;
@@ -183,7 +185,35 @@ app.get("/devices", function (req, res) {
         })
     })
 });
-
+app.get("/reg-devices", function (req, res) {
+    var sql = "select deviceId from devices where deviceId is not null  group by deviceId ";
+    sql += " order by deviceId";
+    db.serialize(function () {
+        db.all(sql, [], function (err, rows) {
+            if (err) {
+                console.log(err.message);
+            } else {
+                res.writeHead(200, {'Content-Type': 'application/json'});
+                res.write(JSON.stringify(rows.map(function (row) {
+                    return {deviceId: row.deviceId};
+                })));
+                res.end();
+            }
+        })
+    })
+});
+app.get("/register",function(req,res){
+    var deviceId = req.query.deviceId;
+    var lat=req.query.lat;
+    var lng=req.query.lng;
+    var updateTime=req.query.regTime;
+    db.serialize(function () {
+        db.run("insert into devices(deviceId,registerTime,updateTime,lat,lng) values(?,?,?,?,?)",
+            [deviceId,updateTime,updateTime,lat,lng]);
+    });
+    res.write("{\"result\":\"ok\"}");
+    res.end();
+})
 app.get("/feedback",function(req,res){
   res.sendFile( __dirname + "/" + "feedback.html" );
 })
@@ -193,7 +223,7 @@ app.post("/feedback",urlencodedParser,function(req,res){
             db.serialize(function () {
                 db.run("insert into feedback(name,content) values(?,?)",
                     [feedbacker,content]);
-            })
+            });
   res.write("feedback saveed");
   res.end();
 })

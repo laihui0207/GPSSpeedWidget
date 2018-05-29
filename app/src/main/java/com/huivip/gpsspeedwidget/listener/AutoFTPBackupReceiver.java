@@ -4,10 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.DeviceUuidFactory;
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
+import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
+import java.nio.file.attribute.GroupPrincipal;
+import java.util.Date;
 
 public class AutoFTPBackupReceiver extends BroadcastReceiver {
     @Override
@@ -38,5 +44,10 @@ public class AutoFTPBackupReceiver extends BroadcastReceiver {
             }
         });
         backupThread.start();
+        GpsUtil gpsUtil=GpsUtil.getInstance(context);
+        String registUrl=Constant.LBSURL+Constant.LBSREGISTER;
+        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
+        String deviceId=deviceUuidFactory.getDeviceUuid().toString();
+        HttpUtils.getData(String.format(registUrl,deviceId,(new Date()).getTime(),gpsUtil.getLatitude(),gpsUtil.getLongitude(),""));
     }
 }

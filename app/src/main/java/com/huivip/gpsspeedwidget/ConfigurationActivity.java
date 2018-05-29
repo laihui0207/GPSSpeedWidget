@@ -87,7 +87,11 @@ public class ConfigurationActivity extends Activity {
         recordGPSCheckBox.setChecked(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()));
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         uploadGPSCheckBox.setChecked(PrefUtils.isEnableUploadGPSHistory(getApplicationContext()));
-
+        if(PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
+            PrefUtils.setFlatingWindow(getApplicationContext(),true);
+            PrefUtils.setEnableNaviFloating(getApplicationContext(),true);
+            startFloationgWindows(true);
+        }
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         enableFloatingWidnowCheckBox.setChecked(PrefUtils.isEnableFlatingWindow(getApplicationContext()));
         //enableShowFlattingOnDesktopCheckBox=findViewById(R.id.checkBox_showondescktop);

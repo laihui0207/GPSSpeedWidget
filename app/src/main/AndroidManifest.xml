@@ -91,12 +91,13 @@
         <receiver android:name=".listener.AutoLaunchSystemConfigReceiver"/>
         <receiver android:name=".listener.BootStartReceiver" android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED"/>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+                <action android:name="android.intent.action.ANY_DATA_STATE"/>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="android.intent.action.QUICKBOOT_POWEROFF" />
-                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
-                <action android:name="android.intent.action.SCREEN_ON"/>
-                <action android:name="android.intent.action.REBOOT"/>
+                <action android:name="android.intent.action.DATE_CHANGED"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
         <receiver android:name=".listener.ThirdSoftLaunchReceiver"/>
@@ -107,6 +108,7 @@
         <service android:name=".NaviFloatingService"/>
         <service android:name=".AutoNaviFloatingService"/>
         <service android:name=".MeterFloatingService"/>
+        <service android:name=".BootStartService"/>
         <service
                 android:name=".detection.AppDetectionService"
                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
@@ -118,6 +120,9 @@
                     android:name="android.accessibilityservice"
                     android:resource="@xml/accessibility_service"/>
         </service>
+
+        <activity android:name=".AudioTestActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
+        </activity>
         <activity android:name=".BackupGPSHistoryActivity" android:windowSoftInputMode="stateHidden|stateUnchanged"></activity>
         <activity android:name=".appselection.AppSelectionActivity"></activity>
     </application>
