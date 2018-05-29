@@ -342,7 +342,7 @@ public class AutoNaviFloatingService extends Service {
                             fadeAnimator.start();
                         }
                     }
-                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 2000) {
+                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
                         if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
                             Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
                             PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
