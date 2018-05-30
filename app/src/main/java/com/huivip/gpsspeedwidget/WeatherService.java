@@ -6,32 +6,35 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.TextureView;
 import android.widget.Toast;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.services.weather.*;
-import com.huivip.gpsspeedwidget.speech.SpeechFactory;
-import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
+import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMapLocationListener {
+public class WeatherService implements AMapLocationListener {
     String cityName;
+    String adCode;
     String district;
-    String pre_district;
+    String pre_adCode;
     double lat;
     double lng;
     long locationTime;
     String deviceId;
     Context context;
+    String resutlText;
     AMapLocationClient mLocationClient = null;
     GpsUtil gpsUtil;
+    private Handler handler=null;
     boolean locationAndWeatherSametime=false;
     boolean isLocationStarted=false;
     private static WeatherService instance;
@@ -42,9 +45,9 @@ public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMa
         this.context=context;
         mLocationClient = new AMapLocationClient(context);
         mLocationClient.setLocationListener(this);
+        handler=new Handler();
         gpsUtil=GpsUtil.getInstance(context);
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
-        //mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
         mLocationClient.setLocationOption(mLocationOption);
         mLocationClient.startLocation();
@@ -67,22 +70,45 @@ public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMa
         searchWeather();
     }
     public void searchWeather(){
-        if(TextUtils.isEmpty(cityName)){
+        if(TextUtils.isEmpty(adCode)){
             return;
         }
-        WeatherSearchQuery mquery = new WeatherSearchQuery(cityName, WeatherSearchQuery.WEATHER_TYPE_LIVE);
-        WeatherSearch mWeatherSearch=new WeatherSearch(context.getApplicationContext());
-        mWeatherSearch.setOnWeatherSearchListener(this);
-        mWeatherSearch.setQuery(mquery);
-        mWeatherSearch.searchWeatherAsyn(); //异步搜索
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String result=HttpUtils.getData(String.format(Constant.LBSSEARCHWEATHER,Constant.AUTONAVI_WEB_KEY, adCode));
+                if(!TextUtils.isEmpty(result)){
+                    try {
+                        JSONObject resultObj=new JSONObject(result);
+                        if("1".equalsIgnoreCase(resultObj.getString("status"))
+                                && "10000".equalsIgnoreCase(resultObj.getString("infocode"))){
+                            JSONArray lives=resultObj.getJSONArray("lives");
+                            //if(lives==null || lives.length()==0) return;
+                            JSONObject cityWeather=lives.getJSONObject(0);
+                            resutlText = "当前:" + cityWeather.getString("city") + ",天气：" + cityWeather.getString("weather") +
+                                    ",气温:" + cityWeather.getString("temperature") + "°,"
+                                    + cityWeather.getString("winddirection") + "风" +cityWeather.getString("windpower") + "级," +
+                                    "湿度" + cityWeather.getString("humidity") + "%";
+                            SpeechFactory.getInstance(context)
+                                    .getTTSEngine(PrefUtils.getTtsEngine(context))
+                                    .speak(resutlText);
+                            handler.post(runnableUi);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
+    Runnable   runnableUi=new  Runnable(){
+        @Override
+        public void run() {
+            Toast.makeText(context,resutlText,Toast.LENGTH_LONG).show();
+        }
 
+    };
 
-    public void getLocationCityWeather(boolean sameSearchWeather){
-        locationAndWeatherSametime=sameSearchWeather;
-        //Toast.makeText(context, "查询天气", Toast.LENGTH_SHORT).show();
-        searchWeather();
-    }
     public void stopLocation(){
         mLocationClient.stopLocation();
         isLocationStarted=false;
@@ -91,50 +117,30 @@ public class WeatherService implements WeatherSearch.OnWeatherSearchListener,AMa
         }
     }
     @Override
-    public void onWeatherLiveSearched(LocalWeatherLiveResult weatherLiveResult, int rCode) {
-        if (rCode == 1000) {
-            if (weatherLiveResult != null && weatherLiveResult.getLiveResult() != null) {
-                LocalWeatherLive weatherlive = weatherLiveResult.getLiveResult();
-                String result = "当前:" + cityName + ",天气：" + weatherlive.getWeather() +
-                        ",气温:" + weatherlive.getTemperature() + "°,"
-                        + weatherlive.getWindDirection() + "风" + weatherlive.getWindPower() + "级," +
-                        "湿度" + weatherlive.getHumidity() + "%";
-                Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-                TTS tts = SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
-                tts.speak(result);
-            }
-        }
-        String registerUrl=Constant.LBSURL+Constant.LBSREGISTER;
-        HttpUtils.getData(String.format(registerUrl,deviceId,Long.toString(locationTime),lng,lat,cityName));
-    }
-
-    @Override
-    public void onWeatherForecastSearched(LocalWeatherForecastResult localWeatherForecastResult, int i) {
-
-    }
-
-    @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null) {
             if (aMapLocation.getErrorCode() == 0) {
                 Log.d("huivip",aMapLocation.toString());
                 if(!TextUtils.isEmpty(aMapLocation.getCity())) {
                     cityName=aMapLocation.getCity();
+                    adCode =aMapLocation.getAdCode();
+                    gpsUtil.setCityName(cityName);
+                    //Toast.makeText(context,cityName+ adCode,Toast.LENGTH_SHORT).show();
                 }
-                if(!TextUtils.isEmpty(aMapLocation.getDistrict())){
-                    district=aMapLocation.getDistrict();
-                    if(TextUtils.isEmpty(pre_district)){
-                        pre_district=district;
-                    } else if (!district.equalsIgnoreCase(pre_district)){
-                        //searchWeather();
-                        pre_district=district;
+                if(!TextUtils.isEmpty(aMapLocation.getAdCode())){
+                    //district=aMapLocation.getDistrict();
+                    if(TextUtils.isEmpty(pre_adCode)){
+                        pre_adCode =adCode;
+                    } else if (!adCode.equalsIgnoreCase(pre_adCode)){
+                        searchWeather();
+                        pre_adCode =adCode;
                     }
                     lat=aMapLocation.getLatitude();
                     lng=aMapLocation.getLongitude();
                     locationTime=aMapLocation.getTime();
                 }
                 //Toast.makeText(context,aMapLocation.toString(),Toast.LENGTH_SHORT).show();
-                if(!TextUtils.isEmpty(aMapLocation.getStreet())){
+                if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getAccuracy()<50){
                     gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
                 }
             }else {

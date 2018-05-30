@@ -85,6 +85,7 @@ public class GpsUtil implements AMapNaviListener {
     float totalLeftDistance = 0F;
     float totalLeftTime = 0F;
     int navi_turn_icon = -1;
+    String cityName="";
     String latedDirectionName = "";
     int naviFloatingStatus = 0; // 0 disabled 1 visible
     int autoNaviStatus = 0; // 0 no started  1 started
@@ -360,6 +361,14 @@ public class GpsUtil implements AMapNaviListener {
 
     public Integer getMphSpeed() {
         return mphSpeed;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 
     public String getMphSpeedStr() {

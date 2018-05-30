@@ -56,6 +56,7 @@ public abstract class PrefUtils {
     public static final String DEVICEID_STORAGE="com.huivip.deviceId.String";
     public static final String CURRENT_DEVICEID="com.huivip.deviceId";
     public static final String ACTIVITY_ON_DESKTOP="com.huivip.widget.onDesktop";
+    public static final String APP_FIRST_RUN="com.huivip.widget.firstRun";
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
     public static final String SHOW_NO_DESKTOP="1";
@@ -136,6 +137,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableRecordGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, true);
+    }
+    public static void setAppFirstRun(Context context,boolean firstRun){
+        edit(context).putBoolean(APP_FIRST_RUN, firstRun).apply();
+    }
+    public static boolean isAppFirstRun(Context context){
+        return getSharedPreferences(context).getBoolean(APP_FIRST_RUN, true);
     }
     public static void setUploadGPSHistory(Context context,boolean uploadHistory){
         edit(context).putBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, uploadHistory).apply();

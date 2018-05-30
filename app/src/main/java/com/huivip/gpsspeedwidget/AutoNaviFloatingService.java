@@ -342,7 +342,14 @@ public class AutoNaviFloatingService extends Service {
                             fadeAnimator.start();
                         }
                     }
-                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
+                    else {
+                        if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
+                            animateViewToSideSlot();
+                        } else {
+                            PrefUtils.setFloatingSolidLocation(getApplicationContext(),params.x,params.y);
+                        }
+                    }
+                    if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
                         if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
                             Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
                             PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
@@ -350,13 +357,6 @@ public class AutoNaviFloatingService extends Service {
                         Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
                         configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
                         startActivity(configActivity);
-                    }
-                    else {
-                        if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
-                            animateViewToSideSlot();
-                        } else {
-                            PrefUtils.setFloatingSolidLocation(getApplicationContext(),params.x,params.y);
-                        }
                     }
                     return true;
             }
