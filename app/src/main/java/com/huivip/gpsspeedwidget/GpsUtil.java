@@ -47,6 +47,7 @@ public class GpsUtil {
     TimerTask locationScanTask;
     Timer locationTimer;
     LocationManager locationManager;
+    WeatherService weatherService;
     boolean limitSpeaked = false;
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
@@ -67,6 +68,7 @@ public class GpsUtil {
     float totalLeftDistance=0F;
     float totalLeftTime=0F;
     int navi_turn_icon=-1;
+    String cityName="";
     String latedDirectionName="";
     int naviFloatingStatus=0; // 0 disabled 1 visible
     int autoNaviStatus=0; // 0 no started  1 started
@@ -137,6 +139,7 @@ public class GpsUtil {
         Intent recordService = new Intent(context, RecordGpsHistoryService.class);
         context.startService(recordService);
         serviceStarted = true;
+        weatherService=WeatherService.getInstance(context);
     }
     public void stopLocationService(boolean stop) {
         if (serviceStarted && ((!stop && !PrefUtils.isWidgetActived(context)) || (PrefUtils.isWidgetActived(context) && stop))) {
@@ -152,6 +155,7 @@ public class GpsUtil {
                 ttsUtil.stop();
             }*/
             serviceStarted = false;
+            weatherService.stopLocation();
         }
 
     }
@@ -289,6 +293,14 @@ public class GpsUtil {
 
     public Integer getMphSpeed() {
         return mphSpeed;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 
     public String getMphSpeedStr() {

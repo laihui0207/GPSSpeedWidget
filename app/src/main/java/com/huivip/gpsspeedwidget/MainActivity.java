@@ -187,7 +187,7 @@ public class MainActivity extends Activity {
         });
         AutoCompleteTextView textUid=findViewById(R.id.editText_UID);
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
-        String deviceId=deviceUuidFactory.getDeviceUuid().toString();
+        String deviceId=deviceUuidFactory.getDeviceId();
         String deviceId_shortString=deviceId.substring(0,deviceId.indexOf("-"));
         PrefUtils.setDeviceIDString(getApplicationContext(),deviceId_shortString);
         String devices=PrefUtils.getDeviceIdStorage(getApplicationContext());
@@ -297,11 +297,11 @@ public class MainActivity extends Activity {
         startFloationgWindows(true);
     }
     private void startFloationgWindows(boolean enabled){
-        Intent defaultFloatingService=new Intent(this,FloatingService.class);
+       /* Intent defaultFloatingService=new Intent(this,FloatingService.class);
         Intent autoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
-        if(enabled){
-            String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
+        if(enabled){*/
+           /* String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
             if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
                 if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
                     meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
@@ -333,9 +333,11 @@ public class MainActivity extends Activity {
                     startService(autoNavifloatService);
                 }
                 startService(meterFloatingService);
-            }
+            }*/
+           Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);
+           startService(bootStartService);
 
-        }
+       /* }
         else {
             if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
                 defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
@@ -349,7 +351,7 @@ public class MainActivity extends Activity {
                 meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
                 startService(meterFloatingService);
             }
-        }
+        }*/
     }
     private void saveDeviceIdString(String deviceString){
         String storedDevices=PrefUtils.getDeviceIdStorage(getApplicationContext());

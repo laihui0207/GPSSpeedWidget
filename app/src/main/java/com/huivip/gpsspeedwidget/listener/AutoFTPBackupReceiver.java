@@ -25,7 +25,7 @@ public class AutoFTPBackupReceiver extends BroadcastReceiver {
                 String registUrl=Constant.LBSURL+Constant.LBSREGISTER;
                 DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
                 String deviceId=deviceUuidFactory.getDeviceUuid().toString();
-                HttpUtils.getData(String.format(registUrl,deviceId,(new Date()).getTime(),gpsUtil.getLatitude(),gpsUtil.getLongitude(),""));
+                HttpUtils.getData(String.format(registUrl,deviceId,(new Date()).getTime(),gpsUtil.getLatitude(),gpsUtil.getLongitude(),gpsUtil.getCityName()));
             }
         }).start();
 

@@ -408,8 +408,9 @@ public class FloatingService extends Service{
                             fadeAnimator.play(fadeOut).before(fadeIn);
                             fadeAnimator.start();
                         }
+                        WeatherService.getInstance(getApplicationContext()).searchWeather();
                     }
-                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
+                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > ViewConfiguration.getLongPressTimeout()) {
                         if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
                             Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
                             PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
