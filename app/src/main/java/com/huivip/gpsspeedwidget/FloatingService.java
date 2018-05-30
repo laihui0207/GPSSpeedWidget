@@ -408,16 +408,6 @@ public class FloatingService extends Service{
                             fadeAnimator.play(fadeOut).before(fadeIn);
                             fadeAnimator.start();
                         }
-                        WeatherService.getInstance(getApplicationContext()).searchWeather();
-                    }
-                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > ViewConfiguration.getLongPressTimeout()) {
-                        if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
-                            Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
-                            PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
-                        }
-                        Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
-                        configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(configActivity);
                     }
                     else {
                         if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
@@ -426,7 +416,16 @@ public class FloatingService extends Service{
                             PrefUtils.setFloatingSolidLocation(getApplicationContext(),params.x,params.y);
                         }
                     }
-                    return true;
+                    if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
+                        if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
+                            Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
+                            PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
+                        }
+                        Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
+                        configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(configActivity);
+                    }
+                    return false;
             }
             return false;
         }

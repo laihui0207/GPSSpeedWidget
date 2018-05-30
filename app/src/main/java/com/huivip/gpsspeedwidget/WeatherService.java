@@ -23,7 +23,7 @@ public class WeatherService implements AMapLocationListener {
     String cityName;
     String adCode;
     String district;
-    String pre_district;
+    String pre_adCode;
     double lat;
     double lng;
     long locationTime;
@@ -46,8 +46,7 @@ public class WeatherService implements AMapLocationListener {
         handler=new Handler();
         gpsUtil=GpsUtil.getInstance(context);
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
-        //mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
-        //mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
         mLocationClient.setLocationOption(mLocationOption);
         mLocationClient.startLocation();
         isLocationStarted = true;
@@ -69,22 +68,15 @@ public class WeatherService implements AMapLocationListener {
         searchWeather();
     }
     public void searchWeather(){
-        if(TextUtils.isEmpty(cityName)){
+        if(TextUtils.isEmpty(adCode)){
             return;
         }
-    /*    WeatherSearchQuery mquery = new WeatherSearchQuery(cityName, WeatherSearchQuery.WEATHER_TYPE_LIVE);
-        WeatherSearch mWeatherSearch=new WeatherSearch(context.getApplicationContext());
-        mWeatherSearch.setOnWeatherSearchListener(this);
-        mWeatherSearch.setQuery(mquery);
-        mWeatherSearch.searchWeatherAsyn(); //异步搜索*/
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String result=HttpUtils.getData(String.format(Constant.LBSSEARCHWEATHER,Constant.AUTONAVI_WEB_KEY, adCode));
                 if(!TextUtils.isEmpty(result)){
                     try {
-                        //resutlText=result;
-                        //handler.post(runnableUi);
                         JSONObject resultObj=new JSONObject(result);
                         if("1".equalsIgnoreCase(resultObj.getString("status"))
                                 && "10000".equalsIgnoreCase(resultObj.getString("infocode"))){
@@ -112,11 +104,6 @@ public class WeatherService implements AMapLocationListener {
 
     };
 
-    public void getLocationCityWeather(boolean sameSearchWeather){
-        locationAndWeatherSametime=sameSearchWeather;
-        //Toast.makeText(context, "查询天气", Toast.LENGTH_SHORT).show();
-        searchWeather();
-    }
     public void stopLocation(){
         mLocationClient.stopLocation();
         isLocationStarted=false;
@@ -124,29 +111,6 @@ public class WeatherService implements AMapLocationListener {
             mLocationClient.disableBackgroundLocation(true);
         }
     }
-   /* @Override
-    public void onWeatherLiveSearched(LocalWeatherLiveResult weatherLiveResult, int rCode) {
-        if (rCode == 1000) {
-            if (weatherLiveResult != null && weatherLiveResult.getLiveResult() != null) {
-                LocalWeatherLive weatherlive = weatherLiveResult.getLiveResult();
-                String result = "当前:" + cityName + ",天气：" + weatherlive.getWeather() +
-                        ",气温:" + weatherlive.getTemperature() + "°,"
-                        + weatherlive.getWindDirection() + "风" + weatherlive.getWindPower() + "级," +
-                        "湿度" + weatherlive.getHumidity() + "%";
-                Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-                TTS tts = SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
-                tts.speak(result);
-            }
-        }
-        String registerUrl=Constant.LBSURL+Constant.LBSREGISTER;
-        HttpUtils.getData(String.format(registerUrl,deviceId,Long.toString(locationTime),lng,lat,cityName));
-    }
-
-    @Override
-    public void onWeatherForecastSearched(LocalWeatherForecastResult localWeatherForecastResult, int i) {
-
-    }*/
-
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null) {
@@ -158,20 +122,20 @@ public class WeatherService implements AMapLocationListener {
                     gpsUtil.setCityName(cityName);
                     //Toast.makeText(context,cityName+ adCode,Toast.LENGTH_SHORT).show();
                 }
-                if(!TextUtils.isEmpty(aMapLocation.getDistrict())){
-                    district=aMapLocation.getDistrict();
-                    if(TextUtils.isEmpty(pre_district)){
-                        pre_district=district;
-                    } else if (!district.equalsIgnoreCase(pre_district)){
-                        //searchWeather();
-                        pre_district=district;
+                if(!TextUtils.isEmpty(aMapLocation.getAdCode())){
+                    //district=aMapLocation.getDistrict();
+                    if(TextUtils.isEmpty(pre_adCode)){
+                        pre_adCode =adCode;
+                    } else if (!adCode.equalsIgnoreCase(pre_adCode)){
+                        searchWeather();
+                        pre_adCode =adCode;
                     }
                     lat=aMapLocation.getLatitude();
                     lng=aMapLocation.getLongitude();
                     locationTime=aMapLocation.getTime();
                 }
                 //Toast.makeText(context,aMapLocation.toString(),Toast.LENGTH_SHORT).show();
-                if(!TextUtils.isEmpty(aMapLocation.getStreet())){
+                if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getAccuracy()<50){
                     gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
                 }
             }else {

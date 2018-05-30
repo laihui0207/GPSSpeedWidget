@@ -401,16 +401,21 @@ public class NaviFloatingService extends Service{
                             fadeAnimator.start();
                         }
                     }
-                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
-                        Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
-                        PrefUtils.setEnableNaviFloatingFixed(getApplicationContext(),false);
-                    }
                     else {
                         if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
                              animateViewToSideSlot();
                         } else {
                             PrefUtils.setNaviFloatingSolidLocation(getApplicationContext(),params.x,params.y);
                         }
+                    }
+                    if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
+                        if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
+                            Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
+                            PrefUtils.setEnableNaviFloatingFixed(getApplicationContext(),false);
+                        }
+                        Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
+                        configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(configActivity);
                     }
                     return true;
             }
