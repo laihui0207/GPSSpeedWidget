@@ -302,7 +302,7 @@ public class GpsUtil implements AMapNaviListener {
             }
             locationManager.requestLocationUpdates(this.providerId, 1L, 1.0F, this.locationListener);
         } catch (SecurityException e) {
-            Toast.makeText(context, "GPS widget 需要GPS权限!", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(context, "GPS widget 需要GPS权限!", Toast.LENGTH_SHORT).show();
         }
 
         if ((this.velocitaString != null) && (gpsEnabled)) {

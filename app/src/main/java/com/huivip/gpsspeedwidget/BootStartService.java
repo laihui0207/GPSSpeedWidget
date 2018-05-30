@@ -32,7 +32,6 @@ public class BootStartService extends Service {
         if(!started){
             boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
             if(start) {
-                GpsUtil.getInstance(getApplicationContext()).startLocationService();
                 if(PrefUtils.isWidgetActived(getApplicationContext())) {
                     Intent service = new Intent(getApplicationContext(), GpsSpeedService.class);
                     service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT, true);
@@ -52,6 +51,9 @@ public class BootStartService extends Service {
                         floatService = new Intent(getApplicationContext(), MeterFloatingService.class);
                     }
                     startService(floatService);
+                }
+                if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
+                    GpsUtil.getInstance(getApplicationContext()).startLocationService();
                 }
                 started=true;
                 AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
