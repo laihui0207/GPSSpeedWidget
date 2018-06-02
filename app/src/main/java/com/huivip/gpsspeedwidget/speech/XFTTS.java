@@ -204,7 +204,12 @@ public class XFTTS implements TTS {
 
     @Override
     public void speak(String arg1) {
-        if (PrefUtils.isEnableAudioService(mContext) && PrefUtils.isEnableTempAudioService(mContext)) {
+        speak(arg1,false);
+    }
+
+    @Override
+    public void speak(String arg1, boolean force) {
+        if (PrefUtils.isEnableAudioService(mContext) && (force || PrefUtils.isEnableTempAudioService(mContext) )) {
             if (wordList != null)
                 wordList.addLast(arg1);
             handler.obtainMessage(CHECK_TTS_PLAY).sendToTarget();

@@ -27,7 +27,7 @@ public class DateChangeReceiver extends BroadcastReceiver {
             else {
                 text="半点报时：当前时间:"+hour+"点"+min+"分";
             }
-            tts.speak(text);
+            tts.speak(text,true);
             WeatherService.getInstance(context).searchWeather();
         }
     }

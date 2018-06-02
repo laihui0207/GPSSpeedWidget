@@ -91,7 +91,7 @@ public class WeatherService implements AMapLocationListener {
                                     "湿度" + cityWeather.getString("humidity") + "%";
                             SpeechFactory.getInstance(context)
                                     .getTTSEngine(PrefUtils.getTtsEngine(context))
-                                    .speak(resutlText);
+                                    .speak(resutlText,true);
                             handler.post(runnableUi);
                         }
                     } catch (JSONException e) {

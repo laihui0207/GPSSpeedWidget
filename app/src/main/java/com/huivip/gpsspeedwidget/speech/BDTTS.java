@@ -54,7 +54,12 @@ public class BDTTS  implements  TTS {
     }
     @Override
     public void speak(String text) {
-        if (PrefUtils.isEnableAudioService(context) && PrefUtils.isEnableTempAudioService(context) && mSpeechSynthesizer!=null) {
+        speak(text,false);
+    }
+
+    @Override
+    public void speak(String text, boolean force) {
+        if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null && (force || PrefUtils.isEnableTempAudioService(context)))  {
             if(!inited){
                 release();
                 initTTS();
@@ -65,6 +70,7 @@ public class BDTTS  implements  TTS {
             }
         }
     }
+
     public void stop(){
         if(PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null) {
             mSpeechSynthesizer.stop();
