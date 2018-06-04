@@ -1,6 +1,8 @@
 package com.huivip.gpsspeedwidget.utils;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 
@@ -9,6 +11,7 @@ import java.lang.reflect.Method;
 public class WifiUtils {
     public static boolean switchWifiHotspot(Context context, String WIFI_HOTSPOT_SSID, String password,boolean enable) {
         WifiManager wifiManager= (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        if(!checkMobileAvalible(context)) return false;
         if (wifiManager.isWifiEnabled() && enable) {
             //如果wifi处于打开状态，则关闭wifi,
             wifiManager.setWifiEnabled(false);
@@ -41,6 +44,13 @@ public class WifiUtils {
             e.printStackTrace();
             return false;
         }
+    }
+    public static boolean checkMobileAvalible(Context context){
+        ConnectivityManager connectivityManager=(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mobNetInfo=connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if(mobNetInfo!=null && mobNetInfo.isAvailable()) return true;
+
+        return false;
     }
 }
 
