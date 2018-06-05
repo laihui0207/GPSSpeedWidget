@@ -98,15 +98,15 @@
                 android:text="下载并覆盖本机数据"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/button_download"/>
+        <Button
+                android:text="返回"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/button_backup_return"/>
         <CheckBox
                 android:text="自动备份历史数据"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/checkBox_autobackup" android:layout_weight="1"
         />
-        <TextView
-                android:text="如使用自动备份，请不要勾选 上传行车轨迹功能"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"
@@ -115,6 +115,10 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/textView_ftpresult" android:layout_weight="1"/>
+        <TextView
+                android:text="如使用自动备份，请不要勾选 上传行车轨迹功能"
+                android:layout_width="113dp"
+                android:layout_height="wrap_content" android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -112,6 +112,14 @@ public class BackupGPSHistoryActivity extends Activity {
 
             };
         });
+        Button returnButton=findViewById(R.id.button_backup_return);
+        returnButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         Button dowloadButton=findViewById(R.id.button_download);
         dowloadButton.setOnClickListener(new Button.OnClickListener(){
 

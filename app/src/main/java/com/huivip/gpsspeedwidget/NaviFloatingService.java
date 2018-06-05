@@ -401,6 +401,9 @@ public class NaviFloatingService extends Service{
                             fadeAnimator.start();
                         }
                     }
+                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
+
+                    }
                     else {
                         if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
                              animateViewToSideSlot();

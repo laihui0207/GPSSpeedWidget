@@ -17,6 +17,7 @@ public class BootStartReceiver extends BroadcastReceiver {
         if(intent!=null){
             Log.d("huivip","get Action:"+intent.getAction());
             Intent bootService=new Intent(context,BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
             context.startService(bootService);
         }
     }

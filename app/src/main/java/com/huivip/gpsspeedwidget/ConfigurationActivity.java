@@ -4,10 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.appwidget.AppWidgetManager;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
@@ -34,10 +31,8 @@ import com.huivip.gpsspeedwidget.utils.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.lang.Process;
 import java.util.*;
 
 /**
@@ -349,6 +344,7 @@ public class ConfigurationActivity extends Activity {
         uidView.setText("本机ID: "+deviceId.substring(0,deviceId.indexOf("-")));
 
         CheckBox autoLaunchHotSpotCheckBox=findViewById(R.id.checkBox_autoWifi);
+        autoLaunchHotSpotCheckBox.setEnabled(WifiUtils.checkMobileAvalible(getApplicationContext()));
         autoLaunchHotSpotCheckBox.setChecked(PrefUtils.isAutoLauchHotSpot(getApplicationContext()));
         autoLaunchHotSpotCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -850,6 +846,96 @@ public class ConfigurationActivity extends Activity {
                         Uri.parse("package:" + getPackageName()));
                 intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivityForResult(intentWriteSetting, 124);
+            }
+        }
+        boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
+        if(overlayEnabled && !PrefUtils.isEnableAccessibilityService(getApplicationContext())){
+
+          /*  if(upgradeRootPermission(BuildConfig.APPLICATION_ID)) {
+                 *//*Settings.Secure.putString(getContentResolver(),
+                    Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,BuildConfig.APPLICATION_ID+"/"+AppDetectionService.class.getName());
+            Settings.Secure.putString(getContentResolver(),
+                    Settings.Secure.ACCESSIBILITY_ENABLED, "1");*//*
+                //updateAccessibility(BuildConfig.APPLICATION_ID + "/" + AppDetectionService.class.getName());
+            }*/
+        }
+    }
+    private void updateAccessibility(String serviceName) {
+        // Parse the enabled services.
+        Set<ComponentName> enabledServices = getEnabledServicesFromSettings(getApplicationContext(),serviceName);
+        if(null == enabledServices) {
+            return;
+        }
+        // Determine enabled services and accessibility state.
+        ComponentName toggledService = ComponentName.unflattenFromString(serviceName);
+        final boolean accessibilityEnabled;
+        // Enabling at least one service enables accessibility.
+        accessibilityEnabled = true;
+        enabledServices.add(toggledService);
+        // Update the enabled services setting.
+        StringBuilder enabledServicesBuilder = new StringBuilder();
+        // Keep the enabled services even if they are not installed since we
+        // have no way to know whether the application restore process has
+        // completed. In general the system should be responsible for the
+        // clean up not settings.
+        for (ComponentName enabledService : enabledServices) {
+            enabledServicesBuilder.append(enabledService.flattenToString());
+            enabledServicesBuilder.append(":");
+        }
+        final int enabledServicesBuilderLength = enabledServicesBuilder.length();
+        if (enabledServicesBuilderLength > 0) {
+            enabledServicesBuilder.deleteCharAt(enabledServicesBuilderLength - 1);
+        }
+        Settings.Secure.putString(getContentResolver(),
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+                enabledServicesBuilder.toString());
+
+        // Update accessibility enabled.
+        Settings.Secure.putInt(getContentResolver(),
+                Settings.Secure.ACCESSIBILITY_ENABLED, accessibilityEnabled ? 1 : 0);
+    }
+    private static Set<ComponentName> getEnabledServicesFromSettings(Context context,String serviceName) {
+        String enabledServicesSetting = Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+        if (enabledServicesSetting == null) {
+            enabledServicesSetting = "";
+        }
+        Set<ComponentName> enabledServices = new HashSet<ComponentName>();
+        TextUtils.SimpleStringSplitter colonSplitter = new TextUtils.SimpleStringSplitter(':');
+        colonSplitter.setString(enabledServicesSetting);
+        while (colonSplitter.hasNext()) {
+            String componentNameString = colonSplitter.next();
+            ComponentName enabledService = ComponentName.unflattenFromString(
+                    componentNameString);
+            if (enabledService != null) {
+                if(enabledService.flattenToString().equals(serviceName)) {
+                    return null;
+                }
+                enabledServices.add(enabledService);
+            }
+        }
+        return enabledServices;
+    }
+    public static boolean upgradeRootPermission(String pkgCodePath) {
+        Process process = null;
+        DataOutputStream os = null;
+        try {
+            String cmd="chmod 777 " + pkgCodePath+"; cp -r /data/app/com.huivip.gpsspeedwidget* /system/app/";
+            process = Runtime.getRuntime().exec("su"); //切换到root帐号
+            os = new DataOutputStream(process.getOutputStream());
+            os.writeBytes(cmd + "\n");
+            os.writeBytes("exit\n");
+            os.flush();
+           return  process.waitFor()==0;
+        } catch (Exception e) {
+            return false;
+        } finally {
+            try {
+                if (os != null) {
+                    os.close();
+                }
+                process.destroy();
+            } catch (Exception e) {
             }
         }
     }
