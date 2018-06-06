@@ -25,6 +25,7 @@ public class WeatherService implements AMapLocationListener {
     String cityName;
     String adCode;
     String district;
+    String address;
     String pre_adCode;
     double lat;
     double lng;
@@ -48,7 +49,10 @@ public class WeatherService implements AMapLocationListener {
         handler=new Handler();
         gpsUtil=GpsUtil.getInstance(context);
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
+        mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
+        //mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
+        mLocationOption.setInterval(1000);
+        mLocationOption.setLocationCacheEnable(false);
         mLocationClient.setLocationOption(mLocationOption);
         mLocationClient.startLocation();
         isLocationStarted = true;
@@ -67,7 +71,7 @@ public class WeatherService implements AMapLocationListener {
     public void setCityName(String cityName){
         this.cityName=cityName;
         Toast.makeText(context,"当前所在:"+cityName,Toast.LENGTH_SHORT).show();
-        searchWeather();
+        //searchWeather();
     }
     public void searchWeather(){
         if(TextUtils.isEmpty(adCode)){
@@ -140,8 +144,10 @@ public class WeatherService implements AMapLocationListener {
                     locationTime=aMapLocation.getTime();
                 }
                 //Toast.makeText(context,aMapLocation.toString(),Toast.LENGTH_SHORT).show();
-                if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getAccuracy()<50){
-                    gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
+                if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getLocationType() == 1 && aMapLocation.getAccuracy()<40){
+                    //gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
+                    address=aMapLocation.getAddress();
+                    //Toast.makeText(context,address,Toast.LENGTH_SHORT).show();
                 }
             }else {
                 //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。

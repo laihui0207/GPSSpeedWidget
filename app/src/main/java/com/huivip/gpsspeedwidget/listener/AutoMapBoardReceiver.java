@@ -100,12 +100,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 String iformationJsonString=intent.getStringExtra("EXTRA_ROAD_INFO");
 
             }
-            if(key==10030){
+           /* if(key==10030){
                 String cityName=intent.getStringExtra("CITY_NAME");
                 //Log.d("huivip","city:"+cityName);
                 //Toast.makeText(context,"city:"+cityName,Toast.LENGTH_LONG).show();
                 WeatherService.getInstance(context).setCityName(cityName);
-            }
+            }*/
             if(key==10001){  // navi information
                 //Toast.makeText(context,intent.getExtras().toString(),Toast.LENGTH_LONG).show();
                 String currentRoadName=intent.getStringExtra("CUR_ROAD_NAME");
