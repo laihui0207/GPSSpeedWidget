@@ -914,7 +914,7 @@ public class GpsUtil implements AMapNaviListener {
         }
     }
 
-   /* @Override
+    @Override
     public void onCalculateRouteSuccess(AMapCalcRouteResult aMapCalcRouteResult) {
 
     }
@@ -922,5 +922,5 @@ public class GpsUtil implements AMapNaviListener {
     @Override
     public void onCalculateRouteFailure(AMapCalcRouteResult aMapCalcRouteResult) {
 
-    }*/
+    }
 }
