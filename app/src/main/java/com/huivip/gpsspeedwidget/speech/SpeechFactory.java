@@ -1,16 +1,16 @@
 package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 public class SpeechFactory {
     public static String BAIDUTTS="baiduTTS";
     public static String XUNFEITTS="xunfeiTTS";
+    public static String TEXTTTS="textTTS";
+    public static String SDKTTS="SDKTTS";
     static SpeechFactory factory;
-    String currentEngine;
-    Context mContext;
+    Context context;
     private SpeechFactory(Context context){
-      this.mContext=context;
+      this.context =context;
     }
 
     public static SpeechFactory getInstance(Context context){
@@ -23,26 +23,12 @@ public class SpeechFactory {
     public TTS getTTSEngine(String type){
         if(type==null) return null;
         if(XUNFEITTS.equalsIgnoreCase(type)){
-            currentEngine=XUNFEITTS;
-            return XFTTS.getInstance(mContext);
-        } else {
-            currentEngine=BAIDUTTS;
-            return BDTTS.getInstance(mContext);
+            return XFTTS.getInstance(context);
+        } if(TEXTTTS.equalsIgnoreCase(type)){
+            return TextSpeech.getInstance(context);
         }
-    }
-    public TTS resetEngine(String engineType){
-        TTS tts=null;
-        /*if(!engineType.equalsIgnoreCase(currentEngine)){
-            tts=getTTSEngine(currentEngine);
-            tts.release();
-            tts=getTTSEngine(engineType);
-            //currentEngine=engineType;
-        } else if(!TextUtils.isEmpty(currentEngine)){
-            tts=getTTSEngine(currentEngine);
-        } else {
-            currentEngine=engineType;*/
-            tts=getTTSEngine(engineType);
-        //}
-        return tts;
+        else {
+            return BDTTS.getInstance(context);
+        }
     }
 }

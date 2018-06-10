@@ -62,6 +62,8 @@ public abstract class PrefUtils {
     public static final String SHOW_NO_DESKTOP="1";
     public static final String SHOW_ONLY_AUTONAVI="3";
     public static final String TTS_ENGINE="com.huivip.TTS.Type";
+    private static final String APP_PLAY_TIME="com.huivip.play.time";
+    private static final String APP_PLAY_WEATHER="com.huivip.play.weather";
 
 
     public static final String FLOATING_DEFAULT="0";
@@ -137,6 +139,18 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableRecordGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, true);
+    }
+    public static void setPlayTime(Context context,boolean value){
+        edit(context).putBoolean(APP_PLAY_TIME, value).apply();
+    }
+    public static boolean isPlayTime(Context context){
+        return getSharedPreferences(context).getBoolean(APP_PLAY_TIME, true);
+    }
+    public static void setPlayWeather(Context context,boolean value){
+        edit(context).putBoolean(APP_PLAY_WEATHER, value).apply();
+    }
+    public static boolean isPlayWeather(Context context){
+        return getSharedPreferences(context).getBoolean(APP_PLAY_WEATHER, true);
     }
     public static void setAppFirstRun(Context context,boolean firstRun){
         edit(context).putBoolean(APP_FIRST_RUN, firstRun).apply();

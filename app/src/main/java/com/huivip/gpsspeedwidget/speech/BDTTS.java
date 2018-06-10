@@ -5,18 +5,21 @@ import android.media.AudioManager;
 import android.util.Log;
 import com.baidu.tts.auth.AuthInfo;
 import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
+import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
+import com.huivip.gpsspeedwidget.MainHandlerConstant;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BDTTS  implements  TTS {
-    Context context;
+public class BDTTS extends TTSService implements SpeechSynthesizerListener, MainHandlerConstant {
+    private static final String TAG = "huivip_BDTTS";
     protected String appId = "10875643";
     protected String appKey = "645OiDA3l2baAATnci6lTzC6";
     protected String secretKey = "222af7afd5d975f91d7247700de1ac99";
@@ -35,11 +38,9 @@ public class BDTTS  implements  TTS {
     // 请确保该PATH下有这个文件 ，m15是离线男声
     private static final String MODEL_FILENAME =
             TEMP_DIR + "/" + "bd_etts_common_speech_f7_mand_eng_high_am-mix_v3.0.0_20170512.dat";
-    private BDTTS(Context context) {
+    public BDTTS(Context context) {
         this.context=context;
         initTTS();
-        //am=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-
     }
 
     public static BDTTS getInstance(Context context) {
@@ -83,8 +84,8 @@ public class BDTTS  implements  TTS {
             //mSpeechSynthesizer=null;
         }
     }
-    @Override
-    public void initTTS() {
+
+    private void initTTS() {
         LoggerProxy.printable(true); // 日志打印在logcat中
         boolean isMix = ttsMode.equals(TtsMode.MIX);
         boolean isSuccess;
@@ -98,19 +99,16 @@ public class BDTTS  implements  TTS {
                 Log.d("huivip","离线资源存在并且可读, 目录：" + TEMP_DIR);
             }
         }
-        // 日志更新在UI中，可以换成MessageListener，在logcat中查看日志
-        SpeechSynthesizerListener listener = new BDTTSMessageListener(context);
-
         // 1. 获取实例
         mSpeechSynthesizer = SpeechSynthesizer.getInstance();
         mSpeechSynthesizer.setContext(context);
 
         // 2. 设置listener
-        mSpeechSynthesizer.setSpeechSynthesizerListener(listener);
-       // mSpeechSynthesizer.setStereoVolume(1F,1F);
+        mSpeechSynthesizer.setSpeechSynthesizerListener(this);
+        // mSpeechSynthesizer.setStereoVolume(1F,1F);
         // 3. 设置appId，appKey.secretKey
-        int result = mSpeechSynthesizer.setAppId(appId);
-        result = mSpeechSynthesizer.setApiKey(appKey, secretKey);
+        mSpeechSynthesizer.setAppId(appId);
+        mSpeechSynthesizer.setApiKey(appKey, secretKey);
 
         // 4. 支持离线的话，需要设置离线模型
         if (isMix) {
@@ -130,7 +128,7 @@ public class BDTTS  implements  TTS {
         // 设置在线发声音人： 0 普通女声（默认） 1 普通男声 2 特别男声 3 情感男声<度逍遥> 4 情感儿童声<度丫丫>
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "0");
         // 设置合成的音量，0-9 ，默认 5
-        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "9");
+        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "7");
         // 设置合成的语速，0-9 ，默认 5
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, "5");
         // 设置合成的语调，0-9 ，默认 5
@@ -177,10 +175,8 @@ public class BDTTS  implements  TTS {
         });*/
 
         // 6. 初始化
-        result = mSpeechSynthesizer.initTts(ttsMode);
-        if(result==0){
-            inited=true;
-        }
+       int result = mSpeechSynthesizer.initTts(ttsMode);
+       inited = result ==0;
         Log.d("huivip","TTS Init:"+result);
 
     }
@@ -232,5 +228,128 @@ public class BDTTS  implements  TTS {
         }
         return offlineResource;
     }
+    @Override
+    public void onSynthesizeStart(String utteranceId) {
+        sendMessage("准备开始合成,序列号:" + utteranceId);
+    }
 
+    /**
+     * 语音流 16K采样率 16bits编码 单声道 。
+     *
+     * @param utteranceId
+     * @param bytes       二进制语音 ，注意可能有空data的情况，可以忽略
+     * @param progress    如合成“百度语音问题”这6个字， progress肯定是从0开始，到6结束。 但progress无法和合成到第几个字对应。
+     */
+    @Override
+    public void onSynthesizeDataArrived(String utteranceId, byte[] bytes, int progress) {
+        //  Log.i(TAG, "合成进度回调, progress：" + progress + ";序列号:" + utteranceId );
+       /* File tempMp3 = null;
+        try {
+            tempMp3 = File.createTempFile("GPSaudio"+utteranceId, "mp3", context.getCacheDir());
+            tempMp3.deleteOnExit();
+            FileOutputStream fos = new FileOutputStream(tempMp3);
+            fos.write(bytes);
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+*/
+
+    }
+
+    /**
+     * 合成正常结束，每句合成正常结束都会回调，如果过程中出错，则回调onError，不再回调此接口
+     *
+     * @param utteranceId
+     */
+    @Override
+    public void onSynthesizeFinish(String utteranceId) {
+        sendMessage("合成结束回调, 序列号:" + utteranceId);
+
+    }
+
+    @Override
+    public void onSpeechStart(String utteranceId) {
+       /* currentSystemVolume=am.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        currentVoiceCallVolume=am.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+        currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int audioVolume=PrefUtils.getAudioVolume(context);
+        if (PrefUtils.isEnableAudioMixService(context)) {
+            //am.setStreamVolume(AudioManager.STREAM_MUSIC, audioVolume, 0);
+        } else {
+            //am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
+            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, audioVolume, 0);
+        }*/
+       requestAudioFocus();
+       int volume=PrefUtils.getAudioVolume(context);
+       mSpeechSynthesizer.setStereoVolume(volume/100f,volume/100f);
+        sendMessage("播放开始回调, 序列号:" + utteranceId);
+    }
+
+    /**
+     * 播放进度回调接口，分多次回调
+     *
+     * @param utteranceId
+     * @param progress    如合成“百度语音问题”这6个字， progress肯定是从0开始，到6结束。 但progress无法保证和合成到第几个字对应。
+     */
+    @Override
+    public void onSpeechProgressChanged(String utteranceId, int progress) {
+        //  Log.i(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId );
+    }
+
+    /**
+     * 播放正常结束，每句播放正常结束都会回调，如果过程中出错，则回调onError,不再回调此接口
+     *
+     * @param utteranceId
+     */
+    @Override
+    public void onSpeechFinish(String utteranceId) {
+        sendMessage("播放结束回调, 序列号:" + utteranceId);
+        //am.setSpeakerphoneOn(false);
+       /* am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,currentVoiceCallVolume,0);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
+        am.setStreamVolume(AudioManager.STREAM_SYSTEM,currentSystemVolume,0);*/
+       afterSpeak();
+    }
+
+    /**
+     * 当合成或者播放过程中出错时回调此接口
+     *
+     * @param utteranceId
+     * @param speechError 包含错误码和错误信息
+     */
+    @Override
+    public void onError(String utteranceId, SpeechError speechError) {
+        sendErrorMessage("错误发生：" + speechError.description + "，错误编码："
+                + speechError.code + "，序列号:" + utteranceId);
+
+
+       /* if(currentVoiceCallVolume!=0){
+            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,currentVoiceCallVolume,0);
+        }
+        if(currentMusicVolume!=0){
+            am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
+        }
+        if(currentSystemVolume!=0){
+            am.setStreamVolume(AudioManager.STREAM_SYSTEM,currentSystemVolume,0);
+        }*/
+    }
+
+    private void sendErrorMessage(String message) {
+        sendMessage(message, true);
+    }
+
+
+    private void sendMessage(String message) {
+        sendMessage(message, false);
+    }
+
+    protected void sendMessage(String message, boolean isError) {
+        if (isError) {
+            Log.e(TAG, message);
+        } else {
+            Log.i(TAG, message);
+        }
+
+    }
 }

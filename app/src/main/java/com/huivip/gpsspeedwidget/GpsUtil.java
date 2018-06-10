@@ -60,6 +60,8 @@ public class GpsUtil implements AMapNaviListener {
     boolean serviceStarted = false;
     TimerTask locationScanTask;
     Timer locationTimer;
+    Timer catchRoadTimer;
+    TimerTask catchRoadTask;
     AMapNavi aMapNavi;
     LocationManager locationManager;
     TTS tts;
@@ -194,6 +196,11 @@ public class GpsUtil implements AMapNaviListener {
                 aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
             }
             aMapNavi.addAMapNaviListener(this);
+            if(PrefUtils.getTtsEngine(context).equalsIgnoreCase(SpeechFactory.SDKTTS)){
+                aMapNavi.setUseInnerVoice(true,false);
+            } else {
+                aMapNavi.setUseInnerVoice(false);
+            }
             aMapNavi.getNaviSetting().setTrafficStatusUpdateEnabled(true);
 
         }

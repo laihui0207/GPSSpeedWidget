@@ -2,7 +2,6 @@ package com.huivip.gpsspeedwidget;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Application;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
 import android.content.pm.PackageManager;
@@ -108,9 +107,11 @@ public class ConfigurationActivity extends Activity {
         CheckBox audidMixCheckBox=findViewById(R.id.checkBox_mix);
         audidMixCheckBox.setChecked(PrefUtils.isEnableAudioMixService(getApplicationContext()));
         audidMixCheckBox.setEnabled(enableAudioCheckBox.isChecked());
-        CheckBox ttsEngineCheckBox=findViewById(R.id.checkBox_xftts);
-        ttsEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.XUNFEITTS));
-        ttsEngineCheckBox.setEnabled(enableAudioCheckBox.isChecked());
+        CheckBox XFEngineCheckBox=findViewById(R.id.checkBox_xftts);
+        XFEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.XUNFEITTS));
+        XFEngineCheckBox.setEnabled(enableAudioCheckBox.isChecked());
+        CheckBox natviAudioCheckBox=findViewById(R.id.checkBox_natviAudio);
+        natviAudioCheckBox.setChecked(SpeechFactory.SDKTTS.equalsIgnoreCase(PrefUtils.getTtsEngine(getApplicationContext())));
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         enableAutoNaviCheckBox.setChecked(PrefUtils.isEnableAutoNaviService(getApplicationContext()));
         remoteUrlEditBox.setEnabled(uploadGPSCheckBox.isChecked());
@@ -184,7 +185,7 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
                 audidMixCheckBox.setEnabled(checkBoxButton.isChecked());
-                ttsEngineCheckBox.setEnabled(checkBoxButton.isChecked());
+                XFEngineCheckBox.setEnabled(checkBoxButton.isChecked());
                 PrefUtils.setEnableAudioService(getApplicationContext(),checkBoxButton.isChecked());
                 /*if(checkBoxButton.isChecked()) {
                     checkIfCanIncreaseMusic();
@@ -198,28 +199,54 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableAudioMixService(getApplicationContext(),compoundButton.isChecked());
                 BDTTS bdtts =BDTTS.getInstance(getApplicationContext());
                 bdtts.release();
-                bdtts.initTTS();
             }
         });
 
-        ttsEngineCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        XFEngineCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String speakText="";
                 if(buttonView.isChecked()){
                     PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.XUNFEITTS);
                     speakText="使用讯飞语音";
+                    natviAudioCheckBox.setChecked(false);
                 }
                 else {
                     PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.BAIDUTTS);
                     speakText="使用百度语音";
                 }
-                EditText ttsVolume=findViewById(R.id.editText_audioVolume);
-                String setedVolume=ttsVolume.getText().toString();
-                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(setedVolume));
+                SeekBar seekBarVolume=findViewById(R.id.seekBar_audioVolume);
+                int volume=seekBarVolume.getProgress();
+                PrefUtils.setAudioVolume(getApplicationContext(),volume);
                 TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
                 tts.speak(speakText);
                 GpsUtil.getInstance(getApplicationContext()).setTts(tts);
+            }
+        });
+
+        natviAudioCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(buttonView.isChecked()){
+                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.SDKTTS);
+                    XFEngineCheckBox.setChecked(false);
+                }
+                else {
+                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.BAIDUTTS);
+                }
+            }
+        });
+        Button testAudoButton=findViewById(R.id.button_testAudio);
+        testAudoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*EditText ttsVolume=findViewById(R.id.editText_audioVolume);
+                String setAudioVolume=ttsVolume.getText().toString();*/
+                SeekBar seekBarVolume=findViewById(R.id.seekBar_audioVolume);
+                int volume=seekBarVolume.getProgress();
+                PrefUtils.setAudioVolume(getApplicationContext(),volume);
+                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+                tts.speak("你好，语音测试");
             }
         });
         enableAutoNaviCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
@@ -347,12 +374,12 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setDelayStartOtherApp(getApplicationContext(),Integer.parseInt(delayTimeValue));
                 boolean serviceEnabled = Utils.isAccessibilityServiceEnabled(getApplicationContext(), AppDetectionService.class);
                 PrefUtils.setEnableAccessibilityService(getApplicationContext(),serviceEnabled);
-                EditText ttsVolume=findViewById(R.id.editText_audioVolume);
+               /* EditText ttsVolume=findViewById(R.id.editText_audioVolume);
                 String setAudioVolume=ttsVolume.getText().toString();
                 if(TextUtils.isEmpty(setAudioVolume)){
                     setAudioVolume="5";
                 }
-                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(setAudioVolume));
+                PrefUtils.setAudioVolume(getApplicationContext(),Integer.parseInt(setAudioVolume));*/
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
@@ -422,10 +449,27 @@ public class ConfigurationActivity extends Activity {
             }
         });
         AudioManager audioManager= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        EditText audioVolumeEditText=findViewById(R.id.editText_audioVolume);
+       /* EditText audioVolumeEditText=findViewById(R.id.editText_audioVolume);
         audioVolumeEditText.setText(PrefUtils.getAudioVolume(getApplicationContext())+"");
-        audioVolumeEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL))});
+        audioVolumeEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, 100)}); //audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)*/
+        SeekBar volumeSeekBar=findViewById(R.id.seekBar_audioVolume);
+        volumeSeekBar.setProgress(PrefUtils.getAudioVolume(getApplicationContext()));
+        volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                PrefUtils.setAudioVolume(getApplicationContext(),progress);
+            }
 
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
         enableNaviFloatingCheckBox=findViewById(R.id.checkBox_navfloatiing);
         CheckBox naviAutoSoltCheckBox=findViewById(R.id.checkBox_Navi_autoSolt);
         enableNaviFloatingCheckBox.setChecked(PrefUtils.isEnableNaviFloating(getApplicationContext()));
@@ -630,7 +674,22 @@ public class ConfigurationActivity extends Activity {
                         .setPositiveButton("关闭", null).show();
             }
         });
-
+        CheckBox playTimeCheckBox=findViewById(R.id.checkBox_playtime);
+        playTimeCheckBox.setChecked(PrefUtils.isPlayTime(getApplicationContext()));
+        playTimeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setPlayTime(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox playWeathereCheckBox=findViewById(R.id.checkBox_playweather);
+        playWeathereCheckBox.setChecked(PrefUtils.isPlayWeather(getApplicationContext()));
+        playWeathereCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setPlayWeather(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         CheckBox naviFloatingFixedCheckbox=findViewById(R.id.checkBox_navi_fixed_position);
         naviFloatingFixedCheckbox.setChecked(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext()));
         naviFloatingFixedCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

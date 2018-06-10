@@ -93,10 +93,12 @@ public class WeatherService implements AMapLocationListener {
                                     ",气温:" + cityWeather.getString("temperature") + "°,"
                                     + cityWeather.getString("winddirection") + "风" +cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
-                            SpeechFactory.getInstance(context)
-                                    .getTTSEngine(PrefUtils.getTtsEngine(context))
-                                    .speak(resutlText,true);
-                            handler.post(runnableUi);
+                            if(PrefUtils.isPlayWeather(context)) {
+                                SpeechFactory.getInstance(context)
+                                        .getTTSEngine(PrefUtils.getTtsEngine(context))
+                                        .speak(resutlText, true);
+                                handler.post(runnableUi);
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

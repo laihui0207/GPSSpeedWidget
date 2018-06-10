@@ -29,7 +29,7 @@ public class BootStartService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(!started){
+        if(intent!=null && !started){
             boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
             if(start) {
                 if(PrefUtils.isWidgetActived(getApplicationContext())) {
