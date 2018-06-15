@@ -14,7 +14,7 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
     private String TAG="huivip_TxtTTS";
     Context context;
     TextToSpeech mts;
-    boolean inited=false;
+    private boolean inited=false;
     static TextSpeech instance;
     private TextSpeech(Context context){
         this.context=context;
@@ -35,9 +35,6 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
 
     @Override
     public void speak(String text, boolean force) {
-        if(mts==null){
-            mts=new TextToSpeech(context,this);
-        }
         if(inited) {
             if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
                 beforeSpeak();
@@ -78,6 +75,7 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
             }
         } else {
             Log.d(TAG,"Device no install TEXT to Speech engine");
+            inited=false;
         }
     }
 }

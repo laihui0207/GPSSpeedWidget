@@ -8,7 +8,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
-        versionName "1.7.4.2"
+        versionName "1.7.4.3"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
@@ -70,6 +70,7 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
+
     /*    compile 'com.github.gigamole.arcprogressstackview:library:1.0.3'*/
     //noinspection GradleCompatible
     compile 'com.android.support:appcompat-v7:27.0.2'

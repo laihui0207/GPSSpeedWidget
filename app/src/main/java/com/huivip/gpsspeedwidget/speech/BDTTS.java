@@ -13,7 +13,6 @@ import com.huivip.gpsspeedwidget.MainHandlerConstant;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,11 +44,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener, Main
 
     public static BDTTS getInstance(Context context) {
         if (BDTTS == null) {
-            synchronized (BDTTS.class) {
-                if(BDTTS ==null) {
-                    BDTTS = new BDTTS(context);
-                }
-            }
+            BDTTS = new BDTTS(context);
         }
         return BDTTS;
     }
@@ -140,12 +135,13 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener, Main
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE_WIFI wifi状态下使用在线，非wifi离线。在线状态下， 请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_NETWORK ， 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
-        if(!PrefUtils.isEnableAudioMixService(context)){
+       /* if(!PrefUtils.isEnableAudioMixService(context)){
             Log.d("huivip","Audio use voice Call");
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-        } else {
-            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        }
+        } else {*/
+          //  mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        /*}*/
+        mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
        // mSpeechSynthesizer.setStereoVolume(1.0f,1.0f);
         //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_ALARM);
        // mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
@@ -270,17 +266,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener, Main
 
     @Override
     public void onSpeechStart(String utteranceId) {
-       /* currentSystemVolume=am.getStreamVolume(AudioManager.STREAM_SYSTEM);
-        currentVoiceCallVolume=am.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
-        currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        int audioVolume=PrefUtils.getAudioVolume(context);
-        if (PrefUtils.isEnableAudioMixService(context)) {
-            //am.setStreamVolume(AudioManager.STREAM_MUSIC, audioVolume, 0);
-        } else {
-            //am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
-            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, audioVolume, 0);
-        }*/
-       requestAudioFocus();
+      // requestAudioFocus();
        int volume=PrefUtils.getAudioVolume(context);
        mSpeechSynthesizer.setStereoVolume(volume/100f,volume/100f);
         sendMessage("播放开始回调, 序列号:" + utteranceId);
@@ -305,11 +291,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener, Main
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
-        //am.setSpeakerphoneOn(false);
-       /* am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,currentVoiceCallVolume,0);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
-        am.setStreamVolume(AudioManager.STREAM_SYSTEM,currentSystemVolume,0);*/
-       afterSpeak();
+      // afterSpeak();
     }
 
     /**
@@ -322,17 +304,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener, Main
     public void onError(String utteranceId, SpeechError speechError) {
         sendErrorMessage("错误发生：" + speechError.description + "，错误编码："
                 + speechError.code + "，序列号:" + utteranceId);
-
-
-       /* if(currentVoiceCallVolume!=0){
-            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL,currentVoiceCallVolume,0);
-        }
-        if(currentMusicVolume!=0){
-            am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
-        }
-        if(currentSystemVolume!=0){
-            am.setStreamVolume(AudioManager.STREAM_SYSTEM,currentSystemVolume,0);
-        }*/
     }
 
     private void sendErrorMessage(String message) {

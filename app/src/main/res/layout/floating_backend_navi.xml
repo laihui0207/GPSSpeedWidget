@@ -40,7 +40,8 @@
                     android:layout_height="wrap_content" android:id="@+id/textView_nextroadname"
                     android:textSize="20dp"
                     android:layout_below="@+id/textView_nextdistance" android:layout_toLeftOf="@+id/navi_limit_view"
-                    android:layout_toStartOf="@+id/navi_limit_view"/>
+                    android:layout_toStartOf="@+id/navi_limit_view" android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" android:singleLine="true"/>
             <TextView
                     android:text="3.2公里" android:textColor="#fff"
                     android:layout_width="wrap_content"
@@ -48,7 +49,8 @@
                     android:layout_weight="1"
                     android:textSize="30dp"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true" android:layout_alignParentStart="true"/>
+                    android:layout_alignParentTop="true" android:layout_alignParentStart="true"
+                    android:singleLine="true"/>
             <TextView
                     android:text="剩余：" android:textColor="#fff"
                     android:layout_width="50dp"
@@ -56,15 +58,16 @@
                     android:gravity="right|center_vertical"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentBottom="true" android:textSize="13dp"/>
+                    android:layout_alignParentBottom="true" android:textSize="13dp"
+                    android:layout_below="@+id/textView_autonavi_speedText"/>
             <TextView
                     android:text="320公里-3小时29分钟" android:textColor="#fff"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/textView_totalleft" android:layout_weight="1"
                     android:gravity="left|center_vertical"
-                    android:textSize="15dp" android:layout_alignParentBottom="true"
-                    android:layout_toRightOf="@+id/textView9"
-                    android:layout_toEndOf="@+id/textView9"/>
+                    android:textSize="15dp"
+                    android:layout_alignTop="@+id/textView9" android:layout_toRightOf="@+id/textView9"
+                    android:layout_toEndOf="@+id/textView9" android:singleLine="true"/>
             <RelativeLayout
                     android:layout_width="100dp"
                     android:layout_height="100dp" android:id="@+id/navi_limit_view"
@@ -102,8 +105,8 @@
                         android:gravity="top|center_vertical|center_horizontal"
                         android:layout_height="20dp" android:id="@+id/textView_navi_limit_label"
                         android:textSize="13dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" android:layout_below="@+id/navi_number_limit"/>
+                        android:layout_below="@+id/navi_number_limit" android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"/>
                 <TextView
                         android:text="0米"
                         android:layout_width="wrap_content"
@@ -118,29 +121,35 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_autonavi_speedText"
-                    android:textSize="30dp"
+                    android:textSize="20dp"
                     android:textColor="#fff"
                     android:textStyle="bold"
-                    android:layout_below="@+id/textView_nextdistance" android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" android:layout_alignBottom="@+id/navi_limit_view"/>
+                    android:layout_alignBottom="@+id/navi_limit_view"
+                    android:layout_alignParentLeft="true" android:layout_alignParentStart="true"
+                    android:layout_toLeftOf="@+id/textView_totalleft"
+                    android:layout_toStartOf="@+id/textView_totalleft"
+                    android:layout_below="@+id/textView_nextroadname"
+                    android:gravity="center_vertical|center_horizontal|center"/>
             <TextView
                     android:text="km/h"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView7"
                     android:textColor="#fff"
+                    android:layout_alignBottom="@+id/textView_autonavi_speedText"
+                    android:layout_below="@+id/textView_nextroadname"
                     android:layout_toRightOf="@+id/textView_autonavi_speedText"
                     android:layout_toEndOf="@+id/textView_autonavi_speedText"
-                    android:layout_alignBottom="@+id/textView_autonavi_speedText"
-                    android:layout_below="@+id/textView_nextroadname"/>
+                    android:gravity="bottom"/>
             <TextView
                     android:text="后"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:layout_alignBottom="@+id/textView_nextdistance"
-                    android:layout_toRightOf="@+id/textView_nextdistance"
-                    android:layout_toEndOf="@+id/textView_nextdistance" android:id="@+id/textView10"
+                    android:id="@+id/textView10"
                     android:textColor="#fff" android:textSize="15dp" android:layout_toLeftOf="@+id/navi_limit_view"
-                    android:layout_toStartOf="@+id/navi_limit_view"/>
+                    android:layout_toStartOf="@+id/navi_limit_view"
+                    android:layout_toRightOf="@+id/textView_nextdistance"
+                    android:layout_toEndOf="@+id/textView_nextdistance"/>
         </RelativeLayout>
     </LinearLayout>
     <LinearLayout

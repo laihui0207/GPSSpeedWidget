@@ -279,7 +279,7 @@ public abstract class PrefUtils {
     }
 
     public static int getAudioVolume(Context context) {
-        return getSharedPreferences(context).getInt(AUDIO_VOLUME, 5);
+        return getSharedPreferences(context).getInt(AUDIO_VOLUME, 80);
     }
 
     public static void setseparatedVolume(Context context, boolean value) {

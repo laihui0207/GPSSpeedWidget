@@ -240,8 +240,6 @@ public class ConfigurationActivity extends Activity {
         testAudoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*EditText ttsVolume=findViewById(R.id.editText_audioVolume);
-                String setAudioVolume=ttsVolume.getText().toString();*/
                 SeekBar seekBarVolume=findViewById(R.id.seekBar_audioVolume);
                 int volume=seekBarVolume.getProgress();
                 PrefUtils.setAudioVolume(getApplicationContext(),volume);

@@ -26,7 +26,7 @@ import java.util.LinkedList;
  * <p>
  * 导航SDK原则上是不提供语音播报模块的，如果您觉得此种播报方式不能满足你的需求，请自行优化或改进。
  */
-public class XFTTS extends TTSService {
+public class XFTTS extends TTSService implements SynthesizerListener {
 
     /**
      * 请替换您自己申请的ID。
@@ -57,7 +57,8 @@ public class XFTTS extends TTSService {
                                 @Override
                                 public void onCompleted(SpeechError arg0) {
                                     handler.obtainMessage(1).sendToTarget();
-                                    afterSpeak();
+                                    //afterSpeak();
+                                    isPlaying=false;
                                 }
 
                                 @Override
@@ -73,12 +74,13 @@ public class XFTTS extends TTSService {
                                 @Override
                                 public void onSpeakBegin() {
                                     //开始播放
+                                    //beforeSpeak();
                                     initTTS();
-                                    beforeSpeak();
                                 }
 
                                 @Override
                                 public void onSpeakPaused() {
+                                    isPlaying=false;
                                 }
 
                                 @Override
@@ -107,12 +109,9 @@ public class XFTTS extends TTSService {
     };
 
     private XFTTS(Context context) {
-        //context = context.getApplicationContext();
         this.context=context;
-        //SpeechUtility.createUtility(SpeechApp.this, "appid=" + getString(R.string.app_id));
         SpeechUtility.createUtility(context, SpeechConstant.APPID + "=" + appId);
         if (mTts == null) {
-            Log.d("huvip","create Speed utility");
             createSynthesizer();
         }
     }
@@ -124,7 +123,7 @@ public class XFTTS extends TTSService {
                     public void onInit(int errorcode) {
                         if (ErrorCode.SUCCESS == errorcode) {
                         } else {
-                            Toast.makeText(context, "语音合成初始化失败!" + errorcode, Toast.LENGTH_SHORT);
+                            Toast.makeText(context, "语音合成初始化失败!" + errorcode, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -138,19 +137,19 @@ public class XFTTS extends TTSService {
     }
 
     public void stop() {
-        if (wordList != null) {
+       /* if (wordList != null) {
             wordList.clear();
-        }
+        }*/
         if (mTts != null) {
             mTts.stopSpeaking();
         }
-        isPlaying = false;
+        /*isPlaying = false;*/
     }
 
     public void release() {
-        if (wordList != null) {
+        /*if (wordList != null) {
             wordList.clear();
-        }
+        }*/
         if (mTts != null) {
             mTts.destroy();
         }
@@ -181,11 +180,53 @@ public class XFTTS extends TTSService {
     }
 
     @Override
-    public void speak(String arg1, boolean force) {
+    public void speak(String text, boolean force) {
         if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context) )) {
-            if (wordList != null)
+            /*if (wordList != null)
                 wordList.addLast(arg1);
-            handler.obtainMessage(CHECK_TTS_PLAY).sendToTarget();
+            else {
+                wordList=new LinkedList<>();
+                wordList.add(arg1);
+            }
+            handler.obtainMessage(CHECK_TTS_PLAY).sendToTarget();*/
+            mTts.startSpeaking(text,this);
         }
+
+    }
+
+    @Override
+    public void onSpeakBegin() {
+        initTTS();
+        beforeSpeak();
+    }
+
+    @Override
+    public void onBufferProgress(int i, int i1, int i2, String s) {
+
+    }
+
+    @Override
+    public void onSpeakPaused() {
+
+    }
+
+    @Override
+    public void onSpeakResumed() {
+
+    }
+
+    @Override
+    public void onSpeakProgress(int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onCompleted(SpeechError speechError) {
+        afterSpeak();
+    }
+
+    @Override
+    public void onEvent(int i, int i1, int i2, Bundle bundle) {
+
     }
 }

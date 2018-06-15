@@ -67,6 +67,8 @@ public class FloatingService extends Service{
     TextView limitShowLabel;
     @BindView(R.id.speedUnits)
     TextView speedUnitTextView;
+    @BindView(R.id.textView_default_altitude)
+    TextView textViewAltitude;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
@@ -230,6 +232,7 @@ public class FloatingService extends Service{
                 else {
                     speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
                 }
+                textViewAltitude.setText("海拔： " + gpsUtil.getAltitude() + "米");
            // }
         }
         else {
