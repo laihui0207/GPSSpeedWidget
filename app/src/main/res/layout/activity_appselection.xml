@@ -12,7 +12,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:background="?colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:contentInsetStart="16dp" />
@@ -48,7 +48,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:background="?toolbarShadow" />
+        android:background="@color/colorPrimaryDark"/>
 
     </FrameLayout>
 

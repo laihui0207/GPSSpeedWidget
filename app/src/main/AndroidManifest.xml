@@ -33,12 +33,13 @@
             android:roundIcon="@mipmap/ic_launcher"
             android:sharedUserId="android.uid.system"
             android:supportsRtl="true"
-            android:theme="@style/Theme.Velociraptor" >
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            >
         <meta-data
                 android:name="com.amap.api.v2.apikey"
                 android:value="6d91e53ca05dee32ec58c9d257224e7b"/>
 
-        <activity android:name=".MainActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
+        <activity android:name=".MainActivity"  android:windowSoftInputMode="stateHidden|stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -137,7 +138,7 @@
         <activity android:name=".AudioTestActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
         </activity>
         <activity android:name=".BackupGPSHistoryActivity" android:windowSoftInputMode="stateHidden|stateUnchanged"></activity>
-        <activity android:name=".appselection.AppSelectionActivity"></activity>
+        <activity android:name=".appselection.AppSelectionActivity" android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
     </application>
 
 </manifest>

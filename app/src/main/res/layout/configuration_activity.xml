@@ -418,20 +418,23 @@
                     android:layout_toRightOf="@+id/checkBox_playweather"
                     android:layout_toEndOf="@+id/checkBox_playweather" android:visibility="gone"/>
             <Button
-                    android:text="测试语音音量"
+                    android:text="测试语音"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/button_testAudio"
                     android:layout_alignBaseline="@+id/checkBox_xftts" android:layout_alignBottom="@+id/checkBox_xftts"
-                    android:layout_toRightOf="@+id/button_pay" android:layout_toEndOf="@+id/button_pay"/>
+                    android:layout_toRightOf="@+id/seekBar_audioVolume"
+                    android:layout_toEndOf="@+id/seekBar_audioVolume"/>
             <SeekBar
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/seekBar_audioVolume"
                     android:max="100" android:progress="50"
                     android:layout_alignBottom="@+id/checkBox_xftts" android:layout_toRightOf="@+id/checkBox_xftts"
-                    android:layout_toEndOf="@+id/checkBox_xftts" android:layout_alignRight="@+id/button_testAudio"
-                    android:layout_alignEnd="@+id/button_testAudio"/>
+                    android:layout_toEndOf="@+id/checkBox_xftts"
+                    android:layout_alignRight="@+id/textView_showmessage"
+                    android:layout_alignEnd="@+id/textView_showmessage"
+                    android:layout_below="@+id/checkBox_playweather"/>
         </RelativeLayout>
     </ScrollView>
     <TextView
