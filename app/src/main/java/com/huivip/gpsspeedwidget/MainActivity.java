@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
@@ -290,7 +291,7 @@ public class MainActivity extends Activity implements TraceListener {
             public void onClick(View v) {
                 LayoutInflater inflater = getLayoutInflater();
                 View layout = inflater.inflate(R.layout.dialog_pay,null);
-                new AlertDialog.Builder(MainActivity.this).setTitle("打赏随意，多少都是一种支持").setView(layout)
+                new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this,R.style.Theme_AppCompat_DayNight)).setTitle("打赏随意，多少都是一种支持").setView(layout)
                         .setPositiveButton("关闭", null).show();
             }
         });

@@ -17,6 +17,7 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
@@ -545,7 +546,7 @@ public class ConfigurationActivity extends Activity {
                 @Override
                 public void handleMessage(Message msg) {
                     if(msg.arg1==0) {
-                        AlertDialog.Builder  mDialog = new AlertDialog.Builder(ConfigurationActivity.this);
+                        AlertDialog.Builder  mDialog = new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight));
                         mDialog.setTitle("版本检查");
                         mDialog.setMessage("已是最新版本，无需更新！");
                         mDialog.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
@@ -556,7 +557,7 @@ public class ConfigurationActivity extends Activity {
                         mDialog.create().show();
                     }
                     else if (msg.arg1==1){
-                        AlertDialog.Builder  mDialog = new AlertDialog.Builder(ConfigurationActivity.this);
+                        AlertDialog.Builder  mDialog = new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight));
                         try {
                             JSONObject updateInfo=new JSONObject((String)msg.obj);
                             JSONObject data= (JSONObject) updateInfo.get("data");
@@ -592,7 +593,7 @@ public class ConfigurationActivity extends Activity {
                 final EditText inputText = new EditText(ConfigurationActivity.this);
                 DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
                 String deviceId=deviceUuidFactory.getDeviceUuid().toString();
-                new AlertDialog.Builder(ConfigurationActivity.this).setTitle("请输入反馈内容").setIcon(
+                new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight)).setTitle("请输入反馈内容").setIcon(
                         android.R.drawable.ic_dialog_info).setView(inputText).
                         setPositiveButton("提交", new DialogInterface.OnClickListener() {
                             @Override
@@ -668,7 +669,7 @@ public class ConfigurationActivity extends Activity {
             public void onClick(View v) {
                 LayoutInflater inflater = getLayoutInflater();
                 View layout = inflater.inflate(R.layout.dialog_pay,null);
-                new AlertDialog.Builder(ConfigurationActivity.this).setTitle("打赏随意，多少都是一种支持").setView(layout)
+                new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight)).setTitle("打赏随意，多少都是一种支持").setView(layout)
                         .setPositiveButton("关闭", null).show();
             }
         });
