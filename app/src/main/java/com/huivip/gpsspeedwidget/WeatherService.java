@@ -56,9 +56,9 @@ public class WeatherService implements AMapLocationListener {
         mLocationClient.setLocationOption(mLocationOption);
         mLocationClient.startLocation();
         isLocationStarted = true;
-        if (android.os.Build.VERSION.SDK_INT >= 27) {
+        //if (android.os.Build.VERSION.SDK_INT >= 27) {
             mLocationClient.enableBackgroundLocation(2001, buildNotification());
-        }
+        //}
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
         deviceId=deviceUuidFactory.getDeviceUuid().toString();
     }
