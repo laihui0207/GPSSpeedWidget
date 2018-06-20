@@ -254,8 +254,8 @@ public class GpsSpeedService extends Service {
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         int mphNumber = gpsUtil.getMphSpeed().intValue();
         setSpeeding(gpsUtil.isHasLimited());
+
         this.remoteViews.setTextViewText(R.id.textView1_watch_speed, gpsUtil.getKmhSpeedStr() + "");
-        this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getLimitSpeed() + "");
         this.remoteViews.setTextViewText(R.id.textView_watch_direction, gpsUtil.getDirection() + "");
 
         switch (mphNumber) {
@@ -588,7 +588,13 @@ public class GpsSpeedService extends Service {
         }
         this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         this.remoteViews = null;
-
+        if(gpsUtil.getLimitSpeed()==0){
+            this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getAltitude()+ "米");
+            this.remoteViews.setTextViewText(R.id.textView_limit_label,"海拔");
+        } else {
+            this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getLimitSpeed() + "");
+            this.remoteViews.setTextViewText(R.id.textView_limit_label,"限速");
+        }
         this.numberRemoteViews.setTextViewText(R.id.textView_direction, gpsUtil.getDirection() + "");
         if (gpsUtil.getLimitDistance() > 0) {
             this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getLimitDistance() + "米");
