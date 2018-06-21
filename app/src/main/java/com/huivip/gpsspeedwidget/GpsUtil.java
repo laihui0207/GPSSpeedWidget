@@ -344,6 +344,7 @@ public class GpsUtil implements AMapNaviListener {
                 limitSpeaked = true;
                 limitCounter = 0;
                 tts.speak("您已超速");
+                Utils.playBeeps();
             }
         } else {
             hasLimited = false;

@@ -26,7 +26,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             Intent service = new Intent(context, BootStartService.class);
                             service.putExtra(BootStartService.START_BOOT,true);
                             context.startService(service);
-                            Toast.makeText(context,"AutoMap started",Toast.LENGTH_SHORT).show();
+                            // Toast.makeText(context,"AutoMap started",Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 3: // auto map in frontend

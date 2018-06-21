@@ -135,20 +135,7 @@ public class FloatingService extends Service{
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
-       /* mFloatingView.setOnLongClickListener(new View.OnLongClickListener(){
 
-            @Override
-            public boolean onLongClick(View v) {
-                if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
-                    Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
-                    PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
-                }
-                Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
-                configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                startActivity(configActivity);
-                return true;
-            }
-        });*/
         boolean isShowLimit=PrefUtils.getShowLimits(getApplicationContext());
         mLimitView.setVisibility(isShowLimit ? View.VISIBLE : View.GONE);
         boolean isShowSpeed=PrefUtils.getShowSpeedometer(getApplicationContext());

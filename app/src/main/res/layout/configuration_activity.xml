@@ -422,19 +422,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/button_testAudio"
-                    android:layout_alignBaseline="@+id/checkBox_xftts" android:layout_alignBottom="@+id/checkBox_xftts"
-                    android:layout_toRightOf="@+id/seekBar_audioVolume"
-                    android:layout_toEndOf="@+id/seekBar_audioVolume"/>
+                    android:layout_alignBottom="@+id/checkBox_xftts" android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"/>
             <SeekBar
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/seekBar_audioVolume"
                     android:max="100" android:progress="50"
-                    android:layout_alignBottom="@+id/checkBox_xftts" android:layout_toRightOf="@+id/checkBox_xftts"
-                    android:layout_toEndOf="@+id/checkBox_xftts"
-                    android:layout_alignRight="@+id/textView_showmessage"
-                    android:layout_alignEnd="@+id/textView_showmessage"
-                    android:layout_below="@+id/checkBox_playweather"/>
+                    android:layout_below="@+id/checkBox_playweather" android:layout_toRightOf="@+id/checkBox_xftts"
+                    android:layout_toEndOf="@+id/checkBox_xftts" android:layout_toLeftOf="@+id/button_testAudio"
+                    android:layout_toStartOf="@+id/button_testAudio"/>
+            <CheckBox
+                    android:text="显示状态栏通知"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_alignTop="@+id/checkBox_autoWifi"
+                    android:layout_toRightOf="@+id/checkBox_autoWifi" android:layout_toEndOf="@+id/checkBox_autoWifi"
+                    android:id="@+id/checkBox_notifiction"/>
+            <CheckBox
+                    android:text="停车显示当前地址"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_below="@+id/linearLayout"
+                    android:layout_toRightOf="@+id/checkBox_playweather"
+                    android:layout_toEndOf="@+id/checkBox_playweather" android:id="@+id/checkBox_showAddress"/>
         </RelativeLayout>
     </ScrollView>
     <TextView

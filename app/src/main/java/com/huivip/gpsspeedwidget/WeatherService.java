@@ -186,6 +186,7 @@ public class WeatherService implements AMapLocationListener {
         }
         builder.setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("GPS速度插件")
+                .setSmallIcon(R.drawable.ic_speedometer)
                 .setContentText("正在后台运行")
                 .setWhen(System.currentTimeMillis());
 
