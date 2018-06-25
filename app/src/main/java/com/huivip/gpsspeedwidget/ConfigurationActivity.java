@@ -91,7 +91,7 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableNaviFloating(getApplicationContext(), true);
                 PrefUtils.setAppFirstRun(getApplicationContext(),false);
             }
-            startFloationgWindows(true);
+            Utils.startFloationgWindows(getApplicationContext(),true);
         }
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         enableFloatingWidnowCheckBox.setChecked(PrefUtils.isEnableFlatingWindow(getApplicationContext()));
@@ -163,10 +163,10 @@ public class ConfigurationActivity extends Activity {
                     @Override
                     public void run() {
                         if(compoundButton.isChecked() ){
-                            startFloationgWindows(true);
+                            Utils.startFloationgWindows(getApplicationContext(),true);
                         }
                         else {
-                            startFloationgWindows(false);
+                            Utils.startFloationgWindows(getApplicationContext(),false);
                         }
                     }
                 }).start();
@@ -649,7 +649,7 @@ public class ConfigurationActivity extends Activity {
                     default:
                         PrefUtils.setFloattingStyle(getApplicationContext(),PrefUtils.FLOATING_DEFAULT);
                 }
-                startFloationgWindows(true);
+                Utils.startFloationgWindows(getApplicationContext(),true);
             }
         });
         RadioButton styleDeafult=findViewById(R.id.radioButton_style_default);
@@ -705,7 +705,26 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),buttonView.isChecked());
             }
         });
+        CheckBox showAddressCheckBox=findViewById(R.id.checkBox_showAddress);
+        showAddressCheckBox.setChecked(PrefUtils.isShowAddressWhenStop(getApplicationContext()));
+        showAddressCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setShowAddressWhenStop(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox showNotificationCheckBox=findViewById(R.id.checkBox_notifiction);
+        showNotificationCheckBox.setChecked(PrefUtils.isShowNotification(getApplicationContext()));
+        showNotificationCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                WeatherService service= WeatherService.getInstance(getApplicationContext());
+                service.stopLocation();
+                PrefUtils.setShowNotification(getApplicationContext(),buttonView.isChecked());
+                service.startLocation();
 
+            }
+        });
         CheckBox goToHomeCheckBox=findViewById(R.id.checkBox_gotoHome);
         goToHomeCheckBox.setChecked(PrefUtils.isGoToHomeAfterAutoLanuch(getApplicationContext()));
         goToHomeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -766,7 +785,7 @@ public class ConfigurationActivity extends Activity {
 
             };
         });
-
+        checkIfCanIncreaseMusic();
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -776,7 +795,7 @@ public class ConfigurationActivity extends Activity {
             invalidateStates();
         }
     }
-    private void startFloationgWindows(boolean enabled){
+   /* private void startFloationgWindows(boolean enabled){
         Intent defaultFloatingService=new Intent(this,FloatingService.class);
         Intent autoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
@@ -830,21 +849,25 @@ public class ConfigurationActivity extends Activity {
                 startService(meterFloatingService);
             }
         }
-    }
+    }*/
     private void checkIfCanIncreaseMusic(){
         AudioManager audioManager= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         int systemVolume=audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
         int musicVolume=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int voiceVolume=audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
         boolean ifSeparatedAudio=false;
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,2,0);
-        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,1,0);
-        int systemVolumeCurrent=audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-        if(systemVolumeCurrent!=2 && systemVolumeCurrent==1){
+        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,1,0);
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,3,0);
+        int musicVolumeCurrent=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int voiceVolumeCurrent=audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
+        if(musicVolumeCurrent==2 && voiceVolumeCurrent==1){
             Log.d("huivip","Separated");
             ifSeparatedAudio=true;
         }
         audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,systemVolume,0);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,musicVolume,0);
+        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,voiceVolume,0);
         PrefUtils.setseparatedVolume(getApplicationContext(),ifSeparatedAudio);
     }
     private void invalidateStates() {
@@ -859,7 +882,7 @@ public class ConfigurationActivity extends Activity {
         floatingSelectGroup.setEnabled(enableFloatingWidnowCheckBox.isChecked());
         onlyDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
-        onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
+        //onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         boolean serviceReady=Utils.isServiceReady(this);
 
         mAppList = PrefUtils.getAutoLaunchAppsName(getApplicationContext());

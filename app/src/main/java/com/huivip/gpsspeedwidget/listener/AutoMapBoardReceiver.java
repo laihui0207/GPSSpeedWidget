@@ -26,6 +26,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             Intent service = new Intent(context, BootStartService.class);
                             service.putExtra(BootStartService.START_BOOT,true);
                             context.startService(service);
+                            gpsUtil.setAutoMapBackendProcessStarted(true);
                             // Toast.makeText(context,"AutoMap started",Toast.LENGTH_SHORT).show();
                         }
                         break;
@@ -33,6 +34,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         if(gpsUtil.getNaviFloatingStatus()==Constant.Navi_Floating_Enabled) {
                             stopFloatingService(context);
                             lanuchSpeedFloationWindows(context,true);
+                            gpsUtil.setAutoMapBackendProcessStarted(true);
                         }
                         PrefUtils.setEnableTempAudioService(context, false);
                         break;
@@ -62,6 +64,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     case 2: // auto map in end
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         gpsUtil.setCurrentRoadName("");
+                        gpsUtil.setAutoMapBackendProcessStarted(false);
                         PrefUtils.setEnableTempAudioService(context, true);
                     case 25:  // xunhang end
                     case 9:  // navi end
@@ -100,6 +103,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             if(key==10056){  // current navi path information
                 String iformationJsonString=intent.getStringExtra("EXTRA_ROAD_INFO");
 
+            }
+            if(key == 10041){  // Get AutoMap Version
+                String versionNumber=intent.getStringExtra("VERSION_NUM");
+                String channelNumber=intent.getStringExtra("CHANNEL_NUM");
+                //Toast.makeText(context,"Version:"+versionNumber+",Channel:"+channelNumber,Toast.LENGTH_SHORT).show();
             }
            /* if(key==10030){
                 String cityName=intent.getStringExtra("CITY_NAME");

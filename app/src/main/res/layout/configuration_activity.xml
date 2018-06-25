@@ -239,7 +239,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_mix"
                     android:layout_above="@+id/enableOver" android:layout_toRightOf="@+id/checkBox_xftts"
-                    android:layout_toEndOf="@+id/checkBox_xftts" android:visibility="gone"/>
+                    android:layout_toEndOf="@+id/checkBox_xftts"/>
             <TextView
                     android:text="   语音音量:"
                     android:layout_width="wrap_content"
@@ -289,7 +289,7 @@
                     android:layout_toRightOf="@+id/button_update"
                     android:layout_toEndOf="@+id/button_update"/>
             <TextView
-                    android:text="长按悬浮窗 2秒取消位置固定"
+                    android:text="路况数据来自高德在线数据"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_showmessage"
@@ -429,8 +429,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/seekBar_audioVolume"
                     android:max="100" android:progress="50"
-                    android:layout_below="@+id/checkBox_playweather" android:layout_toRightOf="@+id/checkBox_xftts"
-                    android:layout_toEndOf="@+id/checkBox_xftts" android:layout_toLeftOf="@+id/button_testAudio"
+                    android:layout_below="@+id/checkBox_showAddress" android:layout_toRightOf="@+id/checkBox_mix"
+                    android:layout_toEndOf="@+id/checkBox_mix" android:layout_toLeftOf="@+id/button_testAudio"
                     android:layout_toStartOf="@+id/button_testAudio"/>
             <CheckBox
                     android:text="显示状态栏通知"
@@ -444,6 +444,14 @@
                     android:layout_height="wrap_content" android:layout_below="@+id/linearLayout"
                     android:layout_toRightOf="@+id/checkBox_playweather"
                     android:layout_toEndOf="@+id/checkBox_playweather" android:id="@+id/checkBox_showAddress"/>
+            <TextView
+                    android:text="长按悬浮窗2秒以上取消位置固定"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_above="@+id/radioGroup_flattingStyleSelect"
+                    android:layout_toRightOf="@+id/checkBox_speed_fixed_position"
+                    android:layout_toEndOf="@+id/checkBox_speed_fixed_position" android:id="@+id/textView6"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_alignTop="@+id/checkBox_speed_fixed_position"/>
         </RelativeLayout>
     </ScrollView>
     <TextView

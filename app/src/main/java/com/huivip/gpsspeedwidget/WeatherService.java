@@ -1,10 +1,9 @@
 package com.huivip.gpsspeedwidget;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.app.*;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -14,6 +13,8 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
+import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -36,37 +37,51 @@ public class WeatherService implements AMapLocationListener {
     AMapLocationClient mLocationClient = null;
     GpsUtil gpsUtil;
     private Handler handler=null;
-    boolean locationAndWeatherSametime=false;
     boolean isLocationStarted=false;
     private static WeatherService instance;
     private static final String NOTIFICATION_CHANNEL_NAME = "BackgroundLocation";
     private NotificationManager notificationManager = null;
     boolean isCreateChannel = false;
+    AMapLocation lastedLocation;
+    AlarmManager alarm ;
+    boolean running=false;
     private WeatherService(Context context){
         this.context=context;
-        mLocationClient = new AMapLocationClient(context);
-        mLocationClient.setLocationListener(this);
         handler=new Handler();
         gpsUtil=GpsUtil.getInstance(context);
-        AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
-        mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
-        //mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
-        mLocationOption.setInterval(1000);
-        mLocationOption.setLocationCacheEnable(false);
-        mLocationClient.setLocationOption(mLocationOption);
-        mLocationClient.startLocation();
-        isLocationStarted = true;
-        //if (android.os.Build.VERSION.SDK_INT >= 27) {
-            mLocationClient.enableBackgroundLocation(2001, buildNotification());
-        //}
+        mLocationClient = new AMapLocationClient(context);
+        mLocationClient.setLocationListener(this);
+        startLocation();
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
         deviceId=deviceUuidFactory.getDeviceUuid().toString();
+        alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
     public static WeatherService getInstance(Context context){
         if(instance==null){
             instance=new WeatherService(context);
         }
         return instance;
+    }
+    public void startLocation(){
+
+        AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
+        mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
+        //mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
+        mLocationOption.setInterval(5000);
+        mLocationOption.setLocationCacheEnable(false);
+        mLocationClient.setLocationOption(mLocationOption);
+        mLocationClient.startLocation();
+        isLocationStarted = true;
+        if (android.os.Build.VERSION.SDK_INT >= 27 || PrefUtils.isShowNotification(context)) {
+            mLocationClient.enableBackgroundLocation(2001, buildNotification());
+        }
+    }
+    public void stopLocation(){
+        mLocationClient.stopLocation();
+        isLocationStarted=false;
+        if (android.os.Build.VERSION.SDK_INT >= 27 || PrefUtils.isShowNotification(context)) {
+            mLocationClient.disableBackgroundLocation(true);
+        }
     }
     public void setCityName(String cityName){
         this.cityName=cityName;
@@ -110,18 +125,22 @@ public class WeatherService implements AMapLocationListener {
     Runnable   runnableUi=new  Runnable(){
         @Override
         public void run() {
-            Toast.makeText(context,resutlText,Toast.LENGTH_LONG).show();
+            String showStr="";
+            if(!TextUtils.isEmpty(address)){
+                showStr+="当前地址:"+address;
+            }
+            if(!TextUtils.isEmpty(resutlText)){
+                showStr+="\n\n"+resutlText;
+            }
+            if(!TextUtils.isEmpty(showStr)) {
+                Toast.makeText(context, showStr, Toast.LENGTH_LONG).show();
+            }
+            resutlText=null;
         }
 
     };
 
-    public void stopLocation(){
-        mLocationClient.stopLocation();
-        isLocationStarted=false;
-        if (android.os.Build.VERSION.SDK_INT >= 27) {
-            mLocationClient.disableBackgroundLocation(true);
-        }
-    }
+
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null) {
@@ -145,11 +164,33 @@ public class WeatherService implements AMapLocationListener {
                     lng=aMapLocation.getLongitude();
                     locationTime=aMapLocation.getTime();
                 }
+                if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>50){
+                    if(lastedLocation!=null && lastedLocation!=aMapLocation) {
+                        running=true;
+                        Log.d("huivip","Launch CatchRoad receiver");
+                        PendingIntent catchRoadIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, CatchRoadReceiver.class), 0);
+                        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);
+                    }
+                    lastedLocation=aMapLocation;
+                }
+
                 //Toast.makeText(context,aMapLocation.toString(),Toast.LENGTH_SHORT).show();
-                if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getLocationType() == 1 && aMapLocation.getAccuracy()<40){
-                    //gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
+                if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getLocationType() == 1){
+                    if(!gpsUtil.isAutoMapBackendProcessStarted() &&
+                            (TextUtils.isEmpty(gpsUtil.getCurrentRoadName()) || !aMapLocation.getStreet().equalsIgnoreCase(gpsUtil.getCurrentRoadName()))){
+                        gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
+                    }
                     address=aMapLocation.getAddress();
-                    //Toast.makeText(context,address,Toast.LENGTH_SHORT).show();
+                }
+                if (PrefUtils.isShowAddressWhenStop(context) && gpsUtil.getSpeed() == 0 && running) {
+                    running = false;
+                    //Toast.makeText(context, "当前位置: "+address, Toast.LENGTH_LONG).show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            handler.post(runnableUi);
+                        }
+                    }, 3000);
                 }
             }else {
                 //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
@@ -186,7 +227,7 @@ public class WeatherService implements AMapLocationListener {
         }
         builder.setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("GPS速度插件")
-                .setSmallIcon(R.drawable.ic_speedometer)
+                .setSmallIcon(R.drawable.ic_speedometer_notif)
                 .setContentText("正在后台运行")
                 .setWhen(System.currentTimeMillis());
 

@@ -1,5 +1,6 @@
 package com.huivip.gpsspeedwidget.speech;
 
+import android.app.Service;
 import android.content.Context;
 import android.media.AudioManager;
 import android.util.Log;
@@ -39,6 +40,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener, Main
             TEMP_DIR + "/" + "bd_etts_common_speech_f7_mand_eng_high_am-mix_v3.0.0_20170512.dat";
     public BDTTS(Context context) {
         this.context=context;
+        am= (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);
         initTTS();
     }
 
@@ -123,7 +125,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener, Main
         // 设置在线发声音人： 0 普通女声（默认） 1 普通男声 2 特别男声 3 情感男声<度逍遥> 4 情感儿童声<度丫丫>
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "0");
         // 设置合成的音量，0-9 ，默认 5
-        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "7");
+        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "9");
         // 设置合成的语速，0-9 ，默认 5
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, "5");
         // 设置合成的语调，0-9 ，默认 5
@@ -135,13 +137,13 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener, Main
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE_WIFI wifi状态下使用在线，非wifi离线。在线状态下， 请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_NETWORK ， 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
-       /* if(!PrefUtils.isEnableAudioMixService(context)){
+        if(!PrefUtils.isEnableAudioMixService(context)){
             Log.d("huivip","Audio use voice Call");
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-        } else {*/
-          //  mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        /*}*/
-        mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
+        } else {
+            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        }
+        //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
        // mSpeechSynthesizer.setStereoVolume(1.0f,1.0f);
         //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_ALARM);
        // mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
@@ -263,9 +265,13 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener, Main
         sendMessage("合成结束回调, 序列号:" + utteranceId);
 
     }
-
+    private  int currentMusicVolume;
     @Override
     public void onSpeechStart(String utteranceId) {
+        currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        if (!PrefUtils.isEnableAudioMixService(context) && PrefUtils.isSeparatedVolume(context)) {
+            am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
+        }
       // requestAudioFocus();
        int volume=PrefUtils.getAudioVolume(context);
        mSpeechSynthesizer.setStereoVolume(volume/100f,volume/100f);
@@ -291,7 +297,9 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener, Main
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
-      // afterSpeak();
+        //am.setSpeakerphoneOn(false);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
+        //afterSpeak();
     }
 
     /**
@@ -304,6 +312,9 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener, Main
     public void onError(String utteranceId, SpeechError speechError) {
         sendErrorMessage("错误发生：" + speechError.description + "，错误编码："
                 + speechError.code + "，序列号:" + utteranceId);
+        if(currentMusicVolume!=0){
+            am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
+        }
     }
 
     private void sendErrorMessage(String message) {

@@ -56,13 +56,13 @@ public class DBUtil extends SQLiteOpenHelper {
         db.execSQL(sql);
         db.close();
     }
-    public List<LocationVO> getLastedData(){
+    public List<LocationVO> getLastedData(String limitNumber){
         List<LocationVO> list=new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor=null;
         try {
             cursor=db.query(tableName, new String[]{"lng", "lat","speed","speedValue","bearingValue","createTime","lineId"},
-                    null,null, null, null, "createTime DESC", "1");
+                    null,null, null, null, "createTime DESC", limitNumber);
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
                     LocationVO vo = new LocationVO();

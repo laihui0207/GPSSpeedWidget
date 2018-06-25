@@ -105,6 +105,7 @@ public class FloatingService extends Service{
             locationTimer.cancel();
             locationTimer.purge();
         }
+
        /* if(gpsUtil!= null) {
             gpsUtil.stopLocationService(false);
         }*/

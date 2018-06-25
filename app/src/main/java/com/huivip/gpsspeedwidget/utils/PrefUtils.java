@@ -57,6 +57,8 @@ public abstract class PrefUtils {
     public static final String CURRENT_DEVICEID="com.huivip.deviceId";
     public static final String ACTIVITY_ON_DESKTOP="com.huivip.widget.onDesktop";
     public static final String APP_FIRST_RUN="com.huivip.widget.firstRun";
+    public static final String SPEED_SHOW_ADDRESS_WHEN_STOP="com.huivip.widget.ShowAddress";
+    public static final String SPEED_SHOW_NOTIFICATION="com.huivip.widget.ShowNotification";
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
     public static final String SHOW_NO_DESKTOP="1";
@@ -290,7 +292,21 @@ public abstract class PrefUtils {
         return getSharedPreferences(context).getBoolean(SEPARATED_VOLUME, false);
     }
 
+    public static void setShowAddressWhenStop(Context context, boolean value) {
+        edit(context).putBoolean(SPEED_SHOW_ADDRESS_WHEN_STOP, value).apply();
+    }
 
+    public static boolean isShowAddressWhenStop(Context context) {
+        return getSharedPreferences(context).getBoolean(SPEED_SHOW_ADDRESS_WHEN_STOP, false);
+    }
+
+    public static void setShowNotification(Context context, boolean value) {
+        edit(context).putBoolean(SPEED_SHOW_NOTIFICATION, value).apply();
+    }
+
+    public static boolean isShowNotification(Context context) {
+        return getSharedPreferences(context).getBoolean(SPEED_SHOW_NOTIFICATION, false);
+    }
     public static void setEnabledWatchWidget(Context context, boolean value) {
         edit(context).putBoolean(ENABLE_WATCH_WIDGET, value).apply();
     }

@@ -7,14 +7,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Bundle;
+import android.os.*;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -26,13 +24,14 @@ import com.amap.api.trace.LBSTraceClient;
 import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -47,6 +46,7 @@ public class MainActivity extends Activity implements TraceListener {
     LBSTraceClient mTraceClient=null;
     Calendar myCalendar = Calendar.getInstance();
     String selectDateStr="";
+    List<TraceLocation> traceLocationList=new ArrayList<>();
     AMap aMap=null;
     String myFormat = "MM/dd/yyyy";
     DeviceUuidFactory deviceUuidFactory;
@@ -131,7 +131,7 @@ public class MainActivity extends Activity implements TraceListener {
                             lastedPositionHandler.handleMessage(message);
                         } else if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext())){
                             DBUtil dbUtil=new DBUtil(getApplicationContext());
-                            List<LocationVO> lastPoint=dbUtil.getLastedData();
+                            List<LocationVO> lastPoint=dbUtil.getLastedData("1");
                             if(lastPoint!=null && !lastPoint.isEmpty()){
                                 JSONArray datas=new JSONArray();
                                 JSONObject data=new JSONObject();
@@ -296,63 +296,28 @@ public class MainActivity extends Activity implements TraceListener {
             }
         });
         startFloationgWindows(true);
+
+        Button gpxButton = findViewById(R.id.button_gpx);
+        gpxButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(traceLocationList!=null && traceLocationList.size()>0) {
+                    String gpxFilePath = FileUtil.createGPXFile(traceLocationList, selectDateStr, getApplicationContext());
+                    if (!TextUtils.isEmpty(gpxFilePath)) {
+                        Toast.makeText(getApplicationContext(), "GpxFile:" + gpxFilePath, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "GpxFile create failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "轨迹数据为空,请先查询行车轨迹", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
     private void startFloationgWindows(boolean enabled){
-       /* Intent defaultFloatingService=new Intent(this,FloatingService.class);
-        Intent autoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
-        Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
-        if(enabled){*/
-           /* String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
-            if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
-                if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
-                    meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-                    startService(meterFloatingService);
-                }
-                if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
-                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                    startService(autoNavifloatService);
-                }
-                startService(defaultFloatingService);
-
-            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
-                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                    startService(defaultFloatingService);
-                }
-                if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
-                    meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-                    startService(meterFloatingService);
-                }
-                startService(autoNavifloatService);
-            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-                if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
-                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                    startService(defaultFloatingService);
-                }
-                if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
-                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                    startService(autoNavifloatService);
-                }
-                startService(meterFloatingService);
-            }*/
            Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);
            startService(bootStartService);
-
-       /* }
-        else {
-            if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                startService(defaultFloatingService);
-            }
-            if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
-                autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                startService(autoNavifloatService);
-            }
-            if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
-                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-                startService(meterFloatingService);
-            }
-        }*/
     }
     private void saveDeviceIdString(String deviceString){
         String storedDevices=PrefUtils.getDeviceIdStorage(getApplicationContext());
@@ -385,13 +350,13 @@ public class MainActivity extends Activity implements TraceListener {
         String dataResult=(String)msg.obj;
         lineDatas=new HashMap<>();
         List<LatLng> totalDatas=new ArrayList<>();
+/*        List<WayPoint> pointList=new ArrayList<>();*/
         Map<String,List<TraceLocation>> tempMap=new HashMap<>();
         try {
             if (dataResult != "-1") {
                 CoordinateConverter converter = new CoordinateConverter(getApplicationContext());
                 converter.from(CoordinateConverter.CoordType.GPS);
                 JSONArray datas = new JSONArray(dataResult);
-
                 List<TraceLocation> latLngs = new ArrayList<>();
                 for (int i = 0; i < datas.length(); i++) {
                     JSONObject data = datas.getJSONObject(i);
@@ -413,11 +378,12 @@ public class MainActivity extends Activity implements TraceListener {
                     if(!data.isNull("speedValue")){
                         location.setSpeed(data.getLong("speedValue")*3.6F);
                     }
-                    if(!data.isNull("bearValue")){
+                    if(!data.isNull("bearingValue")){
                         location.setBearing(data.getLong("bearingValue"));
                     }
                     location.setTime(dateFormat.parse(data.getString("createTime")).getTime());
                     latLngs.add(location);
+                    traceLocationList.add(location);
                     tempMap.put(lineId,latLngs);
                 }
 
@@ -483,26 +449,7 @@ public class MainActivity extends Activity implements TraceListener {
         };
         aMap.setOnMarkerClickListener(markerClickListener);
 
-       /* MultiPointOverlayOptions overlayOptions = new MultiPointOverlayOptions();
-        //overlayOptions.icon(bitmapDescriptor);//设置图标
-        overlayOptions.anchor(0.5f,0.5f); //设置锚点
-        MultiPointOverlay multiPointOverlay = aMap.addMultiPointOverlay(overlayOptions);
-        List<MultiPointItem> list = new ArrayList<MultiPointItem>();
-        for(LatLng latLng: totalDatas){
-            MultiPointItem multiPointItem = new MultiPointItem(latLng);
-            list.add(multiPointItem);
-        }
-        multiPointOverlay.setItems(list);//将规范化的点集交给海量点管理对象设置，待加载完毕即可看到海量点信息
-        AMap.OnMultiPointClickListener multiPointClickListener = new AMap.OnMultiPointClickListener() {
-            // 海量点中某一点被点击时回调的接口
-            // 返回 true 则表示接口已响应事件，否则返回false
-            @Override
-            public boolean onPointClick(MultiPointItem pointItem) {
-                return false;
-            }
-        };
-        // 绑定海量点点击事件
-        aMap.setOnMultiPointClickListener(multiPointClickListener);*/
+
     }
     private void initPermission() {
         String[] permissions = {

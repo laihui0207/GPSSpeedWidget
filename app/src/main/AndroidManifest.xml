@@ -24,6 +24,8 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY"></uses-permission>
     <uses-feature android:name="android.hardware.location.gps"/>
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" tools:ignore="ProtectedPermissions"/>
@@ -94,7 +96,9 @@
         <receiver android:name=".listener.AutoLaunchSystemConfigReceiver"/>
         <receiver android:name=".listener.BootStartReceiver">
             <intent-filter>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED"/>
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED"/>
+                <action android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGEDD"/>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
                 <action android:name="android.intent.action.ANY_DATA_STATE"/>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
@@ -107,12 +111,14 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME"/>
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
             </intent-filter>
         </receiver>
         <receiver android:name=".listener.ThirdSoftLaunchReceiver"/>
         <receiver android:name=".listener.GoToHomeReceiver"/>
         <receiver android:name=".listener.WeatherServiceReceiver"/>
         <receiver android:name=".listener.DateChangeReceiver"/>
+        <receiver android:name=".listener.CatchRoadReceiver"/>
         <service android:name=".GpsSpeedService"/>
         <service android:name=".FloatingService"/>
         <service android:name=".RecordGpsHistoryService"/>

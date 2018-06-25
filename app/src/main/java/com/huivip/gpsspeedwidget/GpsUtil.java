@@ -19,6 +19,7 @@ import com.amap.api.navi.model.*;
 import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
+import com.huivip.gpsspeedwidget.utils.CycleQueue;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -45,6 +46,7 @@ public class GpsUtil implements AMapNaviListener {
     Double speed = 0D;
     Integer mphSpeed = Integer.valueOf(0);
     Integer kmhSpeed = Integer.valueOf(0);
+    private long speedingStartTimestamp = -1;
     Integer limitSpeed = Integer.valueOf(0);
     Float limitDistance = 0F;
     String mphSpeedStr = "0";
@@ -60,8 +62,6 @@ public class GpsUtil implements AMapNaviListener {
     boolean serviceStarted = false;
     TimerTask locationScanTask;
     Timer locationTimer;
-    Timer catchRoadTimer;
-    TimerTask catchRoadTask;
     AMapNavi aMapNavi;
     LocationManager locationManager;
     TTS tts;
@@ -70,13 +70,12 @@ public class GpsUtil implements AMapNaviListener {
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
     boolean aimlessStatred = false;
+    boolean autoMapBackendProcessStarted=false;
     final Handler locationHandler = new Handler();
     BroadcastReceiver broadcastReceiver;
-    int directionCheckCounter = 0;
     int limitDistancePercentage = 0;
     float distance = 0F;
     Location preLocation;
-    Location cameraLocation;
     int cameraType = 0;
     int cameraDistance = 0;
     int cameraSpeed = 0;
@@ -88,9 +87,10 @@ public class GpsUtil implements AMapNaviListener {
     float totalLeftTime = 0F;
     int navi_turn_icon = -1;
     String cityName="";
-    String latedDirectionName = "";
     int naviFloatingStatus = 0; // 0 disabled 1 visible
     int autoNaviStatus = 0; // 0 no started  1 started
+    CycleQueue<Location> locationVOCycleQueue=new CycleQueue<>(5);
+    Location lastedRecoredLocation;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     LocationListener locationListener = new LocationListener() {
         @Override
@@ -254,6 +254,14 @@ public class GpsUtil implements AMapNaviListener {
         return direction;
     }
 
+    public boolean isAutoMapBackendProcessStarted() {
+        return autoMapBackendProcessStarted;
+    }
+
+    public void setAutoMapBackendProcessStarted(boolean autoMapBackendProcessStarted) {
+        this.autoMapBackendProcessStarted = autoMapBackendProcessStarted;
+    }
+
     public float getBearing() {
         return bearing;
     }
@@ -286,6 +294,10 @@ public class GpsUtil implements AMapNaviListener {
             }
             if (preLocation != null) {
                 distance += preLocation.distanceTo(paramLocation);
+            }
+            if(lastedRecoredLocation==null || paramLocation.distanceTo(lastedRecoredLocation)>10){
+                lastedRecoredLocation=paramLocation;
+                locationVOCycleQueue.push(lastedRecoredLocation);
             }
             preLocation = paramLocation;
         } else {
@@ -340,17 +352,27 @@ public class GpsUtil implements AMapNaviListener {
         if (limitSpeed > 0 && kmhSpeed > limitSpeed) {
             hasLimited = true;
             limitCounter++;
+            if(speedingStartTimestamp == -1) {
+                speedingStartTimestamp = System.currentTimeMillis();
+            } else if(System.currentTimeMillis() > speedingStartTimestamp + 1000L){
+                Utils.playBeeps();
+                speedingStartTimestamp = Long.MAX_VALUE - 2000L;
+            }
             if (!limitSpeaked || limitCounter > 300) {
                 limitSpeaked = true;
                 limitCounter = 0;
                 tts.speak("您已超速");
-                Utils.playBeeps();
             }
         } else {
             hasLimited = false;
+            speedingStartTimestamp=-1;
             limitSpeaked = false;
             limitCounter = 0;
         }
+    }
+
+    public CycleQueue<Location> getLocationVOCycleQueue() {
+        return locationVOCycleQueue;
     }
 
     public boolean isHasLimited() {
@@ -881,12 +903,14 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
-        for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
-            cameraType = info.getBroadcastType();
-            if (Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
-                setCameraDistance(info.getDistance());
-                if (info.getLimitSpeed() > 0) {
-                    setCameraSpeed(info.getLimitSpeed());
+        if(getAutoNaviStatus()!=Constant.Navi_Status_Started) {
+            for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
+                cameraType = info.getBroadcastType();
+                if (Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
+                    setCameraDistance(info.getDistance());
+                    if (info.getLimitSpeed() > 0) {
+                        setCameraSpeed(info.getLimitSpeed());
+                    }
                 }
             }
         }

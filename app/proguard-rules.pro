@@ -93,8 +93,8 @@
     void *(**On*Event);
 }
 #----------------------------------------------------------------------------
--libraryjars libs/AMap3DMap_6.2.0_AMapNavi_6.1.0_AMapSearch_6.1.0_AMapLocation_4.0.1_20180427.jar
--libraryjars libs/com.baidu.tts_2.3.1.20170808_e39ea898.jar
+-libraryjars libs/AMap3DMap_6.3.0_AMapNavi_6.1.0_AMapSearch_6.1.0_AMapLocation_4.1.0_20180619.jar
+-libraryjars libs/com.baidu.tts_2.3.2.20180419_5a5fec8.jar
 -libraryjars libs/Msc.jar
 -libraryjars libs/Sunflower.jar
 #---------------------------------webview------------------------------------
