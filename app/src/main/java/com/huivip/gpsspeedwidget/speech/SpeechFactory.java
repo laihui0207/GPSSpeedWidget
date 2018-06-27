@@ -1,6 +1,7 @@
 package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
+import android.content.IntentFilter;
 
 public class SpeechFactory {
     public static String BAIDUTTS="baiduTTS";
@@ -30,5 +31,12 @@ public class SpeechFactory {
         else {
             return BDTTS.getInstance(context);
         }
+    }
+    public static void registCallInEvent(){
+        /*IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothHeadsetClient.ACTION_CONNECTION_STATE_CHANGED);
+        filter.addAction(BluetoothHeadsetClient.ACTION_CALL_CHANGED);
+        filter.addAction(BluetoothHeadsetClient.ACTION_AUDIO_STATE_CHANGED);
+        registerReceiver(broadcastReceiver, filter);*/
     }
 }

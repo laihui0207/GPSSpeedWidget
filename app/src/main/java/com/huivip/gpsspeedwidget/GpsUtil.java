@@ -1,5 +1,7 @@
 package com.huivip.gpsspeedwidget;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -17,6 +20,7 @@ import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.enums.*;
 import com.amap.api.navi.model.*;
 import com.autonavi.tbt.TrafficFacilityInfo;
+import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.CycleQueue;
@@ -46,7 +50,6 @@ public class GpsUtil implements AMapNaviListener {
     Double speed = 0D;
     Integer mphSpeed = Integer.valueOf(0);
     Integer kmhSpeed = Integer.valueOf(0);
-    private long speedingStartTimestamp = -1;
     Integer limitSpeed = Integer.valueOf(0);
     Float limitDistance = 0F;
     String mphSpeedStr = "0";
@@ -71,6 +74,7 @@ public class GpsUtil implements AMapNaviListener {
     boolean hasLimited = false;
     boolean aimlessStatred = false;
     boolean autoMapBackendProcessStarted=false;
+    boolean catchRoadServiceStarted=false;
     final Handler locationHandler = new Handler();
     BroadcastReceiver broadcastReceiver;
     int limitDistancePercentage = 0;
@@ -91,6 +95,11 @@ public class GpsUtil implements AMapNaviListener {
     int autoNaviStatus = 0; // 0 no started  1 started
     CycleQueue<Location> locationVOCycleQueue=new CycleQueue<>(5);
     Location lastedRecoredLocation;
+    Location catchRoadLocation;
+    int recordLocationDistance=2;
+    int catchRoadDistance=10;
+    AlarmManager alarm ;
+    int locationUpdateCount=0;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     LocationListener locationListener = new LocationListener() {
         @Override
@@ -123,7 +132,7 @@ public class GpsUtil implements AMapNaviListener {
         Random random = new Random();
         c = random.nextInt();
         localNumberFormat.setMaximumFractionDigits(1);
-
+        alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
     public static GpsUtil getInstance(Context context) {
@@ -262,6 +271,14 @@ public class GpsUtil implements AMapNaviListener {
         this.autoMapBackendProcessStarted = autoMapBackendProcessStarted;
     }
 
+    public boolean isCatchRoadServiceStarted() {
+        return catchRoadServiceStarted;
+    }
+
+    public void setCatchRoadServiceStarted(boolean catchRoadServiceStarted) {
+        this.catchRoadServiceStarted = catchRoadServiceStarted;
+    }
+
     public float getBearing() {
         return bearing;
     }
@@ -295,11 +312,36 @@ public class GpsUtil implements AMapNaviListener {
             if (preLocation != null) {
                 distance += preLocation.distanceTo(paramLocation);
             }
-            if(lastedRecoredLocation==null || paramLocation.distanceTo(lastedRecoredLocation)>10){
+            // save location every 50 m for catch road service
+            if(lastedRecoredLocation==null || paramLocation.distanceTo(lastedRecoredLocation)>recordLocationDistance){
                 lastedRecoredLocation=paramLocation;
-                locationVOCycleQueue.push(lastedRecoredLocation);
+                //lastedRecoredLocation.setTime(System.currentTimeMillis());
+                lastedRecoredLocation.setTime(System.currentTimeMillis()/1000);
+                locationVOCycleQueue.push(paramLocation);
             }
             preLocation = paramLocation;
+            // reset camera data every 4 second
+            if(cameraDistance>0 && paramLocation.getSpeed()>15 && locationUpdateCount>40){
+                setCameraDistance(0);
+                setCameraSpeed(0);
+                locationUpdateCount=0;
+            }
+            else  if(cameraDistance>0 && paramLocation.getSpeed()>15 ) {
+                locationUpdateCount++;
+            }
+
+            // get catch road data every 500 m
+            if (catchRoadLocation == null) {
+                catchRoadLocation = paramLocation;
+            } else if (paramLocation.distanceTo(catchRoadLocation) > catchRoadDistance) {
+                Log.d("huivip", "Launch CatchRoad receiver");
+                PendingIntent catchRoadIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, CatchRoadReceiver.class), 0);
+                alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);
+                catchRoadLocation=paramLocation;
+                recordLocationDistance=50;
+                catchRoadDistance=500;
+            }
+
         } else {
 
             this.velocitaString = null;
@@ -349,23 +391,20 @@ public class GpsUtil implements AMapNaviListener {
         }
         speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
         // limit speak just say one times in one minutes
-        if (limitSpeed > 0 && kmhSpeed > limitSpeed) {
+        if ((limitSpeed > 0 && kmhSpeed > limitSpeed) ||
+                (cameraSpeed>0 && kmhSpeed > cameraSpeed)) {
             hasLimited = true;
-            limitCounter++;
-            if(speedingStartTimestamp == -1) {
-                speedingStartTimestamp = System.currentTimeMillis();
-            } else if(System.currentTimeMillis() > speedingStartTimestamp + 1000L){
+            if(limitCounter%10==0){
                 Utils.playBeeps();
-                speedingStartTimestamp = Long.MAX_VALUE - 2000L;
             }
             if (!limitSpeaked || limitCounter > 300) {
                 limitSpeaked = true;
                 limitCounter = 0;
-                tts.speak("您已超速");
+                tts.speak("您已超速,限速:"+limitSpeed);
             }
+            limitCounter++;
         } else {
             hasLimited = false;
-            speedingStartTimestamp=-1;
             limitSpeaked = false;
             limitCounter = 0;
         }
@@ -417,9 +456,14 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     public Integer getLimitSpeed() {
+       if (cameraSpeed > 0) {
+            return cameraSpeed;
+        }
         return limitSpeed;
     }
-
+    public void setLimitSpeed(Integer limit){
+        limitSpeed=limit;
+    }
     public void setTts(TTS tts) {
         this.tts = tts;
     }
@@ -517,6 +561,9 @@ public class GpsUtil implements AMapNaviListener {
                 case 9:
                     name = "区间结束";
                     break;
+                case 9999:
+                    name= "道路限速";
+                    break;
                 default:
                     name = "限速";
             }
@@ -545,10 +592,16 @@ public class GpsUtil implements AMapNaviListener {
                 case 10:
                     name = "谨慎驾驶";
                     break;
+                case 9999:
+                    name= "道路限速";
+                    break;
                 default:
                     name = "限速";
 
             }
+        }
+        if(limitSpeed>0 && cameraType ==-1 && isCatchRoadServiceStarted()){
+            name="道路限速";
         }
         return name;
     }
@@ -629,7 +682,6 @@ public class GpsUtil implements AMapNaviListener {
     }
     public void setCameraSpeed(int cameraSpeed) {
         this.cameraSpeed = cameraSpeed;
-        this.limitSpeed = cameraSpeed;
     }
 
     public String getCurrentRoadName() {
@@ -751,20 +803,17 @@ public class GpsUtil implements AMapNaviListener {
     public void onTrafficStatusUpdate() {
 
     }
-    int locationUpdateCount=0;
+
     @Override
     public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-        if(cameraDistance>0 && aMapNaviLocation.getSpeed()>15 && locationUpdateCount>40){
+       /* if(cameraDistance>0 && aMapNaviLocation.getSpeed()>15 && locationUpdateCount>40){
             setCameraDistance(0);
             setCameraSpeed(0);
             locationUpdateCount=0;
         }
         else  if(cameraDistance>0 && aMapNaviLocation.getSpeed()>15 ) {
             locationUpdateCount++;
-        } /*else {
-            pre_camera_distance=0;
-            locationUpdateCount=0;
-        }*/
+        } */
     }
 
     @Override
@@ -814,7 +863,10 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void onNaviInfoUpdate(NaviInfo naviInfo) {
-
+        String roadName=naviInfo.getCurrentRoadName();
+        if(!TextUtils.isEmpty(roadName)){
+            setCurrentRoadName(roadName);
+        }
     }
 
     @Override
@@ -878,6 +930,7 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void showLaneInfo(AMapLaneInfo aMapLaneInfo) {
+        Toast.makeText(context,aMapLaneInfo.getLaneTypeIdArray().toString(),Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -937,10 +990,9 @@ public class GpsUtil implements AMapNaviListener {
     @Override
     public void onPlayRing(int status) {
         if (status == AMapNaviRingType.RING_EDOG || status == AMapNaviRingType.RING_CAMERA) {
-            limitSpeed = 0;
+            setCameraSpeed(0);
             limitDistance = 0F;
             cameraType=-1;
-            //cameraLocation = null;
             tts.speak("已通过");
         }
     }

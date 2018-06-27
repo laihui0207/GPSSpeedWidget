@@ -3,7 +3,6 @@ package com.huivip.gpsspeedwidget;
 import android.annotation.SuppressLint;
 import android.app.*;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -13,8 +12,6 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
-import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -25,15 +22,11 @@ import org.json.JSONObject;
 public class WeatherService implements AMapLocationListener {
     String cityName;
     String adCode;
-    String district;
     String address;
     String pre_adCode;
-    double lat;
-    double lng;
-    long locationTime;
     String deviceId;
     Context context;
-    String resutlText;
+    String resultText;
     AMapLocationClient mLocationClient = null;
     GpsUtil gpsUtil;
     private Handler handler=null;
@@ -95,7 +88,7 @@ public class WeatherService implements AMapLocationListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String result=HttpUtils.getData(String.format(Constant.LBSSEARCHWEATHER,Constant.AUTONAVI_WEB_KEY, adCode));
+                String result=HttpUtils.getData(String.format(Constant.LBSSEARCHWEATHER,PrefUtils.getAmapWebKey(context), adCode));
                 if(!TextUtils.isEmpty(result)){
                     try {
                         JSONObject resultObj=new JSONObject(result);
@@ -104,14 +97,14 @@ public class WeatherService implements AMapLocationListener {
                             JSONArray lives=resultObj.getJSONArray("lives");
                             //if(lives==null || lives.length()==0) return;
                             JSONObject cityWeather=lives.getJSONObject(0);
-                            resutlText = "当前:" + cityWeather.getString("city") + ",天气：" + cityWeather.getString("weather") +
+                            resultText = "当前:" + cityWeather.getString("city") + ",天气：" + cityWeather.getString("weather") +
                                     ",气温:" + cityWeather.getString("temperature") + "°,"
                                     + cityWeather.getString("winddirection") + "风" +cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
                             if(PrefUtils.isPlayWeather(context)) {
                                 SpeechFactory.getInstance(context)
                                         .getTTSEngine(PrefUtils.getTtsEngine(context))
-                                        .speak(resutlText, true);
+                                        .speak(resultText, true);
                                 handler.post(runnableUi);
                             }
                         }
@@ -129,13 +122,17 @@ public class WeatherService implements AMapLocationListener {
             if(!TextUtils.isEmpty(address)){
                 showStr+="当前地址:"+address;
             }
-            if(!TextUtils.isEmpty(resutlText)){
-                showStr+="\n\n"+resutlText;
+            if(!TextUtils.isEmpty(resultText)){
+                if(TextUtils.isEmpty(address)){
+                    showStr= resultText;
+                } else {
+                    showStr+="\n\n"+ resultText;
+                }
             }
             if(!TextUtils.isEmpty(showStr)) {
                 Toast.makeText(context, showStr, Toast.LENGTH_LONG).show();
             }
-            resutlText=null;
+            resultText =null;
         }
 
     };
@@ -145,7 +142,7 @@ public class WeatherService implements AMapLocationListener {
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null) {
             if (aMapLocation.getErrorCode() == 0) {
-                Log.d("huivip",aMapLocation.toString());
+                //Log.d("huivip",aMapLocation.toString());
                 if(!TextUtils.isEmpty(aMapLocation.getCity())) {
                     cityName=aMapLocation.getCity();
                     adCode =aMapLocation.getAdCode();
@@ -160,31 +157,25 @@ public class WeatherService implements AMapLocationListener {
                         searchWeather();
                         pre_adCode =adCode;
                     }
-                    lat=aMapLocation.getLatitude();
-                    lng=aMapLocation.getLongitude();
-                    locationTime=aMapLocation.getTime();
                 }
-                if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>50){
+                if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>10){
                     if(lastedLocation!=null && lastedLocation!=aMapLocation) {
                         running=true;
-                        Log.d("huivip","Launch CatchRoad receiver");
-                        PendingIntent catchRoadIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, CatchRoadReceiver.class), 0);
-                        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);
                     }
                     lastedLocation=aMapLocation;
                 }
 
                 //Toast.makeText(context,aMapLocation.toString(),Toast.LENGTH_SHORT).show();
                 if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getLocationType() == 1){
-                    if(!gpsUtil.isAutoMapBackendProcessStarted() &&
-                            (TextUtils.isEmpty(gpsUtil.getCurrentRoadName()) || !aMapLocation.getStreet().equalsIgnoreCase(gpsUtil.getCurrentRoadName()))){
+                    if(!gpsUtil.isAutoMapBackendProcessStarted() && !gpsUtil.isCatchRoadServiceStarted() &&
+                            (TextUtils.isEmpty(gpsUtil.getCurrentRoadName()) ||
+                                    !aMapLocation.getStreet().equalsIgnoreCase(gpsUtil.getCurrentRoadName()))){
                         gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
                     }
                     address=aMapLocation.getAddress();
                 }
                 if (PrefUtils.isShowAddressWhenStop(context) && gpsUtil.getSpeed() == 0 && running) {
                     running = false;
-                    //Toast.makeText(context, "当前位置: "+address, Toast.LENGTH_LONG).show();
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {

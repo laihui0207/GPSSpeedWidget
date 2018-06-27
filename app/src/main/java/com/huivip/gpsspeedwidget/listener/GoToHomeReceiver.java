@@ -18,9 +18,9 @@ public class GoToHomeReceiver extends BroadcastReceiver {
             context.startActivity(paramIntent);
         }
 
-        int delayTime=PrefUtils.getDelayStartOtherApp(context);
+       /* int delayTime=PrefUtils.getDelayStartOtherApp(context);
         AlarmManager alarm=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent thirdIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,ThirdSoftLaunchReceiver.class), 0);
-        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + (delayTime * 1000 + 300), thirdIntent);
+        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, (delayTime * 1000 + 300), thirdIntent);*/
     }
 }

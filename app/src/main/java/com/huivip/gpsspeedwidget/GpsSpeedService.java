@@ -3,8 +3,6 @@ package com.huivip.gpsspeedwidget;
 import android.app.*;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
@@ -13,11 +11,9 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
-import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
-import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -42,7 +38,6 @@ public class GpsSpeedService extends Service {
     ComponentName thisWidget;
     ComponentName numberWidget;
     final Handler locationHandler = new Handler();
-    BroadcastReceiver broadcastReceiver;
 
     @Override
     public void onCreate() {
@@ -72,30 +67,7 @@ public class GpsSpeedService extends Service {
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedmeterwidget);
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         if (intent != null) {
-            /*if ((intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT,false)) && serviceStoped) {
-               *//* new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Set<String> autoApps = PrefUtils.getAutoLaunchApps(getApplicationContext());
-                        int delayTime=PrefUtils.getDelayStartOtherApp(getApplicationContext());
-                        if(delayTime>0){
-                            try {
-                                Thread.sleep(delayTime*1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        for (String packageName : autoApps) {
-                            Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-                            if (launchIntent != null) {
-                                startActivity(launchIntent);//null pointer check in case package name was not found
-                            }
-                        }
-                    }
-                }).start();*//*
-                autoBackUpGPSData();
-            }*/
-            if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped || intent.getBooleanExtra(EXTRA_AUTONAVI_AUTOBOOT, false)) {
+            if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
                 if (serviceStoped) {
                     serviceStoped = false;
                     this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "...");
@@ -109,16 +81,7 @@ public class GpsSpeedService extends Service {
                     gpsUtil.startLocationService();
                     PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                     if(PrefUtils.isUserManualClosedService(getApplicationContext())) {
-                        //if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
-                            Intent floatService = new Intent(this, FloatingService.class);
-                            String floatingStyle = PrefUtils.getFloatingStyle(getApplicationContext());
-                            if (floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                                floatService = new Intent(this, AutoNaviFloatingService.class);
-                            } else if (floatingStyle.equals(PrefUtils.FLOATING_METER)) {
-                                floatService = new Intent(this, MeterFloatingService.class);
-                            }
-                            startService(floatService);
-                        //}
+                        Utils.startFloationgWindows(getApplicationContext(),true);
                         PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
                     }
                 }
@@ -141,15 +104,7 @@ public class GpsSpeedService extends Service {
                     this.locationTimer.purge();
                     this.locationTimer = null;
                 }
-                Intent floatService = new Intent(this, FloatingService.class);
-                String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
-                if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)){
-                    floatService=new Intent(this,AutoNaviFloatingService.class);
-                }else if (floatingStyle.equals(PrefUtils.FLOATING_METER)){
-                    floatService=new Intent(this,MeterFloatingService.class);
-                }
-                floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                startService(floatService);
+                Utils.startFloationgWindows(getApplicationContext(),false);
                 PrefUtils.setUserManualClosedServer(getApplicationContext(), true);
                 Toast.makeText(getApplicationContext(), "GPS服务关闭", Toast.LENGTH_SHORT).show();
                 stopSelf();
@@ -170,55 +125,6 @@ public class GpsSpeedService extends Service {
         super.onDestroy();
     }
 
-   /* private void autoBackUpGPSData() {
-        if (!PrefUtils.isFTPAutoBackup(getApplicationContext())) {
-            return;
-        }
-        Thread backupThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String address = PrefUtils.getFTPUrl(getApplicationContext());
-                if (TextUtils.isEmpty(address)) return;
-                String port = PrefUtils.getFTPPort(getApplicationContext());
-                String user = PrefUtils.getFTPUser(getApplicationContext());
-                String password = PrefUtils.getFTPPassword(getApplicationContext());
-                String remoteDir = PrefUtils.getFTPPath(getApplicationContext());
-                File dataDir = getDatabasePath("GPSHistory.db");
-                FTPUtils ftp = FTPUtils.getInstance();
-                boolean status = ftp.initFTPSetting(address, Integer.parseInt(port), user, password);
-                if (!status) {
-                    //Toast.makeText(getApplicationContext(), "自动备份轨迹记录登录出错", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                }
-                status = ftp.uploadFile(remoteDir, dataDir.getAbsolutePath(), "GPSHistory.db");
-                if (!status) {
-                    //Toast.makeText(getApplicationContext(), "自动备份轨迹记录上传出错", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
-        });
-        if (Utils.isNetworkConnected(getApplicationContext())) {
-            backupThread.start();
-        } else {
-
-            broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    ConnectivityManager connectMgr = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
-                    NetworkInfo activeNetwork = connectMgr.getActiveNetworkInfo();
-                    if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                        backupThread.start();
-                        context.unregisterReceiver(broadcastReceiver);
-                    }
-                }
-            };
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-            getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
-        }
-    }
-*/
     @Override
     public IBinder onBind(Intent intent) {
         return null;

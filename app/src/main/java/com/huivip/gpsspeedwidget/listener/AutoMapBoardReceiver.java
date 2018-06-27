@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 public class AutoMapBoardReceiver extends BroadcastReceiver {
 
@@ -203,9 +204,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     int cameraSpeed = intent.getIntExtra("CAMERA_SPEED", 0);
                     if (cameraSpeed > 0) {
                         gpsUtil.setCameraSpeed(cameraSpeed);
-                    } else {
+                    }/* else {
                         gpsUtil.setCameraSpeed(0);
-                    }
+                    }*/
                 }
             }
             /*if(key==10072){  // return mute status
@@ -231,37 +232,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
         }
     }
     private void lanuchSpeedFloationWindows(Context context,boolean enabled){
-        Intent defaultFloatingService=new Intent(context,FloatingService.class);
-        Intent AutoNavifloatService=new Intent(context,AutoNaviFloatingService.class);
-        Intent meterFloatingService=new Intent(context,MeterFloatingService.class);
         if(!PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)){
             return;
         }
-        if(enabled){
-            String floatingStyle=PrefUtils.getFloatingStyle(context);
-            if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
-                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            }
-
-        }
-        else {
-            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        }
-        try {
-            context.startService(defaultFloatingService);
-            context.startService(AutoNavifloatService);
-            context.startService(meterFloatingService);
-        } catch (Exception e) {
-            Log.d("huivip","Start Floating server Failed"+e.getMessage());
-        }
+       Utils.startFloationgWindows(context,enabled);
     }
 }

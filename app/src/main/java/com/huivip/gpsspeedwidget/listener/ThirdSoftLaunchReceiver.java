@@ -19,24 +19,28 @@ public class ThirdSoftLaunchReceiver extends BroadcastReceiver {
         if(autoApps==null || autoApps.size()==0){
             return;
         }
-        int index=PrefUtils.getOtherAppIndex(context);
+       /* int index=PrefUtils.getOtherAppIndex(context);
         if(index==autoApps.size()){
             PrefUtils.setOtherAppIndex(context,0);
             return;
         }
         List<String> apps=new ArrayList<>();
-        apps.addAll(autoApps);
-        String packageName = apps.get(index);
-        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        if (launchIntent != null) {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(launchIntent);//null pointer check in case package name was not found
-        }
-        index++;
-        PrefUtils.setOtherAppIndex(context, index);
+        apps.addAll(autoApps);*/
+       int delayTime=PrefUtils.getDelayStartOtherApp(context);
+       for(String packageName: autoApps) {
+           //String packageName = apps.get(index);
+           Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+           if (launchIntent != null) {
+               intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+               context.startActivity(launchIntent);//null pointer check in case package name was not found
+               SystemClock.sleep(SystemClock.elapsedRealtime()+ delayTime*1000+300L);
+           }
+       }
+        //index++;
+       // PrefUtils.setOtherAppIndex(context, index);
         AlarmManager alarm=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent gotoHomeInten = PendingIntent.getBroadcast(context, 0, new Intent(context,GoToHomeReceiver.class), 0);
-        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 300L, gotoHomeInten);
+        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, gotoHomeInten);
     }
 }
 

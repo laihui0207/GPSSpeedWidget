@@ -1,6 +1,8 @@
 package com.huivip.gpsspeedwidget;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -10,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.speech.XFTTS;
@@ -185,7 +188,18 @@ public class AudioTestActivity extends Activity {
                     Toast.makeText(getApplicationContext(),"移动热点启动失败！",Toast.LENGTH_SHORT).show();
                 }*/
 
-                       WeatherService.getInstance(getApplicationContext()).searchWeather();
+                      // WeatherService.getInstance(getApplicationContext()).searchWeather();
+                   /*   Intent intent = new Intent();
+                intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+                intent.putExtra("KEY_TYPE", 10034);
+                intent.putExtra("SOURCE_APP","GPS Plugin");
+                sendBroadcast(intent);*/
+                AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                PendingIntent catchRoadIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), CatchRoadReceiver.class), 0);
+                alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);
+
+               /* Intent drivewayIntent=new Intent(getApplicationContext(),DriveWayFloatingService.class);
+                startService(drivewayIntent);*/
             }
         });
     }

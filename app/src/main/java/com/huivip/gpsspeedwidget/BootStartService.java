@@ -17,6 +17,7 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 public class BootStartService extends Service {
     public static String START_BOOT="FromSTARTBOOT";
     boolean started=false;
+    AlarmManager alarm;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -25,6 +26,7 @@ public class BootStartService extends Service {
 
     @Override
     public void onCreate() {
+        alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
         super.onCreate();
     }
 
@@ -33,42 +35,10 @@ public class BootStartService extends Service {
         if(intent!=null && !started){
             boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
             if(start) {
-                if(PrefUtils.isWidgetActived(getApplicationContext())) {
-                    Intent service = new Intent(getApplicationContext(), GpsSpeedService.class);
-                    service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT, true);
-                    startService(service);
-                }
-
-                PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
-                if(!PrefUtils.isEnableAccessibilityService(getApplicationContext())){
-                    PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_ALL);
-                }
-                boolean floatingServiceIsRunning=false;
-                if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
-                    /*Intent floatService = new Intent(getApplicationContext(), FloatingService.class);
-                    String floatingStyle = PrefUtils.getFloatingStyle(getApplicationContext());
-                    floatingServiceIsRunning=Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName());
-                    if (floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                        floatingServiceIsRunning=Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName());
-                        floatService = new Intent(getApplicationContext(), AutoNaviFloatingService.class);
-                    } else if (floatingStyle.equals(PrefUtils.FLOATING_METER)) {
-                        floatService = new Intent(getApplicationContext(), MeterFloatingService.class);
-                        floatingServiceIsRunning=Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName());
-                    }
-                    if(!floatingServiceIsRunning){
-                        startService(floatService);
-                    }*/
-                    Utils.startFloationgWindows(getApplicationContext(),true);
-                }
-                if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
-                    GpsUtil.getInstance(getApplicationContext()).startLocationService();
-                }
-                started=true;
-                AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
                 if(intent.getBooleanExtra(START_BOOT,false)) {
                     int delayTime = PrefUtils.getDelayStartOtherApp(getApplicationContext());
                     PendingIntent thirdIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), ThirdSoftLaunchReceiver.class), 0);
-                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + (delayTime * 1000 + 300), thirdIntent);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,  300L, thirdIntent);
 
                     PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, autoLaunchIntent);
@@ -80,6 +50,23 @@ public class BootStartService extends Service {
                 PendingIntent weatcherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), 0);
                 alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 60000L, weatcherServiceIntent);
 
+                if(PrefUtils.isWidgetActived(getApplicationContext())) {
+                    Intent service = new Intent(getApplicationContext(), GpsSpeedService.class);
+                    service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT, true);
+                    startService(service);
+                }
+
+                PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
+                if(!PrefUtils.isEnableAccessibilityService(getApplicationContext())){
+                    PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_ALL);
+                }
+                if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+                    Utils.startFloationgWindows(getApplicationContext(),true);
+                }
+                if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
+                    GpsUtil.getInstance(getApplicationContext()).startLocationService();
+                }
+                started=true;
             }
         }
         return super.onStartCommand(intent, flags, startId);

@@ -127,6 +127,7 @@
         <service android:name=".MeterFloatingService"/>
         <service android:name=".speech.AudioFocusService"/>
         <service android:name=".BootStartService"/>
+        <service android:name=".DriveWayFloatingService"/>
         <service
                 android:name=".listener.AutoMapNotificationListener"
                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">

@@ -882,7 +882,7 @@ public class ConfigurationActivity extends Activity {
         floatingSelectGroup.setEnabled(enableFloatingWidnowCheckBox.isChecked());
         onlyDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
-        //onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
+        onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         boolean serviceReady=Utils.isServiceReady(this);
 
         mAppList = PrefUtils.getAutoLaunchAppsName(getApplicationContext());

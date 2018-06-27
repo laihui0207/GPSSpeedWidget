@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:textSize="25dp"
+                android:textSize="23dp"
                 android:text="80"
                 android:textColor="#000"
                 app:autoSizeTextType="uniform"
