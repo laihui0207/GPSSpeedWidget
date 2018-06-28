@@ -188,15 +188,15 @@ public class AudioTestActivity extends Activity {
                     Toast.makeText(getApplicationContext(),"移动热点启动失败！",Toast.LENGTH_SHORT).show();
                 }*/
 
-                      // WeatherService.getInstance(getApplicationContext()).searchWeather();
-                   /*   Intent intent = new Intent();
+                       WeatherService.getInstance(getApplicationContext()).searchWeather();
+                      Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
-                intent.putExtra("KEY_TYPE", 10034);
+                intent.putExtra("KEY_TYPE", 10031);
                 intent.putExtra("SOURCE_APP","GPS Plugin");
-                sendBroadcast(intent);*/
-                AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                sendBroadcast(intent);
+               /* AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 PendingIntent catchRoadIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), CatchRoadReceiver.class), 0);
-                alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);
+                alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);*/
 
                /* Intent drivewayIntent=new Intent(getApplicationContext(),DriveWayFloatingService.class);
                 startService(drivewayIntent);*/
