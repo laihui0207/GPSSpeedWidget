@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import com.amap.api.maps.CoordinateConverter;

@@ -1,22 +1,23 @@
 package com.huivip.gpsspeedwidget;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
-import com.huivip.gpsspeedwidget.speech.XFTTS;
 import com.huivip.gpsspeedwidget.utils.*;
+
+import java.util.List;
 
 public class AudioTestActivity extends Activity {
     AudioManager audioManager;
@@ -107,8 +108,13 @@ public class AudioTestActivity extends Activity {
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.TEXTTTS);
+                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
                 tts.speak("你好，语音测试成功");
+               /* Intent intent = new Intent();
+                intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+                intent.putExtra("KEY_TYPE", 10021);
+                intent.putExtra("SOURCE_APP","GPS Plugin");
+                sendBroadcast(intent);*/
             }
         });
 
@@ -188,21 +194,78 @@ public class AudioTestActivity extends Activity {
                     Toast.makeText(getApplicationContext(),"移动热点启动失败！",Toast.LENGTH_SHORT).show();
                 }*/
 
-                       WeatherService.getInstance(getApplicationContext()).searchWeather();
+                      WeatherService.getInstance(getApplicationContext()).searchWeather();
                       Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
-                intent.putExtra("KEY_TYPE", 10031);
+                intent.putExtra("KEY_TYPE", 10034);
                 intent.putExtra("SOURCE_APP","GPS Plugin");
                 sendBroadcast(intent);
+
+              /*  Intent intent2 = new Intent();
+                intent2.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+                intent2.putExtra("KEY_TYPE", 10031);
+                intent2.putExtra("SOURCE_APP","GPS Plugin");
+                sendBroadcast(intent2);
+
+                Intent intent3 = new Intent();
+                intent3.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+                intent3.putExtra("KEY_TYPE", 10021);
+                intent3.putExtra("SOURCE_APP","GPS Plugin");
+                sendBroadcast(intent3);*/
+                     /* Intent intent=new Intent();
+                      intent.setAction("com.autonavi.action.autostart");
+                      intent.setComponent(new ComponentName("com.autonavi.auto.autostart","com.autonavi.auto.autostart.AutoBackgroundService"));
+                      startService(intent);*/
                /* AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 PendingIntent catchRoadIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), CatchRoadReceiver.class), 0);
                 alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);*/
 
                /* Intent drivewayIntent=new Intent(getApplicationContext(),DriveWayFloatingService.class);
                 startService(drivewayIntent);*/
+                //doStartApplicationWithPackageName("com.autonavi.auto.autostart.AutoBackgroundService","com.autonavi.action.autostart");
             }
         });
     }
+    private void doStartApplicationWithPackageName(String packagename,String action) {
+
+        // 通过包名获取此APP详细信息，包括Activities、services、versioncode、name等等
+        PackageInfo packageinfo = null;
+        try {
+            packageinfo = getPackageManager().getPackageInfo(packagename, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (packageinfo == null) {
+            return;
+        }
+
+        // 创建一个类别为CATEGORY_LAUNCHER的该包名的Intent
+        Intent resolveIntent = new Intent(Intent.ACTION_MAIN, null);
+        resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        resolveIntent.setPackage(packageinfo.packageName);
+
+        // 通过getPackageManager()的queryIntentActivities方法遍历
+        List<ResolveInfo> resolveinfoList = getPackageManager()
+                .queryIntentActivities(resolveIntent, 0);
+
+        ResolveInfo resolveinfo = resolveinfoList.iterator().next();
+        if (resolveinfo != null) {
+            // packagename = 参数packname
+            String packageName = resolveinfo.activityInfo.packageName;
+            // 这个就是我们要找的该APP的LAUNCHER的Activity[组织形式：packagename.mainActivityname]
+            String className = resolveinfo.activityInfo.name;
+            // LAUNCHER Intent
+            Intent intent = new Intent(action);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+            // 设置ComponentName参数1:packagename参数2:MainActivity路径
+            ComponentName cn = new ComponentName(packageName, className);
+
+            intent.setComponent(cn);
+            startActivity(intent);
+        }
+    }
+
     private void reloadVolume(){
         systemEditText.setText(audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM)+"");
         musicEditText.setText(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)+"");

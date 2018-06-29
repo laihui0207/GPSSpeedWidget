@@ -28,7 +28,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             service.putExtra(BootStartService.START_BOOT,true);
                             context.startService(service);
                             gpsUtil.setAutoMapBackendProcessStarted(true);
-                            // Toast.makeText(context,"AutoMap started",Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context,"AutoMap started",Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 3: // auto map in frontend

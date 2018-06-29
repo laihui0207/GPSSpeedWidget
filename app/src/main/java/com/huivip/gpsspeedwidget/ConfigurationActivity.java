@@ -277,6 +277,14 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setShowSpeedometer(getApplicationContext(),compoundButton.isChecked());
             }
         });
+        CheckBox notifyRoadLimitCheckBox=findViewById(R.id.checkBox_roadLimitNotify);
+        notifyRoadLimitCheckBox.setChecked(PrefUtils.isRoadLimitNotify(getApplicationContext()));
+        notifyRoadLimitCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setRoadLimitNotify(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
         enableFloatingButton=findViewById(R.id.EnableFalting);
         enableFloatingButton.setOnClickListener(v -> {

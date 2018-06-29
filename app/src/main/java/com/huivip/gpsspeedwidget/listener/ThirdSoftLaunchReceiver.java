@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.os.SystemClock;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class ThirdSoftLaunchReceiver extends BroadcastReceiver {

@@ -422,14 +422,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/button_testAudio"
-                    android:layout_alignBottom="@+id/checkBox_xftts" android:layout_alignParentRight="true"
+                    android:layout_alignBottom="@+id/seekBar_audioVolume" android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"/>
             <SeekBar
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/seekBar_audioVolume"
                     android:max="100" android:progress="50"
-                    android:layout_below="@+id/checkBox_showAddress" android:layout_toRightOf="@+id/checkBox_mix"
+                    android:layout_alignBottom="@+id/checkBox_mix" android:layout_toRightOf="@+id/checkBox_mix"
                     android:layout_toEndOf="@+id/checkBox_mix" android:layout_toLeftOf="@+id/button_testAudio"
                     android:layout_toStartOf="@+id/button_testAudio"/>
             <CheckBox
@@ -441,9 +441,9 @@
             <CheckBox
                     android:text="停车显示当前地址"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_below="@+id/linearLayout"
-                    android:layout_toRightOf="@+id/checkBox_playweather"
-                    android:layout_toEndOf="@+id/checkBox_playweather" android:id="@+id/checkBox_showAddress"/>
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox_showAddress" android:layout_above="@+id/linearLayout"
+                    android:layout_alignRight="@+id/button_pay" android:layout_alignEnd="@+id/button_pay"/>
             <TextView
                     android:text="长按悬浮窗2秒以上取消位置固定"
                     android:layout_width="wrap_content"
@@ -452,6 +452,12 @@
                     android:layout_toEndOf="@+id/checkBox_speed_fixed_position" android:id="@+id/textView6"
                     android:gravity="center_vertical|center_horizontal"
                     android:layout_alignTop="@+id/checkBox_speed_fixed_position"/>
+            <CheckBox
+                    android:text="道路限速提醒"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_above="@+id/checkBox_mix"
+                    android:layout_toRightOf="@+id/checkBox_playweather"
+                    android:layout_toEndOf="@+id/checkBox_playweather" android:id="@+id/checkBox_roadLimitNotify"/>
         </RelativeLayout>
     </ScrollView>
     <TextView

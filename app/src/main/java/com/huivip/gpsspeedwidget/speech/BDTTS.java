@@ -10,7 +10,6 @@ import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
-import com.huivip.gpsspeedwidget.MainHandlerConstant;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
@@ -18,7 +17,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BDTTS extends TTSService implements SpeechSynthesizerListener, MainHandlerConstant {
+public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     private static final String TAG = "huivip_BDTTS";
     protected String appId = "10875643";
     protected String appKey = "645OiDA3l2baAATnci6lTzC6";

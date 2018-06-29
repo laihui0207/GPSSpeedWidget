@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.text.TextUtils;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
@@ -67,6 +66,7 @@ public abstract class PrefUtils {
     public static final String TTS_ENGINE="com.huivip.TTS.Type";
     private static final String APP_PLAY_TIME="com.huivip.play.time";
     private static final String APP_PLAY_WEATHER="com.huivip.play.weather";
+    private static final String NOTIFY_ROAD_LIMIT="com.huivip.Limit.Notify";
 
 
     public static final String FLOATING_DEFAULT="0";
@@ -168,6 +168,12 @@ public abstract class PrefUtils {
     }
     public static boolean isAppFirstRun(Context context){
         return getSharedPreferences(context).getBoolean(APP_FIRST_RUN, true);
+    }
+    public static void setRoadLimitNotify(Context context,boolean value){
+        edit(context).putBoolean(NOTIFY_ROAD_LIMIT, value).apply();
+    }
+    public static boolean isRoadLimitNotify(Context context){
+        return getSharedPreferences(context).getBoolean(NOTIFY_ROAD_LIMIT, false);
     }
     public static void setUploadGPSHistory(Context context,boolean uploadHistory){
         edit(context).putBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, uploadHistory).apply();

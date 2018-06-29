@@ -11,7 +11,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -338,8 +337,8 @@ public class GpsUtil implements AMapNaviListener {
                 PendingIntent catchRoadIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, CatchRoadReceiver.class), 0);
                 alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);
                 catchRoadLocation=paramLocation;
-                recordLocationDistance=50;
-                catchRoadDistance=500;
+                recordLocationDistance=10;
+                catchRoadDistance=100;
             }
 
         } else {
@@ -391,16 +390,18 @@ public class GpsUtil implements AMapNaviListener {
         }
         speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
         // limit speak just say one times in one minutes
-        if ((limitSpeed > 0 && kmhSpeed > limitSpeed) ||
+        if ((limitSpeed > 0 && kmhSpeed > limitSpeed && PrefUtils.isRoadLimitNotify(context)) ||
                 (cameraSpeed>0 && kmhSpeed > cameraSpeed)) {
             hasLimited = true;
             if(limitCounter%10==0){
-                Utils.playBeeps();
+                if(PrefUtils.isEnableAudioService(context)) {
+                    Utils.playBeeps();
+                }
             }
             if (!limitSpeaked || limitCounter > 300) {
                 limitSpeaked = true;
                 limitCounter = 0;
-                tts.speak("您已超速,限速:"+limitSpeed);
+                tts.speak("您已超速");
             }
             limitCounter++;
         } else {
@@ -993,7 +994,13 @@ public class GpsUtil implements AMapNaviListener {
             setCameraSpeed(0);
             limitDistance = 0F;
             cameraType=-1;
-            tts.speak("已通过");
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    tts.speak("已通过");
+                }
+            }, 2000L);
+
         }
     }
 

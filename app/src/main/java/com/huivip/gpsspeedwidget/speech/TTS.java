@@ -1,6 +1,5 @@
 package com.huivip.gpsspeedwidget.speech;
 
-import android.content.Context;
 
 public interface TTS {
     void speak(String text);

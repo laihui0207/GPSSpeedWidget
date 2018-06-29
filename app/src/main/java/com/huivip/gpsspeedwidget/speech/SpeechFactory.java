@@ -1,7 +1,6 @@
 package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
-import android.content.IntentFilter;
 
 public class SpeechFactory {
     public static String BAIDUTTS="baiduTTS";
