@@ -27,6 +27,7 @@ import com.amap.api.trace.TraceOverlay;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -314,6 +315,24 @@ public class MainActivity extends Activity implements TraceListener {
                 }
             }
         });
+        /*if(enabledApps==null){*/
+         Set<String> enabledApps=PrefUtils.getApps(getApplicationContext());
+        /*}*/
+        if (enabledApps.size() == 1) {
+            for (String packageName : enabledApps) {
+                if (!Utils.isServiceRunning(getApplicationContext(), packageName)) {
+                    Intent launchIntent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(packageName);
+                    if (launchIntent != null) {
+                        launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getApplicationContext().startActivity(launchIntent);//null pointer check in case package name was not found
+                    }
+                    Intent intent3 = new Intent();
+                    intent3.setAction("com.huivip.gpsspeedwidget.autostarted");
+                    sendBroadcast(intent3);
+                }
+            }
+        }
+
     }
     private void startFloationgWindows(boolean enabled){
            Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);

@@ -29,7 +29,7 @@ public class ThirdSoftLaunchReceiver extends BroadcastReceiver {
            //String packageName = apps.get(index);
            Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
            if (launchIntent != null) {
-               intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+               launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                context.startActivity(launchIntent);//null pointer check in case package name was not found
                SystemClock.sleep(SystemClock.elapsedRealtime()+ delayTime*1000+300L);
            }

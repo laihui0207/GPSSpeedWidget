@@ -194,12 +194,12 @@ public class AudioTestActivity extends Activity {
                     Toast.makeText(getApplicationContext(),"移动热点启动失败！",Toast.LENGTH_SHORT).show();
                 }*/
 
-                      WeatherService.getInstance(getApplicationContext()).searchWeather();
+                     /* WeatherService.getInstance(getApplicationContext()).searchWeather();
                       Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
                 intent.putExtra("KEY_TYPE", 10034);
                 intent.putExtra("SOURCE_APP","GPS Plugin");
-                sendBroadcast(intent);
+                sendBroadcast(intent);*/
 
               /*  Intent intent2 = new Intent();
                 intent2.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
@@ -223,6 +223,8 @@ public class AudioTestActivity extends Activity {
                /* Intent drivewayIntent=new Intent(getApplicationContext(),DriveWayFloatingService.class);
                 startService(drivewayIntent);*/
                 //doStartApplicationWithPackageName("com.autonavi.auto.autostart.AutoBackgroundService","com.autonavi.action.autostart");
+                Intent timeIntent =new Intent(getApplicationContext(),MapFloatingService.class);
+                startService(timeIntent);
             }
         });
     }

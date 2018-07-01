@@ -31,6 +31,7 @@ import com.huivip.gpsspeedwidget.speech.BDTTS;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.*;
+import com.judemanutd.autostarter.AutoStartPermissionHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -741,6 +742,27 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setGoToHomeAfterAutoLanuch(getApplicationContext(),buttonView.isChecked());
             }
         });
+        CheckBox enableTimeFloating=findViewById(R.id.checkBox_timeFloating);
+        enableTimeFloating.setChecked(PrefUtils.isEnableTimeFloationgWidow(getApplicationContext()));
+        enableTimeFloating.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableTimeFloationgWidow(getApplicationContext(),buttonView.isChecked());
+                if(buttonView.isChecked()){
+                    if(!Utils.isServiceRunning(getApplicationContext(),RealTimeFloatingService.class.getName())){
+                        Intent timefloating=new Intent(getApplicationContext(),RealTimeFloatingService.class);
+                        startService(timefloating);
+                    }
+                }
+                else {
+                    if(Utils.isServiceRunning(getApplicationContext(),RealTimeFloatingService.class.getName())){
+                        Intent timefloating=new Intent(getApplicationContext(),RealTimeFloatingService.class);
+                        timefloating.putExtra(RealTimeFloatingService.EXTRA_CLOSE,true);
+                        startService(timefloating);
+                    }
+                }
+            }
+        });
         Button uploadLogButton=findViewById(R.id.button_uploadLog);
         uploadLogButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -794,6 +816,8 @@ public class ConfigurationActivity extends Activity {
             };
         });
         checkIfCanIncreaseMusic();
+        AutoStartPermissionHelper.getInstance().getAutoStartPermission(getApplicationContext());
+
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -920,7 +944,9 @@ public class ConfigurationActivity extends Activity {
         intent.addCategory(Intent.CATEGORY_HOME);
         List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         for(ResolveInfo resolveInfo : list){
-            names.add(resolveInfo.activityInfo.packageName);
+            if(!resolveInfo.activityInfo.packageName.equalsIgnoreCase("com.huivip.gpsspeedwdiget")) {
+                names.add(resolveInfo.activityInfo.packageName);
+            }
         }
         return names;
     }

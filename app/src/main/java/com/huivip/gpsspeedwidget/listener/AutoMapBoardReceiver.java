@@ -188,6 +188,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 else {
                     gpsUtil.setTotalLeftTime(0f);
                 }
+                int roadLimitSpeed=intent.getIntExtra("LIMITED_SPEED",-1);
+                if(roadLimitSpeed!=-1){
+                    gpsUtil.setLimitSpeed(roadLimitSpeed);
+                    gpsUtil.setCameraType(9999);
+                }
                 if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
                     int cameraType = intent.getIntExtra("CAMERA_TYPE", -1);
                     if (cameraType > -1) {

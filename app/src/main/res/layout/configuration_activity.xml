@@ -413,10 +413,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_natviAudio"
-                    android:layout_alignBaseline="@+id/checkBox_playweather"
-                    android:layout_alignBottom="@+id/checkBox_playweather"
-                    android:layout_toRightOf="@+id/checkBox_playweather"
-                    android:layout_toEndOf="@+id/checkBox_playweather" android:visibility="gone"/>
+                    android:layout_below="@+id/radioGroup_flattingStyleSelect"
+                    android:layout_alignRight="@+id/enableOver" android:layout_alignEnd="@+id/enableOver"
+                    android:visibility="gone"/>
             <Button
                     android:text="测试语音"
                     android:layout_width="wrap_content"
@@ -458,6 +457,12 @@
                     android:layout_height="wrap_content" android:layout_above="@+id/checkBox_mix"
                     android:layout_toRightOf="@+id/checkBox_playweather"
                     android:layout_toEndOf="@+id/checkBox_playweather" android:id="@+id/checkBox_roadLimitNotify"/>
+            <CheckBox
+                    android:text="显示时间窗口"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_below="@+id/checkBox_h_direction"
+                    android:layout_toRightOf="@+id/EnableFalting" android:layout_toEndOf="@+id/EnableFalting"
+                    android:id="@+id/checkBox_timeFloating"/>
         </RelativeLayout>
     </ScrollView>
     <TextView

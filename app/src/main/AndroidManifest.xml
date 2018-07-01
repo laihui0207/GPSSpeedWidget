@@ -46,8 +46,17 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+       <!-- <activity android:name=".GPSLauncher">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+
+            </intent-filter>
+        </activity>-->
         <activity android:name=".ConfigurationActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
@@ -112,6 +121,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME"/>
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="com.huivip.gpsspeedwidget.autostarted" />
             </intent-filter>
         </receiver>
         <receiver android:name=".listener.ThirdSoftLaunchReceiver"/>
@@ -128,6 +138,7 @@
         <service android:name=".speech.AudioFocusService"/>
         <service android:name=".BootStartService"/>
         <service android:name=".DriveWayFloatingService"/>
+        <service android:name=".MapFloatingService"/>
         <service
                 android:name=".listener.AutoMapNotificationListener"
                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
@@ -135,6 +146,7 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+        <service android:name=".RealTimeFloatingService"/>
         <service
                 android:name=".detection.AppDetectionService"
                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">

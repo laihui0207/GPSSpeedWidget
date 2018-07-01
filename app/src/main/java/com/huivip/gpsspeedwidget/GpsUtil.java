@@ -824,7 +824,9 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void onGetNavigationText(String s) {
-        tts.speak(s);
+        if(!PrefUtils.getTtsEngine(context).equalsIgnoreCase(SpeechFactory.SDKTTS)) {
+            tts.speak(s);
+        }
     }
 
     @Override
