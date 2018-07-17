@@ -148,6 +148,13 @@ public class AutoNaviFloatingService extends Service {
         };
         CrashHandler.getInstance().init(getApplicationContext());
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        speedView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent timeIntent =new Intent(getApplicationContext(),MapFloatingService.class);
+                startService(timeIntent);
+            }
+        });
         super.onCreate();
     }
     void checkLocationData() {
@@ -340,6 +347,8 @@ public class AutoNaviFloatingService extends Service {
                             fadeAnimator = new AnimatorSet();
                             fadeAnimator.play(fadeOut).before(fadeIn);
                             fadeAnimator.start();
+                            /*Intent timeIntent =new Intent(getApplicationContext(),MapFloatingService.class);
+                            startService(timeIntent);*/
                         }
                     }
                     else {

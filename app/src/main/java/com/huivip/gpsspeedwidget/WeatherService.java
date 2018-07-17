@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget;
 import android.annotation.SuppressLint;
 import android.app.*;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -15,6 +16,7 @@ import com.amap.api.location.AMapLocationListener;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.ToastUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -130,7 +132,12 @@ public class WeatherService implements AMapLocationListener {
                 }
             }
             if(!TextUtils.isEmpty(showStr)) {
-                Toast.makeText(context, showStr, Toast.LENGTH_LONG).show();
+               // Toast.makeText(context, showStr, Toast.LENGTH_LONG).show();
+                //ToastUtil.show(context,showStr,5000);
+                Intent textFloat=new Intent(context,TextFloatingService.class);
+                textFloat.putExtra(TextFloatingService.SHOW_TEXT,showStr);
+                textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
+                context.startService(textFloat);
             }
             resultText =null;
         }

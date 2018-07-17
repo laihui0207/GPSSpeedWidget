@@ -4,10 +4,12 @@ import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
@@ -19,10 +21,14 @@ import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import com.huivip.gpsspeedwidget.*;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public abstract class Utils {
@@ -115,6 +121,65 @@ public abstract class Utils {
       }
       return false;
   }
+    public static Set<String> getDesktopPackageName(Context context){
+        List<String> names =new ArrayList<>();
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        String defaultLauncher=packageManager.resolveActivity(intent,PackageManager.MATCH_DEFAULT_ONLY).activityInfo.packageName;
+        Log.d("huivip","Default Launcher:"+defaultLauncher);
+        if(!"com.huivip.gpsspeedwidget".equalsIgnoreCase(defaultLauncher)){
+            PrefUtils.setDefaultLaunchApp(context,defaultLauncher);
+        }
+        List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for(ResolveInfo resolveInfo : list){
+            Log.d("huivip","Launcher:"+resolveInfo.activityInfo.packageName);
+            if(!"com.huivip.gpsspeedwidget".equalsIgnoreCase(resolveInfo.activityInfo.packageName)) {
+                names.add(resolveInfo.activityInfo.packageName);
+            }
+        }
+        if(names!=null && names.size()>0) {
+            PrefUtils.setDefaultLaunchApp(context,names.get(0));
+        }
+        return new HashSet<>(names);
+    }
+    public static void goHome(Context context){
+        PackageManager packageManager = context.getPackageManager();
+        Intent intentLauncher = new Intent(Intent.ACTION_MAIN);
+        intentLauncher.addCategory(Intent.CATEGORY_HOME);
+        String selectDefaultLauncher=packageManager.resolveActivity(intentLauncher,PackageManager.MATCH_DEFAULT_ONLY).activityInfo.packageName;
+        String defaultLaunch = PrefUtils.getDefaultLanuchApp(context);
+        Log.d("huivip","Default launch:"+defaultLaunch+",Select launcher:"+selectDefaultLauncher);
+        if (!TextUtils.isEmpty(defaultLaunch) && "com.huivip.gpsspeedwidget".equalsIgnoreCase(selectDefaultLauncher)) {
+            Intent launchIntent =context.getPackageManager().getLaunchIntentForPackage(defaultLaunch);
+            if (launchIntent != null) {
+                Log.d("huivip","Launch default Launcher:"+defaultLaunch);
+                launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(launchIntent);
+            }
+            else {
+                Log.d("huivip","Launch intent is NULL");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Log.d("huivip","Return back!");
+                            Instrumentation inst= new Instrumentation();
+                            inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
+            }
+        } else {
+            Intent paramIntent = new Intent("android.intent.action.MAIN");
+            paramIntent.addCategory("android.intent.category.HOME");
+            paramIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(paramIntent);
+        }
+    }
     public static boolean isServiceReady(Context context) {
         boolean permissionGranted =
                 isLocationPermissionGranted(context);

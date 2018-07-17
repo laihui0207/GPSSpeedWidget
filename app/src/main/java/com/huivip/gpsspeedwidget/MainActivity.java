@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.*;
@@ -83,6 +84,8 @@ public class MainActivity extends Activity implements TraceListener {
         initPermission();
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.interval(2000);
+        myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
+                .decodeResource(getResources(), R.drawable.car)));
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
         aMap.setMyLocationStyle(myLocationStyle);
         aMap.getUiSettings().setMyLocationButtonEnabled(true);
@@ -315,23 +318,46 @@ public class MainActivity extends Activity implements TraceListener {
                 }
             }
         });
-        /*if(enabledApps==null){*/
-         Set<String> enabledApps=PrefUtils.getApps(getApplicationContext());
-        /*}*/
-        if (enabledApps.size() == 1) {
-            for (String packageName : enabledApps) {
-                if (!Utils.isServiceRunning(getApplicationContext(), packageName)) {
-                    Intent launchIntent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(packageName);
+        Button goHomeButton=findViewById(R.id.button_goHome);
+        goHomeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*PackageManager packageManager = getApplicationContext().getPackageManager();
+                Intent intentLauncher = new Intent(Intent.ACTION_MAIN);
+                intentLauncher.addCategory(Intent.CATEGORY_HOME);
+                String selectDefaultLauncher=packageManager.resolveActivity(intentLauncher,PackageManager.MATCH_DEFAULT_ONLY).activityInfo.packageName;
+                String defaultLaunch = PrefUtils.getDefaultLanuchApp(getApplicationContext());
+                Log.d("huivip","Default launch:"+defaultLaunch+",Select launcher:"+selectDefaultLauncher);
+                if (!TextUtils.isEmpty(defaultLaunch) && "com.huivip.gpsspeedwidget".equalsIgnoreCase(selectDefaultLauncher)) {
+                    Intent launchIntent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(defaultLaunch);
                     if (launchIntent != null) {
                         launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         getApplicationContext().startActivity(launchIntent);//null pointer check in case package name was not found
                     }
-                    Intent intent3 = new Intent();
-                    intent3.setAction("com.huivip.gpsspeedwidget.autostarted");
-                    sendBroadcast(intent3);
-                }
+                } else {
+                   Intent paramIntent = new Intent("android.intent.action.MAIN");
+                    paramIntent.addCategory("android.intent.category.HOME");
+                    paramIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(paramIntent);
+                }*/
+                //Utils.goHome(getApplicationContext());
+                moveTaskToBack(false);
             }
-        }
+        });
+        /*if(enabledApps==null){*/
+         Set<String> desktopPackages=Utils.getDesktopPackageName(getApplicationContext());
+         PrefUtils.setApps(getApplicationContext(),desktopPackages);
+        /*}*/
+        //if (enabledApps.size() == 1) {
+       /* Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction("com.huivip.gpsspeedwidget.autostarted");
+        sendBroadcast(broadcastIntent);*/
+       /* for (String packageName : desktopPackages) {
+            if (!Utils.isServiceRunning(getApplicationContext(), packageName)) {*/
+
+         /*   }
+        }*/
+        //}
 
     }
     private void startFloationgWindows(boolean enabled){

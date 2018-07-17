@@ -20,8 +20,8 @@ public abstract class TTSService implements TTS,AudioManager.OnAudioFocusChangeL
             mAudioManager = (AudioManager) this.context.getSystemService(
                     Context.AUDIO_SERVICE);
         }
-       /* vIsActive = mAudioManager.isMusicActive();
-        if (vIsActive) {//播放状态*/
+        vIsActive = mAudioManager.isMusicActive();
+        if (vIsActive) {//播放状态
            // Log.d(TAG, "in Music!");
             AudioAttributes mPlaybackAttributes = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -65,7 +65,7 @@ public abstract class TTSService implements TTS,AudioManager.OnAudioFocusChangeL
                 }
             }
 
-       /* }*/
+        }
         return false;
     }
 

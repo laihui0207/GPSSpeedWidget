@@ -124,6 +124,25 @@
                 <action android:name="com.huivip.gpsspeedwidget.autostarted" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".listener.MediaNotificationReceiver">
+            <intent-filter>
+                <action android:name="com.android.music.metachanged"/>
+                <action android:name="com.htc.music.metachanged"/>
+                <action android:name="com.rdio.android.metachanged"/>
+                <action android:name="com.sonyericsson.music.metachanged"/>
+                <action android:name="com.real.IMP.metachanged"/>
+                <action android:name="com.miui.player.metachanged"/>
+                <action android:name="com.amazon.mp3.metachanged"/>
+                <action android:name="com.nullsoft.winamp.metachanged"/>
+                <action android:name="com.sec.android.app.music.metachanged"/>
+                <action android:name="fm.last.android.metachanged"/>
+                <action android:name="com.samsung.sec.android.MusicPlayer.metachanged"/>
+                <action android:name="com.andrew.apollo.metachanged"/>
+                <action android:name="com.android.music.playstatechanged"/>
+                <action android:name="com.android.music.playbackcomplete"/>
+                <action android:name="com.android.music.queuechanged"/>
+            </intent-filter>
+        </receiver>
         <receiver android:name=".listener.ThirdSoftLaunchReceiver"/>
         <receiver android:name=".listener.GoToHomeReceiver"/>
         <receiver android:name=".listener.WeatherServiceReceiver"/>
@@ -139,6 +158,7 @@
         <service android:name=".BootStartService"/>
         <service android:name=".DriveWayFloatingService"/>
         <service android:name=".MapFloatingService"/>
+        <service android:name=".TextFloatingService"/>
         <service
                 android:name=".listener.AutoMapNotificationListener"
                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">

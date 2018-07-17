@@ -349,7 +349,7 @@ public class ConfigurationActivity extends Activity {
         onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         Glide.get(this)
                 .register(AppInfo.class, InputStream.class, new AppInfoIconLoader.Factory());
-        PrefUtils.setApps(getApplicationContext(), getDescktopPackageName());
+        PrefUtils.setApps(getApplicationContext(), Utils.getDesktopPackageName(getApplicationContext()));
         Button btnOk= (Button) findViewById(R.id.confirm);
         View.OnClickListener confirmListener  = new View.OnClickListener() {
 
@@ -936,19 +936,6 @@ public class ConfigurationActivity extends Activity {
         Intent intent = new Intent(settingsAction);
         intent.setData(Uri.parse("package:" + packageName));
         startActivity(intent);
-    }
-    private Set<String> getDescktopPackageName(){
-        Set<String> names =new HashSet<>();
-        PackageManager packageManager = this.getPackageManager();
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        for(ResolveInfo resolveInfo : list){
-            if(!resolveInfo.activityInfo.packageName.equalsIgnoreCase("com.huivip.gpsspeedwdiget")) {
-                names.add(resolveInfo.activityInfo.packageName);
-            }
-        }
-        return names;
     }
     /*private boolean isNotificationAccessGranted() {
         return NotificationManagerCompat.getEnabledListenerPackages(ConfigurationActivity.this).contains(BuildConfig.APPLICATION_ID);

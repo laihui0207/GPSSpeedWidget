@@ -189,7 +189,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     gpsUtil.setTotalLeftTime(0f);
                 }
                 int roadLimitSpeed=intent.getIntExtra("LIMITED_SPEED",-1);
-                if(roadLimitSpeed!=-1){
+                if(roadLimitSpeed>0){
                     gpsUtil.setLimitSpeed(roadLimitSpeed);
                     gpsUtil.setCameraType(9999);
                 }

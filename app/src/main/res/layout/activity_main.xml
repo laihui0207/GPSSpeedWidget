@@ -7,8 +7,12 @@
     <LinearLayout android:layout_width="match_parent" android:layout_height="50dp" android:orientation="horizontal">
         <Button
                 android:text="配置"
-                android:layout_width="match_parent"
-                android:id="@+id/button_config" android:layout_height="match_parent"/>
+                android:layout_width="wrap_content"
+                android:id="@+id/button_config" android:layout_height="match_parent" android:layout_weight="6"/>
+        <Button
+                android:text="返回桌面"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/button_goHome"/>
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="50dp" android:orientation="horizontal">
         <Button

@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -15,6 +16,7 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.text.TextUtils;
 import android.view.*;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -22,13 +24,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.amap.api.maps.AMap;
-import com.amap.api.maps.MapView;
-import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.maps.*;
+import com.amap.api.maps.model.*;
+import com.amap.api.navi.AMapNaviView;
+import com.amap.api.navi.AMapNaviViewOptions;
 import com.amap.api.trace.LBSTraceClient;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TimeThread;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -41,11 +47,25 @@ public class MapFloatingService extends Service {
     private WindowManager mWindowManager;
     private View mFloatingView;
     @BindView(R.id.map_floating)
-    MapView mMapView = null;
+    MapView mMapView ;
     AMap aMap=null;
-    LBSTraceClient mTraceClient=null;
+    private Marker carMarker;
+    //LBSTraceClient mTraceClient=null;
     @BindView(R.id.button_map_close)
     Button closeButton;
+    TimerTask locationScanTask;
+    Timer locationTimer = new Timer();
+    final Handler locationHandler = new Handler();
+    GpsUtil gpsUtil;
+    CoordinateConverter converter;
+    // 是否需要跟随定位
+    private boolean isNeedFollow = true;
+
+    // 处理静止后跟随的timer
+    private Timer needFollowTimer;
+    // 屏幕静止DELAY_TIME之后，再次跟随
+    private long DELAY_TIME = 5000;
+    boolean focused=false;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -79,7 +99,7 @@ public class MapFloatingService extends Service {
             }
             return;
         }
-
+        gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_map_window, null);
@@ -100,15 +120,23 @@ public class MapFloatingService extends Service {
         Bundle savedInstanceState=new Bundle();
         mMapView.onCreate(savedInstanceState);
         aMap = mMapView.getMap();
-        mTraceClient = LBSTraceClient.getInstance(this.getApplicationContext());
-        //initPermission();
-        MyLocationStyle myLocationStyle = new MyLocationStyle();
-        myLocationStyle.interval(2000);
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
-        aMap.setMyLocationStyle(myLocationStyle);
-        aMap.getUiSettings().setMyLocationButtonEnabled(true);
-        aMap.setMyLocationEnabled(true);
+
+      /*  AMapNaviViewOptions options = mMapView.getViewOptions();
+        options.setLayoutVisible(false);
+        mMapView.setNaviMode(AMapNaviView.CAR_UP_MODE);*/
+        carMarker = aMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
+                        .decodeResource(getResources(), R.drawable.car))));
         aMap.setTrafficEnabled(true);
+       /* MyLocationStyle myLocationStyle = new MyLocationStyle();
+        myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
+                        .decodeResource(getResources(), R.drawable.car)));
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
+        aMap.setMyLocationStyle(myLocationStyle);*/
+        aMap.getUiSettings().setMyLocationButtonEnabled(false);
+        aMap.setMyLocationEnabled(true);
+        UiSettings mUiSettings=aMap.getUiSettings();
+        mUiSettings.setCompassEnabled(false);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,7 +144,98 @@ public class MapFloatingService extends Service {
                 stopSelf();
             }
         });
+        setMapInteractiveListener();
+        converter = new CoordinateConverter(getApplicationContext());
+        converter.from(CoordinateConverter.CoordType.GPS);
+        this.locationScanTask = new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                MapFloatingService.this.locationHandler.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        MapFloatingService.this.checkLocationData();
+                        //Log.d("huivip","Float Service Check Location");
+                    }
+                });
+            }
+        };
+        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         super.onCreate();
+    }
+   void checkLocationData() {
+        if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
+            LatLng latLng = new LatLng(Double.parseDouble(gpsUtil.getLatitude()),Double.parseDouble(gpsUtil.getLongitude()));
+            // 显示定位小图标，初始化时已经创建过了，这里修改位置即可
+            converter.coord(latLng);
+            LatLng lastedLatLng=converter.convert();
+            carMarker.setPosition(lastedLatLng);
+            if (isNeedFollow) {
+                // 跟随
+                aMap.animateCamera(CameraUpdateFactory.changeLatLng(latLng));
+                if(!focused) {
+                    CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, 16, 0, gpsUtil.getBearing()));
+                    aMap.moveCamera(mCameraUpdate);
+                    focused=true;
+                }
+            }
+        }
+    }
+    private void setMapInteractiveListener() {
+
+        aMap.setOnMapTouchListener(new AMap.OnMapTouchListener() {
+
+            @Override
+            public void onTouch(MotionEvent event) {
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // 按下屏幕
+                        // 如果timer在执行，关掉它
+                        clearTimer();
+                        // 改变跟随状态
+                        isNeedFollow = false;
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // 离开屏幕
+                        startTimerSomeTimeLater();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+
+    }
+    /**
+     * 取消timer任务
+     */
+    private void clearTimer() {
+        if (needFollowTimer != null) {
+            needFollowTimer.cancel();
+            needFollowTimer = null;
+        }
+    }
+
+    /**
+     * 如果地图在静止的情况下
+     */
+    private void startTimerSomeTimeLater() {
+        // 首先关闭上一个timer
+        clearTimer();
+        needFollowTimer = new Timer();
+        // 开启一个延时任务，改变跟随状态
+        needFollowTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                isNeedFollow = true;
+            }
+        }, DELAY_TIME);
     }
 
     private int getWindowType() {

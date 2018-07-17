@@ -52,7 +52,6 @@ public class HttpUtils {
         HttpURLConnection httpURLConnection=null;
         try {
             URL url = new URL(strUrlPath);
-            Log.d("GPSWidget","URL:"+strUrlPath);
             httpURLConnection = (HttpURLConnection)url.openConnection();
             httpURLConnection.setConnectTimeout(10000);
             httpURLConnection.setRequestMethod("GET");

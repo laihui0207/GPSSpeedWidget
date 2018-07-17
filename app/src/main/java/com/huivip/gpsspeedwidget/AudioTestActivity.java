@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,8 +17,12 @@ import android.widget.TextView;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.*;
+import com.huivip.gpsspeedwidget.view.LrcView;
 
+import java.io.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AudioTestActivity extends Activity {
     AudioManager audioManager;
@@ -223,8 +228,39 @@ public class AudioTestActivity extends Activity {
                /* Intent drivewayIntent=new Intent(getApplicationContext(),DriveWayFloatingService.class);
                 startService(drivewayIntent);*/
                 //doStartApplicationWithPackageName("com.autonavi.auto.autostart.AutoBackgroundService","com.autonavi.action.autostart");
-                Intent timeIntent =new Intent(getApplicationContext(),MapFloatingService.class);
-                startService(timeIntent);
+               /* Intent timeIntent =new Intent(getApplicationContext(),MapFloatingService.class);
+                startService(timeIntent);*/
+               /* Set<String> desktops=Utils.getDesktopPackageName(getApplicationContext());
+                for(String str:desktops){
+                    Log.d("huivip",str);
+                }*/
+              /* Intent intent=new Intent();
+               intent.setAction("com.autonavi.action.autostart");
+               startActivity(intent);*/
+               /* ToastUtil.show(getApplicationContext(),"test Toast:30s",30000);
+                Intent textWindow=new Intent(getApplicationContext(),TextFloatingService.class);
+                textWindow.putExtra(TextFloatingService.SHOW_TIME,10);
+                textWindow.putExtra(TextFloatingService.SHOW_TEXT,"这是一个延时窗口");
+                startService(textWindow);*/
+                try {
+                    StringBuilder buf=new StringBuilder();
+                    InputStream json=getAssets().open("sea.lrc");
+                    BufferedReader in=
+                            new BufferedReader(new InputStreamReader(json, "UTF-8"));
+                    String str;
+
+                    while ((str=in.readLine()) != null) {
+                        buf.append(str);
+                    }
+
+                    in.close();
+                    Log.d("huivip",buf.toString());
+                    LrcView lrcView=findViewById(R.id.lrc_view);
+                    lrcView.setLrc(buf.toString());
+                    lrcView.init();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

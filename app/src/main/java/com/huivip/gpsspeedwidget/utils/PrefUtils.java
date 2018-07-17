@@ -23,6 +23,7 @@ public abstract class PrefUtils {
     private static final String PREF_SPEEDOMETER = "pref_speedometer";
     private static final String PREF_LIMITS = "pref_limits";
     private static final String PREF_APPS = "pref_apps";
+    private static final String PREF_DEFAULT_LAUNCHE_APP= "pref_Default_launch_apps";
     private static final String AUTO_FLOATTING_STYLE = "com.huivip.Floating.style";
     private static final String PREF_DELAY_AUTO_START = "com.huivip.delay.started";
     private static final String PREF_DELAY_AUTO_START_INDEX= "com.huivip.delay.started.index";
@@ -453,6 +454,13 @@ public abstract class PrefUtils {
 
     public static void setApps(Context context, Set<String> packageNames) {
         edit(context).putStringSet(PREF_APPS, packageNames).apply();
+    }
+    public static String getDefaultLanuchApp(Context context) {
+        return getSharedPreferences(context).getString(PREF_DEFAULT_LAUNCHE_APP,"");
+    }
+
+    public static void setDefaultLaunchApp(Context context, String packageName) {
+        edit(context).putString(PREF_DEFAULT_LAUNCHE_APP, packageName).apply();
     }
     public static Set<String> getAutoLaunchApps(Context context) {
         return new HashSet<>(getSharedPreferences(context).getStringSet(PREF_AUTO_LAUNCH_APPS, new HashSet<String>()));
