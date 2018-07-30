@@ -121,6 +121,18 @@ public abstract class Utils {
       }
       return false;
   }
+    public static boolean isServiceRunningInForeground(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                if (service.foreground) {
+                    return true;
+                }
+
+            }
+        }
+        return false;
+    }
     public static Set<String> getDesktopPackageName(Context context){
         List<String> names =new ArrayList<>();
         PackageManager packageManager = context.getPackageManager();

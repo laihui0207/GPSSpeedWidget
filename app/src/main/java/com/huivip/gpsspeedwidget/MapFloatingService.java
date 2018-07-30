@@ -57,6 +57,7 @@ public class MapFloatingService extends Service {
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
+    float mapZoom=17f;
     CoordinateConverter converter;
     // 是否需要跟随定位
     private boolean isNeedFollow = true;
@@ -120,23 +121,26 @@ public class MapFloatingService extends Service {
         Bundle savedInstanceState=new Bundle();
         mMapView.onCreate(savedInstanceState);
         aMap = mMapView.getMap();
-
+        aMap.setMapType(AMap.MAP_TYPE_NAVI);
       /*  AMapNaviViewOptions options = mMapView.getViewOptions();
         options.setLayoutVisible(false);
         mMapView.setNaviMode(AMapNaviView.CAR_UP_MODE);*/
         carMarker = aMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
-                        .decodeResource(getResources(), R.drawable.car))));
+                        .decodeResource(getResources(), R.drawable.car))).setFlat(true));
         aMap.setTrafficEnabled(true);
-       /* MyLocationStyle myLocationStyle = new MyLocationStyle();
+     /*   MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
                         .decodeResource(getResources(), R.drawable.car)));
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
-        aMap.setMyLocationStyle(myLocationStyle);*/
+        aMap.setMyLocationStyle(myLocationStyle);
         aMap.getUiSettings().setMyLocationButtonEnabled(false);
-        aMap.setMyLocationEnabled(true);
+        aMap.setMyLocationEnabled(true);*/
         UiSettings mUiSettings=aMap.getUiSettings();
-        mUiSettings.setCompassEnabled(false);
+        mUiSettings.setCompassEnabled(true);
+        mUiSettings.setZoomControlsEnabled(false);
+        mUiSettings.setZoomGesturesEnabled(true);
+        mUiSettings.setScaleControlsEnabled(true);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,21 +170,19 @@ public class MapFloatingService extends Service {
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         super.onCreate();
     }
-   void checkLocationData() {
-        if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
-            LatLng latLng = new LatLng(Double.parseDouble(gpsUtil.getLatitude()),Double.parseDouble(gpsUtil.getLongitude()));
+
+    void checkLocationData() {
+        if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
+            LatLng latLng = new LatLng(Double.parseDouble(gpsUtil.getLatitude()), Double.parseDouble(gpsUtil.getLongitude()));
             // 显示定位小图标，初始化时已经创建过了，这里修改位置即可
             converter.coord(latLng);
-            LatLng lastedLatLng=converter.convert();
+            LatLng lastedLatLng = converter.convert();
             carMarker.setPosition(lastedLatLng);
-            if (isNeedFollow) {
+            if (isNeedFollow && gpsUtil.getSpeed() > 0) {
                 // 跟随
-                aMap.animateCamera(CameraUpdateFactory.changeLatLng(latLng));
-                if(!focused) {
-                    CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, 16, 0, gpsUtil.getBearing()));
-                    aMap.moveCamera(mCameraUpdate);
-                    focused=true;
-                }
+                aMap.animateCamera(CameraUpdateFactory.changeLatLng(lastedLatLng));
+                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 0, gpsUtil.getBearing()));
+                aMap.moveCamera(mCameraUpdate);
             }
         }
     }
@@ -249,6 +251,7 @@ public class MapFloatingService extends Service {
         intent.setData(Uri.parse("package:" + packageName));
         startActivity(intent);
     }
+
     private void initMonitorPosition() {
         if (mFloatingView == null) {
             return;
@@ -257,20 +260,9 @@ public class MapFloatingService extends Service {
             @Override
             public void onGlobalLayout() {
                 WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-                String[] split = PrefUtils.getTimeFloatingLocation(getApplicationContext()).split(",");
-                boolean left = Boolean.parseBoolean(split[0]);
-                float yRatio = Float.parseFloat(split[1]);
-                /*if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                    Point screenSize = new Point();
-                    mWindowManager.getDefaultDisplay().getSize(screenSize);
-                    params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
-                    params.y = (int) (yRatio * screenSize.y + 0.5f);
-                }
-                else {*/
-                    String[] xy=PrefUtils.getTimeFloatingSolidLocation(getApplicationContext()).split(",");
-                    params.x=(int)Float.parseFloat(xy[0]);
-                    params.y=(int)Float.parseFloat(xy[1]);
-               /* }*/
+                String[] xy = PrefUtils.getMapFloatingSolidLocation(getApplicationContext()).split(",");
+                params.x = (int) Float.parseFloat(xy[0]);
+                params.y = (int) Float.parseFloat(xy[1]);
                 try {
                     mWindowManager.updateViewLayout(mFloatingView, params);
                 } catch (IllegalArgumentException ignore) {
@@ -282,34 +274,6 @@ public class MapFloatingService extends Service {
             }
         });
     }
-
-   /* private void animateViewToSideSlot() {
-        Point screenSize = new Point();
-        mWindowManager.getDefaultDisplay().getSize(screenSize);
-
-        WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-        int endX;
-        if (params.x + mFloatingView.getWidth() / 2 >= screenSize.x / 2) {
-            endX = screenSize.x - mFloatingView.getWidth();
-        } else {
-            endX = 0;
-        }
-
-        PrefUtils.setNaviFloatingLocation(getApplicationContext(), (float) params.y / screenSize.y, endX == 0);
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(params.x, endX)
-                .setDuration(300);
-        valueAnimator.setInterpolator(new LinearOutSlowInInterpolator());
-        valueAnimator.addUpdateListener(animation -> {
-            WindowManager.LayoutParams params1 = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-            params1.x = (int) animation.getAnimatedValue();
-            try {
-                mWindowManager.updateViewLayout(mFloatingView, params1);
-            } catch (IllegalArgumentException ignore) {
-            }
-        });
-
-        valueAnimator.start();
-    }*/
     private class FloatingOnTouchListener implements View.OnTouchListener {
 
         private float mInitialTouchX;
@@ -394,26 +358,9 @@ public class MapFloatingService extends Service {
                             fadeAnimator.play(fadeOut).before(fadeIn);
                             fadeAnimator.start();
                         }
+                    } else {
+                        PrefUtils.setMapFloatingSolidLocation(getApplicationContext(), params.x, params.y);
                     }
-                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
-
-                    }
-                    else {
-                        /*if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                             animateViewToSideSlot();
-                        } else {*/
-                            PrefUtils.setTimeFloatingSolidLocation(getApplicationContext(),params.x,params.y);
-                       /* }*/
-                    }
-                    /*if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
-                        if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                            Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
-                            PrefUtils.setEnableNaviFloatingFixed(getApplicationContext(),false);
-                        }
-                        Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
-                        configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(configActivity);
-                    }*/
                     return true;
             }
             return false;

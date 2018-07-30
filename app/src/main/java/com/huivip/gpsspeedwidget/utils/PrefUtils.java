@@ -19,6 +19,7 @@ public abstract class PrefUtils {
     private static final String PREF_FLOATING_LOCATION = "pref_floating_location";
     private static final String PREF_NAVI_FLOATING_LOCATION= "pref_navi_floating_location";
     private static final String PREF_TIME_FLOATING_LOCATION= "pref_time_floating_location";
+    private static final String PREF_TEXT_FLOATING_LOCATION= "pref_text_floating_location";
     private static final String PREF_OPACITY = "pref_opacity";
     private static final String PREF_SPEEDOMETER = "pref_speedometer";
     private static final String PREF_LIMITS = "pref_limits";
@@ -35,6 +36,7 @@ public abstract class PrefUtils {
     public static final String PREF_AUTO_LAUNCH_WIFI_HOTSPOT="AutoStart.Wifi.hotspot";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
+    public static final String AUTO_CLEAN_GPS_HISTORY_PREFS_NAME="AutoCleanGpsHistory";
     public static final String ENABLE_FLATING_WINDOW="com.huivip.Enable.fating.History";
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enable.AudioService";
     public static final String ENABLE_TIME_FLOATING_WINDOW="com.huivip.enable.Time.FloatingWindow";
@@ -51,6 +53,9 @@ public abstract class PrefUtils {
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
     public static final String NAVI_FLOATTING_WINDOW_XY="com.huivip.widget.navi.xy";
     public static final String TIME_FLOATTING_WINDOW_XY="com.huivip.widget.Time.xy";
+    public static final String MAP_FLOATTING_WINDOW_XY="com.huivip.widget.Map.xy";
+    public static final String TEXT_FLOATTING_WINDOW_XY="com.huivip.widget.Text.xy";
+    public static final String LYRC_FLOATTING_WINDOW_XY="com.huivip.widget.lyrc.xy";
     public static final String SEPARATED_VOLUME ="com.huivip.widget.separated.volume";
     public static final String AUDIO_VOLUME="com.huivipo.widget.audio.volume";
     public static final String USER_CLOSED_SERVER="com.huivip.widget.Close.serviced";
@@ -192,6 +197,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableUploadGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, false);
+    }
+    public static void setAutoCleanGPSHistory(Context context,boolean cleanHistory){
+        edit(context).putBoolean(AUTO_CLEAN_GPS_HISTORY_PREFS_NAME, cleanHistory).apply();
+    }
+    public static boolean isEnableAutoCleanGPSHistory(Context context){
+        return getSharedPreferences(context).getBoolean(AUTO_CLEAN_GPS_HISTORY_PREFS_NAME, false);
     }
     public static boolean isFloattingAutoSolt(Context context){
         return getSharedPreferences(context).getBoolean(FLOATTING_WINDOWS_AUTO_SOLT, true);
@@ -377,6 +388,25 @@ public abstract class PrefUtils {
     public static String getTimeFloatingSolidLocation(Context context) {
         return getSharedPreferences(context).getString(TIME_FLOATTING_WINDOW_XY, "0,0");
     }
+    public static String getMapFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(MAP_FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static void setMapFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(MAP_FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
+
+    public static String getTextFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(TEXT_FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static void setTextFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(TEXT_FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
+    public static String getLyrcFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(LYRC_FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static void setLyrcFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(LYRC_FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
     public static void setNaviFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_NAVI_FLOATING_LOCATION, left + "," + screenYRatio).apply();
     }
@@ -388,6 +418,9 @@ public abstract class PrefUtils {
     }
     public static String getTimeFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_TIME_FLOATING_LOCATION, "true,0");
+    }
+    public static String getTextFloatingLocation(Context context) {
+        return getSharedPreferences(context).getString(PREF_TEXT_FLOATING_LOCATION, "true,0");
     }
     public static boolean getUseMetric(Context context) {
         boolean metricDefault;

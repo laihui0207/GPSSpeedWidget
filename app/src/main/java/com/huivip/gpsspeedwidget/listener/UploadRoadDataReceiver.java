@@ -1,10 +1,15 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.listener;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.DBUtil;
+import com.huivip.gpsspeedwidget.DeviceUuidFactory;
+import com.huivip.gpsspeedwidget.LocationVO;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import org.json.JSONArray;
@@ -17,7 +22,7 @@ import java.util.*;
 /**
  * @author sunlaihui
  */
-public class MessageReceiver extends BroadcastReceiver {
+public class UploadRoadDataReceiver extends BroadcastReceiver {
     private int BULK_SIZE=120;
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -45,6 +50,7 @@ public class MessageReceiver extends BroadcastReceiver {
                                     params.put("t", "gps");
                                     params.put("data", jsonStringFromList(tempList));
                                     result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context) + Constant.LBSPOSTGPSURL, params, "utf-8");
+                                    FileUtil.saveLogToFile("Batch Upload result:"+result);
                                 }
                                 if (leftSize > 0) {
                                     List<LocationVO> tempList = locationVOList.subList(counter * BULK_SIZE + 1, counter * BULK_SIZE + leftSize);
@@ -54,10 +60,13 @@ public class MessageReceiver extends BroadcastReceiver {
                                     params.put("data", jsonStringFromList(tempList));
                                     result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context) + Constant.LBSPOSTGPSURL, params, "utf-8");
                                     Log.d("GPSWidget", "Upload Data Result:" + result);
+                                    FileUtil.saveLogToFile("Batch Upload result:"+result);
+
                                 }
                                 if (result != null && result.equalsIgnoreCase("Success")) {
                                     dbUtil.delete(now);
                                 }
+
                             } else {
                                 Map<String, String> params = new HashMap<String, String>();
                                 params.put("deviceId", deviceId);
@@ -65,6 +74,7 @@ public class MessageReceiver extends BroadcastReceiver {
                                 params.put("data", jsonStringFromList(locationVOList));
                                 String result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context) + Constant.LBSPOSTGPSURL, params, "utf-8");
                                 Log.d("GPSWidget", "Upload Data Result:" + result);
+                                FileUtil.saveLogToFile("Upload result:"+result);
                                 if (result != null && result.equalsIgnoreCase("Success")) {
                                     dbUtil.delete(now);
                                 }
@@ -72,6 +82,7 @@ public class MessageReceiver extends BroadcastReceiver {
                         }
                     } catch (Exception e) {
                         Log.d("huivip", "upload data Error:" + e.getLocalizedMessage());
+                        FileUtil.saveLogToFile("Upload result Error:"+e.getLocalizedMessage());
                     }
                     Log.d("huivip", "Upload Data Finish");
                 }

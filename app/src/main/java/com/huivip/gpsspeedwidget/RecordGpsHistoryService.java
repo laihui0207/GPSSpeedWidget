@@ -6,12 +6,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
+import com.huivip.gpsspeedwidget.listener.UploadRoadDataReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.Date;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -50,7 +49,7 @@ public class RecordGpsHistoryService extends Service{
 
         if(recordGPS) {
             if(uploadGPS) {
-                Intent broadcastIntent = new Intent(this, MessageReceiver.class);
+                Intent broadcastIntent = new Intent(this, UploadRoadDataReceiver.class);
                 broadcastIntent.setAction(Constant.UPLOADACTION);
                 uploadMessageSender = PendingIntent.getBroadcast(this, 0, broadcastIntent, 0);
                 alarm = (AlarmManager) getSystemService(ALARM_SERVICE);

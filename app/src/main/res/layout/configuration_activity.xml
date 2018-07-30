@@ -52,8 +52,15 @@
                         android:inputType="textUri"
                         android:text=""
                         android:hint="记录轨迹服务器地址,不填为空使用默认服务器"
-                        android:ems="10"
+                        android:ems="5"
                         android:id="@+id/editText_remoteURL" android:layout_weight="1"/>
+                <CheckBox
+                        android:text="定期清理数据(只保留一个月)"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:layout_below="@+id/radioGroup_flattingStyleSelect"
+                        android:layout_toRightOf="@+id/checkBox_timeFloating"
+                        android:layout_toEndOf="@+id/checkBox_timeFloating" android:id="@+id/checkBox_cleanData"
+                        android:layout_weight="1"/>
 
             </LinearLayout>
 

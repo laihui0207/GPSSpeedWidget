@@ -4,14 +4,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import com.huivip.gpsspeedwidget.DBUtil;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
+import java.util.Calendar;
+import java.util.Date;
 
 public class AutoFTPBackupReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        if(PrefUtils.isEnableAutoCleanGPSHistory(context)){
+            cleanData(context);
+        }
         if (!PrefUtils.isFTPAutoBackup(context)) {
             return;
         }
@@ -38,5 +44,15 @@ public class AutoFTPBackupReceiver extends BroadcastReceiver {
             }
         });
         backupThread.start();
+    }
+    private void cleanData(Context context){
+        if(PrefUtils.isEnableAutoCleanGPSHistory(context)){
+            Calendar calendar=Calendar.getInstance();
+            calendar.add(Calendar.MONTH,-1);
+            Date fromDate=calendar.getTime();
+            DBUtil dbUtil= new DBUtil(context);
+            dbUtil.delete(fromDate);
+
+        }
     }
 }

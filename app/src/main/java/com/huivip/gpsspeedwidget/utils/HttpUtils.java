@@ -40,7 +40,8 @@ public class HttpUtils {
                 return dealResponseResult(inputStream);
             }
         } catch (IOException e) {
-            return "err: " + e.getMessage().toString();
+            Log.d("huivip","post get data error:"+e.getLocalizedMessage());
+            return "-1";
         }finally {
            if(httpURLConnection!=null) {
                httpURLConnection.disconnect();

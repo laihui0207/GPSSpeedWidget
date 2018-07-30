@@ -3,13 +3,18 @@ package com.huivip.gpsspeedwidget.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
+import com.alibaba.idst.nls.internal.utils.L;
 import com.amap.api.trace.TraceLocation;
 
 import java.io.*;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by fujiayi on 2017/5/19.
@@ -123,4 +128,35 @@ public class FileUtil {
         }
         return null;
     }
+    public static String saveLogToFile(String logContent) {
+        String nameString="GPSPluginLog";
+        StringBuffer sb = new StringBuffer();
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+
+        String result = logContent;
+        L.d("Huivip Log to file", result);
+        sb.append(result);
+        try {
+            long timestamp = System.currentTimeMillis();
+            String time = formatter.format(new Date());
+            String fileName = nameString + "-" + time + "-" + timestamp
+                    + ".log";
+            if (Environment.getExternalStorageState().equals(
+                    Environment.MEDIA_MOUNTED)) {
+                String path =Environment.getExternalStorageDirectory().toString()+"/huivip/";
+                File dir = new File(path);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                FileOutputStream fos = new FileOutputStream(path + fileName);
+                fos.write(sb.toString().getBytes());
+                fos.close();
+            }
+            return fileName;
+        } catch (Exception e) {
+            Log.e("huivip", "an error occured while writing file...", e);
+        }
+        return null;
+    }
+
 }

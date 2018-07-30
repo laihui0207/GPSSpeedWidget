@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
@@ -27,6 +28,7 @@ public class LrcView extends View {
     private Paint hPaint;
     private int width = 0, height = 0;
     private int currentPosition = 0;
+    private int playercurrentMillis=0;
     private MediaPlayer player;
     private int lastPosition = 0;
     private int highLineColor;
@@ -48,6 +50,10 @@ public class LrcView extends View {
 
     public void setPlayer(MediaPlayer player) {
         this.player = player;
+    }
+
+    public void setPlayercurrentMillis(int playercurrentMillis) {
+        this.playercurrentMillis = playercurrentMillis;
     }
 
     /**
@@ -101,7 +107,7 @@ public class LrcView extends View {
         getCurrentPosition();
 
 //        drawLrc1(canvas);
-        int currentMillis =player.getCurrentPosition();
+        int currentMillis = player!=null ? player.getCurrentPosition() : playercurrentMillis;
         drawLrc2(canvas, currentMillis);
         long start = list.get(currentPosition).getStart();
         float v = (currentMillis - start) > 500 ? currentPosition * 80 : lastPosition * 80 + (currentPosition - lastPosition) * 80 * ((currentMillis - start) / 500f);
@@ -168,7 +174,7 @@ public class LrcView extends View {
 
     private void getCurrentPosition() {
         try {
-            int currentMillis = player.getCurrentPosition();
+            int currentMillis = player!=null ? player.getCurrentPosition() : playercurrentMillis;
             if (currentMillis < list.get(0).getStart()) {
                 currentPosition = 0;
                 return;

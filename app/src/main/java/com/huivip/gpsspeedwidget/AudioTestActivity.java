@@ -8,18 +8,26 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.huivip.gpsspeedwidget.lyric.GecimeKu;
+import com.huivip.gpsspeedwidget.lyric.MockTimeThread;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.*;
 import com.huivip.gpsspeedwidget.view.LrcView;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,11 +40,19 @@ public class AudioTestActivity extends Activity {
     EditText voiceCallEditText;
     EditText alarmEditText;
     EditText notificationText;
-/*    EditText accEditText;*/
+    String lrcString="";
+    LrcView lrcView;
+    MockTimeThread mock;
+
+    private MediaPlayer mediaPlayer;
+
+    /*    EditText accEditText;*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_test);
+        lrcView=findViewById(R.id.lrc_view);
+        mock=new MockTimeThread(lrcView);
         audioManager= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         TextView systemMaxView=findViewById(R.id.textView_maxSystem);
         systemMaxView.setText("System: current:"+audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM)+",max:"+audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
@@ -237,14 +253,15 @@ public class AudioTestActivity extends Activity {
               /* Intent intent=new Intent();
                intent.setAction("com.autonavi.action.autostart");
                startActivity(intent);*/
-               /* ToastUtil.show(getApplicationContext(),"test Toast:30s",30000);
-                Intent textWindow=new Intent(getApplicationContext(),TextFloatingService.class);
+/*                ToastUtil.show(getApplicationContext(),"test Toast:30s",30000);*/
+               /* Intent textWindow=new Intent(getApplicationContext(),TextFloatingService.class);
                 textWindow.putExtra(TextFloatingService.SHOW_TIME,10);
                 textWindow.putExtra(TextFloatingService.SHOW_TEXT,"这是一个延时窗口");
                 startService(textWindow);*/
-                try {
-                    StringBuilder buf=new StringBuilder();
-                    InputStream json=getAssets().open("sea.lrc");
+                String text;
+               /* try {*/
+                /*    StringBuilder buf=new StringBuilder();
+                    InputStream inputStream=getAssets().open("sea.lrc");
                     BufferedReader in=
                             new BufferedReader(new InputStreamReader(json, "UTF-8"));
                     String str;
@@ -252,18 +269,51 @@ public class AudioTestActivity extends Activity {
                     while ((str=in.readLine()) != null) {
                         buf.append(str);
                     }
-
                     in.close();
-                    Log.d("huivip",buf.toString());
-                    LrcView lrcView=findViewById(R.id.lrc_view);
-                    lrcView.setLrc(buf.toString());
-                    lrcView.init();
-                } catch (IOException e) {
+                    int size = inputStream.available();
+                    byte[] buffer = new byte[size];
+                    inputStream.read(buffer);
+                    inputStream.close();
+                    text = new String(buffer);
+                    Log.d("huivip",text);
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.sea);*/
+
+
+                   /* new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            lrcString=GecimeKu.downloadLyric("大海","张雨生");
+                            //lrcView.setPlayer(mediaPlayer);
+                            if(!TextUtils.isEmpty(lrcString)) {
+                                Message msg = new Message();
+                                mHandler.sendMessage(msg);
+                            }
+                        }
+                    }).start();*/
+
+                    Intent lycFloatingService =new Intent(getApplicationContext(),LyricFloatingService.class);
+                    lycFloatingService.putExtra(LyricFloatingService.SONGNAME,"大海");
+                    lycFloatingService.putExtra(LyricFloatingService.ARTIST,"张雨生");
+                    startService(lycFloatingService);
+                   // mediaPlayer.start();
+               /* } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
         });
     }
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            lrcView.setLrc(lrcString);
+            lrcView.init();
+
+            mock.start();
+        }
+    };
     private void doStartApplicationWithPackageName(String packagename,String action) {
 
         // 通过包名获取此APP详细信息，包括Activities、services、versioncode、name等等

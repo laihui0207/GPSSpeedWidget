@@ -19,8 +19,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.*;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +31,8 @@ import butterknife.ButterKnife;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import devlight.io.library.ArcProgressStackView;
+import jp.co.recruit_lifestyle.android.floatingview.FloatingViewListener;
+import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +45,12 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  * Created by laisun on 28/02/2018.
  */
 
-public class FloatingService extends Service{
+public class FloatingService extends Service implements FloatingViewListener {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
 
     private WindowManager mWindowManager;
     private View mFloatingView;
+    private FloatingViewManager mFloatingViewManager;
     @BindView(R.id.limit)
     View mLimitView;
     @BindView(R.id.speedometer)
@@ -88,6 +93,17 @@ public class FloatingService extends Service{
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
+           /* LayoutInflater inflater = LayoutInflater.from(this);
+            DisplayMetrics metrics = new DisplayMetrics();
+            mWindowManager.getDefaultDisplay().getMetrics(metrics);
+            mFloatingView = inflater.inflate(R.layout.floating_default_limit, null);
+            // final ImageView iconView = (ImageView) inflater.inflate(R.layout.floating_default_limit, null, false);
+            mFloatingViewManager = new FloatingViewManager(this, this);
+            mFloatingViewManager.setFixedTrashIconImage(R.drawable.ic_overlay_close);
+            mFloatingViewManager.setActionTrashIconImage(R.drawable.ic_overlay_action);
+            final FloatingViewManager.Options options = new FloatingViewManager.Options();
+            options.overMargin = (int) (16 * metrics.density);
+            mFloatingViewManager.addViewToWindow(mFloatingView, options);*/
             gpsUtil.startLocationService();
         }
         return Service.START_REDELIVER_INTENT;
@@ -157,7 +173,13 @@ public class FloatingService extends Service{
             mSpeedometerView.setLayoutParams(speedLayout);
         }
         initMonitorPosition();
-
+        mSpeedometerText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent timeIntent =new Intent(getApplicationContext(),MapFloatingService.class);
+                startService(timeIntent);
+            }
+        });
         final ArrayList<ArcProgressStackView.Model> models = new ArrayList<>();
         models.add(new ArcProgressStackView.Model("", 0,
                 ContextCompat.getColor(this, R.color.colorPrimary800),
@@ -323,6 +345,18 @@ public class FloatingService extends Service{
 
         valueAnimator.start();
     }
+
+    @Override
+    public void onFinishFloatingView() {
+        stopForeground(true);
+        stopSelf();
+    }
+
+    @Override
+    public void onTouchFinished(boolean b, int i, int i1) {
+
+    }
+
     private class FloatingOnTouchListener implements View.OnTouchListener {
 
         private float mInitialTouchX;

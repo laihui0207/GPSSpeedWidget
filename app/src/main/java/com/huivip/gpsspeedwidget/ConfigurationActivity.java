@@ -86,6 +86,8 @@ public class ConfigurationActivity extends Activity {
         recordGPSCheckBox.setChecked(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()));
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         uploadGPSCheckBox.setChecked(PrefUtils.isEnableUploadGPSHistory(getApplicationContext()));
+        CheckBox cleanDataCheckBox = findViewById(R.id.checkBox_cleanData);
+        cleanDataCheckBox.setChecked(PrefUtils.isEnableAutoCleanGPSHistory(getApplicationContext()));
         if(PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
             if(PrefUtils.isAppFirstRun(getApplicationContext())) {
                 PrefUtils.setFlatingWindow(getApplicationContext(), true);
@@ -136,6 +138,12 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setRecordGPSHistory(getApplicationContext(),checkBoxButton.isChecked());
             }
         });
+        cleanDataCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setAutoCleanGPSHistory(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         uploadGPSCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
@@ -145,9 +153,13 @@ public class ConfigurationActivity extends Activity {
                         askForPermission(Manifest.permission.READ_PHONE_STATE, REQUEST_PHONE);
                     }
                     remoteUrlEditBox.setEnabled(true);
+                    cleanDataCheckBox.setChecked(false);
+                    cleanDataCheckBox.setEnabled(false);
+                    PrefUtils.setAutoCleanGPSHistory(getApplicationContext(),false);
                 }
                 else {
                     remoteUrlEditBox.setEnabled(false);
+                    cleanDataCheckBox.setEnabled(true);
                 }
 
                 PrefUtils.setUploadGPSHistory(getApplicationContext(),checkBoxButton.isChecked());

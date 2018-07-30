@@ -40,7 +40,7 @@
 
 ### 后台服务启动方法
 ```$bash
-npm install express querystring node-cache sqlite3 moment -y
+npm install express querystring node-cache sqlite3 moment body-parser -y
 npm install pm2 -y -g 
 pm2 start GPSHistory.js 
 pm2 startup systemd
@@ -242,6 +242,10 @@ pm2 save
 3. 取路精度设为 100米一次
 4. 电子狗语音已通过延迟2秒
 
+### 1.7.5
+1. 调整悬浮地图
+2. 
+
 
 ### 打赏列表
 |打赏好友|方式|金额 |
@@ -262,7 +266,7 @@ pm2 save
 |微信：*烟|微信|1元|
 |微信：*云|微信|10元|
 |QQ: 车来车往|微信|1.68元|
-|QQ: 风信子|QQ|46元|
+|QQ: 风信子|QQ|146元|
 |微信：*憶|微信|6.6元|
 |QQ: *鹏 | QQ |6.18元|
 |微信：*梦|微信|1元|

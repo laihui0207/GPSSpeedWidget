@@ -54,6 +54,8 @@ public class DBUtil extends SQLiteOpenHelper {
         String sql="delete from "+tableName+" where createTime <"+fromDate.getTime();
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(sql);
+        sql="VACUUM";
+        db.execSQL(sql);
         db.close();
     }
     public List<LocationVO> getLastedData(String limitNumber){

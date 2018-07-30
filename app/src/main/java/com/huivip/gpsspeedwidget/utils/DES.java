@@ -11,7 +11,7 @@ public class DES {
             throws Exception {
         IvParameterSpec zeroIv = new IvParameterSpec(iv);
         SecretKeySpec key = new SecretKeySpec(encryptKey.getBytes(), "DES");
-        Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
+        Cipher cipher = Cipher.getInstance("DES");
         cipher.init(Cipher.ENCRYPT_MODE, key, zeroIv);
         byte[] encryptedData = cipher.doFinal(encryptString.getBytes());
 
@@ -23,7 +23,7 @@ public class DES {
         byte[] byteMi = new Base64().decode(decryptString);
         IvParameterSpec zeroIv = new IvParameterSpec(iv);
         SecretKeySpec key = new SecretKeySpec(decryptKey.getBytes(), "DES");
-        Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
+        Cipher cipher = Cipher.getInstance("DES");
         cipher.init(Cipher.DECRYPT_MODE, key, zeroIv);
         byte decryptedData[] = cipher.doFinal(byteMi);
 

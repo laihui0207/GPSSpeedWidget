@@ -19,7 +19,7 @@
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -89,7 +89,7 @@
                     android:name="android.appwidget.provider"
                     android:resource="@xml/number_widget_provider"/>
         </receiver>
-        <receiver android:name=".MessageReceiver">
+        <receiver android:name=".listener.UploadRoadDataReceiver">
             <intent-filter>
                 <action android:name="com.huivip.recordGpsHistory.start"/>
             </intent-filter>
@@ -127,6 +127,12 @@
         <receiver android:name=".listener.MediaNotificationReceiver">
             <intent-filter>
                 <action android:name="com.android.music.metachanged"/>
+                <action android:name="com.android.music.statuschanged"/>
+                <action android:name="com.android.music.musicservicecommand"/>
+                <action android:name="com.android.music.updateprogress"/>
+                <action android:name="com.kugou.android.music.metachanged"/>
+                <action android:name="com.tencent.qqmusic.widgetupdate"/>
+                <action android:name="cn.flyaudio.media.action.TRACK_DETAILS"/>
                 <action android:name="com.htc.music.metachanged"/>
                 <action android:name="com.rdio.android.metachanged"/>
                 <action android:name="com.sonyericsson.music.metachanged"/>
@@ -135,12 +141,63 @@
                 <action android:name="com.amazon.mp3.metachanged"/>
                 <action android:name="com.nullsoft.winamp.metachanged"/>
                 <action android:name="com.sec.android.app.music.metachanged"/>
-                <action android:name="fm.last.android.metachanged"/>
                 <action android:name="com.samsung.sec.android.MusicPlayer.metachanged"/>
                 <action android:name="com.andrew.apollo.metachanged"/>
                 <action android:name="com.android.music.playstatechanged"/>
+                <action android:name="com.maxmpz.audioplayer.metachanged"/>
+                <action android:name="com.maxmpz.audioplayer.playstatechanged"/>
                 <action android:name="com.android.music.playbackcomplete"/>
                 <action android:name="com.android.music.queuechanged"/>
+                <action android:name="com.geecko.QuickLyric.SHOW_NOTIFICATION"/>
+                <action android:name="com.jrtstudio.music.metachanged"/>
+                <action android:name="com.jrtstudio.music.playstatechanged"/>
+                <action android:name="com.jrtstudio.AnotherMusicPlayer.metachanged"/>
+                <action android:name="com.jrtstudio.AnotherMusicPlayer.playstatechanged"/>
+                <action android:name="com.htc.music.playstatechanged"/>
+                <action android:name="com.rdio.android.metachanged"/>
+                <action android:name="com.rdio.android.playstatechanged"/>
+                <action android:name="fm.last.android.metachanged"/>
+                <action android:name="com.miui.player.metachanged"/>
+                <action android:name="com.miui.player.playstatechanged"/>
+                <action android:name="com.real.IMP.metachanged"/>
+                <action android:name="com.samsung.MusicPlayer.metachanged"/>
+                <action android:name="com.samsung.sec.metachanged"/>
+                <action android:name="com.samsung.music.metachanged"/>
+                <action android:name="com.samsung.sec.android.MusicPlayer.metachanged"/>
+                <action android:name="com.samsung.sec.android.MusicPlayer.playstatechanged"/>
+                <action android:name="com.lge.music.metachanged"/>
+                <action android:name="com.lge.music.playstatechanged"/>
+                <action android:name="com.sec.android.app.music.metachanged"/>
+                <action android:name="com.sec.android.app.music.playstatechanged"/>
+                <action android:name="com.rhapsody.metachanged"/>
+                <action android:name="com.rhapsody.playstatechanged"/>
+                <action android:name="com.maxmpz.audioplayer.playstatechanged"/>
+                <action android:name="net.jjc1138.android.scrobbler.action.MUSIC_STATUS"/>
+                <action android:name="com.adam.aslfms.notify.playstatechanged"/>
+                <action android:name="com.andrew.apollo.metachanged"/>
+                <action android:name="com.amazon.mp3.playstatechanged"/>
+                <action android:name="com.amazon.mp3.metachanged"/>
+                <action android:name="com.spotify.music.metadatachanged"/>
+                <action android:name="com.spotify.music.playbackstatechanged"/>
+                <action android:name="com.nullsoft.winamp.metachanged"/>
+                <action android:name="com.nullsoft.winamp.playstatechanged"/>
+                <action android:name="com.jetappfactory.jetaudio.playstatechanged"/>
+                <action android:name="com.jetappfactory.jetaudio.metachanged"/>
+                <action android:name="com.jetappfactory.jetaudioplus.playstatechanged"/>
+                <action android:name="com.jetappfactory.jetaudioplus.metachanged"/>
+                <action android:name="com.e8tracks.playstatechanged"/>
+                <action android:name="com.e8tracks.metachanged"/>
+                <action android:name="com.doubleTwist.androidPlayer.metachanged"/>
+                <action android:name="com.doubleTwist.androidPlayer.playstatechanged"/>
+                <action android:name="com.tbig.playerpro.metachanged"/>
+                <action android:name="com.tbig.playerpro.playstatechanged"/>
+                <action android:name="com.tbig.playerprotrial.metachanged"/>
+                <action android:name="com.tbig.playerprotrial.playstatechanged"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".listener.DelayTaskReceiver">
+            <intent-filter>
+                <action android:name="com.huivip.textfloating.close"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".listener.ThirdSoftLaunchReceiver"/>
@@ -159,6 +216,8 @@
         <service android:name=".DriveWayFloatingService"/>
         <service android:name=".MapFloatingService"/>
         <service android:name=".TextFloatingService"/>
+        <service android:name=".lyric.LyricService"/>
+        <service android:name=".LyricFloatingService"/>
         <service
                 android:name=".listener.AutoMapNotificationListener"
                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">

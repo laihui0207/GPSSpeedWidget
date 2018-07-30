@@ -139,6 +139,13 @@ public class MeterFloatingService extends Service {
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         CrashHandler.getInstance().init(getApplicationContext());
+        speedView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent timeIntent =new Intent(getApplicationContext(),MapFloatingService.class);
+                startService(timeIntent);
+            }
+        });
         super.onCreate();
     }
     void checkLocationData() {
