@@ -30,15 +30,15 @@ public class ThirdSoftLaunchReceiver extends BroadcastReceiver {
                 if (launchIntent != null) {
                     launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(launchIntent);//null pointer check in case package name was not found
-                    SystemClock.sleep(SystemClock.elapsedRealtime() + delayTime * 1000 + 300L);
+                    SystemClock.sleep( delayTime * 1000 + 300L);
                 }
             }
         }
         //index++;
        // PrefUtils.setOtherAppIndex(context, index);
         AlarmManager alarm=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent gotoHomeInten = PendingIntent.getBroadcast(context, 0, new Intent(context,GoToHomeReceiver.class), 0);
-        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 3000L, gotoHomeInten);
+        PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,GoToHomeReceiver.class), 0);
+        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
     }
 }
 

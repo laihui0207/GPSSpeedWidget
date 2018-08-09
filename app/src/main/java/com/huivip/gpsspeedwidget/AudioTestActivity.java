@@ -4,22 +4,31 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.media.RemoteController;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.huivip.gpsspeedwidget.lyric.GecimeKu;
 import com.huivip.gpsspeedwidget.lyric.MockTimeThread;
+import com.huivip.gpsspeedwidget.lyric.MusicNotificationListenerService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.*;
@@ -43,9 +52,34 @@ public class AudioTestActivity extends Activity {
     String lrcString="";
     LrcView lrcView;
     MockTimeThread mock;
+    private RemoteController.OnClientUpdateListener mOnClientUpdateListener;
+    private ServiceConnection mServiceConnection;
+    private MusicNotificationListenerService mNotificationListenerService;
+    private RemoteController mRemoteController;
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+    }
 
     private MediaPlayer mediaPlayer;
+ /*   private void onPlaybackStateUpdate(int state) {
+        if (mPlayPauseIb == null)
+            return;
+        mMusicControlState = STATE_MUSICDATA;
+        switch (state) {
+            case 2:
+                //paused
+                mPlayPauseIb.setBackgroundResource(R.mipmap.play);
+                break;
+            case 3:
+                //playing
+                mPlayPauseIb.setBackgroundResource(R.mipmap.pause);
+                break;
 
+        }
+        Log.d("Remote","position:"+mRemoteController.getEstimatedMediaPosition());
+    }*/
     /*    EditText accEditText;*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +116,67 @@ public class AudioTestActivity extends Activity {
                 audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,Integer.parseInt(systemEditText.getText().toString()),AudioManager.FLAG_SHOW_UI);
             }
         });
+
+        mOnClientUpdateListener = new RemoteController.OnClientUpdateListener() {
+            @Override
+            public void onClientChange(boolean clearing) {
+
+            }
+
+            @Override
+            public void onClientPlaybackStateUpdate(int state) {
+/*                onPlaybackStateUpdate(state);*/
+                Log.d("huivip","Status:"+state);
+            }
+
+            @Override
+            public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
+/*                onPlaybackStateUpdate(state);*/
+                Log.d("huivip","Status:"+state);
+                Log.d("huivip","stateChangeTimes:"+stateChangeTimeMs);
+                Log.d("huivip","CurrentPost:"+currentPosMs);
+                Log.d("huivip","Speed:"+speed);
+            }
+
+            @Override
+            public void onClientTransportControlUpdate(int transportControlFlags) {
+
+            }
+
+            @Override
+            public void onClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor) {
+                String artist = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "null");
+                String album = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ALBUM, "null");
+                String title = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
+                Long duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
+                Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_compass);
+                Bitmap bitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
+                Log.d("huivip", "artist:" + artist + "album:" + album + "title:" + title + "duration:" + duration);
+                ToastUtil.show(getApplicationContext(),title,10000);
+               /* Music music = new Music();
+                music.setCover(bitmap);
+                music.setTitle(title);
+                music.setArtist(artist);
+                onMetadataUpdate(music);*/
+            }
+        };
+        mServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                MusicNotificationListenerService.RCBinder rcBinder = (MusicNotificationListenerService.RCBinder) service;
+                mNotificationListenerService = rcBinder.getService();
+                mNotificationListenerService.registerRemoteController();
+                mNotificationListenerService.setExternalClientUpdateListener(mOnClientUpdateListener);
+                mRemoteController=mNotificationListenerService.getmRemoteController();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Log.d("huivip","Remote Controller connected");
+
+            }
+        };
+        getApplicationContext().bindService(new Intent(getApplicationContext(), MusicNotificationListenerService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         Button buttonMusic=findViewById(R.id.button_music);
         buttonMusic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,6 +258,13 @@ public class AudioTestActivity extends Activity {
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!Utils.isNotificationEnabled(getApplicationContext())){
+                    Utils.openNotificationWindows(getApplicationContext());
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),"enabled notification listen",Toast.LENGTH_SHORT).show();
+                }
+                //mNotificationListenerService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_NEXT);
                 /*Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_REBOOT);
                 intent.putExtra("nowait", 1);
@@ -291,10 +393,10 @@ public class AudioTestActivity extends Activity {
                         }
                     }).start();*/
 
-                    Intent lycFloatingService =new Intent(getApplicationContext(),LyricFloatingService.class);
+                   /* Intent lycFloatingService =new Intent(getApplicationContext(),LyricFloatingService.class);
                     lycFloatingService.putExtra(LyricFloatingService.SONGNAME,"大海");
                     lycFloatingService.putExtra(LyricFloatingService.ARTIST,"张雨生");
-                    startService(lycFloatingService);
+                    startService(lycFloatingService);*/
                    // mediaPlayer.start();
                /* } catch (IOException e) {
                     e.printStackTrace();

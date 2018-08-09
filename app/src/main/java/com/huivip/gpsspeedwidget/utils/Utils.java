@@ -3,10 +3,13 @@ package com.huivip.gpsspeedwidget.utils;
 import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
-import android.app.Instrumentation;
+import android.annotation.TargetApi;
+import android.app.*;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -17,14 +20,22 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.lyric.LyricService;
+import com.huivip.gpsspeedwidget.lyric.MusicNotificationListenerService;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +43,10 @@ import java.util.Set;
 
 
 public abstract class Utils {
-
+    public static final String TRACK_NOTIF_CHANNEL = "track_visible_notif";
+    public static final String TRACK_NOTIF_HIDDEN_CHANNEL = "track_hidden_notif";
+    private static final String TRANSLATION_CHANNEL = "translation_notif";
+    public static final int NOTIFICATION_ID = 6;
     public static boolean isAccessibilityServiceEnabled(Context context, Class<? extends AccessibilityService> c) {
         int accessibilityEnabled = 0;
         final String service = BuildConfig.APPLICATION_ID + "/" + c.getName();
@@ -156,7 +170,7 @@ public abstract class Utils {
         return new HashSet<>(names);
     }
     public static void goHome(Context context){
-        PackageManager packageManager = context.getPackageManager();
+     /*   PackageManager packageManager = context.getPackageManager();
         Intent intentLauncher = new Intent(Intent.ACTION_MAIN);
         intentLauncher.addCategory(Intent.CATEGORY_HOME);
         String selectDefaultLauncher=packageManager.resolveActivity(intentLauncher,PackageManager.MATCH_DEFAULT_ONLY).activityInfo.packageName;
@@ -185,12 +199,12 @@ public abstract class Utils {
                 }).start();
 
             }
-        } else {
+        } else {*/
             Intent paramIntent = new Intent("android.intent.action.MAIN");
             paramIntent.addCategory("android.intent.category.HOME");
             paramIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(paramIntent);
-        }
+        /*}*/
     }
     public static boolean isServiceReady(Context context) {
         boolean permissionGranted =
@@ -339,4 +353,106 @@ public abstract class Utils {
             }
         }
     }
+
+    public static int getPrimaryColor(Context context) {
+        TypedValue primaryColor = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.colorPrimary, primaryColor, true);
+        return primaryColor.data;
+    }
+    public static Notification makeNotification(Context context, String artist, String track, long duration, boolean retentionNotif, boolean isPlaying) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean prefOverlay = sharedPref.getBoolean("pref_overlay", false) && (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context));
+        int notificationPref = prefOverlay ? 2 : Integer.valueOf(sharedPref.getString("pref_notifications", "0"));
+
+        Intent activityIntent = new Intent(context.getApplicationContext(), MainActivity.class)
+                .setAction("com.geecko.QuickLyric.getLyrics")
+                .putExtra("retentionNotif", retentionNotif)
+                .putExtra("TAGS", new String[]{artist, track});
+        Intent wearableIntent = new Intent("com.geecko.QuickLyric.SEND_TO_WEARABLE")
+                .putExtra("artist", artist).putExtra("track", track).putExtra("duration", duration);
+        final Intent overlayIntent = new Intent(context.getApplicationContext(), LyricFloatingService.class)
+                .setAction(LyricFloatingService.CLICKED_FLOATING_ACTION);
+
+        PendingIntent overlayPending = PendingIntent.getService(context.getApplicationContext(), 0, overlayIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent openAppPending = PendingIntent.getActivity(context.getApplicationContext(), 0, activityIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent wearablePending = PendingIntent.getBroadcast(context.getApplicationContext(), 8, wearableIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(notificationPref == 1 && isPlaying ? TRACK_NOTIF_CHANNEL : TRACK_NOTIF_HIDDEN_CHANNEL,
+                    "Lyric",
+                    notificationPref == 1 && isPlaying ? NotificationManager.IMPORTANCE_LOW : NotificationManager.IMPORTANCE_MIN);
+            notificationChannel.setShowBadge(false);
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
+        NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context.getApplicationContext(), notificationPref == 1 && isPlaying ? TRACK_NOTIF_CHANNEL : TRACK_NOTIF_HIDDEN_CHANNEL);
+        NotificationCompat.Builder wearableNotifBuilder = new NotificationCompat.Builder(context.getApplicationContext(), TRACK_NOTIF_HIDDEN_CHANNEL);
+
+
+        notifBuilder
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(String.format("%s - %s", artist, track))
+                .setContentIntent(prefOverlay ? overlayPending : openAppPending)
+                .setVisibility(-1) // Notification.VISIBILITY_SECRET
+                .setGroup("Lyrics_Notification")
+                .setColor(getPrimaryColor(context))
+                .setShowWhen(false)
+                .setGroupSummary(true);
+        if (notificationPref == 2) {
+            notifBuilder.setOngoing(true).setPriority(-2); // Notification.PRIORITY_MIN
+            wearableNotifBuilder.setPriority(-2);
+        } else
+            notifBuilder.setPriority(-1); // Notification.PRIORITY_LOW
+
+        Notification notif = notifBuilder.build();
+
+        if (notificationPref == 2 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            notif.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+        if (notificationPref == 1)
+            notif.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        try {
+            context.getPackageManager().getPackageInfo("com.google.android.wearable.app", PackageManager.GET_META_DATA);
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+
+        return notif;
+    }
+    public static void openNotificationWindows(Context context){
+        Intent localIntent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+        //直接跳转到应用通知设置的代码：
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            //localIntent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+            localIntent.putExtra("app_package", context.getPackageName());
+            localIntent.putExtra("app_uid", context.getApplicationInfo().uid);
+            localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }/* else if (android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            localIntent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            localIntent.addCategory(Intent.CATEGORY_DEFAULT);
+            localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            localIntent.setData(Uri.parse("package:" + context.getPackageName()));
+        }*/ else {
+            //4.4以下没有从app跳转到应用通知设置页面的Action，可考虑跳转到应用详情页面,
+            localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (Build.VERSION.SDK_INT >= 9) {
+                localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+                localIntent.setData(Uri.fromParts("package", context.getPackageName(), null));
+            } else if (Build.VERSION.SDK_INT <= 8) {
+                localIntent.setAction(Intent.ACTION_VIEW);
+                localIntent.setClassName("com.android.settings", "com.android.setting.InstalledAppDetails");
+                localIntent.putExtra("com.android.settings.ApplicationPkgName", context.getPackageName());
+            }
+        }
+        context.startActivity(localIntent);
+    }
+/*    @TargetApi(Build.VERSION_CODES.KITKAT)*/
+    public static boolean isNotificationEnabled(Context context) {
+        ComponentName cn = new ComponentName(context, LyricService.class);
+        String flat = Settings.Secure.getString(context.getContentResolver(), "enabled_notification_listeners");
+        final boolean enabled = flat != null && flat.contains(cn.flattenToString());
+       return enabled;
+    }
+
 }

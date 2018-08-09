@@ -44,7 +44,7 @@
                 android:id="@+id/selectDate"
                 android:layout_weight="1"
                 android:clickable="true" android:layout_width="wrap_content"
-                android:hint="选择行车轨迹查询日期" android:layout_height="wrap_content"
+                android:hint="选择查询日期" android:layout_height="wrap_content"
         />
         <Button android:layout_width="wrap_content" android:id="@+id/TrackBtn"
                 android:layout_weight="1" android:layout_height="wrap_content"

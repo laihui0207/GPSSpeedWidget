@@ -84,12 +84,12 @@ public class LrcView extends View {
         gPaint = new Paint();
         gPaint.setAntiAlias(true);
         gPaint.setColor(lrcColor);
-        gPaint.setTextSize(36);
+        gPaint.setTextSize(45);
         gPaint.setTextAlign(Paint.Align.CENTER);
         hPaint = new Paint();
         hPaint.setAntiAlias(true);
         hPaint.setColor(highLineColor);
-        hPaint.setTextSize(36);
+        hPaint.setTextSize(45);
         hPaint.setTextAlign(Paint.Align.CENTER);
     }
 

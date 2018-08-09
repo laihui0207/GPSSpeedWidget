@@ -340,8 +340,8 @@ public class MainActivity extends Activity implements TraceListener {
                     paramIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(paramIntent);
                 }*/
-                //Utils.goHome(getApplicationContext());
-                moveTaskToBack(false);
+                Utils.goHome(getApplicationContext());
+                //moveTaskToBack(false);
             }
         });
         /*if(enabledApps==null){*/

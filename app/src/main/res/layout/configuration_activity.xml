@@ -420,9 +420,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_natviAudio"
-                    android:layout_below="@+id/radioGroup_flattingStyleSelect"
-                    android:layout_alignRight="@+id/enableOver" android:layout_alignEnd="@+id/enableOver"
-                    android:visibility="gone"/>
+                    android:layout_above="@+id/checkBox_Navi_autoSolt"
+                    android:layout_toEndOf="@+id/checkBox_showLimit"/>
             <Button
                     android:text="测试语音"
                     android:layout_width="wrap_content"

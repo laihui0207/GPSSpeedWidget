@@ -197,12 +197,16 @@ public class GpsUtil implements AMapNaviListener {
         if (PrefUtils.isEnableAutoNaviService(context) && !aimlessStatred) {
             aMapNavi = AMapNavi.getInstance(context);
             aMapNavi.addAMapNaviListener(this);
+
             if(PrefUtils.getTtsEngine(context).equalsIgnoreCase(SpeechFactory.SDKTTS)){
                 aMapNavi.setUseInnerVoice(true);
+                aMapNavi.getNaviSetting().setUseOfflineVoice(true);
+                aMapNavi.getNaviSetting().setIgnoreWifi(true);
+                aMapNavi.setSoundQuality(SoundQuality.High_Quality);
             } else {
                 aMapNavi.setUseInnerVoice(false);
             }
-            aMapNavi.getNaviSetting().setTrafficStatusUpdateEnabled(true);
+
             if (PrefUtils.isOldDriverMode(context)) {
                 aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
                 aMapNavi.startAimlessMode(AimLessMode.CAMERA_DETECTED);
@@ -1013,6 +1017,11 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void onCalculateRouteFailure(AMapCalcRouteResult aMapCalcRouteResult) {
+
+    }
+
+    @Override
+    public void onNaviRouteNotify(AMapNaviRouteNotifyData aMapNaviRouteNotifyData) {
 
     }
 }

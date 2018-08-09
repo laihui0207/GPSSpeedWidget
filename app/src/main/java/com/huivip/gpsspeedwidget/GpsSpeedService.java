@@ -24,7 +24,8 @@ public class GpsSpeedService extends Service {
     static final int MAX_VELOCITA_NUMBER = 140;
     public static final String EXTRA_AUTOBOOT = "com.huivip.gpsspeedwidget.EXTRA_AUTOBOOT";
     public static final String EXTRA_AUTONAVI_AUTOBOOT = "com.huivip.gpsspeedwidget.EXTRA_AUTONAVI_AUTOBOOT";
-
+    public static final String EXTRA_ACION="com.huivip.widget.ACTION";
+    public static final String EXTRA_ACION_SPEED_CLICK="com.huivip.widget.speed.click";
     GpsUtil gpsUtil;
     AppWidgetManager manager;
 

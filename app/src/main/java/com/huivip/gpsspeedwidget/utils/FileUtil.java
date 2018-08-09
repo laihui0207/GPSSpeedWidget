@@ -3,7 +3,9 @@ package com.huivip.gpsspeedwidget.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.TextureView;
 import android.widget.Toast;
 import com.alibaba.idst.nls.internal.utils.L;
 import com.amap.api.trace.TraceLocation;
@@ -80,7 +82,70 @@ public class FileUtil {
     public static void uploadCrashLog(String logPath,String deviceId){
 
     }
+    public static String loadLric(Context context,String songName,String artist){
+        String content="";
+        String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";
+        File dir=new File(path);
+        if(!dir.exists()){
+            return content;
+        }
+        String fileName=songName;
+        if(!TextUtils.isEmpty(artist)){
+            fileName+="_"+artist;
+        }
+        fileName+=".lrc";
+        String lrcFileName=path+fileName;
+        File lrcFile=new File(lrcFileName);
+        if(!lrcFile.exists()){
+            return content;
+        }
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(lrcFileName));
+            try {
+                StringBuilder sb = new StringBuilder();
+                String line = br.readLine();
 
+                while (line != null) {
+                    sb.append(line);
+                    sb.append(System.lineSeparator());
+                    line = br.readLine();
+                }
+                content = sb.toString();
+            } finally {
+                br.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
+    }
+    public static void saveLric(Context context,String songName,String artist,String content){
+        String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";
+        File dir=new File(path);
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        String fileName=songName;
+        if(!TextUtils.isEmpty(artist)){
+            fileName+="_"+artist;
+        }
+        fileName+=".lrc";
+        String lrcFileName=path+fileName;
+        File lrcFile=new File(lrcFileName);
+        if(lrcFile.exists()){
+            lrcFile.delete();
+        }
+
+        try {
+            FileWriter fileWriter = new FileWriter(lrcFile);
+            fileWriter.write(content);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            Toast.makeText(context,"File create Error:"+e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+        }
+    }
     public static String createGPXFile(List<TraceLocation> data, String selectDate,Context context){
         if(data==null && data.size()==0){
             return null;

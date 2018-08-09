@@ -47,7 +47,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
+               <!-- <category android:name="android.intent.category.DEFAULT" />-->
             </intent-filter>
         </activity>
        <!-- <activity android:name=".GPSLauncher">
@@ -100,29 +100,31 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+        <service android:name="com.amap.api.track.AMapTrackService" />
         <service android:name="com.amap.api.location.APSService"></service>
         <receiver android:name=".listener.AutoFTPBackupReceiver"/>
         <receiver android:name=".listener.AutoLaunchSystemConfigReceiver"/>
         <receiver android:name=".listener.BootStartReceiver">
             <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <category android:name="android.intent.category.HOME"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED"/>
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED"/>
                 <action android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGEDD"/>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
                 <action android:name="android.intent.action.ANY_DATA_STATE"/>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.DATE_CHANGED"/>
                 <action android:name="android.intent.action.SCREEN_ON"/>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
                 <action android:name="android.intent.action.TIME_SET"/>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.HOME"/>
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
                 <action android:name="com.huivip.gpsspeedwidget.autostarted" />
             </intent-filter>
+
         </receiver>
         <receiver android:name=".listener.MediaNotificationReceiver">
             <intent-filter>
@@ -154,7 +156,6 @@
                 <action android:name="com.jrtstudio.AnotherMusicPlayer.metachanged"/>
                 <action android:name="com.jrtstudio.AnotherMusicPlayer.playstatechanged"/>
                 <action android:name="com.htc.music.playstatechanged"/>
-                <action android:name="com.rdio.android.metachanged"/>
                 <action android:name="com.rdio.android.playstatechanged"/>
                 <action android:name="fm.last.android.metachanged"/>
                 <action android:name="com.miui.player.metachanged"/>
@@ -216,15 +217,7 @@
         <service android:name=".DriveWayFloatingService"/>
         <service android:name=".MapFloatingService"/>
         <service android:name=".TextFloatingService"/>
-        <service android:name=".lyric.LyricService"/>
         <service android:name=".LyricFloatingService"/>
-        <service
-                android:name=".listener.AutoMapNotificationListener"
-                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
         <service android:name=".RealTimeFloatingService"/>
         <service
                 android:name=".detection.AppDetectionService"
@@ -237,7 +230,21 @@
                     android:name="android.accessibilityservice"
                     android:resource="@xml/accessibility_service"/>
         </service>
-
+        <service android:name="com.huivip.gpsspeedwidget.lyric.LyricService"
+                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+        </service>
+       <!-- <service
+                android:name=".lyric.NotificationListenerService"
+                android:enabled="true"
+                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+                android:process=":NLS">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+        </service>-->
         <activity android:name=".AudioTestActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
         </activity>
         <activity android:name=".BackupGPSHistoryActivity" android:windowSoftInputMode="stateHidden|stateUnchanged"></activity>

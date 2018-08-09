@@ -1,6 +1,7 @@
 package com.huivip.gpsspeedwidget.lyric;
 
 import android.text.TextUtils;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,7 +20,7 @@ public class WangYiYunMusic {
         if(TextUtils.isEmpty(songName)) return content;
         Map<String,String> params=new HashMap<>();
         params.put("s",songName);
-        params.put("limit","10");
+        params.put("limit","2");
         params.put("offset","0");
         params.put("type","1");
         String songDetail=HttpUtils.submitPostData(SEARCH_URL,params,"utf-8");
@@ -31,6 +32,9 @@ public class WangYiYunMusic {
                 JSONArray songs =result.getJSONArray("songs");
                 if(songs.length()>0){
                     songId=((JSONObject)songs.get(0)).getString("id");
+                    if(TextUtils.isEmpty(songId)){
+                        songId=((JSONObject)songs.get(1)).getString("id");
+                    }
                     if(TextUtils.isEmpty(songId)) return content;
                     String lyrcResponse=HttpUtils.getData(String.format(LYRC_URL, songId));
                     if(TextUtils.isEmpty(lyrcResponse)) return content;

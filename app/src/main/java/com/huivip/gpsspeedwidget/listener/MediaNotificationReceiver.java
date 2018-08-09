@@ -1,21 +1,25 @@
 package com.huivip.gpsspeedwidget.listener;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
+import android.content.*;
+import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.os.BadParcelableException;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Toast;
 import com.huivip.gpsspeedwidget.LyricFloatingService;
 import com.huivip.gpsspeedwidget.TextFloatingService;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
+import com.huivip.gpsspeedwidget.lyric.MediaControllerCallback;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 public class MediaNotificationReceiver extends BroadcastReceiver {
     private String preSongName;
     private static boolean spotifyPlaying = false;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
@@ -48,21 +52,14 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         String songName=intent.getStringExtra("track");
         String artistName=intent.getStringExtra("artist");
         String album=intent.getStringExtra("album");
-        if (intent.getAction().equals("com.amazon.mp3.metachanged")) {
-            artistName = extras.getString("com.amazon.mp3.artist");
-            songName = extras.getString("com.amazon.mp3.track");
-        } else if (intent.getAction().equals("com.spotify.music.metadatachanged"))
-            isPlaying = spotifyPlaying;
-        else if (intent.getAction().equals("com.spotify.music.playbackstatechanged"))
-            spotifyPlaying = isPlaying;
 
         if (artistName != null && artistName.trim().startsWith("<") && artistName.trim().endsWith(">") && artistName.contains("unknown"))
             artistName = "";
 
-        if (!TextUtils.isEmpty(player) && player.contains("youtube") && (TextUtils.isEmpty(artistName) || TextUtils.isEmpty(songName) ||
+       /* if (!TextUtils.isEmpty(player) && player.contains("youtube") && (TextUtils.isEmpty(artistName) || TextUtils.isEmpty(songName) ||
                 (!artistName.contains("VEVO") && !songName.contains("-")))) {
             return;
-        }
+        }*/
         StringBuffer showString=new StringBuffer();
         if (artistName != null && artistName.trim().startsWith("<") && artistName.trim().endsWith(">") && artistName.contains("unknown")) {
             artistName = "";
@@ -73,7 +70,7 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         if(!TextUtils.isEmpty(artistName)){
             showString.append("歌手:"+artistName).append("\n");
         }
-        if(!TextUtils.isEmpty(album)){
+        /*if(!TextUtils.isEmpty(album)){
             showString.append("唱片:"+album).append("\n");
         }
         showString.append("长度:").append(longToTimeString(duration)).append("\n");
@@ -84,8 +81,28 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         }
         if(position > -1){
             showString.append("当前:"+longToTimeString(position)+"\n");
+        }*/
+        Log.d("huivip", showString.toString());
+        SharedPreferences current = context.getSharedPreferences("current_music", Context.MODE_PRIVATE);
+        String currentArtist = current.getString("artist", "");
+        String currentTrack = current.getString("track", "");
+
+        SharedPreferences.Editor editor = current.edit();
+        editor.putString("artist", artistName);
+        editor.putString("track", songName);
+        editor.putString("player", player);
+        if (!(currentArtist.equals(artistName) && currentTrack.equals(songName) && position == -1))
+            editor.putLong("position", position);
+        editor.putBoolean("playing", isPlaying);
+        editor.putLong("duration", duration);
+        if (isPlaying) {
+            editor.putLong("startTime", System.currentTimeMillis());
         }
-        Log.d("huivip",showString.toString());
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
+            editor.commit();
+        else
+            editor.apply();
+
         if(!TextUtils.isEmpty(showString.toString())){
 /*            Toast.makeText(context,showString.toString(),Toast.LENGTH_LONG).show();*/
             Intent textFloat=new Intent(context,TextFloatingService.class);
@@ -93,28 +110,12 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
             textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
             context.startService(textFloat);
         }
-/*        if(songName!=null && !songName.equalsIgnoreCase(preSongName)) {*/
-            if(Utils.isServiceRunning(context,LyricFloatingService.class.getName()) && !isPlaying){
-                Intent lycFloatingService = new Intent(context, LyricFloatingService.class);
-                intent.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
-                context.startService(lycFloatingService);
-            }
-            if(isPlaying) {
-                Intent lycFloatingService = new Intent(context, LyricFloatingService.class);
-                lycFloatingService.putExtra(LyricFloatingService.SONGNAME, songName);
-                lycFloatingService.putExtra(LyricFloatingService.ARTIST, artistName);
-                if (position > -1) {
-                    lycFloatingService.putExtra(LyricFloatingService.POSITION, position);
-                }
-                lycFloatingService.putExtra(LyricFloatingService.DURATION, duration);
-                context.startService(lycFloatingService);
-            }
-           /* preSongName=songName;
-        } else if(!isPlaying){
-            Intent lycFloatingService = new Intent(context, LyricFloatingService.class);
-            intent.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
-            context.startService(lycFloatingService);
-        }*/
+        Intent lycService = new Intent(context, LyricService.class);
+        lycService.putExtra(LyricService.SONGNAME, songName);
+        lycService.putExtra(LyricService.ARTIST, artistName);
+        lycService.putExtra(LyricService.STATUS, isPlaying);
+        lycService.putExtra(LyricService.DURATION, duration);
+        context.startService(lycService);
     }
     private String longToTimeString(long time){
         long totalSecond=time/1000;
@@ -128,5 +129,10 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         result.append(minute).append(":").append(second);
         return result.toString();
 
+    }
+    public static void disableBroadcastReceiver(Context context) {
+        int flag=(PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
+        ComponentName component=new ComponentName(context.getApplicationContext(), MediaNotificationReceiver.class);
+        context.getPackageManager().setComponentEnabledSetting(component, flag, PackageManager.DONT_KILL_APP);
     }
 }

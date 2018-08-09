@@ -3,11 +3,13 @@ package com.huivip.gpsspeedwidget;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.Intent;
+import android.content.*;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
+import android.media.RemoteController;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -16,17 +18,18 @@ import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.huivip.gpsspeedwidget.listener.DelayTaskReceiver;
-import com.huivip.gpsspeedwidget.lyric.GecimeKu;
-import com.huivip.gpsspeedwidget.lyric.MockTimeThread;
-import com.huivip.gpsspeedwidget.lyric.WangYiYunMusic;
+import com.huivip.gpsspeedwidget.lyric.*;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.ToastUtil;
 import com.huivip.gpsspeedwidget.view.LrcView;
 import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
 
@@ -43,6 +46,8 @@ public class LyricFloatingService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     public static final String EXTRA_HIDE="com.huivip.gpsspeed.EXTRA_HIDE";
     public static final String EXTRA_SHOW="com.huivip.gpsspeed.EXTRA_SHOW";
+    public static final String UPDATE_LYRICS_ACTION="GPSWIDGET_UPDATE_LYRICS";
+    public static final String CLICKED_FLOATING_ACTION = "clicked_action";
     public static final String SHOW_TIME ="TextFlating_ShowTime";
     public static final String SHOW_TEXT ="TextFlating_ShowText";
     public static final String TARGET="LYRICFLoating";
@@ -51,14 +56,13 @@ public class LyricFloatingService extends Service{
     public static String POSITION="lyfic.position";
     public static String STATUS="lyric.status";
     public static String DURATION="lyric.duration";
+    public static String LYRIC_CONTENT="lyric.content";
     private WindowManager mWindowManager;
+    private MediaControllerCallback controllerCallback = null;
     private View mFloatingView;
     long startTime;
     AudioManager audioManager;
     String lyrcContent;
-    String songName="";
-    String artistName;
-    MockTimeThread mock;
     TimerTask lyricTask;
     long duration=0;
     Timer lyricTimer;
@@ -81,40 +85,13 @@ public class LyricFloatingService extends Service{
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
-            if(intent.getIntExtra(SHOW_TIME,0)>0){
-                int delayTimeStop=intent.getIntExtra(SHOW_TIME,0);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                       onStop();
-                       stopSelf();
-                    }
-                }, delayTimeStop*1000+300);
-            }
-            if(!audioManager.isMusicActive()){
-                onStop();
-                stopSelf();
-            }
-            String inputSongName = intent.getStringExtra(SONGNAME);
-            String inputArtistName = intent.getStringExtra(ARTIST);
+            lyrcContent=intent.getStringExtra(LYRIC_CONTENT);//FileUtil.loadLric(getApplicationContext(),inputSongName,inputArtistName);
             long position=intent.getLongExtra(POSITION,0L);
+            Log.d("huivip","Floating Position:"+position);
             duration=intent.getLongExtra(DURATION,-1L);
-            startTime=System.currentTimeMillis()+1000+position;
-            mock=new MockTimeThread(lrcView);
-            if(!TextUtils.isEmpty(inputSongName) &&(songName==null || !inputSongName.equalsIgnoreCase(songName))){
-                lrcView.setLrc(null);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // lyrcContent = GecimeKu.downloadLyric(inputSongName, inputArtistName);
-                        lyrcContent = WangYiYunMusic.downloadLyric(inputSongName, inputArtistName);
-                        Message msg = new Message();
-                        mHandler.sendMessage(msg);
-                        songName=inputSongName;
-                    }
-                }).start();
-
-            }
+            startTime=System.currentTimeMillis()-500-position;
+            lrcView.setLrc(lyrcContent);
+            lrcView.init();
             isShowing = true;
 
         }
@@ -125,7 +102,6 @@ public class LyricFloatingService extends Service{
                     @Override
                     public void run() {
                         calTime();
-                        //Log.d("huivip","GPS UTIL Check Location");
                     }
                 });
             }
@@ -133,10 +109,11 @@ public class LyricFloatingService extends Service{
         this.lyricTimer.schedule(this.lyricTask, 0L, 500L);
         return Service.START_REDELIVER_INTENT;
     }
-    private void calTime(){
-        long position=System.currentTimeMillis() - startTime;
+
+    private void calTime() {
+        long position = System.currentTimeMillis() - startTime;
         lrcView.setPlayercurrentMillis((int) position);
-        if(duration>0 && (position+1000)>=duration){
+        if (duration > 0 && (position + 1000) >= duration) {
             onStop();
             stopSelf();
         }
@@ -145,39 +122,7 @@ public class LyricFloatingService extends Service{
             stopSelf();
         }
     }
-
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            if(TextUtils.isEmpty(lyrcContent)) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(LyricFloatingService.this.lyricTimer!=null){
-                            LyricFloatingService.this.lyricTimer.cancel();
-                        }
-                       onStop();
-                       stopSelf();
-                    }
-                }, 3000L);
-            }
-            else {
-                lrcView.setLrc(lyrcContent);
-                //mock.reset();
-                lrcView.init();
-               /* if(!mock.isAlive()) {
-                    mock.start();
-                }*/
-
-            }
-            super.handleMessage(msg);
-        }
-    };
     private void onStop(){
-        /*if(mock!=null){
-            mock.reset();
-            mock.setRunning(false);
-        }*/
         if(mFloatingView!=null && mWindowManager!=null){
             try {
                 mWindowManager.removeView(mFloatingView);
@@ -185,10 +130,11 @@ public class LyricFloatingService extends Service{
 
             }
         }
-
         isShowing=false;
     }
-
+    public static void sendIntent(Context context, Intent intent) {
+        context.sendBroadcast(intent);
+    }
     @Override
     public void onCreate() {
         if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
@@ -205,7 +151,7 @@ public class LyricFloatingService extends Service{
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_lyrc_window, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 getWindowType(),
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
@@ -217,16 +163,7 @@ public class LyricFloatingService extends Service{
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         initMonitorPosition();
         CrashHandler.getInstance().init(getApplicationContext());
-       /* lrcView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                onStop();
-                stopSelf();
-                return false;
-            }
-        });*/
         lyricTimer = new Timer();
-
         super.onCreate();
     }
 
@@ -303,15 +240,11 @@ public class LyricFloatingService extends Service{
                     if (!mIsClick) {
                         params.x = (int) (dX + mInitialX);
                         params.y = (int) (dY + mInitialY);
-
                         try {
                             mWindowManager.updateViewLayout(mFloatingView, params);
                         } catch (IllegalArgumentException ignore) {
                         }
-                    } /*else {
-                        onStop();
-                        stopSelf();
-                    }*/
+                    }
                     return true;
                 case MotionEvent.ACTION_UP:
                     PrefUtils.setLyrcFloatingSolidLocation(getApplicationContext(), params.x, params.y);

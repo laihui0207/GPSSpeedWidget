@@ -28,6 +28,17 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+       /* for (int i = 0; i < appWidgetIds.length; i++) {
+            int appWidgetId = appWidgetIds[i];
+
+            Intent intent = new Intent(context, GpsSpeedService.class);
+            intent.setAction(GpsSpeedService.EXTRA_ACION_SPEED_CLICK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.speednumberwidget);
+            views.setOnClickPendingIntent(R.id.number_speed, pendingIntent);
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        }*/
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 

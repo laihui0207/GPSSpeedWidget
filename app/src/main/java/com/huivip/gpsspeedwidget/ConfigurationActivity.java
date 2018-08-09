@@ -986,6 +986,9 @@ public class ConfigurationActivity extends Activity {
                 startActivityForResult(intentWriteSetting, 124);
             }
         }
+        if(!Utils.isNotificationEnabled(getApplicationContext())){
+            Utils.openNotificationWindows(getApplicationContext());
+        }
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
         if(overlayEnabled && !PrefUtils.isEnableAccessibilityService(getApplicationContext())){
 

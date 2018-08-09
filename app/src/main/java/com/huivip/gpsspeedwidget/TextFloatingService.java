@@ -42,8 +42,8 @@ public class TextFloatingService extends Service{
     private WindowManager mWindowManager;
     private View mFloatingView;
 
-    @BindView(R.id.textView_time)
-    TextView timeTextView;
+    @BindView(R.id.textView_text)
+    TextView textTextView;
     boolean isShowing=false;
     @Nullable
     @Override
@@ -72,7 +72,7 @@ public class TextFloatingService extends Service{
             }
         }
         String text=intent.getStringExtra(SHOW_TEXT);
-        timeTextView.setText(text);
+        textTextView.setText(text);
         isShowing=true;
         return Service.START_REDELIVER_INTENT;
     }
