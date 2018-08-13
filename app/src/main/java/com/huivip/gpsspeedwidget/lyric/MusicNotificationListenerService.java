@@ -1,7 +1,5 @@
 package com.huivip.gpsspeedwidget.lyric;
 
-import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.RemoteController;

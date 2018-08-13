@@ -1,12 +1,12 @@
 package com.huivip.gpsspeedwidget.lyric;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
+import android.media.RemoteControlClient;
 import android.media.RemoteController;
 import android.os.*;
 import android.service.notification.NotificationListenerService;
@@ -17,13 +17,15 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import com.huivip.gpsspeedwidget.LyricFloatingService;
+import com.huivip.gpsspeedwidget.LyricWidgetService;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
-import com.huivip.gpsspeedwidget.view.LrcView;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.lang.ref.WeakReference;
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class LyricService extends NotificationListenerService implements RemoteController.OnClientUpdateListener  {
+    public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     public static String SONGNAME="lyric.songName";
     public static String ARTIST="lyric.artist";
     public static String DURATION="lyric.duration";
@@ -68,8 +70,8 @@ public class LyricService extends NotificationListenerService implements RemoteC
     @Override
     public void onDestroy() {
         this.mBinder = null;
-        /*if (mRemoteController != null && mRemoteController.get() != null)
-            am.unregisterRemoteController(mRemoteController.get());*/
+        if (mRemoteController != null && mRemoteController.get() != null)
+            am.unregisterRemoteController(mRemoteController.get());
         super.onDestroy();
     }
 
@@ -79,7 +81,12 @@ public class LyricService extends NotificationListenerService implements RemoteC
             String inputSongName=intent.getStringExtra(SONGNAME);
             String inputArtist=intent.getStringExtra(ARTIST);
             boolean isPlaying=intent.getBooleanExtra(STATUS,false);
+            if(!am.isMusicActive()){
+                stopSelf();
+            }
+            currentPosition=0;
             if(!TextUtils.isEmpty(inputSongName) && (songName==null || !inputSongName.equalsIgnoreCase(songName) || am.isMusicActive())){
+                lyricContent=null;
                searchLyric(inputSongName,inputArtist);
             }
         }
@@ -93,6 +100,7 @@ public class LyricService extends NotificationListenerService implements RemoteC
         Log.e(TAG, "onNotificationPosted...");
     }
     public boolean sendMusicKeyEvent(int keyCode) {
+        Log.d("huvip","lyric service Send key:"+keyCode);
         if (mRemoteController != null) {
             KeyEvent keyEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
             boolean down = mRemoteController.get().sendMediaKeyEvent(keyEvent);
@@ -145,9 +153,9 @@ public class LyricService extends NotificationListenerService implements RemoteC
         Log.d("huivip","stateChangeTimes:"+stateChangeTimeMs);
         Log.d("huivip","CurrentPost:"+currentPosMs);
         Log.d("huivip","Speed:"+speed);
-        if(state==2){
+        if(state==RemoteControlClient.PLAYSTATE_PAUSED){
             launchLrcFloationgWindows(false);
-        } else if(state==3){
+        } else if(state== RemoteControlClient.PLAYSTATE_PLAYING){
             currentPosition=currentPosMs;
             searchLyric(songName,artistName);
         }
@@ -166,8 +174,7 @@ public class LyricService extends NotificationListenerService implements RemoteC
         duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
         Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_compass);
         Bitmap bitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
-        //ToastUtil.show(getApplicationContext(),songName,10000);
-
+        searchLyric(songName,artistName);
     }
     private void searchLyric(String inputSongName,String inputArtist){
         new Thread(new Runnable() {
@@ -210,6 +217,25 @@ public class LyricService extends NotificationListenerService implements RemoteC
              lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
          }
          startService(lycFloatingService);
+         if(!Utils.isServiceRunning(getApplicationContext(),LyricWidgetService.class.getName())) {
+             Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
+             widgetService.putExtra(LyricWidgetService.DURATION, duration);
+             widgetService.putExtra(LyricWidgetService.LYRIC_CONTENT, lyricContent);
+             if (currentPosition > 0) {
+                 widgetService.putExtra(LyricWidgetService.POSITION, currentPosition);
+             }
+        /* if(!start){
+             widgetService.putExtra(LyricWidgetService.EXTRA_CLOSE,true);
+             startService(widgetService);
+         } else {*/
+             startService(widgetService);
+             /*}*/
+         }
+        Intent intent2 = new Intent();
+        intent2.setAction("com.huivip.widget.lyric.changed");
+        intent2.putExtra(LyricWidgetService.LYRIC_CONTENT, lyricContent);
+        intent2.putExtra(LyricWidgetService.POSITION,currentPosition);
+        sendBroadcast(intent2);
     }
     public class RCBinder extends Binder {
         public LyricService getService() {

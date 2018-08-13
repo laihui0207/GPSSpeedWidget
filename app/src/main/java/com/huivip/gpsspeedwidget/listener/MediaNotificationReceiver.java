@@ -13,7 +13,9 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.LyricFloatingService;
 import com.huivip.gpsspeedwidget.TextFloatingService;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
+import com.huivip.gpsspeedwidget.lyric.LyricServiceLowVersion;
 import com.huivip.gpsspeedwidget.lyric.MediaControllerCallback;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 public class MediaNotificationReceiver extends BroadcastReceiver {
@@ -102,20 +104,31 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
             editor.commit();
         else
             editor.apply();
+        if (PrefUtils.isLyricEnabled(context)) {
+            if (!TextUtils.isEmpty(showString.toString())) {
+                /*            Toast.makeText(context,showString.toString(),Toast.LENGTH_LONG).show();*/
+                Intent textFloat = new Intent(context, TextFloatingService.class);
+                textFloat.putExtra(TextFloatingService.SHOW_TEXT, showString.toString());
+                textFloat.putExtra(TextFloatingService.SHOW_TIME, 10);
+                context.startService(textFloat);
+            }
 
-        if(!TextUtils.isEmpty(showString.toString())){
-/*            Toast.makeText(context,showString.toString(),Toast.LENGTH_LONG).show();*/
-            Intent textFloat=new Intent(context,TextFloatingService.class);
-            textFloat.putExtra(TextFloatingService.SHOW_TEXT,showString.toString());
-            textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
-            context.startService(textFloat);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                Intent lycService = new Intent(context, LyricService.class);
+                lycService.putExtra(LyricService.SONGNAME, songName);
+                lycService.putExtra(LyricService.ARTIST, artistName);
+                lycService.putExtra(LyricService.STATUS, isPlaying);
+                lycService.putExtra(LyricService.DURATION, duration);
+                context.startService(lycService);
+            } else {
+                Intent lycServiceLowVersion = new Intent(context, LyricServiceLowVersion.class);
+                lycServiceLowVersion.putExtra(LyricServiceLowVersion.SONGNAME, songName);
+                lycServiceLowVersion.putExtra(LyricServiceLowVersion.ARTIST, artistName);
+                lycServiceLowVersion.putExtra(LyricServiceLowVersion.STATUS, isPlaying);
+                lycServiceLowVersion.putExtra(LyricServiceLowVersion.DURATION, duration);
+                context.startService(lycServiceLowVersion);
+            }
         }
-        Intent lycService = new Intent(context, LyricService.class);
-        lycService.putExtra(LyricService.SONGNAME, songName);
-        lycService.putExtra(LyricService.ARTIST, artistName);
-        lycService.putExtra(LyricService.STATUS, isPlaying);
-        lycService.putExtra(LyricService.DURATION, duration);
-        context.startService(lycService);
     }
     private String longToTimeString(long time){
         long totalSecond=time/1000;

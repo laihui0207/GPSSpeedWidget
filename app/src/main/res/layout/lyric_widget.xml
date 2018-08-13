@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:background="@drawable/speed_border"
+>
+    <LinearLayout android:id="@+id/lyric_widget"
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:gravity="top|center"
+                  android:layout_height="wrap_content" android:weightSum="2">
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <TextView
+                    android:text="Music"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" android:id="@+id/textView_lyric" android:layout_weight="1"
+                    android:textColor="@color/green" android:textSize="40sp"
+                    android:layout_gravity="center_vertical|center"
+                    android:gravity="center" android:textStyle="bold"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:visibility="gone">
+            <Button
+                    android:text="上一首"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/button_lyric_prev" android:layout_weight="1"/>
+            <Button
+                    android:text="播放"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/button_lyric_play" android:layout_weight="1"/>
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/button_lyric_next" android:layout_weight="1"
+                    android:text="下一首"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools" package="com.huivip.gpsspeedwidget">
-
+    <uses-permission android:name="android.permission.RAISED_THREAD_PRIORITY"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -36,13 +36,14 @@
             android:roundIcon="@mipmap/ic_launcher"
             android:sharedUserId="android.uid.system"
             android:supportsRtl="true"
+            android:persistent="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             >
         <meta-data
                 android:name="com.amap.api.v2.apikey"
                 android:value="6d91e53ca05dee32ec58c9d257224e7b"/>
 
-        <activity android:name=".MainActivity"  android:windowSoftInputMode="stateHidden|stateUnchanged">
+        <activity android:name=".MainActivity" android:excludeFromRecents="true" android:windowSoftInputMode="stateHidden|stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -89,6 +90,18 @@
                     android:name="android.appwidget.provider"
                     android:resource="@xml/number_widget_provider"/>
         </receiver>
+        <receiver
+                android:name=".LyricWidgetProvider"
+                android:label="LyricWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="Lyric_WIDGET_UPDATE"/>
+            </intent-filter>
+
+            <meta-data
+                    android:name="android.appwidget.provider"
+                    android:resource="@xml/lyric_widget_provider"/>
+        </receiver>
         <receiver android:name=".listener.UploadRoadDataReceiver">
             <intent-filter>
                 <action android:name="com.huivip.recordGpsHistory.start"/>
@@ -108,20 +121,18 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <category android:name="android.intent.category.HOME"/>
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT"/>
-                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED"/>
-                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED"/>
-                <action android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGEDD"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
                 <action android:name="android.intent.action.ANY_DATA_STATE"/>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
                 <action android:name="android.intent.action.DATE_CHANGED"/>
-                <action android:name="android.intent.action.SCREEN_ON"/>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
-                <action android:name="android.intent.action.TIME_SET"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
                 <action android:name="com.huivip.gpsspeedwidget.autostarted" />
             </intent-filter>
 
@@ -207,6 +218,11 @@
         <receiver android:name=".listener.DateChangeReceiver"/>
         <receiver android:name=".listener.CatchRoadReceiver"/>
         <service android:name=".GpsSpeedService"/>
+        <service android:name=".LyricWidgetService">
+            <intent-filter>
+                <action android:name="com.huivip.widget.lyric.changed"/>
+            </intent-filter>
+        </service>
         <service android:name=".FloatingService"/>
         <service android:name=".RecordGpsHistoryService"/>
         <service android:name=".NaviFloatingService"/>
@@ -219,6 +235,7 @@
         <service android:name=".TextFloatingService"/>
         <service android:name=".LyricFloatingService"/>
         <service android:name=".RealTimeFloatingService"/>
+        <service android:name=".lyric.LyricServiceLowVersion"/>
         <service
                 android:name=".detection.AppDetectionService"
                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">

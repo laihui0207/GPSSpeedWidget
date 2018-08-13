@@ -14,32 +14,19 @@ import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.RemoteController;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.text.TextUtils;
+import android.os.*;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-import com.huivip.gpsspeedwidget.lyric.GecimeKu;
-import com.huivip.gpsspeedwidget.lyric.MockTimeThread;
+import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.lyric.MusicNotificationListenerService;
-import com.huivip.gpsspeedwidget.speech.SpeechFactory;
-import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.*;
 import com.huivip.gpsspeedwidget.view.LrcView;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class AudioTestActivity extends Activity {
     AudioManager audioManager;
@@ -51,10 +38,9 @@ public class AudioTestActivity extends Activity {
     EditText notificationText;
     String lrcString="";
     LrcView lrcView;
-    MockTimeThread mock;
     private RemoteController.OnClientUpdateListener mOnClientUpdateListener;
     private ServiceConnection mServiceConnection;
-    private MusicNotificationListenerService mNotificationListenerService;
+    private LyricService lyricService;
     private RemoteController mRemoteController;
     @Override
     public void onAttachedToWindow() {
@@ -86,7 +72,6 @@ public class AudioTestActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_test);
         lrcView=findViewById(R.id.lrc_view);
-        mock=new MockTimeThread(lrcView);
         audioManager= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         TextView systemMaxView=findViewById(R.id.textView_maxSystem);
         systemMaxView.setText("System: current:"+audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM)+",max:"+audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
@@ -117,57 +102,54 @@ public class AudioTestActivity extends Activity {
             }
         });
 
-        mOnClientUpdateListener = new RemoteController.OnClientUpdateListener() {
-            @Override
-            public void onClientChange(boolean clearing) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            mOnClientUpdateListener = new RemoteController.OnClientUpdateListener() {
+                @Override
+                public void onClientChange(boolean clearing) {
 
-            }
+                }
 
-            @Override
-            public void onClientPlaybackStateUpdate(int state) {
-/*                onPlaybackStateUpdate(state);*/
-                Log.d("huivip","Status:"+state);
-            }
+                @Override
+                public void onClientPlaybackStateUpdate(int state) {
+                    //onPlaybackStateUpdate(state);
+                    Log.d("huivip","Status:"+state);
+                }
 
-            @Override
-            public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
-/*                onPlaybackStateUpdate(state);*/
-                Log.d("huivip","Status:"+state);
-                Log.d("huivip","stateChangeTimes:"+stateChangeTimeMs);
-                Log.d("huivip","CurrentPost:"+currentPosMs);
-                Log.d("huivip","Speed:"+speed);
-            }
+                @Override
+                public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
+                    //onPlaybackStateUpdate(state);
+                    Log.d("huivip","Status:"+state);
+                    Log.d("huivip","stateChangeTimes:"+stateChangeTimeMs);
+                    Log.d("huivip","CurrentPost:"+currentPosMs);
+                    Log.d("huivip","Speed:"+speed);
+                }
 
-            @Override
-            public void onClientTransportControlUpdate(int transportControlFlags) {
+                @Override
+                public void onClientTransportControlUpdate(int transportControlFlags) {
 
-            }
+                }
 
-            @Override
-            public void onClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor) {
-                String artist = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "null");
-                String album = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ALBUM, "null");
-                String title = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
-                Long duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
-                Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_compass);
-                Bitmap bitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
-                Log.d("huivip", "artist:" + artist + "album:" + album + "title:" + title + "duration:" + duration);
-                ToastUtil.show(getApplicationContext(),title,10000);
-               /* Music music = new Music();
-                music.setCover(bitmap);
-                music.setTitle(title);
-                music.setArtist(artist);
-                onMetadataUpdate(music);*/
-            }
-        };
+                @Override
+                public void onClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor) {
+                    String artist = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "null");
+                    String album = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ALBUM, "null");
+                    String title = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
+                    Long duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
+                    Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_compass);
+                    Bitmap bitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
+                    Log.d("huivip", "artist:" + artist + "album:" + album + "title:" + title + "duration:" + duration);
+                    ToastUtil.show(getApplicationContext(),title,10000);
+                }
+            };
+        }
         mServiceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                MusicNotificationListenerService.RCBinder rcBinder = (MusicNotificationListenerService.RCBinder) service;
-                mNotificationListenerService = rcBinder.getService();
-                mNotificationListenerService.registerRemoteController();
-                mNotificationListenerService.setExternalClientUpdateListener(mOnClientUpdateListener);
-                mRemoteController=mNotificationListenerService.getmRemoteController();
+                LyricService.RCBinder rcBinder = (LyricService.RCBinder) service;
+                lyricService = rcBinder.getService();
+                //lyricService.registerRemoteController();
+                //lyricService.setExternalClientUpdateListener(mOnClientUpdateListener);
+                mRemoteController=lyricService.getmRemoteController();
             }
 
             @Override
@@ -182,6 +164,36 @@ public class AudioTestActivity extends Activity {
             @Override
             public void onClick(View view) {
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,Integer.parseInt(musicEditText.getText().toString()),AudioManager.FLAG_SHOW_UI);
+            }
+        });
+        Button buttonPlay=findViewById(R.id.button_play);
+        buttonPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("huivip","Play click");
+                if(lyricService!=null){
+                    lyricService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
+                }
+            }
+        });
+        Button buttonPre=findViewById(R.id.button_prev);
+        buttonPre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("huivip","Prev click");
+                if(lyricService!=null){
+                    lyricService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
+                }
+            }
+        });
+        Button buttonNext=findViewById(R.id.button_next);
+        buttonNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("huivip","next click");
+                if(lyricService!=null){
+                    lyricService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_NEXT);
+                }
             }
         });
         Button buttonRing=findViewById(R.id.button_ring);
@@ -220,19 +232,19 @@ public class AudioTestActivity extends Activity {
                 audioManager.setStreamVolume(AudioManager.STREAM_ACCESSIBILITY,Integer.parseInt(accEditText.getText().toString()),AudioManager.FLAG_SHOW_UI);
             }
         });*/
-        Button testButton=findViewById(R.id.button_testtts);
+      /*  Button testButton=findViewById(R.id.button_testtts);
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
                 tts.speak("你好，语音测试成功");
-               /* Intent intent = new Intent();
+               *//* Intent intent = new Intent();
                 intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
                 intent.putExtra("KEY_TYPE", 10021);
                 intent.putExtra("SOURCE_APP","GPS Plugin");
-                sendBroadcast(intent);*/
+                sendBroadcast(intent);*//*
             }
-        });
+        });*/
 
         Button saveButton=findViewById(R.id.button_save);
         saveButton.setOnClickListener(new View.OnClickListener(){
@@ -254,16 +266,15 @@ public class AudioTestActivity extends Activity {
         CrashHandler.getInstance().init(getApplicationContext());
         reloadVolume();
         Button rebootBtn=findViewById(R.id.button_reboot);
-        Intent floatService=new Intent(this,NaviFloatingService.class);
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!Utils.isNotificationEnabled(getApplicationContext())){
+               /* if(!Utils.isNotificationEnabled(getApplicationContext())){
                     Utils.openNotificationWindows(getApplicationContext());
                 }
                 else {
                     Toast.makeText(getApplicationContext(),"enabled notification listen",Toast.LENGTH_SHORT).show();
-                }
+                }*/
                 //mNotificationListenerService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_NEXT);
                 /*Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_REBOOT);
@@ -412,8 +423,6 @@ public class AudioTestActivity extends Activity {
 
             lrcView.setLrc(lrcString);
             lrcView.init();
-
-            mock.start();
         }
     };
     private void doStartApplicationWithPackageName(String packagename,String action) {

@@ -27,6 +27,7 @@ import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
+import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.speech.BDTTS;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
@@ -296,6 +297,27 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setRoadLimitNotify(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox enableLyricCheckBox=findViewById(R.id.checkBox_lyric);
+        enableLyricCheckBox.setChecked(PrefUtils.isLyricEnabled(getApplicationContext()));
+        enableLyricCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setLyricEnabled(getApplicationContext(),buttonView.isChecked());
+                if(buttonView.isChecked()){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        if (!Utils.isNotificationEnabled(getApplicationContext())) {
+                            Utils.openNotificationWindows(getApplicationContext());
+                        }
+                    }
+                } else {
+                    if (Utils.isServiceRunning(getApplicationContext(), LyricFloatingService.class.getName())) {
+                        Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
+                        lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE, true);
+                        startService(lycFloatingService);
+                    }
+                }
             }
         });
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
@@ -986,20 +1008,18 @@ public class ConfigurationActivity extends Activity {
                 startActivityForResult(intentWriteSetting, 124);
             }
         }
-        if(!Utils.isNotificationEnabled(getApplicationContext())){
-            Utils.openNotificationWindows(getApplicationContext());
-        }
-        boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
+
+       /* boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
         if(overlayEnabled && !PrefUtils.isEnableAccessibilityService(getApplicationContext())){
 
-          /*  if(upgradeRootPermission(BuildConfig.APPLICATION_ID)) {
-                 *//*Settings.Secure.putString(getContentResolver(),
+          *//*  if(upgradeRootPermission(BuildConfig.APPLICATION_ID)) {
+                 *//**//*Settings.Secure.putString(getContentResolver(),
                     Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,BuildConfig.APPLICATION_ID+"/"+AppDetectionService.class.getName());
             Settings.Secure.putString(getContentResolver(),
-                    Settings.Secure.ACCESSIBILITY_ENABLED, "1");*//*
+                    Settings.Secure.ACCESSIBILITY_ENABLED, "1");*//**//*
                 //updateAccessibility(BuildConfig.APPLICATION_ID + "/" + AppDetectionService.class.getName());
-            }*/
-        }
+            }*//*
+        }*/
     }
     private void updateAccessibility(String serviceName) {
         // Parse the enabled services.

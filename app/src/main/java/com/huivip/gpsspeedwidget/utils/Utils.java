@@ -421,31 +421,35 @@ public abstract class Utils {
         return notif;
     }
     public static void openNotificationWindows(Context context){
-        Intent localIntent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-        //直接跳转到应用通知设置的代码：
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            //localIntent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-            localIntent.putExtra("app_package", context.getPackageName());
-            localIntent.putExtra("app_uid", context.getApplicationInfo().uid);
-            localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }/* else if (android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+      try {
+          Intent localIntent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+          //直接跳转到应用通知设置的代码：
+          if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+              //localIntent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+              localIntent.putExtra("app_package", context.getPackageName());
+              localIntent.putExtra("app_uid", context.getApplicationInfo().uid);
+              localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          }/* else if (android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             localIntent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             localIntent.addCategory(Intent.CATEGORY_DEFAULT);
             localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             localIntent.setData(Uri.parse("package:" + context.getPackageName()));
         }*/ else {
-            //4.4以下没有从app跳转到应用通知设置页面的Action，可考虑跳转到应用详情页面,
-            localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            if (Build.VERSION.SDK_INT >= 9) {
-                localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
-                localIntent.setData(Uri.fromParts("package", context.getPackageName(), null));
-            } else if (Build.VERSION.SDK_INT <= 8) {
-                localIntent.setAction(Intent.ACTION_VIEW);
-                localIntent.setClassName("com.android.settings", "com.android.setting.InstalledAppDetails");
-                localIntent.putExtra("com.android.settings.ApplicationPkgName", context.getPackageName());
-            }
-        }
-        context.startActivity(localIntent);
+              //4.4以下没有从app跳转到应用通知设置页面的Action，可考虑跳转到应用详情页面,
+              localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              if (Build.VERSION.SDK_INT >= 9) {
+                  localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+                  localIntent.setData(Uri.fromParts("package", context.getPackageName(), null));
+              } else if (Build.VERSION.SDK_INT <= 8) {
+                  localIntent.setAction(Intent.ACTION_VIEW);
+                  localIntent.setClassName("com.android.settings", "com.android.setting.InstalledAppDetails");
+                  localIntent.putExtra("com.android.settings.ApplicationPkgName", context.getPackageName());
+              }
+          }
+          context.startActivity(localIntent);
+      } catch (Exception e){
+          Log.d("huivip","Launch Notification Center failed");
+      }
     }
 /*    @TargetApi(Build.VERSION_CODES.KITKAT)*/
     public static boolean isNotificationEnabled(Context context) {
@@ -453,6 +457,26 @@ public abstract class Utils {
         String flat = Settings.Secure.getString(context.getContentResolver(), "enabled_notification_listeners");
         final boolean enabled = flat != null && flat.contains(cn.flattenToString());
        return enabled;
+    }
+    private boolean isCallable(Context context,Intent intent) {
+        List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
+    }
+    public static boolean checkApplicationIfExists(Context context, String packageName) {
+        if (packageName == null || "".equals(packageName)) {
+            return false;
+        }
+        PackageInfo packageinfo = null;
+        try {
+            packageinfo = context.getPackageManager().getPackageInfo(packageName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (packageinfo == null) {
+            return false;
+        }
+        return true;
     }
 
 }

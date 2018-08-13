@@ -37,7 +37,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     // 请确保该PATH下有这个文件 ，m15是离线男声
     private static final String MODEL_FILENAME =
             TEMP_DIR + "/" + "bd_etts_common_speech_f7_mand_eng_high_am-mix_v3.0.0_20170512.dat";
-    public BDTTS(Context context) {
+    private BDTTS(Context context) {
         this.context=context;
         am= (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);
         initTTS();

@@ -38,6 +38,7 @@ public abstract class PrefUtils {
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
     public static final String AUTO_CLEAN_GPS_HISTORY_PREFS_NAME="AutoCleanGpsHistory";
     public static final String ENABLE_FLATING_WINDOW="com.huivip.Enable.fating.History";
+    public static final String ENABLED_LYRIC_PREFS_NAME="com.huivip.Enable.fating.Lyric";
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enable.AudioService";
     public static final String ENABLE_TIME_FLOATING_WINDOW="com.huivip.enable.Time.FloatingWindow";
     public static final String ENABLE_AUDIO_MIX="com.huivip.enable.AudioMix";
@@ -203,6 +204,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableAutoCleanGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(AUTO_CLEAN_GPS_HISTORY_PREFS_NAME, false);
+    }
+    public static void setLyricEnabled(Context context,boolean cleanHistory){
+        edit(context).putBoolean(ENABLED_LYRIC_PREFS_NAME, cleanHistory).apply();
+    }
+    public static boolean isLyricEnabled(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLED_LYRIC_PREFS_NAME, false);
     }
     public static boolean isFloattingAutoSolt(Context context){
         return getSharedPreferences(context).getBoolean(FLOATTING_WINDOWS_AUTO_SOLT, true);
