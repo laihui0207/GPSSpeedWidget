@@ -7,5 +7,6 @@
     <color name="colorPrimary800">#283593</color>
     <color name="red500">#f44336</color>
     <color name="green">#31c17d</color>
+    <color name="blue">#0080FF</color>
 
 </resources>

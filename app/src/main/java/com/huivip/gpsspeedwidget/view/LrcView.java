@@ -77,8 +77,8 @@ public class LrcView extends View {
         super(context, attrs, defStyleAttr);
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.LrcView);
-        highLineColor = ta.getColor(R.styleable.LrcView_hignLineColor, getResources().getColor(R.color.green));
-        lrcColor = ta.getColor(R.styleable.LrcView_lrcColor, getResources().getColor(android.R.color.darker_gray));
+        highLineColor = ta.getColor(R.styleable.LrcView_hignLineColor, getResources().getColor(R.color.blue));
+        lrcColor = ta.getColor(R.styleable.LrcView_lrcColor, getResources().getColor(android.R.color.white));
         mode = ta.getInt(R.styleable.LrcView_lrcMode,mode);
         ta.recycle();
         gPaint = new Paint();
@@ -139,7 +139,7 @@ public class LrcView extends View {
             long end = lrcBean.getEnd();
             int i = (int) ((currentMillis - start) * 1.0f / (end - start) * highLineWidth);
             if (i > 0) {
-                Bitmap textBitmap = Bitmap.createBitmap(i, 80, Bitmap.Config.ARGB_8888);
+                Bitmap textBitmap = Bitmap.createBitmap(i, 90, Bitmap.Config.ARGB_8888);
                 Canvas textCanvas = new Canvas(textBitmap);
                 textCanvas.drawText(highLineLrc, highLineWidth / 2, 80, hPaint);
                 canvas.drawBitmap(textBitmap, leftOffset, height / 2 + 80 * (currentPosition - 1), null);

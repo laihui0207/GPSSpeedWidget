@@ -3,6 +3,8 @@ package com.huivip.gpsspeedwidget;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
+import android.content.res.TypedArray;
+import android.graphics.Paint;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
@@ -28,6 +30,11 @@ public class LyricWidgetService extends Service {
     AppWidgetManager manager;
     AudioManager audioManager;
     ComponentName lyricWidget;
+    private Paint gPaint;
+    private Paint hPaint;
+    private int highLineColor;
+    private int lrcColor;
+    private int width = 0, height = 0;
     String lyric_content;
     long position;
     TimerTask lyricTask;
@@ -52,6 +59,16 @@ public class LyricWidgetService extends Service {
         this.manager = AppWidgetManager.getInstance(this);
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         this.lyricWidget = new ComponentName(this,LyricWidgetProvider.class);
+        gPaint = new Paint();
+        gPaint.setAntiAlias(true);
+        gPaint.setColor(R.color.blue);
+        gPaint.setTextSize(45);
+        gPaint.setTextAlign(Paint.Align.CENTER);
+        hPaint = new Paint();
+        hPaint.setAntiAlias(true);
+        hPaint.setColor(R.color.green);
+        hPaint.setTextSize(45);
+        hPaint.setTextAlign(Paint.Align.CENTER);
         lyricTimer = new Timer();
         this.lyricTask = new TimerTask() {
             @Override
@@ -77,7 +94,7 @@ public class LyricWidgetService extends Service {
         }
         if (intent != null && !started) {
 
-            lyric_content = intent.getStringExtra(LYRIC_CONTENT);
+           /* lyric_content = intent.getStringExtra(LYRIC_CONTENT);
             Log.d("huivip","Lyric wiget:"+lyric_content);
             if (!TextUtils.isEmpty(lyric_content)) {
                 list = LrcUtil.parseStr2List(lyric_content);
@@ -88,7 +105,7 @@ public class LyricWidgetService extends Service {
             }
             duration = intent.getLongExtra(DURATION, 0);
             position = intent.getLongExtra(POSITION, 0);
-            startTime=System.currentTimeMillis()-position;
+            startTime=System.currentTimeMillis()-position;*/
             started=true;
             IntentFilter intentFilter = new IntentFilter( "com.huivip.widget.lyric.changed" );
             registerReceiver( myBroadcastReceiver , intentFilter);

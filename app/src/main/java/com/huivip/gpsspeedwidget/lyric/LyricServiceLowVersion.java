@@ -19,6 +19,7 @@ import android.view.KeyEvent;
 import com.huivip.gpsspeedwidget.LyricFloatingService;
 import com.huivip.gpsspeedwidget.LyricWidgetService;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.lang.ref.WeakReference;
 
@@ -130,18 +131,19 @@ public class LyricServiceLowVersion extends Service  {
              lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
          }
          startService(lycFloatingService);
-
-        Intent widgetService=new Intent(getApplicationContext(), LyricWidgetService.class);
-        widgetService.putExtra(LyricWidgetService.DURATION,duration);
-        widgetService.putExtra(LyricWidgetService.LYRIC_CONTENT,lyricContent);
-        if(currentPosition>0){
-            widgetService.putExtra(LyricWidgetService.POSITION,currentPosition);
-        }
-        if(!start){
-            widgetService.putExtra(LyricWidgetService.EXTRA_CLOSE,true);
-            stopService(widgetService);
-        } else {
+        if (!Utils.isServiceRunning(getApplicationContext(), LyricWidgetService.class.getName())) {
+            Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
+           /* widgetService.putExtra(LyricWidgetService.DURATION, duration);
+            widgetService.putExtra(LyricWidgetService.LYRIC_CONTENT, lyricContent);
+            if (currentPosition > 0) {
+                widgetService.putExtra(LyricWidgetService.POSITION, currentPosition);
+            }*/
             startService(widgetService);
         }
+        Intent intent2 = new Intent();
+        intent2.setAction("com.huivip.widget.lyric.changed");
+        intent2.putExtra(LyricWidgetService.LYRIC_CONTENT, lyricContent);
+        intent2.putExtra(LyricWidgetService.POSITION,currentPosition);
+        sendBroadcast(intent2);
     }
 }
