@@ -3,11 +3,12 @@ package com.huivip.gpsspeedwidget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
+import android.content.*;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
+import com.huivip.gpsspeedwidget.listener.BootStartReceiver;
+import com.huivip.gpsspeedwidget.utils.LrcUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 
@@ -41,6 +42,8 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.number_speed, pendingIntent);
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }*/
+        IntentFilter intentFilter = new IntentFilter( "android.intent.action.USER_PRESENT" );
+        context.registerReceiver( myBroadcastReceiver , intentFilter);
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
@@ -67,5 +70,16 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         PrefUtils.setWidgetActived(context,false);
         super.onDisabled(context);
     }
+    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
 
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent!=null && intent.getAction().equalsIgnoreCase("android.intent.action.USER_PRESENT")){
+                Intent bootService=new Intent(context,BootStartService.class);
+                bootService.putExtra(BootStartService.START_BOOT,true);
+                context.startService(bootService);
+            }
+        }
+
+    };
 }
