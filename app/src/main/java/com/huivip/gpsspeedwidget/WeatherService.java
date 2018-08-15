@@ -1,10 +1,9 @@
 package com.huivip.gpsspeedwidget;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.app.*;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -15,6 +14,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,39 +22,32 @@ import org.json.JSONObject;
 public class WeatherService implements AMapLocationListener {
     String cityName;
     String adCode;
-    String district;
+    String address;
     String pre_adCode;
-    double lat;
-    double lng;
-    long locationTime;
     String deviceId;
     Context context;
-    String resutlText;
+    String resultText;
     AMapLocationClient mLocationClient = null;
     GpsUtil gpsUtil;
     private Handler handler=null;
-    boolean locationAndWeatherSametime=false;
     boolean isLocationStarted=false;
     private static WeatherService instance;
     private static final String NOTIFICATION_CHANNEL_NAME = "BackgroundLocation";
     private NotificationManager notificationManager = null;
     boolean isCreateChannel = false;
+    AMapLocation lastedLocation;
+    AlarmManager alarm ;
+    boolean running=false;
     private WeatherService(Context context){
         this.context=context;
-        mLocationClient = new AMapLocationClient(context);
-        mLocationClient.setLocationListener(this);
         handler=new Handler();
         gpsUtil=GpsUtil.getInstance(context);
-        AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
-        mLocationClient.setLocationOption(mLocationOption);
-        mLocationClient.startLocation();
-        isLocationStarted = true;
-        if (android.os.Build.VERSION.SDK_INT >= 27) {
-            mLocationClient.enableBackgroundLocation(2001, buildNotification());
-        }
+        mLocationClient = new AMapLocationClient(context);
+        mLocationClient.setLocationListener(this);
+        startLocation();
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
         deviceId=deviceUuidFactory.getDeviceUuid().toString();
+        alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
     public static WeatherService getInstance(Context context){
         if(instance==null){
@@ -62,10 +55,31 @@ public class WeatherService implements AMapLocationListener {
         }
         return instance;
     }
+    public void startLocation(){
+
+        AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
+        mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
+        //mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
+        mLocationOption.setInterval(5000);
+        mLocationOption.setLocationCacheEnable(false);
+        mLocationClient.setLocationOption(mLocationOption);
+        mLocationClient.startLocation();
+        isLocationStarted = true;
+        if (android.os.Build.VERSION.SDK_INT >= 27 || PrefUtils.isShowNotification(context)) {
+            mLocationClient.enableBackgroundLocation(2001, buildNotification());
+        }
+    }
+    public void stopLocation(){
+        mLocationClient.stopLocation();
+        isLocationStarted=false;
+        if (android.os.Build.VERSION.SDK_INT >= 27 || PrefUtils.isShowNotification(context)) {
+            mLocationClient.disableBackgroundLocation(true);
+        }
+    }
     public void setCityName(String cityName){
         this.cityName=cityName;
         Toast.makeText(context,"当前所在:"+cityName,Toast.LENGTH_SHORT).show();
-        searchWeather();
+        //searchWeather();
     }
     public void searchWeather(){
         if(TextUtils.isEmpty(adCode)){
@@ -74,7 +88,7 @@ public class WeatherService implements AMapLocationListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String result=HttpUtils.getData(String.format(Constant.LBSSEARCHWEATHER,Constant.AUTONAVI_WEB_KEY, adCode));
+                String result=HttpUtils.getData(String.format(Constant.LBSSEARCHWEATHER,PrefUtils.getAmapWebKey(context), adCode));
                 if(!TextUtils.isEmpty(result)){
                     try {
                         JSONObject resultObj=new JSONObject(result);
@@ -83,11 +97,16 @@ public class WeatherService implements AMapLocationListener {
                             JSONArray lives=resultObj.getJSONArray("lives");
                             //if(lives==null || lives.length()==0) return;
                             JSONObject cityWeather=lives.getJSONObject(0);
-                            resutlText = "当前:" + cityWeather.getString("city") + ",天气：" + cityWeather.getString("weather") +
+                            resultText = "当前:" + cityWeather.getString("city") + ",天气：" + cityWeather.getString("weather") +
                                     ",气温:" + cityWeather.getString("temperature") + "°,"
                                     + cityWeather.getString("winddirection") + "风" +cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
-                            handler.post(runnableUi);
+                            if(PrefUtils.isPlayWeather(context)) {
+                               /* SpeechFactory.getInstance(context)
+                                        .getTTSEngine(PrefUtils.getTtsEngine(context))
+                                        .speak(resultText, true);*/
+                                handler.post(runnableUi);
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -99,23 +118,36 @@ public class WeatherService implements AMapLocationListener {
     Runnable   runnableUi=new  Runnable(){
         @Override
         public void run() {
-            Toast.makeText(context,resutlText,Toast.LENGTH_LONG).show();
+            String showStr="";
+            if(!TextUtils.isEmpty(address)){
+                showStr+="当前地址:"+address;
+            }
+            if(!TextUtils.isEmpty(resultText)){
+                if(TextUtils.isEmpty(address)){
+                    showStr= resultText;
+                } else {
+                    showStr+="\n\n"+ resultText;
+                }
+            }
+            if(!TextUtils.isEmpty(showStr)) {
+               // Toast.makeText(context, showStr, Toast.LENGTH_LONG).show();
+                //ToastUtil.show(context,showStr,5000);
+                Intent textFloat=new Intent(context,TextFloatingService.class);
+                textFloat.putExtra(TextFloatingService.SHOW_TEXT,showStr);
+                textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
+                context.startService(textFloat);
+            }
+            resultText =null;
         }
 
     };
 
-    public void stopLocation(){
-        mLocationClient.stopLocation();
-        isLocationStarted=false;
-        if (android.os.Build.VERSION.SDK_INT >= 27) {
-            mLocationClient.disableBackgroundLocation(true);
-        }
-    }
+
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null) {
             if (aMapLocation.getErrorCode() == 0) {
-                Log.d("huivip",aMapLocation.toString());
+                //Log.d("huivip",aMapLocation.toString());
                 if(!TextUtils.isEmpty(aMapLocation.getCity())) {
                     cityName=aMapLocation.getCity();
                     adCode =aMapLocation.getAdCode();
@@ -130,13 +162,31 @@ public class WeatherService implements AMapLocationListener {
                         searchWeather();
                         pre_adCode =adCode;
                     }
-                    lat=aMapLocation.getLatitude();
-                    lng=aMapLocation.getLongitude();
-                    locationTime=aMapLocation.getTime();
                 }
+                if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>10){
+                    if(lastedLocation!=null && lastedLocation!=aMapLocation) {
+                        running=true;
+                    }
+                    lastedLocation=aMapLocation;
+                }
+
                 //Toast.makeText(context,aMapLocation.toString(),Toast.LENGTH_SHORT).show();
-                if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getAccuracy()<50){
-                    gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
+                if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getLocationType() == 1){
+                    /*if(!gpsUtil.isAutoMapBackendProcessStarted() && !gpsUtil.isCatchRoadServiceStarted() &&
+                            (TextUtils.isEmpty(gpsUtil.getCurrentRoadName()) ||
+                                    !aMapLocation.getStreet().equalsIgnoreCase(gpsUtil.getCurrentRoadName()))){
+                        gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
+                    }*/
+                    address=aMapLocation.getAddress();
+                }
+                if (PrefUtils.isShowAddressWhenStop(context) && gpsUtil.getSpeed() == 0 && running) {
+                    running = false;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            handler.post(runnableUi);
+                        }
+                    }, 3000);
                 }
             }else {
                 //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。

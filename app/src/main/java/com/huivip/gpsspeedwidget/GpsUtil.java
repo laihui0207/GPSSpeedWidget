@@ -51,6 +51,9 @@ public class GpsUtil {
     boolean limitSpeaked = false;
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
+    boolean aimlessStatred = false;
+    boolean autoMapBackendProcessStarted=false;
+    boolean catchRoadServiceStarted=false;
     final Handler locationHandler = new Handler();
     BroadcastReceiver broadcastReceiver;
     int directionCheckCounter = 0;
@@ -178,6 +181,22 @@ public class GpsUtil {
             direction = "西北";
         }
         return direction;
+    }
+
+    public boolean isAutoMapBackendProcessStarted() {
+        return autoMapBackendProcessStarted;
+    }
+
+    public void setAutoMapBackendProcessStarted(boolean autoMapBackendProcessStarted) {
+        this.autoMapBackendProcessStarted = autoMapBackendProcessStarted;
+    }
+
+    public boolean isCatchRoadServiceStarted() {
+        return catchRoadServiceStarted;
+    }
+
+    public void setCatchRoadServiceStarted(boolean catchRoadServiceStarted) {
+        this.catchRoadServiceStarted = catchRoadServiceStarted;
     }
 
     public float getBearing() {

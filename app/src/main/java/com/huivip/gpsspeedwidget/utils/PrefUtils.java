@@ -17,10 +17,13 @@ public abstract class PrefUtils {
     private static final String PREF_METRIC = "pref_metric";
     private static final String PREF_FLOATING_LOCATION = "pref_floating_location";
     private static final String PREF_NAVI_FLOATING_LOCATION= "pref_navi_floating_location";
+    private static final String PREF_TIME_FLOATING_LOCATION= "pref_time_floating_location";
+    private static final String PREF_TEXT_FLOATING_LOCATION= "pref_text_floating_location";
     private static final String PREF_OPACITY = "pref_opacity";
     private static final String PREF_SPEEDOMETER = "pref_speedometer";
     private static final String PREF_LIMITS = "pref_limits";
     private static final String PREF_APPS = "pref_apps";
+    private static final String PREF_DEFAULT_LAUNCHE_APP= "pref_Default_launch_apps";
     private static final String AUTO_FLOATTING_STYLE = "com.huivip.Floating.style";
     private static final String PREF_DELAY_AUTO_START = "com.huivip.delay.started";
     private static final String PREF_DELAY_AUTO_START_INDEX= "com.huivip.delay.started.index";
@@ -32,8 +35,11 @@ public abstract class PrefUtils {
     public static final String PREF_AUTO_LAUNCH_WIFI_HOTSPOT="AutoStart.Wifi.hotspot";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
+    public static final String AUTO_CLEAN_GPS_HISTORY_PREFS_NAME="AutoCleanGpsHistory";
     public static final String ENABLE_FLATING_WINDOW="com.huivip.Enable.fating.History";
+    public static final String ENABLED_LYRIC_PREFS_NAME="com.huivip.Enable.fating.Lyric";
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enable.AudioService";
+    public static final String ENABLE_TIME_FLOATING_WINDOW="com.huivip.enable.Time.FloatingWindow";
     public static final String ENABLE_AUDIO_MIX="com.huivip.enable.AudioMix";
     public static final String ENABLE_TEMP_AUDIO_SERVICE="com.huivip.enable.temp.AudioService";
     public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enable.autoNavi.Service";
@@ -46,6 +52,10 @@ public abstract class PrefUtils {
     public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
     public static final String NAVI_FLOATTING_WINDOW_XY="com.huivip.widget.navi.xy";
+    public static final String TIME_FLOATTING_WINDOW_XY="com.huivip.widget.Time.xy";
+    public static final String MAP_FLOATTING_WINDOW_XY="com.huivip.widget.Map.xy";
+    public static final String TEXT_FLOATTING_WINDOW_XY="com.huivip.widget.Text.xy";
+    public static final String LYRC_FLOATTING_WINDOW_XY="com.huivip.widget.lyrc.xy";
     public static final String SEPARATED_VOLUME ="com.huivip.widget.separated.volume";
     public static final String AUDIO_VOLUME="com.huivipo.widget.audio.volume";
     public static final String USER_CLOSED_SERVER="com.huivip.widget.Close.serviced";
@@ -56,11 +66,16 @@ public abstract class PrefUtils {
     public static final String CURRENT_DEVICEID="com.huivip.deviceId";
     public static final String ACTIVITY_ON_DESKTOP="com.huivip.widget.onDesktop";
     public static final String APP_FIRST_RUN="com.huivip.widget.firstRun";
+    public static final String SPEED_SHOW_ADDRESS_WHEN_STOP="com.huivip.widget.ShowAddress";
+    public static final String SPEED_SHOW_NOTIFICATION="com.huivip.widget.ShowNotification";
     public static final String SHOW_ALL="0";
     public static final String SHOW_ONLY_DESKTOP="2";
     public static final String SHOW_NO_DESKTOP="1";
     public static final String SHOW_ONLY_AUTONAVI="3";
     public static final String TTS_ENGINE="com.huivip.TTS.Type";
+    private static final String APP_PLAY_TIME="com.huivip.play.time";
+    private static final String APP_PLAY_WEATHER="com.huivip.play.weather";
+    private static final String NOTIFY_ROAD_LIMIT="com.huivip.Limit.Notify";
 
 
     public static final String FLOATING_DEFAULT="0";
@@ -113,12 +128,20 @@ public abstract class PrefUtils {
     public static boolean isEnableAutoStart(Context context){
         return getSharedPreferences(context).getBoolean(AUTO_START_PREFS_NAME, true);
     }
-    /*public static void setTTSEngineType(Context context,String style){
+   /* public static void setTTSEngineType(Context context,String style){
         edit(context).putString(TTS_ENGINE, style).apply();
     }
     public static String getTtsEngine(Context context){
         return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.BAIDUTTS);
     }*/
+    public static String getAmapWebKey(Context context){
+        String deviceId=getDeviceIdString(context);
+        String lastChar=deviceId.substring(deviceId.length()-1);
+        if(lastChar.matches("\\d+(?:\\.\\d+)?")){
+            return Constant.AUTONAVI_WEB_KEY;
+        }
+        return Constant.AUTONAVI_WEB_KEY2;
+    }
     public static void setFloattingStyle(Context context,String style){
         edit(context).putString(AUTO_FLOATTING_STYLE, style).apply();
     }
@@ -137,17 +160,55 @@ public abstract class PrefUtils {
     public static boolean isEnableRecordGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, true);
     }
+
+    public static void setEnableTimeFloationgWidow(Context context,boolean value){
+        edit(context).putBoolean(ENABLE_TIME_FLOATING_WINDOW, value).apply();
+    }
+    public static boolean isEnableTimeFloationgWidow(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_TIME_FLOATING_WINDOW, false);
+    }
+
+    public static void setPlayTime(Context context,boolean value){
+        edit(context).putBoolean(APP_PLAY_TIME, value).apply();
+    }
+    public static boolean isPlayTime(Context context){
+        return getSharedPreferences(context).getBoolean(APP_PLAY_TIME, true);
+    }
+    public static void setPlayWeather(Context context,boolean value){
+        edit(context).putBoolean(APP_PLAY_WEATHER, value).apply();
+    }
+    public static boolean isPlayWeather(Context context){
+        return getSharedPreferences(context).getBoolean(APP_PLAY_WEATHER, true);
+    }
     public static void setAppFirstRun(Context context,boolean firstRun){
         edit(context).putBoolean(APP_FIRST_RUN, firstRun).apply();
     }
     public static boolean isAppFirstRun(Context context){
         return getSharedPreferences(context).getBoolean(APP_FIRST_RUN, true);
     }
+    public static void setRoadLimitNotify(Context context,boolean value){
+        edit(context).putBoolean(NOTIFY_ROAD_LIMIT, value).apply();
+    }
+    public static boolean isRoadLimitNotify(Context context){
+        return getSharedPreferences(context).getBoolean(NOTIFY_ROAD_LIMIT, false);
+    }
     public static void setUploadGPSHistory(Context context,boolean uploadHistory){
         edit(context).putBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, uploadHistory).apply();
     }
     public static boolean isEnableUploadGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, false);
+    }
+    public static void setAutoCleanGPSHistory(Context context,boolean cleanHistory){
+        edit(context).putBoolean(AUTO_CLEAN_GPS_HISTORY_PREFS_NAME, cleanHistory).apply();
+    }
+    public static boolean isEnableAutoCleanGPSHistory(Context context){
+        return getSharedPreferences(context).getBoolean(AUTO_CLEAN_GPS_HISTORY_PREFS_NAME, false);
+    }
+    public static void setLyricEnabled(Context context,boolean cleanHistory){
+        edit(context).putBoolean(ENABLED_LYRIC_PREFS_NAME, cleanHistory).apply();
+    }
+    public static boolean isLyricEnabled(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLED_LYRIC_PREFS_NAME, false);
     }
     public static boolean isFloattingAutoSolt(Context context){
         return getSharedPreferences(context).getBoolean(FLOATTING_WINDOWS_AUTO_SOLT, true);
@@ -264,7 +325,7 @@ public abstract class PrefUtils {
     }
 
     public static int getAudioVolume(Context context) {
-        return getSharedPreferences(context).getInt(AUDIO_VOLUME, 5);
+        return getSharedPreferences(context).getInt(AUDIO_VOLUME, 80);
     }
 
     public static void setseparatedVolume(Context context, boolean value) {
@@ -275,7 +336,21 @@ public abstract class PrefUtils {
         return getSharedPreferences(context).getBoolean(SEPARATED_VOLUME, false);
     }
 
+    public static void setShowAddressWhenStop(Context context, boolean value) {
+        edit(context).putBoolean(SPEED_SHOW_ADDRESS_WHEN_STOP, value).apply();
+    }
 
+    public static boolean isShowAddressWhenStop(Context context) {
+        return getSharedPreferences(context).getBoolean(SPEED_SHOW_ADDRESS_WHEN_STOP, false);
+    }
+
+    public static void setShowNotification(Context context, boolean value) {
+        edit(context).putBoolean(SPEED_SHOW_NOTIFICATION, value).apply();
+    }
+
+    public static boolean isShowNotification(Context context) {
+        return getSharedPreferences(context).getBoolean(SPEED_SHOW_NOTIFICATION, false);
+    }
     public static void setEnabledWatchWidget(Context context, boolean value) {
         edit(context).putBoolean(ENABLE_WATCH_WIDGET, value).apply();
     }
@@ -304,6 +379,9 @@ public abstract class PrefUtils {
     public static void setNaviFloatingSolidLocation(Context context, float x, float y) {
         edit(context).putString(NAVI_FLOATTING_WINDOW_XY, x + "," + y).apply();
     }
+    public static void setTimeFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(TIME_FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
     public static String getFloatingSolidLocation(Context context) {
         return getSharedPreferences(context).getString(FLOATTING_WINDOW_XY, "0,0");
     }
@@ -313,6 +391,28 @@ public abstract class PrefUtils {
     public static String getNaviFloatingSolidLocation(Context context) {
         return getSharedPreferences(context).getString(NAVI_FLOATTING_WINDOW_XY, "0,0");
     }
+    public static String getTimeFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(TIME_FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static String getMapFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(MAP_FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static void setMapFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(MAP_FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
+
+    public static String getTextFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(TEXT_FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static void setTextFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(TEXT_FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
+    public static String getLyrcFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(LYRC_FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static void setLyrcFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(LYRC_FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
     public static void setNaviFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_NAVI_FLOATING_LOCATION, left + "," + screenYRatio).apply();
     }
@@ -321,6 +421,12 @@ public abstract class PrefUtils {
     }
     public static String getNaviFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_NAVI_FLOATING_LOCATION, "true,0");
+    }
+    public static String getTimeFloatingLocation(Context context) {
+        return getSharedPreferences(context).getString(PREF_TIME_FLOATING_LOCATION, "true,0");
+    }
+    public static String getTextFloatingLocation(Context context) {
+        return getSharedPreferences(context).getString(PREF_TEXT_FLOATING_LOCATION, "true,0");
     }
     public static boolean getUseMetric(Context context) {
         boolean metricDefault;
@@ -387,6 +493,13 @@ public abstract class PrefUtils {
 
     public static void setApps(Context context, Set<String> packageNames) {
         edit(context).putStringSet(PREF_APPS, packageNames).apply();
+    }
+    public static String getDefaultLanuchApp(Context context) {
+        return getSharedPreferences(context).getString(PREF_DEFAULT_LAUNCHE_APP,"");
+    }
+
+    public static void setDefaultLaunchApp(Context context, String packageName) {
+        edit(context).putString(PREF_DEFAULT_LAUNCHE_APP, packageName).apply();
     }
     public static Set<String> getAutoLaunchApps(Context context) {
         return new HashSet<>(getSharedPreferences(context).getStringSet(PREF_AUTO_LAUNCH_APPS, new HashSet<String>()));

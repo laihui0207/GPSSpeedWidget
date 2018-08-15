@@ -397,6 +397,12 @@
                     android:layout_alignBaseline="@+id/checkBox_gotoHome"
                     android:layout_alignBottom="@+id/checkBox_gotoHome"
                     android:layout_toRightOf="@+id/checkBox_gotoHome" android:layout_toEndOf="@+id/checkBox_gotoHome"/>
+            <CheckBox
+                    android:text="桌面歌词"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/checkBox_lyric" android:layout_weight="1"
+                    android:layout_alignBottom="@+id/textView" android:layout_toEndOf="@+id/editText_speedadjust"/>
+
         </RelativeLayout>
     </ScrollView>
     <TextView

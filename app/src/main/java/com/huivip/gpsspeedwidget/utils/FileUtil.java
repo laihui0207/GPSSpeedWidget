@@ -3,11 +3,18 @@ package com.huivip.gpsspeedwidget.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.TextureView;
+import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by fujiayi on 2017/5/19.
@@ -73,4 +80,99 @@ public class FileUtil {
     public static void uploadCrashLog(String logPath,String deviceId){
 
     }
+    public static String loadLric(Context context,String songName,String artist){
+        String content="";
+        String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";
+        File dir=new File(path);
+        if(!dir.exists()){
+            return content;
+        }
+        String fileName=songName;
+        if(!TextUtils.isEmpty(artist)){
+            fileName+="_"+artist;
+        }
+        fileName+=".lrc";
+        String lrcFileName=path+fileName;
+        File lrcFile=new File(lrcFileName);
+        if(!lrcFile.exists()){
+            return content;
+        }
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(lrcFileName));
+            try {
+                StringBuilder sb = new StringBuilder();
+                String line = br.readLine();
+
+                while (line != null) {
+                    sb.append(line);
+                    sb.append(System.lineSeparator());
+                    line = br.readLine();
+                }
+                content = sb.toString();
+            } finally {
+                br.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
+    }
+    public static void saveLric(Context context,String songName,String artist,String content){
+        String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";
+        File dir=new File(path);
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        String fileName=songName;
+        if(!TextUtils.isEmpty(artist)){
+            fileName+="_"+artist;
+        }
+        fileName+=".lrc";
+        String lrcFileName=path+fileName;
+        File lrcFile=new File(lrcFileName);
+        if(lrcFile.exists()){
+            lrcFile.delete();
+        }
+
+        try {
+            FileWriter fileWriter = new FileWriter(lrcFile);
+            fileWriter.write(content);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            Toast.makeText(context,"File create Error:"+e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static String saveLogToFile(String logContent) {
+        String nameString="GPSPluginLog";
+        StringBuffer sb = new StringBuffer();
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+
+        String result = logContent;
+        sb.append(result);
+        try {
+            long timestamp = System.currentTimeMillis();
+            String time = formatter.format(new Date());
+            String fileName = nameString + "-" + time + "-" + timestamp
+                    + ".log";
+            if (Environment.getExternalStorageState().equals(
+                    Environment.MEDIA_MOUNTED)) {
+                String path =Environment.getExternalStorageDirectory().toString()+"/huivip/";
+                File dir = new File(path);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                FileOutputStream fos = new FileOutputStream(path + fileName);
+                fos.write(sb.toString().getBytes());
+                fos.close();
+            }
+            return fileName;
+        } catch (Exception e) {
+            Log.e("huivip", "an error occured while writing file...", e);
+        }
+        return null;
+    }
+
 }

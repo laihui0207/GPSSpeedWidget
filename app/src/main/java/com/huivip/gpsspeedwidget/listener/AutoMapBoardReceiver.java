@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 public class AutoMapBoardReceiver extends BroadcastReceiver {
 
@@ -25,14 +26,16 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         if(start) {
                             Intent service = new Intent(context, BootStartService.class);
                             service.putExtra(BootStartService.START_BOOT,true);
-                            //service.putExtra(GpsSpeedService.EXTRA_AUTONAVI_AUTOBOOT,true);
                             context.startService(service);
+                            gpsUtil.setAutoMapBackendProcessStarted(true);
+                            //Toast.makeText(context,"AutoMap started",Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 3: // auto map in frontend
                         if(gpsUtil.getNaviFloatingStatus()==Constant.Navi_Floating_Enabled) {
                             stopFloatingService(context);
                             lanuchSpeedFloationWindows(context,true);
+                            gpsUtil.setAutoMapBackendProcessStarted(true);
                         }
                         PrefUtils.setEnableTempAudioService(context, false);
                         break;
@@ -62,6 +65,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     case 2: // auto map in end
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         gpsUtil.setCurrentRoadName("");
+                        gpsUtil.setAutoMapBackendProcessStarted(false);
                         PrefUtils.setEnableTempAudioService(context, true);
                     case 25:  // xunhang end
                     case 9:  // navi end
@@ -101,11 +105,17 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 String iformationJsonString=intent.getStringExtra("EXTRA_ROAD_INFO");
 
             }
-            if(key==10030){
+            if(key == 10041){  // Get AutoMap Version
+                String versionNumber=intent.getStringExtra("VERSION_NUM");
+                String channelNumber=intent.getStringExtra("CHANNEL_NUM");
+                //Toast.makeText(context,"Version:"+versionNumber+",Channel:"+channelNumber,Toast.LENGTH_SHORT).show();
+            }
+           /* if(key==10030){
                 String cityName=intent.getStringExtra("CITY_NAME");
                 //Log.d("huivip","city:"+cityName);
                 //Toast.makeText(context,"city:"+cityName,Toast.LENGTH_LONG).show();
-            }
+                WeatherService.getInstance(context).setCityName(cityName);
+            }*/
             if(key==10001){  // navi information
                 //Toast.makeText(context,intent.getExtras().toString(),Toast.LENGTH_LONG).show();
                 String currentRoadName=intent.getStringExtra("CUR_ROAD_NAME");
@@ -178,6 +188,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 else {
                     gpsUtil.setTotalLeftTime(0f);
                 }
+               /* int roadLimitSpeed=intent.getIntExtra("LIMITED_SPEED",-1);
+                if(roadLimitSpeed>0){
+                    gpsUtil.setLimitSpeed(roadLimitSpeed);
+                    gpsUtil.setCameraType(9999);
+                }*/
                 if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
                     int cameraType = intent.getIntExtra("CAMERA_TYPE", -1);
                     if (cameraType > -1) {
@@ -194,9 +209,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     int cameraSpeed = intent.getIntExtra("CAMERA_SPEED", 0);
                     if (cameraSpeed > 0) {
                         gpsUtil.setCameraSpeed(cameraSpeed);
-                    } else {
+                    }/* else {
                         gpsUtil.setCameraSpeed(0);
-                    }
+                    }*/
                 }
             }
             /*if(key==10072){  // return mute status
@@ -222,37 +237,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
         }
     }
     private void lanuchSpeedFloationWindows(Context context,boolean enabled){
-        Intent defaultFloatingService=new Intent(context,FloatingService.class);
-        Intent AutoNavifloatService=new Intent(context,AutoNaviFloatingService.class);
-        Intent meterFloatingService=new Intent(context,MeterFloatingService.class);
         if(!PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)){
             return;
         }
-        if(enabled){
-            String floatingStyle=PrefUtils.getFloatingStyle(context);
-            if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
-                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-                AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            }
-
-        }
-        else {
-            meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-            AutoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-        }
-        try {
-            context.startService(defaultFloatingService);
-            context.startService(AutoNavifloatService);
-            context.startService(meterFloatingService);
-        } catch (Exception e) {
-            Log.d("huivip","Start Floating server Failed"+e.getMessage());
-        }
+       Utils.startFloationgWindows(context,enabled);
     }
 }

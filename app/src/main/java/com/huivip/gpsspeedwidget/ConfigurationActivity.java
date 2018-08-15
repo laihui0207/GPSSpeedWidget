@@ -18,6 +18,7 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
@@ -27,6 +28,7 @@ import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
+import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.utils.*;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,13 +84,15 @@ public class ConfigurationActivity extends Activity {
         recordGPSCheckBox.setChecked(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()));
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         uploadGPSCheckBox.setChecked(PrefUtils.isEnableUploadGPSHistory(getApplicationContext()));
+      /*  CheckBox cleanDataCheckBox = findViewById(R.id.checkBox_cleanData);
+        cleanDataCheckBox.setChecked(PrefUtils.isEnableAutoCleanGPSHistory(getApplicationContext()));*/
         if(PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
             if(PrefUtils.isAppFirstRun(getApplicationContext())) {
                 PrefUtils.setFlatingWindow(getApplicationContext(), true);
                 PrefUtils.setEnableNaviFloating(getApplicationContext(), true);
                 PrefUtils.setAppFirstRun(getApplicationContext(),false);
             }
-            startFloationgWindows(true);
+            Utils.startFloationgWindows(getApplicationContext(),true);
         }
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         enableFloatingWidnowCheckBox.setChecked(PrefUtils.isEnableFlatingWindow(getApplicationContext()));
@@ -130,6 +134,12 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setRecordGPSHistory(getApplicationContext(),checkBoxButton.isChecked());
             }
         });
+       /* cleanDataCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setAutoCleanGPSHistory(getApplicationContext(),buttonView.isChecked());
+            }
+        });*/
         uploadGPSCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
@@ -139,9 +149,13 @@ public class ConfigurationActivity extends Activity {
                         askForPermission(Manifest.permission.READ_PHONE_STATE, REQUEST_PHONE);
                     }
                     remoteUrlEditBox.setEnabled(true);
+                   /* cleanDataCheckBox.setChecked(false);
+                    cleanDataCheckBox.setEnabled(false);*/
+                    PrefUtils.setAutoCleanGPSHistory(getApplicationContext(),false);
                 }
                 else {
                     remoteUrlEditBox.setEnabled(false);
+/*                    cleanDataCheckBox.setEnabled(true);*/
                 }
 
                 PrefUtils.setUploadGPSHistory(getApplicationContext(),checkBoxButton.isChecked());
@@ -158,10 +172,10 @@ public class ConfigurationActivity extends Activity {
                     @Override
                     public void run() {
                         if(compoundButton.isChecked() ){
-                            startFloationgWindows(true);
+                            Utils.startFloationgWindows(getApplicationContext(),true);
                         }
                         else {
-                            startFloationgWindows(false);
+                            Utils.startFloationgWindows(getApplicationContext(),false);
                         }
                     }
                 }).start();
@@ -227,6 +241,35 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setShowSpeedometer(getApplicationContext(),compoundButton.isChecked());
             }
         });
+       /* CheckBox notifyRoadLimitCheckBox=findViewById(R.id.checkBox_roadLimitNotify);
+        notifyRoadLimitCheckBox.setChecked(PrefUtils.isRoadLimitNotify(getApplicationContext()));
+        notifyRoadLimitCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setRoadLimitNotify(getApplicationContext(),buttonView.isChecked());
+            }
+        });*/
+        CheckBox enableLyricCheckBox=findViewById(R.id.checkBox_lyric);
+        enableLyricCheckBox.setChecked(PrefUtils.isLyricEnabled(getApplicationContext()));
+        enableLyricCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setLyricEnabled(getApplicationContext(),buttonView.isChecked());
+                if(buttonView.isChecked()){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        if (!Utils.isNotificationEnabled(getApplicationContext())) {
+                            Utils.openNotificationWindows(getApplicationContext());
+                        }
+                    }
+                } else {
+                    if (Utils.isServiceRunning(getApplicationContext(), LyricFloatingService.class.getName())) {
+                        Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
+                        lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE, true);
+                        startService(lycFloatingService);
+                    }
+                }
+            }
+        });
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
         enableFloatingButton=findViewById(R.id.EnableFalting);
         enableFloatingButton.setOnClickListener(v -> {
@@ -290,7 +333,7 @@ public class ConfigurationActivity extends Activity {
         onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         Glide.get(this)
                 .register(AppInfo.class, InputStream.class, new AppInfoIconLoader.Factory());
-        PrefUtils.setApps(getApplicationContext(), getDescktopPackageName());
+        PrefUtils.setApps(getApplicationContext(), Utils.getDesktopPackageName(getApplicationContext()));
         Button btnOk= (Button) findViewById(R.id.confirm);
         View.OnClickListener confirmListener  = new View.OnClickListener() {
 
@@ -479,7 +522,7 @@ public class ConfigurationActivity extends Activity {
                 @Override
                 public void handleMessage(Message msg) {
                     if(msg.arg1==0) {
-                        AlertDialog.Builder  mDialog = new AlertDialog.Builder(ConfigurationActivity.this);
+                        AlertDialog.Builder  mDialog = new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight));
                         mDialog.setTitle("版本检查");
                         mDialog.setMessage("已是最新版本，无需更新！");
                         mDialog.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
@@ -490,7 +533,7 @@ public class ConfigurationActivity extends Activity {
                         mDialog.create().show();
                     }
                     else if (msg.arg1==1){
-                        AlertDialog.Builder  mDialog = new AlertDialog.Builder(ConfigurationActivity.this);
+                        AlertDialog.Builder  mDialog = new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight));
                         try {
                             JSONObject updateInfo=new JSONObject((String)msg.obj);
                             JSONObject data= (JSONObject) updateInfo.get("data");
@@ -526,7 +569,7 @@ public class ConfigurationActivity extends Activity {
                 final EditText inputText = new EditText(ConfigurationActivity.this);
                 DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
                 String deviceId=deviceUuidFactory.getDeviceUuid().toString();
-                new AlertDialog.Builder(ConfigurationActivity.this).setTitle("请输入反馈内容").setIcon(
+                new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight)).setTitle("请输入反馈内容").setIcon(
                         android.R.drawable.ic_dialog_info).setView(inputText).
                         setPositiveButton("提交", new DialogInterface.OnClickListener() {
                             @Override
@@ -582,7 +625,7 @@ public class ConfigurationActivity extends Activity {
                     default:
                         PrefUtils.setFloattingStyle(getApplicationContext(),PrefUtils.FLOATING_DEFAULT);
                 }
-                startFloationgWindows(true);
+                Utils.startFloationgWindows(getApplicationContext(),true);
             }
         });
         RadioButton styleDeafult=findViewById(R.id.radioButton_style_default);
@@ -602,7 +645,7 @@ public class ConfigurationActivity extends Activity {
             public void onClick(View v) {
                 LayoutInflater inflater = getLayoutInflater();
                 View layout = inflater.inflate(R.layout.dialog_pay,null);
-                new AlertDialog.Builder(ConfigurationActivity.this).setTitle("打赏随意，多少都是一种支持").setView(layout)
+                new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight)).setTitle("打赏随意，多少都是一种支持").setView(layout)
                         .setPositiveButton("关闭", null).show();
             }
         });
@@ -623,7 +666,26 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),buttonView.isChecked());
             }
         });
+        /*CheckBox showAddressCheckBox=findViewById(R.id.checkBox_showAddress);
+        showAddressCheckBox.setChecked(PrefUtils.isShowAddressWhenStop(getApplicationContext()));
+        showAddressCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setShowAddressWhenStop(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox showNotificationCheckBox=findViewById(R.id.checkBox_notifiction);
+        showNotificationCheckBox.setChecked(PrefUtils.isShowNotification(getApplicationContext()));
+        showNotificationCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                WeatherService service= WeatherService.getInstance(getApplicationContext());
+                service.stopLocation();
+                PrefUtils.setShowNotification(getApplicationContext(),buttonView.isChecked());
+                service.startLocation();
 
+            }
+        });*/
         CheckBox goToHomeCheckBox=findViewById(R.id.checkBox_gotoHome);
         goToHomeCheckBox.setChecked(PrefUtils.isGoToHomeAfterAutoLanuch(getApplicationContext()));
         goToHomeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -848,17 +910,18 @@ public class ConfigurationActivity extends Activity {
                 startActivityForResult(intentWriteSetting, 124);
             }
         }
-        boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
+
+       /* boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
         if(overlayEnabled && !PrefUtils.isEnableAccessibilityService(getApplicationContext())){
 
-          /*  if(upgradeRootPermission(BuildConfig.APPLICATION_ID)) {
-                 *//*Settings.Secure.putString(getContentResolver(),
+          *//*  if(upgradeRootPermission(BuildConfig.APPLICATION_ID)) {
+                 *//**//*Settings.Secure.putString(getContentResolver(),
                     Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,BuildConfig.APPLICATION_ID+"/"+AppDetectionService.class.getName());
             Settings.Secure.putString(getContentResolver(),
-                    Settings.Secure.ACCESSIBILITY_ENABLED, "1");*//*
+                    Settings.Secure.ACCESSIBILITY_ENABLED, "1");*//**//*
                 //updateAccessibility(BuildConfig.APPLICATION_ID + "/" + AppDetectionService.class.getName());
-            }*/
-        }
+            }*//*
+        }*/
     }
     private void updateAccessibility(String serviceName) {
         // Parse the enabled services.
