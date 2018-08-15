@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.util.Set;
 
@@ -27,7 +28,7 @@ public class ThirdSoftLaunchReceiver extends BroadcastReceiver {
             for (String packageName : autoApps) {
                 //String packageName = apps.get(index);
                 Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-                if (launchIntent != null) {
+                if (launchIntent != null && !Utils.isServiceRunning(context,packageName)) {
                     launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(launchIntent);//null pointer check in case package name was not found
                     SystemClock.sleep( delayTime * 1000 + 300L);

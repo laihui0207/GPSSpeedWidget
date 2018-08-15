@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools" package="com.huivip.gpsspeedwidget">
     <uses-permission android:name="android.permission.RAISED_THREAD_PRIORITY"/>
+    <uses-permission android:name="android.permission.USB_PERMISSION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -47,7 +48,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
-                <category android:name="android.intent.category.HOME" />
+<!--                <category android:name="android.intent.category.HOME" />-->
                <!-- <category android:name="android.intent.category.DEFAULT" />-->
             </intent-filter>
         </activity>
@@ -117,8 +118,8 @@
         <service android:name="com.amap.api.location.APSService"></service>
         <receiver android:name=".listener.AutoFTPBackupReceiver"/>
         <receiver android:name=".listener.AutoLaunchSystemConfigReceiver"/>
-        <receiver android:name=".listener.BootStartReceiver">
-            <intent-filter>
+        <receiver android:name="com.huivip.gpsspeedwidget.listener.BootStartReceiver">
+            <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <category android:name="android.intent.category.HOME"/>
             </intent-filter>
@@ -128,26 +129,25 @@
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
-            <intent-filter >
+           <!-- <intent-filter>
                 <action android:name="android.intent.action.MEDIA_MOUNTED"/>
                 <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
                 <data android:scheme="file">
                 </data>
             </intent-filter>
             <intent-filter>
-            <action android:name="android.intent.action.PACKAGE_ADDED" />
-            <action android:name="android.intent.action.PACKAGE_REMOVED" />
-            <action android:name="android.intent.action.PACKAGE_REPLACED" />
-
-            <data android:scheme="package" />
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
+                <data android:scheme="package"/>
             </intent-filter>
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
                 <action android:name="android.intent.action.ANY_DATA_STATE"/>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
                 <action android:name="android.intent.action.DATE_CHANGED"/>
-                <action android:name="com.huivip.gpsspeedwidget.autostarted" />
-            </intent-filter>
+                <action android:name="com.huivip.gpsspeedwidget.autostarted"/>
+            </intent-filter>-->
 
         </receiver>
         <receiver android:name=".listener.MediaNotificationReceiver">
@@ -182,29 +182,21 @@
                 <action android:name="com.htc.music.playstatechanged"/>
                 <action android:name="com.rdio.android.playstatechanged"/>
                 <action android:name="fm.last.android.metachanged"/>
-                <action android:name="com.miui.player.metachanged"/>
                 <action android:name="com.miui.player.playstatechanged"/>
-                <action android:name="com.real.IMP.metachanged"/>
                 <action android:name="com.samsung.MusicPlayer.metachanged"/>
                 <action android:name="com.samsung.sec.metachanged"/>
                 <action android:name="com.samsung.music.metachanged"/>
-                <action android:name="com.samsung.sec.android.MusicPlayer.metachanged"/>
                 <action android:name="com.samsung.sec.android.MusicPlayer.playstatechanged"/>
                 <action android:name="com.lge.music.metachanged"/>
                 <action android:name="com.lge.music.playstatechanged"/>
-                <action android:name="com.sec.android.app.music.metachanged"/>
                 <action android:name="com.sec.android.app.music.playstatechanged"/>
                 <action android:name="com.rhapsody.metachanged"/>
                 <action android:name="com.rhapsody.playstatechanged"/>
-                <action android:name="com.maxmpz.audioplayer.playstatechanged"/>
                 <action android:name="net.jjc1138.android.scrobbler.action.MUSIC_STATUS"/>
                 <action android:name="com.adam.aslfms.notify.playstatechanged"/>
-                <action android:name="com.andrew.apollo.metachanged"/>
                 <action android:name="com.amazon.mp3.playstatechanged"/>
-                <action android:name="com.amazon.mp3.metachanged"/>
                 <action android:name="com.spotify.music.metadatachanged"/>
                 <action android:name="com.spotify.music.playbackstatechanged"/>
-                <action android:name="com.nullsoft.winamp.metachanged"/>
                 <action android:name="com.nullsoft.winamp.playstatechanged"/>
                 <action android:name="com.jetappfactory.jetaudio.playstatechanged"/>
                 <action android:name="com.jetappfactory.jetaudio.metachanged"/>

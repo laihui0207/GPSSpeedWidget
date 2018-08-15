@@ -48,7 +48,8 @@ public class BootStartService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(intent!=null && !started){
+        if(intent!=null){
+            Log.d(START_BOOT,"Boot Start Service Launched");
             boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
             if(start) {
                 started=true;
@@ -61,15 +62,17 @@ public class BootStartService extends Service {
 
                     PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 120000L, autoFtpBackupIntent);
+
+                    PendingIntent weatcherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), 0);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 60000L, weatcherServiceIntent);
                 }
 
-                PendingIntent weatcherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), 0);
-                alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 60000L, weatcherServiceIntent);
-
                 if(PrefUtils.isWidgetActived(getApplicationContext())) {
-                    Intent service = new Intent(getApplicationContext(), GpsSpeedService.class);
-                    service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT, true);
-                    startService(service);
+                    if(!Utils.isServiceRunning(getApplicationContext(),GpsSpeedService.class.getName())) {
+                        Intent service = new Intent(getApplicationContext(), GpsSpeedService.class);
+                        service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT, true);
+                        startService(service);
+                    }
                 }
 
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
@@ -118,7 +121,7 @@ public class BootStartService extends Service {
                     }
                 }*/
 
-                Set<String> desktopPackages=Utils.getDesktopPackageName(getApplicationContext());
+               /* Set<String> desktopPackages=Utils.getDesktopPackageName(getApplicationContext());
                 PrefUtils.setApps(getApplicationContext(),desktopPackages);
                 PackageManager packageManager = getApplicationContext().getPackageManager();
                 Intent intentLauncher = new Intent(Intent.ACTION_MAIN);
@@ -135,10 +138,17 @@ public class BootStartService extends Service {
                             getApplicationContext().startActivity(launchIntent);//null pointer check in case package name was not found
                         }
                     }
-                }
+                }*/
             }
         }
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        DateChangeReceiver receiver=new DateChangeReceiver();
+        getApplicationContext().unregisterReceiver(receiver);
+        super.onDestroy();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)//注意申明 API 21
