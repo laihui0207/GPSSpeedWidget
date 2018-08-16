@@ -53,16 +53,16 @@ public class CatchRoadReceiver extends BroadcastReceiver {
                 bearingStr += localNumberFormat.format(location.getBearing()) + ",";
                 speedStr += localNumberFormat.format(location.getSpeed()) + ",";
             }
-            if (!TextUtils.isEmpty(latlng)) {
+            if (!TextUtils.isEmpty(latlng) && latlng.length()>1) {
                 latlng = latlng.substring(0, latlng.length() - 1);
             }
-            if (!TextUtils.isEmpty(dateStr)) {
+            if (!TextUtils.isEmpty(dateStr) && dateStr.length()>1) {
                 dateStr = dateStr.substring(0, dateStr.length() - 1);
             }
-            if (!TextUtils.isEmpty(bearingStr)) {
+            if (!TextUtils.isEmpty(bearingStr) && bearingStr.length()>1) {
                 bearingStr = bearingStr.substring(0, bearingStr.length() - 1);
             }
-            if (!TextUtils.isEmpty(speedStr)) {
+            if (!TextUtils.isEmpty(speedStr) && speedStr.length()>1) {
                 speedStr = speedStr.substring(0, speedStr.length() - 1);
             }
         }

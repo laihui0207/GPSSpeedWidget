@@ -42,8 +42,8 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.number_speed, pendingIntent);
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }*/
-        IntentFilter intentFilter = new IntentFilter( "android.intent.action.USER_PRESENT" );
-        context.registerReceiver( myBroadcastReceiver , intentFilter);
+      /*  IntentFilter intentFilter = new IntentFilter( "android.intent.action.USER_PRESENT" );
+        context.registerReceiver( myBroadcastReceiver , intentFilter);*/
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 

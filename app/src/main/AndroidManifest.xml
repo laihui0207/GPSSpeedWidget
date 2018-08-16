@@ -129,6 +129,19 @@
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="autochips.intent.action.QB_POWERON"/>
+                <action android:name="xy.android.acc.on"/>
+                <action android:name="com.unisound.intent.action.GET_POWER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="autochips.intent.action.QB_POWEROFF"/>
+                <action android:name="xy.android.acc.off"/>
+                <action android:name="com.unisound.intent.action.DO_SLEEP"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.nwd.action.ACTION_MCU_STATE_CHANGE"/>
+            </intent-filter>
            <!-- <intent-filter>
                 <action android:name="android.intent.action.MEDIA_MOUNTED"/>
                 <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>

@@ -1,8 +1,10 @@
 package com.huivip.gpsspeedwidget.speech;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.media.AudioManager;
+import android.os.Handler;
 import android.util.Log;
 import com.baidu.tts.auth.AuthInfo;
 import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
@@ -11,7 +13,8 @@ import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-
+import android.os.Handler;
+import android.os.Message;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -159,8 +162,8 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
             params.put(SpeechSynthesizer.PARAM_TTS_TEXT_MODEL_FILE, TEXT_FILENAME);
             params.put(SpeechSynthesizer.PARAM_TTS_SPEECH_MODEL_FILE, MODEL_FILENAME);
         }
-       // InitConfig initConfig =  new InitConfig(appId, appKey, secretKey, ttsMode, params, listener);
-       /* AutoCheck.getInstance(context).check(initConfig, new Handler() {
+        InitConfig initConfig =  new InitConfig(appId, appKey, secretKey, ttsMode, params, this);
+        AutoCheck.getInstance(context).check(initConfig, new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == 100) {
@@ -173,7 +176,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
                 }
             }
 
-        });*/
+        });
 
         // 6. 初始化
        int result = mSpeechSynthesizer.initTts(ttsMode);
