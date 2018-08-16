@@ -1,11 +1,13 @@
 package com.huivip.gpsspeedwidget.appselection;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -35,7 +37,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class AppSelectionActivity extends AppCompatActivity /*Activity implements AppCompatCallback */{
+public class AppSelectionActivity extends AppCompatActivity {
 
     public static final String STATE_SELECTED_APPS = "state_selected_apps";
     public static final String STATE_SELECTED_APPS_NAME = "state_selected_apps_name";
@@ -50,7 +52,6 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
     private Set<String> mSelectedApps;
     private Set<String> mSelectedAppsName;
     private List<AppInfo> mAppList;
-    private AppCompatDelegate delegate;
     //private List<AppInfo> mMapApps;
 
    // private boolean mMapsOnly;
@@ -63,12 +64,8 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appselection);
-      /*  delegate = AppCompatDelegate.create(this, this);
-        delegate.onCreate(savedInstanceState);
-        delegate.setContentView(R.layout.activity_appselection);*/
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        //delegate.setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
@@ -195,12 +192,12 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_app_selection, menu);
        // MenuItem item = menu.findItem(R.id.menu_app_selection_maps);
-      /*  Drawable drawable-v17 = AppCompatResources.getDrawable(this, R.drawable-v17.ic_map_white_24dp).mutate();
-        drawable-v17 = DrawableCompat.wrap(drawable-v17);*/
+      /*  Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.ic_map_white_24dp).mutate();
+        drawable = DrawableCompat.wrap(drawable);*/
        /* if (mMapsOnly) {
-            DrawableCompat.setTint(drawable-v17, ContextCompat.getColor(this, R.color.colorAccent));
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.colorAccent));
         }*/
-       // item.setIcon(drawable-v17);
+       // item.setIcon(drawable);
         return true;
     }
 
