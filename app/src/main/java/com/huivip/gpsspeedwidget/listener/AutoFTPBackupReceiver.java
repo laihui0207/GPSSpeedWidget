@@ -4,31 +4,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import com.huivip.gpsspeedwidget.Constant;
-import com.huivip.gpsspeedwidget.DeviceUuidFactory;
-import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.DBUtil;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
-import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
-import java.nio.file.attribute.GroupPrincipal;
+import java.util.Calendar;
 import java.util.Date;
 
 public class AutoFTPBackupReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                GpsUtil gpsUtil=GpsUtil.getInstance(context);
-                String registUrl=Constant.LBSURL+Constant.LBSREGISTER;
-                DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
-                String deviceId=deviceUuidFactory.getDeviceUuid().toString();
-                HttpUtils.getData(String.format(registUrl,deviceId,(new Date()).getTime(),gpsUtil.getLatitude(),gpsUtil.getLongitude(),gpsUtil.getCityName()));
-            }
-        }).start();
-
+        if(PrefUtils.isEnableAutoCleanGPSHistory(context)){
+            cleanData(context);
+        }
         if (!PrefUtils.isFTPAutoBackup(context)) {
             return;
         }
@@ -55,6 +44,15 @@ public class AutoFTPBackupReceiver extends BroadcastReceiver {
             }
         });
         backupThread.start();
+    }
+    private void cleanData(Context context){
+        if(PrefUtils.isEnableAutoCleanGPSHistory(context)){
+            Calendar calendar=Calendar.getInstance();
+            calendar.add(Calendar.MONTH,-1);
+            Date fromDate=calendar.getTime();
+            DBUtil dbUtil= new DBUtil(context);
+            dbUtil.delete(fromDate);
 
+        }
     }
 }

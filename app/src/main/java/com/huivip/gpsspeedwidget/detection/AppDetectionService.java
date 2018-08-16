@@ -2,7 +2,6 @@ package com.huivip.gpsspeedwidget.detection;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;

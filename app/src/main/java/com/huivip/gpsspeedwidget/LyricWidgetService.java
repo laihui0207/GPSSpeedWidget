@@ -3,7 +3,6 @@ package com.huivip.gpsspeedwidget;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
-import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.media.AudioManager;
 import android.os.Handler;
@@ -93,19 +92,6 @@ public class LyricWidgetService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
         if (intent != null && !started) {
-
-           /* lyric_content = intent.getStringExtra(LYRIC_CONTENT);
-            Log.d("huivip","Lyric wiget:"+lyric_content);
-            if (!TextUtils.isEmpty(lyric_content)) {
-                list = LrcUtil.parseStr2List(lyric_content);
-            } else {
-                onStop();
-                stopSelf();
-                list=null;
-            }
-            duration = intent.getLongExtra(DURATION, 0);
-            position = intent.getLongExtra(POSITION, 0);
-            startTime=System.currentTimeMillis()-position;*/
             started=true;
             IntentFilter intentFilter = new IntentFilter( "com.huivip.widget.lyric.changed" );
             registerReceiver( myBroadcastReceiver , intentFilter);
