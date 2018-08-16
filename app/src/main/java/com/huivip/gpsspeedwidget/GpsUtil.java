@@ -237,9 +237,9 @@ public class GpsUtil implements AMapNaviListener {
             Intent recordService = new Intent(context, RecordGpsHistoryService.class);
             recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
             context.startService(recordService);
-            if (tts != null) {
-                tts.release();
-            }
+            //if (tts != null) {
+            SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context)).release();
+           // }
             serviceStarted = false;
             weatherService.stopLocation();
         }

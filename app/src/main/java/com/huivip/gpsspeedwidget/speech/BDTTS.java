@@ -25,7 +25,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     protected TtsMode ttsMode = TtsMode.MIX;
     protected String offlineVoice = OfflineResource.VOICE_FEMALE;
     protected SpeechSynthesizer mSpeechSynthesizer;
-    private static BDTTS BDTTS;
+    private static BDTTS BdTTS;
     AudioManager am;
     boolean inited=false;
     // ================选择TtsMode.ONLINE  不需要设置以下参数; 选择TtsMode.MIX 需要设置下面2个离线资源文件的路径
@@ -44,10 +44,14 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     }
 
     public static BDTTS getInstance(Context context) {
-        if (BDTTS == null) {
-            BDTTS = new BDTTS(context);
+        if (BdTTS == null) {
+            synchronized(BDTTS.class) {
+                if(BdTTS==null) {
+                    BdTTS = new BDTTS(context);
+                }
+            }
         }
-        return BDTTS;
+        return BdTTS;
     }
     @Override
     public void speak(String text) {
