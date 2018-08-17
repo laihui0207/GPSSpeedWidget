@@ -58,7 +58,6 @@ public class LyricFloatingService extends Service{
     public static String DURATION="lyric.duration";
     public static String LYRIC_CONTENT="lyric.content";
     private WindowManager mWindowManager;
-    private MediaControllerCallback controllerCallback = null;
     private View mFloatingView;
     long startTime;
     AudioManager audioManager;

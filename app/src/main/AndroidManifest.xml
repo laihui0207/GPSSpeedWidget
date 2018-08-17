@@ -271,15 +271,6 @@
                 <action android:name="android.service.notification.NotificationListenerService"/>
             </intent-filter>
         </service>
-       <!-- <service
-                android:name=".lyric.NotificationListenerService"
-                android:enabled="true"
-                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-                android:process=":NLS">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService"/>
-            </intent-filter>
-        </service>-->
         <activity android:name=".AudioTestActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
         </activity>
         <activity android:name=".BackupGPSHistoryActivity" android:windowSoftInputMode="stateHidden|stateUnchanged"></activity>

@@ -1,39 +1,23 @@
 package com.huivip.gpsspeedwidget;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.media.AudioManager;
-import android.media.session.MediaController;
 import android.media.session.MediaSession;
-import android.media.session.MediaSessionManager;
-import android.media.session.PlaybackState;
-import android.os.Build;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 import com.huivip.gpsspeedwidget.listener.*;
-import com.huivip.gpsspeedwidget.lyric.MediaControllerCallback;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Set;
 
 public class BootStartService extends Service {
     public static String START_BOOT="FromSTARTBOOT";
     boolean started=false;
     AlarmManager alarm;
     MediaSession session;
-    MediaControllerCallback mediaControllerCallback=null;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -96,10 +80,4 @@ public class BootStartService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    @Override
-    public void onDestroy() {
-        DateChangeReceiver receiver=new DateChangeReceiver();
-        getApplicationContext().unregisterReceiver(receiver);
-        super.onDestroy();
-    }
 }

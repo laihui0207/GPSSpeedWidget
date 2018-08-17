@@ -132,6 +132,7 @@ public class GpsUtil implements AMapNaviListener {
         c = random.nextInt();
         localNumberFormat.setMaximumFractionDigits(1);
         alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        tts = SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
     }
 
     public static GpsUtil getInstance(Context context) {
@@ -148,7 +149,6 @@ public class GpsUtil implements AMapNaviListener {
     public void startLocationService() {
         if (serviceStarted) return;
         this.locationTimer = new Timer();
-        tts = SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
         speedAdjust = PrefUtils.getSpeedAdjust(context);
         this.locationScanTask = new TimerTask() {
             @Override
@@ -238,7 +238,7 @@ public class GpsUtil implements AMapNaviListener {
             recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
             context.startService(recordService);
             //if (tts != null) {
-            SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context)).release();
+            //SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context)).release();
            // }
             serviceStarted = false;
             weatherService.stopLocation();

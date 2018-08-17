@@ -32,7 +32,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     AudioManager am;
     boolean inited=false;
     // ================选择TtsMode.ONLINE  不需要设置以下参数; 选择TtsMode.MIX 需要设置下面2个离线资源文件的路径
-    private static final String TEMP_DIR = "/sdcard/GPS"; // 重要！请手动将assets目录下的3个dat 文件复制到该目录
+    private static final String TEMP_DIR = "/sdcard/baiduTTS"; // 重要！请手动将assets目录下的3个dat 文件复制到该目录
 
     // 请确保该PATH下有这个文件
     private static final String TEXT_FILENAME = TEMP_DIR + "/" + "bd_etts_text.dat";
@@ -104,7 +104,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         }
         // 1. 获取实例
         mSpeechSynthesizer = SpeechSynthesizer.getInstance();
-        mSpeechSynthesizer.setContext(context);
+        mSpeechSynthesizer.setContext(context.getApplicationContext());
 
         // 2. 设置listener
         mSpeechSynthesizer.setSpeechSynthesizerListener(this);
@@ -145,7 +145,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
         if(!PrefUtils.isEnableAudioMixService(context)){
             Log.d("huivip","Audio use voice Call");
-            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
+            mSpeechSynthesizer.setAudioStreamType(AudioManager.MODE_IN_CALL);
         } else {
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         }
@@ -155,7 +155,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
        // mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
 
         // x. 额外 ： 自动so文件是否复制正确及上面设置的参数
-        Map<String, String> params = new HashMap<>();
+       /* Map<String, String> params = new HashMap<>();
         // 复制下上面的 mSpeechSynthesizer.setParam参数
         // 上线时请删除AutoCheck的调用
         if (isMix) {
@@ -177,7 +177,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
             }
 
         });
-
+*/
         // 6. 初始化
        int result = mSpeechSynthesizer.initTts(ttsMode);
        inited = result ==0;
