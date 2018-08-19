@@ -902,14 +902,14 @@ public class ConfigurationActivity extends Activity {
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(!Settings.System.canWrite(this)){
                 Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
                         Uri.parse("package:" + getPackageName()));
                 intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivityForResult(intentWriteSetting, 124);
             }
-        }
+        }*/
 
        /* boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
         if(overlayEnabled && !PrefUtils.isEnableAccessibilityService(getApplicationContext())){
