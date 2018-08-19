@@ -178,6 +178,7 @@ public class MapFloatingService extends Service {
             converter.coord(latLng);
             LatLng lastedLatLng = converter.convert();
             carMarker.setPosition(lastedLatLng);
+            //carMarker.setIcon();
             if (isNeedFollow && gpsUtil.getSpeed() > 0) {
                 // 跟随
                 aMap.animateCamera(CameraUpdateFactory.changeLatLng(lastedLatLng));
