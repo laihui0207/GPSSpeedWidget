@@ -94,12 +94,14 @@ public class LyricServiceLowVersion extends Service  {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                long startedTime=System.currentTimeMillis();
                 lyricContent = FileUtil.loadLric(getApplicationContext(), inputSongName, inputArtist);
                 if (TextUtils.isEmpty(lyricContent)) {
                     lyricContent = WangYiYunMusic.downloadLyric(inputSongName, inputArtist);
                 }
                 songName = inputSongName;
                 artistName = inputArtist;
+                currentPosition=System.currentTimeMillis()-startedTime;
                 Message msg = new Message();
                 mHandler.sendMessage(msg);
 

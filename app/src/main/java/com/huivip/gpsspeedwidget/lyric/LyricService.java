@@ -180,10 +180,12 @@ public class LyricService extends NotificationListenerService implements RemoteC
         new Thread(new Runnable() {
             @Override
             public void run() {
+                long startedTime=System.currentTimeMillis();
                 lyricContent = FileUtil.loadLric(getApplicationContext(), inputSongName, inputArtist);
                 if (TextUtils.isEmpty(lyricContent)) {
                     lyricContent = WangYiYunMusic.downloadLyric(inputSongName, inputArtist);
                 }
+                currentPosition=System.currentTimeMillis()-startedTime;
                 songName = inputSongName;
                 artistName = inputArtist;
                 Message msg = new Message();

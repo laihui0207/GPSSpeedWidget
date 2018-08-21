@@ -84,12 +84,13 @@ public class FileUtil {
     }
     public static String loadLric(Context context,String songName,String artist){
         String content="";
+        if(TextUtils.isEmpty(songName)) return content;
         String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";
         File dir=new File(path);
         if(!dir.exists()){
             return content;
         }
-        String fileName=songName;
+        String fileName=songName.replace("//","_");
         if(!TextUtils.isEmpty(artist)){
             fileName+="_"+artist;
         }
@@ -126,7 +127,7 @@ public class FileUtil {
         if(!dir.exists()){
             dir.mkdirs();
         }
-        String fileName=songName;
+        String fileName=songName.replace("//","_");
         if(!TextUtils.isEmpty(artist)){
             fileName+="_"+artist;
         }
