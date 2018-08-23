@@ -519,8 +519,8 @@ public class GpsSpeedService extends Service {
             this.remoteViews.setTextViewText(R.id.textView_limit_label,"限速");
             this.numberRemoteViews.setTextViewText(R.id.textView_limit_label,"限速");
         } else {
-            this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getAltitude()+ "米");
-            this.numberRemoteViews.setTextViewText(R.id.number_limit, gpsUtil.getAltitude()+ "米");
+            this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getAltitude()+ "");
+            this.numberRemoteViews.setTextViewText(R.id.number_limit, gpsUtil.getAltitude()+ "");
             this.remoteViews.setTextViewText(R.id.textView_limit_label,"海拔");
             this.numberRemoteViews.setTextViewText(R.id.textView_limit_label,"海拔");
         }
