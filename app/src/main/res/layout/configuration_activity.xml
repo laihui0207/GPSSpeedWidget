@@ -47,7 +47,7 @@
                     android:ems="2"
                     android:id="@+id/editText_delay_started" android:text="0"/>
             <TextView
-                    android:text="秒依次启动"
+                    android:text="秒依次启动第三方应用"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView8"
@@ -139,7 +139,7 @@
                     android:id="@+id/checkBox_navi_mode"/>
 
             <CheckBox
-                    android:text="道路限速提醒"
+                    android:text="道路限速超速提醒(不建议开启)"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_roadLimitNotify"/>
@@ -218,7 +218,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_timeFloating"/>
             <CheckBox
-                    android:text="停车显示当前地址"
+                    android:text="停车播报当前地址"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_showAddress"/>

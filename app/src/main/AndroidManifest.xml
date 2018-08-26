@@ -142,6 +142,9 @@
             <intent-filter>
                 <action android:name="com.nwd.action.ACTION_MCU_STATE_CHANGE"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.ANY_DATA_STATE"/>
+            </intent-filter>
            <!-- <intent-filter>
                 <action android:name="android.intent.action.MEDIA_MOUNTED"/>
                 <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>

@@ -104,9 +104,6 @@ public class WeatherService implements AMapLocationListener {
                                     + cityWeather.getString("winddirection") + "风" +cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
                             if(PrefUtils.isPlayWeather(context)) {
-                                SpeechFactory.getInstance(context)
-                                        .getTTSEngine(PrefUtils.getTtsEngine(context))
-                                        .speak(resultText, true);
                                 handler.post(runnableUi);
                             }
                         }
@@ -138,6 +135,9 @@ public class WeatherService implements AMapLocationListener {
                 textFloat.putExtra(TextFloatingService.SHOW_TEXT,showStr);
                 textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
                 context.startService(textFloat);
+                SpeechFactory.getInstance(context)
+                        .getTTSEngine(PrefUtils.getTtsEngine(context))
+                        .speak(resultText, true);
             }
             resultText =null;
         }

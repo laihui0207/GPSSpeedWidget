@@ -22,7 +22,9 @@ public class ThirdSoftLaunchReceiver extends BroadcastReceiver {
                 if (launchIntent != null && !Utils.isServiceRunning(context,packageName)) {
                     launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(launchIntent);//null pointer check in case package name was not found
-                    SystemClock.sleep( delayTime * 1000 + 300L);
+                    if(autoApps.size()>1) {
+                        SystemClock.sleep(delayTime * 1000 + 300L);
+                    }
                 }
             }
         }
