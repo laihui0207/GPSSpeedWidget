@@ -49,6 +49,9 @@ public class MapFloatingService extends Service {
     @BindView(R.id.map_floating)
     MapView mMapView ;
     AMap aMap=null;
+    @BindView(R.id.textview_floating_map_title)
+    TextView timeTextView;
+    TimeThread timeThread;
     private Marker carMarker;
     //LBSTraceClient mTraceClient=null;
     @BindView(R.id.button_map_close)
@@ -81,6 +84,8 @@ public class MapFloatingService extends Service {
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
+            timeThread.running=true;
+            timeThread.start();
         }
         return Service.START_REDELIVER_INTENT;
     }
@@ -88,6 +93,7 @@ public class MapFloatingService extends Service {
         if(mFloatingView!=null && mWindowManager!=null){
             mWindowManager.removeView(mFloatingView);
         }
+        timeThread.running=false;
     }
 
     @Override
@@ -116,6 +122,7 @@ public class MapFloatingService extends Service {
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         initMonitorPosition();
+        timeThread=new TimeThread(timeTextView);
         CrashHandler.getInstance().init(getApplicationContext());
         //mMapView = (MapView) findViewById(R.id.map);
         Bundle savedInstanceState=new Bundle();

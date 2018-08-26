@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
+
 import java.util.Set;
 
 public class AppDetectionService extends AccessibilityService {
@@ -42,6 +44,11 @@ public class AppDetectionService extends AccessibilityService {
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (enabledApps == null) {
             updateSelectedApps();
+        }
+        if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())){
+            Intent bootService=new Intent(getApplicationContext(),BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            startService(bootService);
         }
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
             return ;
