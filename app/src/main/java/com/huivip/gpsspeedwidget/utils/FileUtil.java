@@ -87,9 +87,9 @@ public class FileUtil {
         if(!dir.exists()){
             return content;
         }
-        String fileName=songName.replace("//","_");
+        String fileName=songName.replace("/","_");
         if(!TextUtils.isEmpty(artist)){
-            fileName+="_"+artist.replace("//","_");
+            fileName+="_"+artist.replace("/","_");
         }
         fileName+=".lrc";
         String lrcFileName=path+fileName;
@@ -106,7 +106,6 @@ public class FileUtil {
 
                 while (line != null) {
                     sb.append(line);
-                    sb.append(System.lineSeparator());
                     line = br.readLine();
                 }
                 content = sb.toString();
@@ -124,9 +123,9 @@ public class FileUtil {
         if(!dir.exists()){
             dir.mkdirs();
         }
-        String fileName=songName.replace("//","_");
+        String fileName=songName.replace("/","_");
         if(!TextUtils.isEmpty(artist)){
-            fileName+="_"+artist.replace("//","_");
+            fileName+="_"+artist.replace("/","_");
         }
         fileName+=".lrc";
         String lrcFileName=path+fileName;

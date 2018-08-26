@@ -43,6 +43,7 @@ public class AppDetectionService extends AccessibilityService {
         if (enabledApps == null) {
             updateSelectedApps();
         }
+
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
             return ;
         }
