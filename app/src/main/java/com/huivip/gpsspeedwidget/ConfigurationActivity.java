@@ -465,7 +465,7 @@ public class ConfigurationActivity extends Activity {
             }
         });
         EditText speedAdjustEditText=findViewById(R.id.editText_speedadjust);
-        speedAdjustEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(-5, 5)});
+        speedAdjustEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(-15, 15)});
         if(PrefUtils.getSpeedAdjust(getApplicationContext())!=0){
             speedAdjustEditText.setText(PrefUtils.getSpeedAdjust(getApplicationContext())+"");
         }

@@ -385,11 +385,8 @@ public class GpsUtil implements AMapNaviListener {
         mphSpeed = (int) (this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         kmhSpeed = (int) (this.speed.doubleValue() * 3.6D);
         if (speedAdjust != 0) {
-            if (kmhSpeed > 0) {
+            if (kmhSpeed > 0 && kmhSpeed > Math.abs(speedAdjust)) {
                 kmhSpeed += speedAdjust;
-                if (kmhSpeed < 0) {
-                    kmhSpeed = 0;
-                }
             }
         }
         speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);

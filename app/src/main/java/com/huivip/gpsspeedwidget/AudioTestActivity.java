@@ -158,7 +158,9 @@ public class AudioTestActivity extends Activity {
 
             }
         };
-        getApplicationContext().bindService(new Intent(getApplicationContext(), MusicNotificationListenerService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+             getApplicationContext().bindService(new Intent(getApplicationContext(), MusicNotificationListenerService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        }
         Button buttonMusic=findViewById(R.id.button_music);
         buttonMusic.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -16,17 +16,8 @@ public class ThirdSoftLaunchReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Set<String> autoApps = PrefUtils.getAutoLaunchApps(context);
         if(autoApps!=null || autoApps.size()>0) {
-
-       /* int index=PrefUtils.getOtherAppIndex(context);
-        if(index==autoApps.size()){
-            PrefUtils.setOtherAppIndex(context,0);
-            return;
-        }
-        List<String> apps=new ArrayList<>();
-        apps.addAll(autoApps);*/
             int delayTime = PrefUtils.getDelayStartOtherApp(context);
             for (String packageName : autoApps) {
-                //String packageName = apps.get(index);
                 Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
                 if (launchIntent != null && !Utils.isServiceRunning(context,packageName)) {
                     launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -35,8 +26,6 @@ public class ThirdSoftLaunchReceiver extends BroadcastReceiver {
                 }
             }
         }
-        //index++;
-       // PrefUtils.setOtherAppIndex(context, index);
         AlarmManager alarm=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,GoToHomeReceiver.class), 0);
         alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);

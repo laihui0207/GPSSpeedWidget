@@ -16,6 +16,7 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 public class BootStartService extends Service {
     public static String START_BOOT="FromSTARTBOOT";
     boolean started=false;
+    boolean autoStarted=false;
     AlarmManager alarm;
     MediaSession session;
     @Nullable
@@ -32,25 +33,30 @@ public class BootStartService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(intent!=null && !started){
-            Log.d(START_BOOT,"Boot Start Service Launched");
-            boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
+        boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
+        if(intent!=null && !autoStarted){
             if(start) {
-                started=true;
-                if(intent.getBooleanExtra(START_BOOT,false)) {
+                if (intent.getBooleanExtra(START_BOOT, false)) {
+                    Log.d(START_BOOT,"Auto Boot Start Service Launched");
+                    autoStarted = true;
                     PendingIntent thirdIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), ThirdSoftLaunchReceiver.class), 0);
-                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,  300L, thirdIntent);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 100L, thirdIntent);
 
                     PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, autoLaunchIntent);
 
-                    PendingIntent weatcherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), 0);
-                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 60000L, weatcherServiceIntent);
-
                     PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 120000L, autoFtpBackupIntent);
-                }
 
+                    PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), 0);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 60000L, weatherServiceIntent);
+                }
+            }
+        }
+        if(intent!=null && !started){
+            Log.d(START_BOOT,"Boot Start Service Launched");
+            if(start) {
+                started=true;
                 if(PrefUtils.isWidgetActived(getApplicationContext())) {
                     if(!Utils.isServiceRunning(getApplicationContext(),GpsSpeedService.class.getName())) {
                         Intent service = new Intent(getApplicationContext(), GpsSpeedService.class);
