@@ -13,6 +13,8 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
+
 import java.util.*;
 
 /**
@@ -24,6 +26,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         deviceUuidFactory = new DeviceUuidFactory(getApplicationContext());
+        String deviceId=deviceUuidFactory.getDeviceId();
+        String deviceId_shortString=deviceId.substring(0,deviceId.indexOf("-"));
+        PrefUtils.setDeviceIDString(getApplicationContext(),deviceId_shortString);
         setContentView(R.layout.activity_main);
         initPermission();
         Button configButton=findViewById(R.id.button_config);

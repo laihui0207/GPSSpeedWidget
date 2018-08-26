@@ -384,6 +384,7 @@ public class ConfigurationActivity extends Activity {
         TextView uidView=findViewById(R.id.textView_uid);
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
         String deviceId=deviceUuidFactory.getDeviceUuid().toString();
+        PrefUtils.setDeviceIDString(getApplicationContext(),deviceId.substring(0,deviceId.indexOf("-")));
         uidView.setText("本机ID: "+deviceId.substring(0,deviceId.indexOf("-")));
 
         CheckBox autoLaunchHotSpotCheckBox=findViewById(R.id.checkBox_autoWifi);
