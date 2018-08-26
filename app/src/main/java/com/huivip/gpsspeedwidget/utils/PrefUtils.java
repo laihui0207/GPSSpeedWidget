@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.text.TextUtils;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 
@@ -136,6 +137,9 @@ public abstract class PrefUtils {
     }*/
     public static String getAmapWebKey(Context context){
         String deviceId=getDeviceIdString(context);
+        if(TextUtils.isEmpty(deviceId)){
+
+        }
         String lastChar=deviceId.substring(deviceId.length()-1);
         if(lastChar.matches("\\d+(?:\\.\\d+)?")){
             return Constant.AUTONAVI_WEB_KEY;
