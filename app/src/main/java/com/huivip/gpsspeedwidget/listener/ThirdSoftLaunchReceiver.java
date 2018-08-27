@@ -16,21 +16,24 @@ public class ThirdSoftLaunchReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Set<String> autoApps = PrefUtils.getAutoLaunchApps(context);
         if(autoApps!=null || autoApps.size()>0) {
-            int delayTime = PrefUtils.getDelayStartOtherApp(context);
-            for (String packageName : autoApps) {
-                Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-                if (launchIntent != null && !Utils.isServiceRunning(context,packageName)) {
-                    launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(launchIntent);//null pointer check in case package name was not found
-                    if(autoApps.size()>1) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    int delayTime = PrefUtils.getDelayStartOtherApp(context);
+                    for (String packageName : autoApps) {
                         SystemClock.sleep(delayTime * 1000 + 300L);
+                        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+                        if (launchIntent != null && !Utils.isServiceRunning(context,packageName)) {
+                            launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(launchIntent);//null pointer check in case package name was not found
+                        }
                     }
+                    AlarmManager alarm=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+                    PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,GoToHomeReceiver.class), 0);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
                 }
-            }
+            }).start();
         }
-        AlarmManager alarm=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,GoToHomeReceiver.class), 0);
-        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
     }
 }
 

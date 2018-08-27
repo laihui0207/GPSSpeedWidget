@@ -104,6 +104,9 @@ public class WeatherService implements AMapLocationListener {
                                     + cityWeather.getString("winddirection") + "风" +cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
                             if(PrefUtils.isPlayWeather(context)) {
+                                SpeechFactory.getInstance(context)
+                                        .getTTSEngine(PrefUtils.getTtsEngine(context))
+                                        .speak(resultText, true);
                                 handler.post(runnableUi);
                             }
                         }
@@ -129,15 +132,10 @@ public class WeatherService implements AMapLocationListener {
                 }
             }
             if(!TextUtils.isEmpty(showStr)) {
-               // Toast.makeText(context, showStr, Toast.LENGTH_LONG).show();
-                //ToastUtil.show(context,showStr,5000);
                 Intent textFloat=new Intent(context,TextFloatingService.class);
                 textFloat.putExtra(TextFloatingService.SHOW_TEXT,showStr);
                 textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
                 context.startService(textFloat);
-                SpeechFactory.getInstance(context)
-                        .getTTSEngine(PrefUtils.getTtsEngine(context))
-                        .speak(resultText, true);
             }
             resultText =null;
         }
@@ -186,6 +184,9 @@ public class WeatherService implements AMapLocationListener {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            SpeechFactory.getInstance(context)
+                                    .getTTSEngine(PrefUtils.getTtsEngine(context))
+                                    .speak(address, true);
                             handler.post(runnableUi);
                         }
                     }, 3000);
