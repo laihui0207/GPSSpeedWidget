@@ -72,6 +72,7 @@ public class GpsUtil implements AMapNaviListener {
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
     boolean aimlessStatred = false;
+    boolean autoNavi_on_Frontend=false;
     boolean autoMapBackendProcessStarted=false;
     boolean catchRoadServiceStarted=false;
     final Handler locationHandler = new Handler();
@@ -273,7 +274,9 @@ public class GpsUtil implements AMapNaviListener {
     public void setAutoMapBackendProcessStarted(boolean autoMapBackendProcessStarted) {
         this.autoMapBackendProcessStarted = autoMapBackendProcessStarted;
     }
-
+    public void setAutoNavi_on_Frontend(boolean on_frontend){
+        this.autoNavi_on_Frontend=on_frontend;
+    }
     public boolean isCatchRoadServiceStarted() {
         return catchRoadServiceStarted;
     }
@@ -343,6 +346,15 @@ public class GpsUtil implements AMapNaviListener {
                 catchRoadLocation=paramLocation;
                 recordLocationDistance=10;
                 catchRoadDistance=100;
+            }
+            if(PrefUtils.isEnableAutoGoHomeAfterNaviStarted(context) && kmhSpeed>0 && autoNavi_on_Frontend && naviFloatingStatus == Constant.Navi_Status_Started ){
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("huivip","Auto Navi started will go home");
+                        Utils.goHome(context);
+                    }
+                }, 20*1000);
             }
 
         } else {

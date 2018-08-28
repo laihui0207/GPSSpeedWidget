@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"
               xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="200dip"
-                    android:layout_height="200dip">
+    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="100dip"
+                    android:layout_height="100dip">
         <ImageView android:id="@+id/imageview_meter_speed" android:background="@drawable/base"
                    android:layout_width="match_parent" android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
@@ -12,26 +12,25 @@
                                               android:layout_height="match_parent"
                                               android:layout_centerHorizontal="true"
                                               android:layout_centerVertical="true" android:padding="10dp"/>
-        <TextView android:textSize="50dp"
+        <TextView android:textSize="25dp"
                   android:id="@+id/textview_meter_SpeedText" android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:text="--"
                   android:textStyle="bold" android:textColor="#fff"
                   android:layout_alignParentBottom="true" android:layout_centerHorizontal="true"
-                  android:layout_marginBottom="12dp"/>
+        />
         <TextView
                 android:text="北"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:layout_alignParentTop="true"
-                android:layout_marginTop="22dp"
-                android:id="@+id/textView_meter_direction" android:textColor="#fff"
-                android:layout_centerHorizontal="true" android:textSize="25dp"/>
+                android:layout_centerHorizontal="true" android:layout_marginTop="13dp"
+                android:id="@+id/textView_meter_direction" android:textColor="#fff"/>
         <RelativeLayout android:id="@+id/meter_limitLayout"
-                        android:layout_width="45dp"
+                        android:layout_width="40dp"
                         android:gravity="center"
                         android:background="@drawable/circle_meter_limit"
                         android:layout_gravity="center"
-                        android:layout_height="45dp"
+                        android:layout_height="40dp"
                         android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:visibility="gone">
@@ -49,33 +48,29 @@
                     android:layout_width="match_parent"
                     android:id="@+id/meter_number_limit"
                     android:layout_height="wrap_content"
-                    android:ellipsize="none"
                     android:text="0"
-                    android:textColor="#fff"
-                    android:fontFamily="sans-serif-thin"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:textColor="#000"
                     android:includeFontPadding="false"
-                    android:textSize="20dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" android:layout_alignParentBottom="true"
-                    android:textStyle="bold" android:layout_alignParentTop="true"/>
+                    android:textSize="40dp"
+                    android:layout_alignParentStart="true"
+                    android:textStyle="bold" android:layout_alignParentTop="true" android:gravity="center"/>
             <TextView
                     android:text="限速"
                     android:layout_width="match_parent"
-                    android:textColor="#fff"
+                    android:textColor="#000"
                     android:gravity="top|center_vertical|center_horizontal"
-                    android:layout_height="10dp" android:id="@+id/textView_meter_limit_label"
-                    android:layout_alignParentBottom="true"
-                    android:textSize="6dp" android:allowUndo="true" android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
+                    android:layout_height="20dp" android:id="@+id/textView_meter_limit_label"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true" android:layout_alignParentStart="true"
+                    android:textSize="12dp" android:visibility="gone"/>
             <TextView
                     android:text="0米"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#fff"
+                    android:textColor="#000"
                     android:id="@+id/textView_meter_distance"
                     android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
-                    android:layout_marginTop="4dp" android:textSize="6dp"/>
+                    android:layout_marginTop="6dp" android:textSize="13dp" android:visibility="gone"/>
         </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.amap.api.navi.AMapNavi;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
@@ -111,6 +112,7 @@ public class XFTTS extends TTSService implements SynthesizerListener {
     private XFTTS(Context context) {
         this.context=context;
         SpeechUtility.createUtility(context, SpeechConstant.APPID + "=" + appId);
+        CrashHandler.getInstance().init(context);
         if (mTts == null) {
             createSynthesizer();
         }
@@ -123,7 +125,8 @@ public class XFTTS extends TTSService implements SynthesizerListener {
                     public void onInit(int errorcode) {
                         if (ErrorCode.SUCCESS == errorcode) {
                         } else {
-                            Toast.makeText(context, "语音合成初始化失败!" + errorcode, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, "语音合成初始化失败!" + errorcode, Toast.LENGTH_SHORT).show();
+                            Log.d("huivip_XF","Init Failed,Error Code:"+errorcode);
                         }
                     }
                 });
@@ -197,7 +200,7 @@ public class XFTTS extends TTSService implements SynthesizerListener {
     @Override
     public void onSpeakBegin() {
         initTTS();
-        beforeSpeak();
+       // beforeSpeak();
     }
 
     @Override
@@ -222,7 +225,7 @@ public class XFTTS extends TTSService implements SynthesizerListener {
 
     @Override
     public void onCompleted(SpeechError speechError) {
-        afterSpeak();
+       // afterSpeak();
     }
 
     @Override

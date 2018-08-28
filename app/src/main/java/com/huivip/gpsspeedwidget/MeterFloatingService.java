@@ -106,7 +106,11 @@ public class MeterFloatingService extends Service {
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        mFloatingView = inflater.inflate(R.layout.floatting_meter, null);
+        if(PrefUtils.isShowSmallFloatingStyle(getApplicationContext())){
+            mFloatingView = inflater.inflate(R.layout.floatting_meter_small, null);
+        } else {
+            mFloatingView = inflater.inflate(R.layout.floatting_meter, null);
+        }
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"
               xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="200dip"
-                    android:layout_height="200dip">
+    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="100dip"
+                    android:layout_height="100dip">
         <ImageView android:id="@+id/imageview_meter_speed" android:background="@drawable/base"
                    android:layout_width="match_parent" android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
@@ -12,7 +12,7 @@
                                               android:layout_height="match_parent"
                                               android:layout_centerHorizontal="true"
                                               android:layout_centerVertical="true" android:padding="10dp"/>
-        <TextView android:textSize="50dp"
+        <TextView android:textSize="20dp"
                   android:id="@+id/textview_meter_SpeedText" android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:text="--"
@@ -23,9 +23,9 @@
                 android:text="北"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:layout_alignParentTop="true"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="12dp"
                 android:id="@+id/textView_meter_direction" android:textColor="#fff"
-                android:layout_centerHorizontal="true" android:textSize="25dp"/>
+                android:layout_centerHorizontal="true"/>
         <RelativeLayout android:id="@+id/meter_limitLayout"
                         android:layout_width="45dp"
                         android:gravity="center"

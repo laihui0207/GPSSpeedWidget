@@ -135,8 +135,10 @@ public class WeatherService implements AMapLocationListener {
             if(!TextUtils.isEmpty(showStr)) {
                 Intent textFloat=new Intent(context,TextFloatingService.class);
                 textFloat.putExtra(TextFloatingService.SHOW_TEXT,showStr);
-                textFloat.putExtra(TextFloatingService.SHOW_TIME,30);
+                textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
                 context.startService(textFloat);
+
+                //Toast.makeText(context, showStr, Toast.LENGTH_LONG).show();
             }
             resultText =null;
         }
@@ -164,11 +166,11 @@ public class WeatherService implements AMapLocationListener {
                         pre_adCode =adCode;
                     }
                 }
+                if(!running && gpsUtil.getKmhSpeed()>0 && PrefUtils.isHideFlatingWindowWhenStop(context)){
+                    Utils.startFloationgWindows(context,true);
+                }
                 if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>10){
                     if(lastedLocation!=null && lastedLocation!=aMapLocation) {
-                        if(!running && PrefUtils.isHideFlatingWindowWhenStop(context)){
-                            Utils.startFloationgWindows(context,true);
-                        }
                         running=true;
                     }
                     lastedLocation=aMapLocation;
@@ -183,20 +185,22 @@ public class WeatherService implements AMapLocationListener {
                     }
                     address=aMapLocation.getAddress();
                 }
-                if (PrefUtils.isShowAddressWhenStop(context) && gpsUtil.getSpeed() == 0 && running) {
+                if (gpsUtil.getSpeed() == 0 && running) {
                     running = false;
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            SpeechFactory.getInstance(context)
-                                    .getTTSEngine(PrefUtils.getTtsEngine(context))
-                                    .speak(address, true);
-                            if(PrefUtils.isHideFlatingWindowWhenStop(context)) {
-                                Utils.startFloationgWindows(context, false);
+                    if (PrefUtils.isHideFlatingWindowWhenStop(context)) {
+                        Utils.startFloationgWindows(context, false);
+                    }
+                    if(PrefUtils.isShowAddressWhenStop(context)) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                SpeechFactory.getInstance(context)
+                                        .getTTSEngine(PrefUtils.getTtsEngine(context))
+                                        .speak(address, true);
+                                handler.post(runnableUi);
                             }
-                            handler.post(runnableUi);
-                        }
-                    }, 3000);
+                        }, 3000);
+                    }
                 }
             }else {
                 //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。

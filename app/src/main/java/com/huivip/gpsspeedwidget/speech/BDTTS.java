@@ -12,6 +12,7 @@ import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import android.os.Handler;
 import android.os.Message;
@@ -43,6 +44,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     private BDTTS(Context context) {
         this.context=context;
         am= (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);
+        CrashHandler.getInstance().init(context);
         initTTS();
     }
 

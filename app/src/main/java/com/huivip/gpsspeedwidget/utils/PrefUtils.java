@@ -43,6 +43,8 @@ public abstract class PrefUtils {
     public static final String ENABLED_LYRIC_PREFS_NAME="com.huivip.Enable.fating.Lyric";
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enable.AudioService";
     public static final String ENABLE_TIME_FLOATING_WINDOW="com.huivip.enable.Time.FloatingWindow";
+    public static final String ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI="com.huivip.enable.hide.FloatingWindow.OnNaviApp";
+    public static final String ENABLE_AUTO_GOHOME_AFTER_NAVI_STARTED="com.huivip.enable.auto.goHome.afterNavi";
     public static final String ENABLE_AUDIO_MIX="com.huivip.enable.AudioMix";
     public static final String ENABLE_TEMP_AUDIO_SERVICE="com.huivip.enable.temp.AudioService";
     public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enable.autoNavi.Service";
@@ -164,13 +166,24 @@ public abstract class PrefUtils {
         return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, true);
     }
 
-    public static void setEnableTimeFloationgWidow(Context context,boolean value){
+    public static void setEnableTimeFloatingWidow(Context context, boolean value){
         edit(context).putBoolean(ENABLE_TIME_FLOATING_WINDOW, value).apply();
     }
-    public static boolean isEnableTimeFloationgWidow(Context context){
+    public static boolean isEnableTimeFloatingWidow(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_TIME_FLOATING_WINDOW, false);
     }
-
+    public static void setHideFloatingWidowOnNaviApp(Context context, boolean value){
+        edit(context).putBoolean(ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI, value).apply();
+    }
+    public static boolean isHideFloatingWidowOnNaviApp(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI, true);
+    }
+    public static void setEnableAutoGoHomeAfterNaviStarted(Context context, boolean value){
+        edit(context).putBoolean(ENABLE_AUTO_GOHOME_AFTER_NAVI_STARTED, value).apply();
+    }
+    public static boolean isEnableAutoGoHomeAfterNaviStarted(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_AUTO_GOHOME_AFTER_NAVI_STARTED, false);
+    }
     public static void setPlayTime(Context context,boolean value){
         edit(context).putBoolean(APP_PLAY_TIME, value).apply();
     }

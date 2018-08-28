@@ -16,12 +16,10 @@
                 android:layout_height="wrap_content" android:id="@+id/button_map_close" android:layout_weight="1"/>
     </LinearLayout>
     <RelativeLayout android:layout_width="330dp" android:layout_height="match_parent">
-        <com.amap.api.maps.MapView
-                android:id="@+id/map_floating"
+        <com.amap.api.navi.AMapNaviView
+                android:id="@+id/realnavi_floating"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-
-        </com.amap.api.maps.MapView>
+        </com.amap.api.navi.AMapNaviView>
     </RelativeLayout>
 </LinearLayout>

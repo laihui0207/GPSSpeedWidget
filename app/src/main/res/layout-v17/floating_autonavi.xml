@@ -38,23 +38,23 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/textView_autonavi_direction" android:textColor="#000" android:textSize="20dp"
-                android:layout_alignParentTop="true"/>
+                android:layout_above="@+id/textView_autonavi_altitude" android:layout_marginBottom="-45dp"/>
         <TextView
                 android:text="km/h"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView_autonavi_speedUnit"
                 android:textColor="#000" android:textSize="20dp"
-                android:layout_centerHorizontal="true" android:layout_alignParentBottom="true"/>
+                android:layout_centerHorizontal="true" android:layout_alignParentBottom="true"
+                android:layout_marginBottom="25dp"/>
         <TextView
                 android:text="海拔: 0米"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView_autonavi_altitude"
-                android:textSize="12dp" android:textColor="#000"
-                android:layout_centerVertical="false"
-                android:layout_centerHorizontal="true" android:layout_alignParentBottom="false"
-                android:layout_alignTop="@+id/SpeedText"/>
+                android:textSize="15dp" android:textColor="#000"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true" android:layout_marginTop="45dp"/>
         <RelativeLayout android:id="@+id/autoNavi_limitLayout"
                         android:layout_width="80dp"
                         android:gravity="center"

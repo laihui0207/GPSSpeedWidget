@@ -69,7 +69,7 @@ public class BootStartService extends Service {
                 if(!PrefUtils.isEnableAccessibilityService(getApplicationContext())){
                     PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_ALL);
                 }
-                if(PrefUtils.isEnableTimeFloationgWidow(getApplicationContext())){
+                if(PrefUtils.isEnableTimeFloatingWidow(getApplicationContext())){
                     if(!Utils.isServiceRunning(getApplicationContext(),RealTimeFloatingService.class.getName())){
                         Intent timeFloating=new Intent(getApplicationContext(),RealTimeFloatingService.class);
                         startService(timeFloating);

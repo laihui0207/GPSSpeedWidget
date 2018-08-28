@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.*;
@@ -27,7 +26,6 @@ import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
-import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.speech.BDTTS;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
@@ -297,6 +295,22 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setHideFlatingWindowWhenStop(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox floatingHideWhenOnNavi=findViewById(R.id.checkBox_hideFloating_onAutoNavi);
+        floatingHideWhenOnNavi.setChecked(PrefUtils.isHideFloatingWidowOnNaviApp(getApplicationContext()));
+        floatingHideWhenOnNavi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setHideFloatingWidowOnNaviApp(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox autoGoHomeAfterNaviCheckBox=findViewById(R.id.checkBox_returnHome_afterAutoStart);
+        autoGoHomeAfterNaviCheckBox.setChecked(PrefUtils.isEnableAutoGoHomeAfterNaviStarted(getApplicationContext()));
+        autoGoHomeAfterNaviCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableAutoGoHomeAfterNaviStarted(getApplicationContext(),buttonView.isChecked());
             }
         });
         CheckBox showSpeedCheckBox=findViewById(R.id.checkBox_showSpeed);
@@ -793,11 +807,11 @@ public class ConfigurationActivity extends Activity {
             }
         });
         CheckBox enableTimeFloating=findViewById(R.id.checkBox_timeFloating);
-        enableTimeFloating.setChecked(PrefUtils.isEnableTimeFloationgWidow(getApplicationContext()));
+        enableTimeFloating.setChecked(PrefUtils.isEnableTimeFloatingWidow(getApplicationContext()));
         enableTimeFloating.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                PrefUtils.setEnableTimeFloationgWidow(getApplicationContext(),buttonView.isChecked());
+                PrefUtils.setEnableTimeFloatingWidow(getApplicationContext(),buttonView.isChecked());
                 if(buttonView.isChecked()){
                     if(!Utils.isServiceRunning(getApplicationContext(),RealTimeFloatingService.class.getName())){
                         Intent timefloating=new Intent(getApplicationContext(),RealTimeFloatingService.class);
