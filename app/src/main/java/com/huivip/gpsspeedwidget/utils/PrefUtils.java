@@ -23,6 +23,8 @@ public abstract class PrefUtils {
     private static final String PREF_OPACITY = "pref_opacity";
     private static final String PREF_SPEEDOMETER = "pref_speedometer";
     private static final String PREF_LIMITS = "pref_limits";
+    private static final String PREF_SHOW_SMALL_FLOATING= "pref_small_floating_style";
+    private static final String PREF_HIDE_FLOATING_WHEN_STOP= "pref_hide_floating_window_when_stop";
     private static final String PREF_APPS = "pref_apps";
     private static final String PREF_DEFAULT_LAUNCHE_APP= "pref_Default_launch_apps";
     private static final String AUTO_FLOATTING_STYLE = "com.huivip.Floating.style";
@@ -465,6 +467,20 @@ public abstract class PrefUtils {
 
     public static void setShowLimits(Context context, boolean show) {
         edit(context).putBoolean(PREF_LIMITS, show).apply();
+    }
+    public static boolean isShowSmallFloatingStyle(Context context) {
+        return getSharedPreferences(context).getBoolean(PREF_SHOW_SMALL_FLOATING, false);
+    }
+
+    public static void setShowSmallFloatingStyle(Context context, boolean show) {
+        edit(context).putBoolean(PREF_SHOW_SMALL_FLOATING, show).apply();
+    }
+    public static boolean isHideFlatingWindowWhenStop(Context context) {
+        return getSharedPreferences(context).getBoolean(PREF_HIDE_FLOATING_WHEN_STOP, false);
+    }
+
+    public static void setHideFlatingWindowWhenStop(Context context, boolean hide) {
+        edit(context).putBoolean(PREF_HIDE_FLOATING_WHEN_STOP,hide).apply();
     }
     public static boolean isEnableNaviFloating(Context context) {
         return getSharedPreferences(context).getBoolean(ENABLE_NAVI_FLOATING_WINDOWS, false);

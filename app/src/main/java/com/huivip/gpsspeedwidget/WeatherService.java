@@ -17,6 +17,7 @@ import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.ToastUtil;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -134,7 +135,7 @@ public class WeatherService implements AMapLocationListener {
             if(!TextUtils.isEmpty(showStr)) {
                 Intent textFloat=new Intent(context,TextFloatingService.class);
                 textFloat.putExtra(TextFloatingService.SHOW_TEXT,showStr);
-                textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
+                textFloat.putExtra(TextFloatingService.SHOW_TIME,30);
                 context.startService(textFloat);
             }
             resultText =null;
@@ -165,6 +166,9 @@ public class WeatherService implements AMapLocationListener {
                 }
                 if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>10){
                     if(lastedLocation!=null && lastedLocation!=aMapLocation) {
+                        if(!running && PrefUtils.isHideFlatingWindowWhenStop(context)){
+                            Utils.startFloationgWindows(context,true);
+                        }
                         running=true;
                     }
                     lastedLocation=aMapLocation;
@@ -187,6 +191,9 @@ public class WeatherService implements AMapLocationListener {
                             SpeechFactory.getInstance(context)
                                     .getTTSEngine(PrefUtils.getTtsEngine(context))
                                     .speak(address, true);
+                            if(PrefUtils.isHideFlatingWindowWhenStop(context)) {
+                                Utils.startFloationgWindows(context, false);
+                            }
                             handler.post(runnableUi);
                         }
                     }, 3000);

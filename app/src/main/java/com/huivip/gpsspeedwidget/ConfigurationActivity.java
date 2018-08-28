@@ -283,6 +283,22 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setShowLimits(getApplicationContext(),compoundButton.isChecked());
             }
         });
+        CheckBox floatingSmallType=findViewById(R.id.checkBox_smallType);
+        floatingSmallType.setChecked(PrefUtils.isShowSmallFloatingStyle(getApplicationContext()));
+        floatingSmallType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setShowSmallFloatingStyle(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox floatingHideWhenStop=findViewById(R.id.checkBox_hideFloating);
+        floatingHideWhenStop.setChecked(PrefUtils.isHideFlatingWindowWhenStop(getApplicationContext()));
+        floatingHideWhenStop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setHideFlatingWindowWhenStop(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         CheckBox showSpeedCheckBox=findViewById(R.id.checkBox_showSpeed);
         showSpeedCheckBox.setChecked(PrefUtils.getShowSpeedometer(getApplicationContext()));
         showSpeedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
