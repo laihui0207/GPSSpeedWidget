@@ -505,38 +505,38 @@ public class GpsSpeedService extends Service {
         }
 
 
-        if (gpsUtil.getLimitSpeed() > 0 || gpsUtil.getCameraDistance()>0) {
+       /* if (gpsUtil.getLimitSpeed() > 0 || gpsUtil.getCameraDistance()>0) {
             this.remoteViews.setTextViewText(R.id.watch_number_limit, gpsUtil.getLimitSpeed() + "");
             this.remoteViews.setProgressBar(R.id.watch_progressBarLimit, 100, gpsUtil.getLimitDistancePercentage(), false);
             this.remoteViews.setTextViewText(R.id.textView_watch_distance, gpsUtil.getLimitDistance() + "米");
             this.remoteViews.setViewVisibility(R.id.watch_limitLayout, View.VISIBLE);
-        } else {
+        } else {*/
             this.remoteViews.setViewVisibility(R.id.watch_limitLayout, View.GONE);
-        }
-        if(gpsUtil.getLimitSpeed()>0){
+        /*}*/
+        /*if(gpsUtil.getLimitSpeed()>0){
             this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getLimitSpeed() + "");
             this.numberRemoteViews.setTextViewText(R.id.number_limit,gpsUtil.getLimitSpeed()+"");
             this.remoteViews.setTextViewText(R.id.textView_limit_label,"限速");
             this.numberRemoteViews.setTextViewText(R.id.textView_limit_label,"限速");
-        } else {
+        } else {*/
             this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getAltitude()+ "");
             this.numberRemoteViews.setTextViewText(R.id.number_limit, gpsUtil.getAltitude()+ "");
             this.remoteViews.setTextViewText(R.id.textView_limit_label,"海拔");
             this.numberRemoteViews.setTextViewText(R.id.textView_limit_label,"海拔");
-        }
-        if (gpsUtil.getCameraType() > -1) {
+        /*}*/
+       /* if (gpsUtil.getCameraType() > -1) {
             this.numberRemoteViews.setTextViewText(R.id.textView_limit_label, gpsUtil.getCameraTypeName());
             this.remoteViews.setTextViewText(R.id.textView_watch_limit_label, gpsUtil.getCameraTypeName());
         } else {
             this.numberRemoteViews.setTextViewText(R.id.textView_limit_label, "限速");
             this.remoteViews.setTextViewText(R.id.textView_watch_limit_label, "限速");
-        }
+        }*/
         this.numberRemoteViews.setTextViewText(R.id.textView_direction, gpsUtil.getDirection() + "");
-        if (gpsUtil.getLimitDistance() > 0) {
+       /* if (gpsUtil.getLimitDistance() > 0) {
             this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getLimitDistance() + "米");
-        } else {
+        } else {*/
             this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getDistance() + "");
-        }
+        /*}*/
 
         if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
             this.numberRemoteViews.setTextViewText(R.id.textView_unit, "km/h");
