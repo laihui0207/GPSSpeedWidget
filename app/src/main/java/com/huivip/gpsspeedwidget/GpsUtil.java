@@ -277,6 +277,9 @@ public class GpsUtil implements AMapNaviListener {
     public void setAutoNavi_on_Frontend(boolean on_frontend){
         this.autoNavi_on_Frontend=on_frontend;
     }
+    public boolean isAutoNavi_on_Frontend(){
+        return this.autoNavi_on_Frontend;
+    }
     public boolean isCatchRoadServiceStarted() {
         return catchRoadServiceStarted;
     }

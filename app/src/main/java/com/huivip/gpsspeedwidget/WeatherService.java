@@ -137,7 +137,7 @@ public class WeatherService implements AMapLocationListener {
                 textFloat.putExtra(TextFloatingService.SHOW_TEXT,showStr);
                 textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
                 context.startService(textFloat);
-
+                ToastUtil.show(context,showStr,100000);
                 //Toast.makeText(context, showStr, Toast.LENGTH_LONG).show();
             }
             resultText =null;
@@ -167,7 +167,7 @@ public class WeatherService implements AMapLocationListener {
                     }
                 }
                 if(!running && gpsUtil.getKmhSpeed()>0 && PrefUtils.isHideFlatingWindowWhenStop(context)){
-                    Utils.startFloationgWindows(context,true);
+                    Utils.startFloatingWindows(context,true);
                 }
                 if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>10){
                     if(lastedLocation!=null && lastedLocation!=aMapLocation) {
@@ -188,7 +188,7 @@ public class WeatherService implements AMapLocationListener {
                 if (gpsUtil.getSpeed() == 0 && running) {
                     running = false;
                     if (PrefUtils.isHideFlatingWindowWhenStop(context)) {
-                        Utils.startFloationgWindows(context, false);
+                        Utils.startFloatingWindows(context, false);
                     }
                     if(PrefUtils.isShowAddressWhenStop(context)) {
                         new Handler().postDelayed(new Runnable() {

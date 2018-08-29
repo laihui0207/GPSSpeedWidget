@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -50,6 +51,9 @@ public class AppDetectionService extends AccessibilityService {
             bootService.putExtra(BootStartService.START_BOOT,true);
             startService(bootService);
         }
+       /* if(event.getPackageName()!=null){
+            FileUtil.saveLogToFile("Detection service Check package Name:"+event.getPackageName());
+        }*/
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
             return ;
         }

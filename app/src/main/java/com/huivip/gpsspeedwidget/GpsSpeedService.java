@@ -82,7 +82,7 @@ public class GpsSpeedService extends Service {
                     gpsUtil.startLocationService();
                     PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                     if(PrefUtils.isUserManualClosedService(getApplicationContext())) {
-                        Utils.startFloationgWindows(getApplicationContext(),true);
+                        Utils.startFloatingWindows(getApplicationContext(),true);
                         PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
                     }
                 }
@@ -105,7 +105,7 @@ public class GpsSpeedService extends Service {
                     this.locationTimer.purge();
                     this.locationTimer = null;
                 }
-                Utils.startFloationgWindows(getApplicationContext(),false);
+                Utils.startFloatingWindows(getApplicationContext(),false);
                 PrefUtils.setUserManualClosedServer(getApplicationContext(), true);
                 Toast.makeText(getApplicationContext(), "GPS服务关闭", Toast.LENGTH_SHORT).show();
                 stopSelf();

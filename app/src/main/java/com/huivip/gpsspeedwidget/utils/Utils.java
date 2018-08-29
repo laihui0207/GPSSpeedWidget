@@ -292,11 +292,15 @@ public abstract class Utils {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
-    public static void startFloationgWindows(Context context,boolean enabled){
+    public static void startFloatingWindows(Context context, boolean enabled){
         Intent defaultFloatingService=new Intent(context,FloatingService.class);
         Intent autoNavifloatService=new Intent(context,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(context,MeterFloatingService.class);
         if(enabled){
+            GpsUtil gpsUtil=GpsUtil.getInstance(context);
+            if(gpsUtil.isAutoNavi_on_Frontend() && PrefUtils.isHideFloatingWidowOnNaviApp(context)){
+                return;
+            }
             String floatingStyle=PrefUtils.getFloatingStyle(context);
             if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
                 if(Utils.isServiceRunning(context,MeterFloatingService.class.getName())){

@@ -93,7 +93,7 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableNaviFloating(getApplicationContext(), true);
                 PrefUtils.setAppFirstRun(getApplicationContext(),false);
             }
-            Utils.startFloationgWindows(getApplicationContext(),true);
+            Utils.startFloatingWindows(getApplicationContext(),true);
         }
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         enableFloatingWidnowCheckBox.setChecked(PrefUtils.isEnableFlatingWindow(getApplicationContext()));
@@ -175,10 +175,10 @@ public class ConfigurationActivity extends Activity {
                     @Override
                     public void run() {
                         if(compoundButton.isChecked() ){
-                            Utils.startFloationgWindows(getApplicationContext(),true);
+                            Utils.startFloatingWindows(getApplicationContext(),true);
                         }
                         else {
-                            Utils.startFloationgWindows(getApplicationContext(),false);
+                            Utils.startFloatingWindows(getApplicationContext(),false);
                         }
                     }
                 }).start();
@@ -722,7 +722,7 @@ public class ConfigurationActivity extends Activity {
                     default:
                         PrefUtils.setFloattingStyle(getApplicationContext(),PrefUtils.FLOATING_DEFAULT);
                 }
-                Utils.startFloationgWindows(getApplicationContext(),true);
+                Utils.startFloatingWindows(getApplicationContext(),true);
             }
         });
         RadioButton styleDeafult=findViewById(R.id.radioButton_style_default);
@@ -891,7 +891,7 @@ public class ConfigurationActivity extends Activity {
             invalidateStates();
         }
     }
-   /* private void startFloationgWindows(boolean enabled){
+   /* private void startFloatingWindows(boolean enabled){
         Intent defaultFloatingService=new Intent(this,FloatingService.class);
         Intent autoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(this,MeterFloatingService.class);

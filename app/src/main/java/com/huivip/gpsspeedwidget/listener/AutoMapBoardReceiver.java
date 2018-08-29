@@ -38,7 +38,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         }
                         gpsUtil.setAutoNavi_on_Frontend(true);
                         if(PrefUtils.isHideFloatingWidowOnNaviApp(context)){
-                            Utils.startFloationgWindows(context,false);
+                            Utils.startFloatingWindows(context,false);
                         }
                         PrefUtils.setEnableTempAudioService(context, false);
                         break;
@@ -50,7 +50,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         }
                         gpsUtil.setAutoNavi_on_Frontend(false);
                         if(PrefUtils.isHideFloatingWidowOnNaviApp(context) && gpsUtil.getAutoNaviStatus() != Constant.Navi_Status_Started){
-                            Utils.startFloationgWindows(context,true);
+                            Utils.startFloatingWindows(context,true);
                         }
                         PrefUtils.setEnableTempAudioService(context, false);
                         //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
@@ -74,6 +74,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setCurrentRoadName("");
                         gpsUtil.setAutoMapBackendProcessStarted(false);
                         PrefUtils.setEnableTempAudioService(context, true);
+                        if(PrefUtils.isHideFloatingWidowOnNaviApp(context)){
+                            Utils.startFloatingWindows(context,true);
+                        }
                     case 25:  // xunhang end
                     case 9:  // navi end
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
@@ -135,7 +138,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 }
                 int limitSpeed=intent.getIntExtra("LIMITED_SPEED",0);
                 if(limitSpeed>0) {
-                    gpsUtil.setCameraSpeed(limitSpeed);
+                    gpsUtil.setLimitSpeed(limitSpeed);
                 }
                 /*
                 //当前道路类型，对应的值为int类型
@@ -248,6 +251,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
         if(!PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)){
             return;
         }
-       Utils.startFloationgWindows(context,enabled);
+       Utils.startFloatingWindows(context,enabled);
     }
 }
