@@ -8,18 +8,18 @@
             android:layout_width="match_parent" android:background="@drawable/text_floating_border"
             android:layout_height="wrap_content" android:weightSum="10">
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:text="高德地图" android:layout_weight="10" android:id="@+id/textview_floating_map_title"
+                  android:text="高德地图" android:layout_weight="10" android:id="@+id/textview_floating_realNavi_title"
                   android:textSize="30dp" android:gravity="center" android:textStyle="bold"/>
         <Button
                 android:text="X"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/button_map_close" android:layout_weight="1"/>
+                android:layout_height="wrap_content" android:id="@+id/button_realNavi_close" android:layout_weight="1"/>
     </LinearLayout>
     <RelativeLayout android:layout_width="330dp" android:layout_height="match_parent">
         <com.amap.api.navi.AMapNaviView
-                android:id="@+id/realnavi_floating"
+                android:id="@+id/navi_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-        </com.amap.api.navi.AMapNaviView>
+                android:layout_height="match_parent"
+        />
     </RelativeLayout>
 </LinearLayout>

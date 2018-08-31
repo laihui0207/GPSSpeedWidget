@@ -71,7 +71,7 @@ public class AudioTestActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_test);
-        lrcView=findViewById(R.id.lrc_view);
+/*        lrcView=findViewById(R.id.lrc_view);*/
         audioManager= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         TextView systemMaxView=findViewById(R.id.textView_maxSystem);
         systemMaxView.setText("System: current:"+audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM)+",max:"+audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
@@ -271,6 +271,11 @@ public class AudioTestActivity extends Activity {
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+               /* Intent timeIntent =new Intent(getApplicationContext(),GPSNaviService.class);
+                timeIntent.putExtra(GPSNaviService.EXTRA_TO_LATITUDE,39.96087);
+                timeIntent.putExtra(GPSNaviService.EXTRA_TO_LONGITUDE,116.427231);
+                startService(timeIntent);*/
+
                /* if(!Utils.isNotificationEnabled(getApplicationContext())){
                     Utils.openNotificationWindows(getApplicationContext());
                 }

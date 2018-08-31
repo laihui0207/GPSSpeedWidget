@@ -137,7 +137,7 @@ public class WeatherService implements AMapLocationListener {
                 textFloat.putExtra(TextFloatingService.SHOW_TEXT,showStr);
                 textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
                 context.startService(textFloat);
-                ToastUtil.show(context,showStr,100000);
+                //ToastUtil.show(context,showStr,100000);
                 //Toast.makeText(context, showStr, Toast.LENGTH_LONG).show();
             }
             resultText =null;

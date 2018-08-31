@@ -118,6 +118,9 @@ public class FileUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(TextUtils.isEmpty(content) && lrcFile!=null){
+            lrcFile.delete();
+        }
         return content;
     }
     public static void saveLric(Context context,String songName,String artist,String content){
@@ -136,14 +139,16 @@ public class FileUtil {
         if(lrcFile.exists()){
             lrcFile.delete();
         }
-
+        if(TextUtils.isEmpty(content)){
+            return;
+        }
         try {
             FileWriter fileWriter = new FileWriter(lrcFile);
             fileWriter.write(content);
             fileWriter.flush();
             fileWriter.close();
         } catch (IOException e) {
-            Toast.makeText(context,"File create Error:"+e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context,"File create Error:"+e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
         }
     }
     public static String createGPXFile(List<TraceLocation> data, String selectDate,Context context){
@@ -196,7 +201,7 @@ public class FileUtil {
     public static String saveLogToFile(String logContent) {
         String nameString="GPSPluginLog";
         StringBuffer sb = new StringBuffer();
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         String result = logContent;
         L.d("Huivip Log to file", result);

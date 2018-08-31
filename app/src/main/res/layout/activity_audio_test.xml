@@ -175,7 +175,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/button_next" android:layout_weight="1"/>
     </LinearLayout>
-    <com.huivip.gpsspeedwidget.view.LrcView android:layout_width="match_parent"
+    <!--<com.huivip.gpsspeedwidget.view.LrcView android:layout_width="match_parent"
                                             android:id="@+id/lrc_view" app:lrcMode="KARAOKE"
-                                            android:layout_height="match_parent"/>
+                                            android:layout_height="match_parent"/>-->
+    <com.amap.api.navi.AMapNaviView
+            android:id="@+id/navi_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+    />
 </LinearLayout>
