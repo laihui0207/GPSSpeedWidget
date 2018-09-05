@@ -27,6 +27,7 @@ public class WeatherService implements AMapLocationListener {
     String adCode;
     String address;
     String pre_adCode;
+    String pre_address;
     String deviceId;
     Context context;
     String resultText;
@@ -169,7 +170,7 @@ public class WeatherService implements AMapLocationListener {
                 if(!running && gpsUtil.getKmhSpeed()>0 && PrefUtils.isHideFlatingWindowWhenStop(context)){
                     Utils.startFloatingWindows(context,true);
                 }
-                if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>10){
+                if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>50){
                     if(lastedLocation!=null && lastedLocation!=aMapLocation) {
                         running=true;
                     }
@@ -191,15 +192,18 @@ public class WeatherService implements AMapLocationListener {
                         Utils.startFloatingWindows(context, false);
                     }
                     if(PrefUtils.isShowAddressWhenStop(context)) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                SpeechFactory.getInstance(context)
-                                        .getTTSEngine(PrefUtils.getTtsEngine(context))
-                                        .speak(address, true);
-                                handler.post(runnableUi);
-                            }
-                        }, 3000);
+                        if (!address.equalsIgnoreCase(pre_address)) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    SpeechFactory.getInstance(context)
+                                            .getTTSEngine(PrefUtils.getTtsEngine(context))
+                                            .speak(address, true);
+                                    pre_address = address;
+                                    handler.post(runnableUi);
+                                }
+                            }, 3000);
+                        }
                     }
                 }
             }else {
