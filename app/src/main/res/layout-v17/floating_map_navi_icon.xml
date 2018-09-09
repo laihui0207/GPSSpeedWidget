@@ -1,30 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"
               xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="180dip"
-                    android:layout_height="180dip">
-        <ImageView android:id="@+id/imageview_speed" android:background="@drawable/index_bg_nomove_day"
+    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="80dip"
+                    android:layout_height="80dip">
+        <com.huivip.gpsspeedwidget.view.ImageWheelView android:id="@+id/imageview_direction" android:background="@drawable/navi_direction_outside_day"
                    android:layout_width="match_parent" android:layout_height="match_parent"
-                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
-        />
-        <ImageView android:id="@+id/imageview_red_night" android:background="@drawable/index_red_bg_night"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
-                   android:visibility="gone"/>
-        <!--     <ImageView android:id="@+id/imageview_red_day" android:background="@drawable-v17/index_red_bg_day"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
-                   android:visibility="gone"/>-->
-        <ImageView android:id="@+id/imageview_nomove_night" android:background="@drawable/index_bg_nomove_night"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
-                   android:visibility="gone"/>
-        <com.huivip.gpsspeedwidget.SpeedWheel android:id="@+id/imageView_pointer" android:layout_width="match_parent"
-                                              android:layout_height="match_parent"
-                                              android:layout_centerHorizontal="true"
-                                              android:layout_centerVertical="true"/>
+                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"/>
+        <com.huivip.gpsspeedwidget.view.ImageWheelView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:background="@drawable/car"
+                android:id="@+id/imageView_car_direction" android:layout_margin="15dp"/>
     </RelativeLayout>
 </LinearLayout>

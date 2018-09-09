@@ -470,7 +470,7 @@
                     android:layout_below="@+id/enableFloatingWindow"
                     android:layout_toEndOf="@+id/radioGroup_flattingStyleSelect"/>
             <CheckBox
-                    android:text="导航开始后20秒返回桌面"
+                    android:text="导航开始20秒后返回桌面"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_returnHome_afterAutoStart"

@@ -109,6 +109,7 @@ public class FileUtil {
 
                 while (line != null) {
                     sb.append(line);
+                    sb.append("\n");
                     line = br.readLine();
                 }
                 content = sb.toString();

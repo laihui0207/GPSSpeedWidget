@@ -10,6 +10,7 @@ import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.listener.BootStartReceiver;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 
 /**
@@ -23,6 +24,11 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         Intent service = new Intent(context, GpsSpeedService.class);
         views.setOnClickPendingIntent(R.id.number_widget, PendingIntent.getService(context, 0,
                 service, 0));
+        if(!Utils.isServiceRunning(context,BootStartService.class.getName())){
+            Intent bootService=new Intent(context,BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            context.startService(bootService);
+        }
         ComponentName localComponentName = new ComponentName(context, GpsSpeedNumberWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }

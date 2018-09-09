@@ -88,7 +88,7 @@ public class LyricFloatingService extends Service{
             long position=intent.getLongExtra(POSITION,0L);
             Log.d("huivip","Floating Position:"+position);
             duration=intent.getLongExtra(DURATION,-1L);
-            startTime=System.currentTimeMillis()-position;
+            startTime=System.currentTimeMillis()-position-1000;
             lrcView.setLrc(lyrcContent);
             lrcView.init();
             isShowing = true;

@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.net.Uri;
@@ -17,11 +18,9 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.*;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.amap.api.maps.*;
@@ -32,6 +31,7 @@ import com.amap.api.trace.LBSTraceClient;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TimeThread;
+import com.huivip.gpsspeedwidget.view.ImageWheelView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -64,6 +64,7 @@ public class MapFloatingService extends Service {
     CoordinateConverter converter;
     // 是否需要跟随定位
     private boolean isNeedFollow = true;
+    boolean isLocated=false;
 
     // 处理静止后跟随的timer
     private Timer needFollowTimer;
@@ -132,9 +133,12 @@ public class MapFloatingService extends Service {
       /*  AMapNaviViewOptions options = mMapView.getViewOptions();
         options.setLayoutVisible(false);
         mMapView.setNaviMode(AMapNaviView.CAR_UP_MODE);*/
-        carMarker = aMap.addMarker(new MarkerOptions()
+
+        /*carMarker = aMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
-                        .decodeResource(getResources(), R.drawable.car))).setFlat(true));
+                        .decodeResource(getResources(), R.drawable.car))).setFlat(true));*/
+        carMarker = aMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(0f))).setFlat(true));
         aMap.setTrafficEnabled(true);
      /*   MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
@@ -185,14 +189,35 @@ public class MapFloatingService extends Service {
             converter.coord(latLng);
             LatLng lastedLatLng = converter.convert();
             carMarker.setPosition(lastedLatLng);
+            float bearing=gpsUtil.getBearing();
+            carMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBitmap(bearing)));
+            carMarker.setRotateAngle(360-bearing);
             //carMarker.setIcon();
-            if (isNeedFollow && gpsUtil.getSpeed() > 0) {
+            if (!isLocated || (isNeedFollow && gpsUtil.getSpeed() > 0)) {
                 // 跟随
                 aMap.animateCamera(CameraUpdateFactory.changeLatLng(lastedLatLng));
-                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 0, gpsUtil.getBearing()));
+                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 0,bearing));
                 aMap.moveCamera(mCameraUpdate);
+                isLocated=true;
             }
         }
+    }
+    private Bitmap getBitmap(float bearing) {
+        Bitmap bitmap = null;
+        View view = View.inflate(this,R.layout.floating_map_navi_icon, null);
+        ImageWheelView directionView=view.findViewById(R.id.imageview_direction);
+        directionView.setRotation(360-bearing);
+        //SpeedWheel car_directionView=view.findViewById(R.id.imageView_car_direction);
+       // car_directionView.setRotation(bearing);
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        view.buildDrawingCache();
+        bitmap = view.getDrawingCache();
+        if(bitmap==null){
+            Log.d("huivip","Get map icon bitmap failed");
+        }
+        return bitmap;
     }
     private void setMapInteractiveListener() {
 

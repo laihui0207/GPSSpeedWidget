@@ -193,14 +193,16 @@ public class WeatherService implements AMapLocationListener {
                     }
                     if(PrefUtils.isShowAddressWhenStop(context)) {
                         if (!address.equalsIgnoreCase(pre_address)) {
+                            pre_address = address;
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    SpeechFactory.getInstance(context)
-                                            .getTTSEngine(PrefUtils.getTtsEngine(context))
-                                            .speak(address, true);
-                                    pre_address = address;
-                                    handler.post(runnableUi);
+                                    if(gpsUtil.getSpeed()==0) {
+                                        SpeechFactory.getInstance(context)
+                                                .getTTSEngine(PrefUtils.getTtsEngine(context))
+                                                .speak(address, true);
+                                        handler.post(runnableUi);
+                                    }
                                 }
                             }, 3000);
                         }
