@@ -9,6 +9,7 @@ import android.view.TextureView;
 import android.widget.Toast;
 import com.alibaba.idst.nls.internal.utils.L;
 import com.amap.api.trace.TraceLocation;
+import com.huivip.gpsspeedwidget.Constant;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -123,6 +124,23 @@ public class FileUtil {
             lrcFile.delete();
         }
         return content;
+    }
+    public static void deleteLric(Context context,String songName,String artist){
+        String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";
+        File dir=new File(path);
+        if(!dir.exists()){
+            return;
+        }
+        String fileName=songName.replace("/","_");
+        if(!TextUtils.isEmpty(artist)){
+            fileName+="_"+artist.replace("/","_");;
+        }
+        fileName+=".lrc";
+        String lrcFileName=path+fileName;
+        File lrcFile=new File(lrcFileName);
+        if(lrcFile.exists()){
+            lrcFile.delete();
+        }
     }
     public static void saveLric(Context context,String songName,String artist,String content){
         String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";

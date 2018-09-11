@@ -18,10 +18,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import com.huivip.gpsspeedwidget.LyricFloatingService;
 import com.huivip.gpsspeedwidget.LyricWidgetService;
+import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
+import com.huivip.gpsspeedwidget.utils.LrcUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 public class LyricServiceLowVersion extends Service  {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
@@ -112,8 +115,14 @@ public class LyricServiceLowVersion extends Service  {
         @Override
         public void handleMessage(Message msg) {
             if(!TextUtils.isEmpty(lyricContent)) {
-                FileUtil.saveLric(getApplicationContext(),songName,artistName,lyricContent);
-                launchLrcFloationgWindows(true);
+                List<LrcBean> list= LrcUtil.parseStr2List(lyricContent);
+                if(list!=null && list.size()>0) {
+                    FileUtil.saveLric(getApplicationContext(), songName, artistName, lyricContent);
+                    launchLrcFloationgWindows(true);
+                } else {
+                    launchLrcFloationgWindows(false);
+                    FileUtil.deleteLric(getApplicationContext(),songName,artistName);
+                }
             } else {
                 launchLrcFloationgWindows(false);
             }

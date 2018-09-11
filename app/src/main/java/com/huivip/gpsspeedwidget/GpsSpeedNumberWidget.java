@@ -22,8 +22,11 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         super.onReceive(context, paramIntent);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.speednumberwidget);
         Intent service = new Intent(context, GpsSpeedService.class);
-        views.setOnClickPendingIntent(R.id.number_widget, PendingIntent.getService(context, 0,
+        views.setOnClickPendingIntent(R.id.speedlayout, PendingIntent.getService(context, 0,
                 service, 0));
+        Intent mapFloatingService=new Intent(context,MapFloatingService.class);
+        PendingIntent launchMapFloatingService=PendingIntent.getService(context,1,mapFloatingService,0);
+        views.setOnClickPendingIntent(R.id.limitLayout,launchMapFloatingService);
         if(!Utils.isServiceRunning(context,BootStartService.class.getName())){
             Intent bootService=new Intent(context,BootStartService.class);
             bootService.putExtra(BootStartService.START_BOOT,true);
