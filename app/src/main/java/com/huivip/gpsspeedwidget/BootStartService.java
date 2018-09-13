@@ -67,7 +67,7 @@ public class BootStartService extends Service {
                     PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_ALL);
                 }
                 if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
-                    Utils.startFloationgWindows(getApplicationContext(),true);
+                    Utils.startFloatingWindows(getApplicationContext(),true);
                 }
                 if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
                     GpsUtil.getInstance(getApplicationContext()).startLocationService();

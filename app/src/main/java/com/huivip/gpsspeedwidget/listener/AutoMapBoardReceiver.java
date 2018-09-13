@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -37,6 +35,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             lanuchSpeedFloationWindows(context,true);
                             gpsUtil.setAutoMapBackendProcessStarted(true);
                         }
+                        gpsUtil.setAutoNavi_on_Frontend(true);
+                        if(PrefUtils.isHideFloatingWidowOnNaviApp(context)){
+                            Utils.startFloatingWindows(context,false);
+                        }
                         PrefUtils.setEnableTempAudioService(context, false);
                         break;
                     case 4: // auto map in backend
@@ -44,6 +46,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             startFloatingService(context);
                             lanuchSpeedFloationWindows(context,false);
                             gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
+                        }
+                        gpsUtil.setAutoNavi_on_Frontend(false);
+                        if(PrefUtils.isHideFloatingWidowOnNaviApp(context) && gpsUtil.getAutoNaviStatus() != Constant.Navi_Status_Started){
+                            Utils.startFloatingWindows(context,true);
                         }
                         PrefUtils.setEnableTempAudioService(context, false);
                         //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
@@ -67,6 +73,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setCurrentRoadName("");
                         gpsUtil.setAutoMapBackendProcessStarted(false);
                         PrefUtils.setEnableTempAudioService(context, true);
+                        if(PrefUtils.isHideFloatingWidowOnNaviApp(context)){
+                            Utils.startFloatingWindows(context,true);
+                        }
                     case 25:  // xunhang end
                     case 9:  // navi end
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
@@ -240,6 +249,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
         if(!PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)){
             return;
         }
-       Utils.startFloationgWindows(context,enabled);
+       Utils.startFloatingWindows(context,enabled);
     }
 }

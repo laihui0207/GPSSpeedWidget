@@ -23,6 +23,8 @@ public abstract class PrefUtils {
     private static final String PREF_OPACITY = "pref_opacity";
     private static final String PREF_SPEEDOMETER = "pref_speedometer";
     private static final String PREF_LIMITS = "pref_limits";
+    private static final String PREF_SHOW_SMALL_FLOATING= "pref_small_floating_style";
+    private static final String PREF_HIDE_FLOATING_WHEN_STOP= "pref_hide_floating_window_when_stop";
     private static final String PREF_APPS = "pref_apps";
     private static final String PREF_DEFAULT_LAUNCHE_APP= "pref_Default_launch_apps";
     private static final String AUTO_FLOATTING_STYLE = "com.huivip.Floating.style";
@@ -41,6 +43,8 @@ public abstract class PrefUtils {
     public static final String ENABLED_LYRIC_PREFS_NAME="com.huivip.Enable.fating.Lyric";
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enable.AudioService";
     public static final String ENABLE_TIME_FLOATING_WINDOW="com.huivip.enable.Time.FloatingWindow";
+    public static final String ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI="com.huivip.enable.hide.FloatingWindow.OnNaviApp";
+    public static final String ENABLE_AUTO_GOHOME_AFTER_NAVI_STARTED="com.huivip.enable.auto.goHome.afterNavi";
     public static final String ENABLE_AUDIO_MIX="com.huivip.enable.AudioMix";
     public static final String ENABLE_TEMP_AUDIO_SERVICE="com.huivip.enable.temp.AudioService";
     public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enable.autoNavi.Service";
@@ -171,7 +175,18 @@ public abstract class PrefUtils {
     public static boolean isEnableTimeFloationgWidow(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_TIME_FLOATING_WINDOW, false);
     }
-
+    public static void setHideFloatingWidowOnNaviApp(Context context, boolean value){
+        edit(context).putBoolean(ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI, value).apply();
+    }
+    public static boolean isHideFloatingWidowOnNaviApp(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI, true);
+    }
+    public static void setEnableAutoGoHomeAfterNaviStarted(Context context, boolean value){
+        edit(context).putBoolean(ENABLE_AUTO_GOHOME_AFTER_NAVI_STARTED, value).apply();
+    }
+    public static boolean isEnableAutoGoHomeAfterNaviStarted(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_AUTO_GOHOME_AFTER_NAVI_STARTED, false);
+    }
     public static void setPlayTime(Context context,boolean value){
         edit(context).putBoolean(APP_PLAY_TIME, value).apply();
     }
@@ -468,6 +483,20 @@ public abstract class PrefUtils {
 
     public static void setShowLimits(Context context, boolean show) {
         edit(context).putBoolean(PREF_LIMITS, show).apply();
+    }
+    public static boolean isShowSmallFloatingStyle(Context context) {
+        return getSharedPreferences(context).getBoolean(PREF_SHOW_SMALL_FLOATING, false);
+    }
+
+    public static void setShowSmallFloatingStyle(Context context, boolean show) {
+        edit(context).putBoolean(PREF_SHOW_SMALL_FLOATING, show).apply();
+    }
+    public static boolean isHideFlatingWindowWhenStop(Context context) {
+        return getSharedPreferences(context).getBoolean(PREF_HIDE_FLOATING_WHEN_STOP, false);
+    }
+
+    public static void setHideFlatingWindowWhenStop(Context context, boolean hide) {
+        edit(context).putBoolean(PREF_HIDE_FLOATING_WHEN_STOP,hide).apply();
     }
     public static boolean isEnableNaviFloating(Context context) {
         return getSharedPreferences(context).getBoolean(ENABLE_NAVI_FLOATING_WINDOWS, false);

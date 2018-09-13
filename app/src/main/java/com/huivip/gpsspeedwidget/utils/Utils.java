@@ -292,7 +292,7 @@ public abstract class Utils {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
-    public static void startFloationgWindows(Context context,boolean enabled){
+    public static void startFloatingWindows(Context context, boolean enabled){
         Intent defaultFloatingService=new Intent(context,FloatingService.class);
         Intent autoNavifloatService=new Intent(context,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(context,MeterFloatingService.class);

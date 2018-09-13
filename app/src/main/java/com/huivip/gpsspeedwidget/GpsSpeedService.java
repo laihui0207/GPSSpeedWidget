@@ -3,8 +3,6 @@ package com.huivip.gpsspeedwidget;
 import android.app.*;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
@@ -13,11 +11,9 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
-import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
-import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -109,7 +105,7 @@ public class GpsSpeedService extends Service {
                     gpsUtil.startLocationService();
                     PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                     if(PrefUtils.isUserManualClosedService(getApplicationContext())) {
-                        Utils.startFloationgWindows(getApplicationContext(),true);
+                        Utils.startFloatingWindows(getApplicationContext(),true);
                         PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
                     }
                 }
@@ -132,7 +128,7 @@ public class GpsSpeedService extends Service {
                     this.locationTimer.purge();
                     this.locationTimer = null;
                 }
-                Utils.startFloationgWindows(getApplicationContext(),false);
+                Utils.startFloatingWindows(getApplicationContext(),false);
                 PrefUtils.setUserManualClosedServer(getApplicationContext(), true);
                 Toast.makeText(getApplicationContext(), "GPS服务关闭", Toast.LENGTH_SHORT).show();
                 stopSelf();

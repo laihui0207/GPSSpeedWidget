@@ -56,7 +56,20 @@
                         android:id="@+id/editText_remoteURL" android:layout_weight="1"/>
 
             </LinearLayout>
-
+            <CheckBox
+                    android:text="报时间"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox_playtime" android:layout_above="@+id/checkBox_Navi_autoSolt"
+                    android:layout_alignStart="@+id/checkBox_showLimit" android:visibility="gone"
+                    android:layout_alignLeft="@+id/checkBox_showLimit"/>
+            <CheckBox
+                    android:text="报天气"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox_playweather"
+                    android:layout_alignBottom="@+id/textView" android:layout_toEndOf="@+id/checkBox_autoWifi"
+                    android:layout_toRightOf="@+id/checkBox_autoWifi"/>
             <CheckBox
                     android:text="开启巡航悬浮窗口"
                     android:layout_width="wrap_content"
@@ -294,9 +307,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_showmessage"
-                    android:layout_alignBaseline="@+id/enableOver" android:layout_alignBottom="@+id/enableOver"
-                    android:layout_toRightOf="@+id/enableOver"
-                    android:layout_toEndOf="@+id/enableOver"/>
+                    android:layout_above="@+id/checkBox_Navi_autoSolt" android:layout_toEndOf="@+id/EnableFalting"/>
             <CheckBox
                     android:text="高德样式"
                     android:layout_width="wrap_content"
@@ -401,8 +412,22 @@
                     android:text="桌面歌词"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/checkBox_lyric" android:layout_weight="1"
-                    android:layout_alignBottom="@+id/textView" android:layout_toEndOf="@+id/editText_speedadjust"/>
-
+                    android:layout_alignBottom="@+id/textView" android:layout_toEndOf="@+id/editText_speedadjust"
+                    android:layout_toRightOf="@+id/editText_speedadjust"/>
+            <CheckBox
+                    android:text="小号样式"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox_smallType"
+                    android:layout_below="@+id/enableFloatingWindow"
+                    android:layout_toEndOf="@+id/radioGroup_flattingStyleSelect"
+                    android:layout_toRightOf="@+id/radioGroup_flattingStyleSelect"/>
+            <CheckBox
+                    android:text="高德地图界面关闭悬浮窗"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox_hideFloating_onAutoNavi" android:layout_above="@+id/enableFloatingWindow"
+                    android:layout_toEndOf="@+id/enableOver"/>
         </RelativeLayout>
     </ScrollView>
     <TextView

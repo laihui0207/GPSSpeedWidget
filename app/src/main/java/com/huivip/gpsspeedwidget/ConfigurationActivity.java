@@ -2,7 +2,6 @@ package com.huivip.gpsspeedwidget;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Application;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
 import android.content.pm.PackageManager;
@@ -28,7 +27,6 @@ import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
-import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.utils.*;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,7 +90,7 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableNaviFloating(getApplicationContext(), true);
                 PrefUtils.setAppFirstRun(getApplicationContext(),false);
             }
-            Utils.startFloationgWindows(getApplicationContext(),true);
+            Utils.startFloatingWindows(getApplicationContext(),true);
         }
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         enableFloatingWidnowCheckBox.setChecked(PrefUtils.isEnableFlatingWindow(getApplicationContext()));
@@ -172,10 +170,10 @@ public class ConfigurationActivity extends Activity {
                     @Override
                     public void run() {
                         if(compoundButton.isChecked() ){
-                            Utils.startFloationgWindows(getApplicationContext(),true);
+                            Utils.startFloatingWindows(getApplicationContext(),true);
                         }
                         else {
-                            Utils.startFloationgWindows(getApplicationContext(),false);
+                            Utils.startFloatingWindows(getApplicationContext(),false);
                         }
                     }
                 }).start();
@@ -233,6 +231,38 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setShowLimits(getApplicationContext(),compoundButton.isChecked());
             }
         });
+        CheckBox floatingSmallType=findViewById(R.id.checkBox_smallType);
+        floatingSmallType.setChecked(PrefUtils.isShowSmallFloatingStyle(getApplicationContext()));
+        floatingSmallType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setShowSmallFloatingStyle(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+       /* CheckBox floatingHideWhenStop=findViewById(R.id.checkBox_hideFloating);
+        floatingHideWhenStop.setChecked(PrefUtils.isHideFlatingWindowWhenStop(getApplicationContext()));
+        floatingHideWhenStop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setHideFlatingWindowWhenStop(getApplicationContext(),buttonView.isChecked());
+            }
+        });*/
+        CheckBox floatingHideWhenOnNavi=findViewById(R.id.checkBox_hideFloating_onAutoNavi);
+        floatingHideWhenOnNavi.setChecked(PrefUtils.isHideFloatingWidowOnNaviApp(getApplicationContext()));
+        floatingHideWhenOnNavi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setHideFloatingWidowOnNaviApp(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+     /*   CheckBox autoGoHomeAfterNaviCheckBox=findViewById(R.id.checkBox_returnHome_afterAutoStart);
+        autoGoHomeAfterNaviCheckBox.setChecked(PrefUtils.isEnableAutoGoHomeAfterNaviStarted(getApplicationContext()));
+        autoGoHomeAfterNaviCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableAutoGoHomeAfterNaviStarted(getApplicationContext(),buttonView.isChecked());
+            }
+        });*/
         CheckBox showSpeedCheckBox=findViewById(R.id.checkBox_showSpeed);
         showSpeedCheckBox.setChecked(PrefUtils.getShowSpeedometer(getApplicationContext()));
         showSpeedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -626,7 +656,7 @@ public class ConfigurationActivity extends Activity {
                     default:
                         PrefUtils.setFloattingStyle(getApplicationContext(),PrefUtils.FLOATING_DEFAULT);
                 }
-                Utils.startFloationgWindows(getApplicationContext(),true);
+                Utils.startFloatingWindows(getApplicationContext(),true);
             }
         });
         RadioButton styleDeafult=findViewById(R.id.radioButton_style_default);
@@ -650,7 +680,22 @@ public class ConfigurationActivity extends Activity {
                         .setPositiveButton("关闭", null).show();
             }
         });
-
+        CheckBox playTimeCheckBox=findViewById(R.id.checkBox_playtime);
+        playTimeCheckBox.setChecked(PrefUtils.isPlayTime(getApplicationContext()));
+        playTimeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setPlayTime(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox playWeathereCheckBox=findViewById(R.id.checkBox_playweather);
+        playWeathereCheckBox.setChecked(PrefUtils.isPlayWeather(getApplicationContext()));
+        playWeathereCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setPlayWeather(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         CheckBox naviFloatingFixedCheckbox=findViewById(R.id.checkBox_navi_fixed_position);
         naviFloatingFixedCheckbox.setChecked(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext()));
         naviFloatingFixedCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

@@ -52,6 +52,7 @@ public class GpsUtil {
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
     boolean aimlessStatred = false;
+    boolean autoNavi_on_Frontend=false;
     boolean autoMapBackendProcessStarted=false;
     boolean catchRoadServiceStarted=false;
     final Handler locationHandler = new Handler();
@@ -190,7 +191,12 @@ public class GpsUtil {
     public void setAutoMapBackendProcessStarted(boolean autoMapBackendProcessStarted) {
         this.autoMapBackendProcessStarted = autoMapBackendProcessStarted;
     }
-
+    public void setAutoNavi_on_Frontend(boolean on_frontend){
+        this.autoNavi_on_Frontend=on_frontend;
+    }
+    public boolean isAutoNavi_on_Frontend(){
+        return this.autoNavi_on_Frontend;
+    }
     public boolean isCatchRoadServiceStarted() {
         return catchRoadServiceStarted;
     }
