@@ -9,4 +9,6 @@
     <color name="green">#31c17d</color>
     <color name="blue">#0080FF</color>
 
+    <color name="black_overlay">#66000000</color>
+
 </resources>

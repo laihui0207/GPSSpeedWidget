@@ -79,7 +79,7 @@ public class LyricFloatingService extends Service{
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if(intent!=null){
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableNaviFloating(getApplicationContext())) {
+            if (intent.getBooleanExtra(EXTRA_CLOSE, false)) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);

@@ -158,9 +158,9 @@ public class AudioTestActivity extends Activity {
 
             }
         };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
              getApplicationContext().bindService(new Intent(getApplicationContext(), MusicNotificationListenerService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
-        }
+        }*/
         Button buttonMusic=findViewById(R.id.button_music);
         buttonMusic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,6 +174,7 @@ public class AudioTestActivity extends Activity {
             public void onClick(View v) {
                 Log.d("huivip","Play click");
                 if(lyricService!=null){
+                    Log.d("huivip","Send Play click");
                     lyricService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
                 }
             }
@@ -271,6 +272,12 @@ public class AudioTestActivity extends Activity {
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent screenSaveActivity=new Intent(getApplicationContext(),ScreenSaveActivity.class);
+                screenSaveActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(screenSaveActivity);
+               /* Intent playMusic=new Intent();
+                playMusic.setAction("cn.kuwo.kwmusicauto.action.PLAY_MUSIC");
+                getApplicationContext().sendBroadcast(playMusic);*/
                /* Intent timeIntent =new Intent(getApplicationContext(),GPSNaviService.class);
                 timeIntent.putExtra(GPSNaviService.EXTRA_TO_LATITUDE,39.96087);
                 timeIntent.putExtra(GPSNaviService.EXTRA_TO_LONGITUDE,116.427231);

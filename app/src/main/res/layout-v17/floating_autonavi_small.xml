@@ -3,7 +3,7 @@
               xmlns:android="http://schemas.android.com/apk/res/android">
     <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="120dip"
                     android:layout_height="120dip">
-        <ImageView android:id="@+id/imageview_speed" android:background="@drawable/index_bg_nomove_day"
+        <ImageView android:id="@+id/imageview_speed" android:background="@drawable/index_bg_day"
                    android:layout_width="match_parent" android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
         />
@@ -22,29 +22,30 @@
                    android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
         />
+        <com.huivip.gpsspeedwidget.SpeedWheel android:id="@+id/imageView_pointer" android:layout_width="match_parent"
+                                              android:layout_height="match_parent"
+                                              android:layout_alignParentStart="true"
+                                              android:layout_alignParentTop="true"/>
         <TextView android:textSize="55dp"
                   android:id="@+id/SpeedText" android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:text="80"
                   android:textStyle="bold" android:textColor="#000"
                   android:layout_centerInParent="true"/>
-        <com.huivip.gpsspeedwidget.SpeedWheel android:id="@+id/imageView_pointer" android:layout_width="match_parent"
-                                              android:layout_height="match_parent"
-                                              android:layout_alignParentStart="true"
-                                              android:layout_alignParentTop="true"/>
+
         <TextView
                 android:text="北"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/textView_autonavi_direction" android:textColor="#000" android:textSize="15dp"
-                android:layout_alignParentTop="true" android:layout_marginTop="15dp"/>
+                android:layout_alignParentTop="true" android:layout_marginTop="15dp" android:visibility="gone"/>
         <TextView
                 android:text="km/h"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView_autonavi_speedUnit"
-                android:textColor="#000" android:textSize="20dp" android:layout_below="@+id/SpeedText"
-                android:layout_centerHorizontal="true" android:visibility="gone"/>
+                android:textColor="#000" android:textSize="15dp"
+                android:layout_centerHorizontal="true" android:layout_alignBottom="@+id/SpeedText"/>
         <TextView
                 android:text="海拔: 0米"
                 android:layout_width="wrap_content"
@@ -52,7 +53,7 @@
                 android:id="@+id/textView_autonavi_altitude"
                 android:textSize="12dp" android:textColor="#000"
                 android:layout_centerHorizontal="true"
-                android:layout_alignBottom="@+id/SpeedText"/>
+                android:layout_alignTop="@+id/SpeedText"/>
         <RelativeLayout android:id="@+id/autoNavi_limitLayout"
                         android:layout_width="50dp"
                         android:gravity="center"

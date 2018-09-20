@@ -113,7 +113,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             }
             if(key==10056){  // current navi path information
                 String iformationJsonString=intent.getStringExtra("EXTRA_ROAD_INFO");
-                FileUtil.saveLogToFile(iformationJsonString);
+                // FileUtil.saveLogToFile(iformationJsonString);
 
             }
             if(key == 10041){  // Get AutoMap Version

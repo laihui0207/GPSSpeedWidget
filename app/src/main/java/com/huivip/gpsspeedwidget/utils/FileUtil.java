@@ -247,5 +247,23 @@ public class FileUtil {
         }
         return null;
     }
-
+    public static void CleanTempFile(){
+        if (Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED)) {
+            String path =Environment.getExternalStorageDirectory().toString()+"/huivip/";
+            File dir = new File(path);
+            if (!dir.exists()) {
+                return;
+            }
+            if(dir.isDirectory()){
+                File[] files=dir.listFiles();
+                if(files.length< 20) return;
+                for(File file:files){
+                    if(file.exists()){
+                        file.delete();
+                    }
+                }
+            }
+        }
+    }
 }

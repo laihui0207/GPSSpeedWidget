@@ -357,7 +357,19 @@ public abstract class Utils {
             }
         }
     }
+    public static  String longToTimeString(long time){
+        long totalSecond=time/1000;
+        long hour=totalSecond/3600;
+        long minute=(totalSecond-hour*3600)/60;
+        long second=(totalSecond - hour*3600-minute*60);
+        StringBuffer result=new StringBuffer();
+        if(hour>0){
+            result.append(hour).append(":");
+        }
+        result.append(minute).append(":").append(second);
+        return result.toString();
 
+    }
     public static int getPrimaryColor(Context context) {
         TypedValue primaryColor = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.colorPrimary, primaryColor, true);

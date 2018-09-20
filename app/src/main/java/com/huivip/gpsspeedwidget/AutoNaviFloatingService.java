@@ -164,7 +164,8 @@ public class AutoNaviFloatingService extends Service {
     void checkLocationData() {
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             speedView.setText(gpsUtil.getKmhSpeedStr() + "");
-            speedWheelView.setRotation((float) (gpsUtil.getSpeedometerPercentage() / 100d * 280f));
+            //speedWheelView.setRotation((float) (gpsUtil.getSpeedometerPercentage() / 100d * 280f));
+            speedWheelView.setRotation(360-gpsUtil.getBearing());
             setSpeedOveral(gpsUtil.isHasLimited());
             directionTextView.setText(gpsUtil.getDirection() + "");
             altitudeTextView.setText("海拔： " + gpsUtil.getAltitude() + "米");

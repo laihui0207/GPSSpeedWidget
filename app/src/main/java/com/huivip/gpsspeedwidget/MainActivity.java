@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
@@ -29,6 +30,7 @@ import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+import com.huivip.gpsspeedwidget.view.ImageWheelView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +52,7 @@ public class MainActivity extends Activity implements TraceListener {
     String selectDateStr="";
     List<TraceLocation> traceLocationList=new ArrayList<>();
     AMap aMap=null;
+    private Marker carMarker;
     String myFormat = "MM/dd/yyyy";
     DeviceUuidFactory deviceUuidFactory;
     SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CHINA);
@@ -90,6 +93,8 @@ public class MainActivity extends Activity implements TraceListener {
         aMap.setMyLocationStyle(myLocationStyle);
         aMap.getUiSettings().setMyLocationButtonEnabled(true);
         aMap.setMyLocationEnabled(true);
+       /* carMarker = aMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(0f))).setFlat(true));*/
         aMap.setTrafficEnabled(true);
         UiSettings mUiSettings=aMap.getUiSettings();
         mUiSettings.setCompassEnabled(true);
@@ -359,6 +364,23 @@ public class MainActivity extends Activity implements TraceListener {
         }*/
         //}
 
+    }
+    private Bitmap getBitmap(float bearing) {
+        Bitmap bitmap = null;
+        View view = View.inflate(this,R.layout.floating_map_navi_icon, null);
+        ImageWheelView directionView=view.findViewById(R.id.imageview_direction);
+        directionView.setRotation(360-bearing);
+        //SpeedWheel car_directionView=view.findViewById(R.id.imageView_car_direction);
+        // car_directionView.setRotation(bearing);
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        view.buildDrawingCache();
+        bitmap = view.getDrawingCache();
+        if(bitmap==null){
+            Log.d("huivip","Get map icon bitmap failed");
+        }
+        return bitmap;
     }
     private void startFloationgWindows(boolean enabled){
            Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);

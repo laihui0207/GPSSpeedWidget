@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools" package="com.huivip.gpsspeedwidget">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.huivip.gpsspeedwidget">
+
     <uses-permission android:name="android.permission.RAISED_THREAD_PRIORITY"/>
     <uses-permission android:name="android.permission.USB_PERMISSION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -20,51 +22,66 @@
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions"/>
+    <uses-permission
+            android:name="android.permission.WRITE_SETTINGS"
+            tools:ignore="ProtectedPermissions"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BROADCAST_STICKY"></uses-permission>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+
     <uses-feature android:name="android.hardware.location.gps"/>
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" tools:ignore="ProtectedPermissions"/>
+
+    <uses-permission
+            android:name="android.permission.WRITE_SECURE_SETTINGS"
+            tools:ignore="ProtectedPermissions"/>
+
     <application
             android:allowBackup="true"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
+            android:persistent="true"
             android:roundIcon="@mipmap/ic_launcher"
             android:sharedUserId="android.uid.system"
             android:supportsRtl="true"
-            android:persistent="true"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            >
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
         <meta-data
                 android:name="com.amap.api.v2.apikey"
                 android:value="6d91e53ca05dee32ec58c9d257224e7b"/>
 
-        <activity android:name=".MainActivity" android:excludeFromRecents="true" android:windowSoftInputMode="stateHidden|stateUnchanged">
+        <activity
+                android:name=".MainActivity"
+                android:excludeFromRecents="true"
+                android:windowSoftInputMode="stateHidden|stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
-<!--                <category android:name="android.intent.category.HOME" />-->
-               <!-- <category android:name="android.intent.category.DEFAULT" />-->
+                <!-- <category android:name="android.intent.category.HOME" /> -->
+                <!-- <category android:name="android.intent.category.DEFAULT" /> -->
             </intent-filter>
         </activity>
-       <!-- <activity android:name=".GPSLauncher">
+        <!--
+        <activity android:name=".GPSLauncher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
 
             </intent-filter>
-        </activity>-->
-        <activity android:name=".ConfigurationActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
+        </activity>
+        -->
+        <activity
+                android:name=".ConfigurationActivity"
+                android:windowSoftInputMode="stateHidden|stateUnchanged">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
         <activity android:name="com.amap.api.maps.offlinemap.OfflineMapActivity"/>
+
         <receiver
                 android:name=".GpsSpeedWidget"
                 android:icon="@drawable/icon"
@@ -111,16 +128,20 @@
         <receiver android:name=".listener.AutoMapBoardReceiver">
             <intent-filter>
                 <action android:name="AUTONAVI_STANDARD_BROADCAST_SEND"/>
-                <category android:name="android.intent.category.DEFAULT" />
+
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
-        <service android:name="com.amap.api.track.AMapTrackService" />
-        <service android:name="com.amap.api.location.APSService"></service>
+
+        <service android:name="com.amap.api.track.AMapTrackService"/>
+        <service android:name="com.amap.api.location.APSService"/>
+
         <receiver android:name=".listener.AutoFTPBackupReceiver"/>
         <receiver android:name=".listener.AutoLaunchSystemConfigReceiver"/>
-        <receiver android:name="com.huivip.gpsspeedwidget.listener.BootStartReceiver">
+        <receiver android:name=".listener.BootStartReceiver">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+
                 <category android:name="android.intent.category.HOME"/>
             </intent-filter>
             <intent-filter>
@@ -142,10 +163,13 @@
             <intent-filter>
                 <action android:name="com.nwd.action.ACTION_MCU_STATE_CHANGE"/>
             </intent-filter>
-         <!--   <intent-filter>
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.ANY_DATA_STATE"/>
-            </intent-filter>-->
-           <!-- <intent-filter>
+            </intent-filter>
+            -->
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.MEDIA_MOUNTED"/>
                 <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
                 <data android:scheme="file">
@@ -163,7 +187,8 @@
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
                 <action android:name="android.intent.action.DATE_CHANGED"/>
                 <action android:name="com.huivip.gpsspeedwidget.autostarted"/>
-            </intent-filter>-->
+            </intent-filter>
+            -->
 
         </receiver>
         <receiver android:name=".listener.MediaNotificationReceiver">
@@ -175,6 +200,9 @@
                 <action android:name="com.kugou.android.music.metachanged"/>
                 <action android:name="com.tencent.qqmusic.widgetupdate"/>
                 <action android:name="cn.flyaudio.media.action.TRACK_DETAILS"/>
+                <action android:name="cn.kuwo.kwmusicauto.action.PLAYER_STATUS"/>
+                <action android:name="cn.kuwo.kwmusicauto.action.OPEN_DESKLYRIC"/>
+                <action android:name="com.kugou.android.music.metachanged"/>
                 <action android:name="com.htc.music.metachanged"/>
                 <action android:name="com.rdio.android.metachanged"/>
                 <action android:name="com.sonyericsson.music.metachanged"/>
@@ -238,6 +266,7 @@
         <receiver android:name=".listener.WeatherServiceReceiver"/>
         <receiver android:name=".listener.DateChangeReceiver"/>
         <receiver android:name=".listener.CatchRoadReceiver"/>
+
         <service android:name=".GpsSpeedService"/>
         <service android:name=".LyricWidgetService">
             <intent-filter>
@@ -269,16 +298,30 @@
                     android:name="android.accessibilityservice"
                     android:resource="@xml/accessibility_service"/>
         </service>
-        <service android:name="com.huivip.gpsspeedwidget.lyric.LyricService"
-                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+        <service
+                android:name=".lyric.LyricService"
+                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService"/>
             </intent-filter>
         </service>
-        <activity android:name=".AudioTestActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
+
+        <activity
+                android:name=".AudioTestActivity"
+                android:windowSoftInputMode="stateHidden|stateUnchanged">
         </activity>
-        <activity android:name=".BackupGPSHistoryActivity" android:windowSoftInputMode="stateHidden|stateUnchanged"></activity>
-        <activity android:name=".appselection.AppSelectionActivity" android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
+        <activity
+                android:name=".BackupGPSHistoryActivity"
+                android:windowSoftInputMode="stateHidden|stateUnchanged"/>
+        <activity
+                android:name=".appselection.AppSelectionActivity"
+                android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+        <activity
+                android:name=".ScreenSaveActivity"
+                android:configChanges="orientation|keyboardHidden|screenSize"
+                android:label="@string/title_activity_screen_save"
+                android:theme="@style/FullscreenTheme">
+        </activity>
     </application>
 
 </manifest>

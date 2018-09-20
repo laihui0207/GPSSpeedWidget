@@ -3,7 +3,7 @@
               xmlns:android="http://schemas.android.com/apk/res/android">
     <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="180dip"
                     android:layout_height="180dip">
-        <ImageView android:id="@+id/imageview_speed" android:background="@drawable/index_bg_nomove_day"
+        <ImageView android:id="@+id/imageview_speed" android:background="@drawable/index_bg_day"
                    android:layout_width="match_parent" android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
         />

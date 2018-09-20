@@ -3,10 +3,10 @@
               xmlns:android="http://schemas.android.com/apk/res/android">
     <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="100dip"
                     android:layout_height="100dip">
-        <ImageView android:id="@+id/imageview_speed" android:background="@drawable/index_bg_nomove_day"
+        <ImageView android:id="@+id/imageview_speed" android:background="@drawable/index_bg_day"
                    android:layout_width="match_parent" android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
-        />
+                   android:visibility="gone"/>
         <ImageView android:id="@+id/imageview_red_night" android:background="@drawable/index_red_bg_night"
                    android:layout_width="match_parent"
                    android:layout_height="match_parent"
@@ -41,22 +41,21 @@
                 android:textColor="#000"
                 android:layout_marginTop="15dp"
                 android:layout_centerVertical="false"
-                android:layout_centerHorizontal="true"/>
+                android:layout_centerHorizontal="true" android:visibility="gone"/>
         <TextView
                 android:text="km/h"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView_autonavi_speedUnit"
                 android:layout_centerHorizontal="true" android:textColor="#000" android:textSize="10dp"
-                android:layout_below="@+id/SpeedText" android:visibility="gone"/>
+                android:layout_alignBottom="@+id/SpeedText"/>
         <TextView
                 android:text="海拔: 0米"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView_autonavi_altitude"
-                android:layout_alignBottom="@+id/SpeedText"
                 android:layout_centerHorizontal="true" android:textColor="#000" android:textSize="12dp"
-                android:visibility="gone"/>
+                android:layout_alignTop="@+id/SpeedText"/>
         <RelativeLayout android:id="@+id/autoNavi_limitLayout"
                         android:layout_width="44dp"
                         android:gravity="center"

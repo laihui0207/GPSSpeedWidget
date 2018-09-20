@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 import com.huivip.gpsspeedwidget.DBUtil;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
@@ -47,12 +48,22 @@ public class AutoFTPBackupReceiver extends BroadcastReceiver {
     }
     private void cleanData(Context context){
         if(PrefUtils.isEnableAutoCleanGPSHistory(context)){
-            Calendar calendar=Calendar.getInstance();
-            calendar.add(Calendar.MONTH,-1);
-            Date fromDate=calendar.getTime();
-            DBUtil dbUtil= new DBUtil(context);
-            dbUtil.delete(fromDate);
-
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Calendar calendar=Calendar.getInstance();
+                    calendar.add(Calendar.MONTH,-1);
+                    Date fromDate=calendar.getTime();
+                    DBUtil dbUtil= new DBUtil(context);
+                    dbUtil.delete(fromDate);
+                }
+            }).start();
         }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FileUtil.CleanTempFile();
+            }
+        }).start();
     }
 }

@@ -26,7 +26,7 @@ public class SpeedWheel extends ImageView
         this.mBorderPaint.setStyle(Paint.Style.STROKE);
         this.mBorderPaint.setColor(-1);
         this.mBorderPaint.setAlpha(0);
-        setImageResource(R.drawable.index_bg_move);
+        setImageResource(R.drawable.navi_direction_outside_day);
     }
 }
 
