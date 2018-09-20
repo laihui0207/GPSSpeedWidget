@@ -15,20 +15,19 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 public class MediaNotificationReceiver extends BroadcastReceiver {
     private String preSongName;
     private static boolean spotifyPlaying = false;
+    private static final String KW_PLAYER_STATUS = "cn.kuwo.kwmusicauto.action.PLAYER_STATUS";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
-        Log.d("huivip",intent.getAction());
-        Log.d("huivip",extras.toString());
         if (extras != null)
             try {
                 extras.getInt("state");
             } catch (BadParcelableException e) {
                 return;
             }
-        if (extras == null || extras.getInt("state") > 1 //Tracks longer than 20min are presumably not songs
-                || (extras.getString("artist") == null && extras.getString("track") == null)
+        if (extras == null || (extras.getString("artist") == null && extras.getString("track") == null &&
+                extras.getString("play_music_name") ==null && extras.getString("play_music_artist") ==null )
         ) {
             return;
         }
@@ -48,7 +47,11 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         String songName=intent.getStringExtra("track");
         String artistName=intent.getStringExtra("artist");
         String album=intent.getStringExtra("album");
-
+        if(intent.getAction().equalsIgnoreCase(KW_PLAYER_STATUS)){
+            songName=intent.getStringExtra("play_music_name");
+            artistName=intent.getStringExtra("play_music_artist");
+            album=intent.getStringExtra("play_music_album");
+        }
         if (artistName != null && artistName.trim().startsWith("<") && artistName.trim().endsWith(">") && artistName.contains("unknown"))
             artistName = "";
 
