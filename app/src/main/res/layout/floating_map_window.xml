@@ -10,10 +10,17 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:text="高德地图" android:layout_weight="10" android:id="@+id/textview_floating_map_title"
                   android:textSize="30dp" android:gravity="center" android:textStyle="bold"/>
+        <TextView
+                android:text="关闭"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView_close_floating_map"
+                android:layout_weight="10"
+                android:textSize="20sp"/>
         <Button
                 android:text="X"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/button_map_close" android:layout_weight="1"/>
+                android:layout_height="wrap_content" android:id="@+id/button_map_close" android:layout_weight="1"
+                android:visibility="gone"/>
     </LinearLayout>
     <RelativeLayout android:layout_width="330dp" android:layout_height="match_parent">
         <com.amap.api.maps.MapView

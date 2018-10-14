@@ -258,11 +258,22 @@ public class FileUtil {
             if(dir.isDirectory()){
                 File[] files=dir.listFiles();
                 if(files.length< 20) return;
-                for(File file:files){
+                if(files.length>200){
+                    for(int i=0;i<200;i++){
+                        File file=files[i];
+                        if(file.exists() && !file.isDirectory()){
+                            file.delete();
+                        }
+                    }
+                }
+                if(dir.listFiles()!=null && dir.listFiles().length>200){
+                    CleanTempFile();
+                }
+                /*for(File file:files){
                     if(file.exists()){
                         file.delete();
                     }
-                }
+                }*/
             }
         }
     }

@@ -9,7 +9,7 @@
             android:layout_height="wrap_content" android:id="@+id/layout_Time">
         <TextView
                 android:text="时间窗口"
-                android:layout_width="wrap_content" android:textColor="@color/cardview_light_background"
+                android:layout_width="wrap_content" android:textColor="@color/blue"
                 android:layout_height="wrap_content" android:id="@+id/textView_time" android:layout_weight="1"
                 android:textSize="40sp" android:textStyle="bold"/>
     </LinearLayout>

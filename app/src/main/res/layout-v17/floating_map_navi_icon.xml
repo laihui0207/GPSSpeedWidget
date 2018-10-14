@@ -8,7 +8,7 @@
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"/>
         <com.huivip.gpsspeedwidget.view.ImageWheelView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" android:background="@drawable/car"
+                android:layout_height="match_parent" android:background="@drawable/navi_direction_inside_day"
                 android:id="@+id/imageView_car_direction" android:layout_margin="15dp"/>
     </RelativeLayout>
 </LinearLayout>

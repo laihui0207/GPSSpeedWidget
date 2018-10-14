@@ -56,6 +56,8 @@ public class MapFloatingService extends Service {
     //LBSTraceClient mTraceClient=null;
     @BindView(R.id.button_map_close)
     Button closeButton;
+    @BindView(R.id.textView_close_floating_map)
+    TextView closeTextView;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
@@ -152,7 +154,7 @@ public class MapFloatingService extends Service {
         mUiSettings.setZoomControlsEnabled(false);
         mUiSettings.setZoomGesturesEnabled(true);
         mUiSettings.setScaleControlsEnabled(true);
-        closeButton.setOnClickListener(new View.OnClickListener() {
+        closeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onStop();
