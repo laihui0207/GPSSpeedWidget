@@ -202,7 +202,6 @@
                 <action android:name="cn.flyaudio.media.action.TRACK_DETAILS"/>
                 <action android:name="cn.kuwo.kwmusicauto.action.PLAYER_STATUS"/>
                 <action android:name="cn.kuwo.kwmusicauto.action.OPEN_DESKLYRIC"/>
-                <action android:name="com.kugou.android.music.metachanged"/>
                 <action android:name="com.htc.music.metachanged"/>
                 <action android:name="com.rdio.android.metachanged"/>
                 <action android:name="com.sonyericsson.music.metachanged"/>

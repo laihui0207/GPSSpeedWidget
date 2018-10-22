@@ -113,13 +113,14 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             }
             if(key==10056){  // current navi path information
                 String iformationJsonString=intent.getStringExtra("EXTRA_ROAD_INFO");
-                // FileUtil.saveLogToFile(iformationJsonString);
+                FileUtil.saveLogToFile(iformationJsonString);
 
             }
             if(key == 10041){  // Get AutoMap Version
                 String versionNumber=intent.getStringExtra("VERSION_NUM");
                 String channelNumber=intent.getStringExtra("CHANNEL_NUM");
                 //Toast.makeText(context,"Version:"+versionNumber+",Channel:"+channelNumber,Toast.LENGTH_SHORT).show();
+                FileUtil.saveLogToFile("Version:"+versionNumber+",Channel number:"+channelNumber);
             }
            /* if(key==10030){
                 String cityName=intent.getStringExtra("CITY_NAME");

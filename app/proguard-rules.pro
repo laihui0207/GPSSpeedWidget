@@ -93,7 +93,7 @@
     void *(**On*Event);
 }
 #----------------------------------------------------------------------------
--libraryjars libs/AMap3DMap_6.3.1_AMapNavi_6.2.0_AMapSearch_6.1.0_AMapTrack_1.0.0_AMapLocation_4.1.0_20180801.jar
+-libraryjars libs/AMap3DMap_6.5.0_AMapNavi_6.4.0_AMapTrack_1.0.0_AMapLocation_4.2.0_20181009.jar
 -libraryjars libs/com.baidu.tts_2.3.1.20170808_e39ea89a.jar
 -libraryjars libs/Msc.jar
 -libraryjars libs/Sunflower.jar

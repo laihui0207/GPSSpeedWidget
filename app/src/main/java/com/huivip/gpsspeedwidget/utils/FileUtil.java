@@ -226,10 +226,9 @@ public class FileUtil {
         L.d("Huivip Log to file", result);
         sb.append(result);
         try {
-            long timestamp = System.currentTimeMillis();
+            //long timestamp = System.currentTimeMillis();
             String time = formatter.format(new Date());
-            String fileName = nameString + "-" + time + "-" + timestamp
-                    + ".log";
+            String fileName = nameString + "-" + time + ".log";
             if (Environment.getExternalStorageState().equals(
                     Environment.MEDIA_MOUNTED)) {
                 String path =Environment.getExternalStorageDirectory().toString()+"/huivip/";
