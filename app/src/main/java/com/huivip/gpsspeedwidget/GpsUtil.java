@@ -146,7 +146,13 @@ public class GpsUtil implements AMapNaviListener {
         }
         return instance;
     }
-
+    public void destory(){
+        if(tts!=null){
+            tts.release();
+        }
+        stopAimlessNavi();
+        stopLocationService(true);
+    }
     public void startLocationService() {
         if (serviceStarted) return;
         this.locationTimer = new Timer();

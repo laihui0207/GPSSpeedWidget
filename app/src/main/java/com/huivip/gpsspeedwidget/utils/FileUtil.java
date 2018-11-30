@@ -12,6 +12,9 @@ import com.amap.api.trace.TraceLocation;
 import com.huivip.gpsspeedwidget.Constant;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -236,13 +239,23 @@ public class FileUtil {
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-                FileOutputStream fos = new FileOutputStream(path + fileName);
+/*                Files.write(Paths.get(path+fileName),sb.toString().getBytes(), StandardOpenOption.APPEND);*/
+                FileWriter fw=new FileWriter(path+fileName,true);
+                BufferedWriter bw=new BufferedWriter(fw);
+                PrintWriter pw=new PrintWriter(bw);
+                pw.println(sb.toString());
+                pw.close();
+                bw.close();
+                fw.close();
+               /* FileOutputStream fos = new FileOutputStream(path + fileName);
                 fos.write(sb.toString().getBytes());
-                fos.close();
+                fos.close();*/
             }
             return fileName;
         } catch (Exception e) {
             Log.e("huivip", "an error occured while writing file...", e);
+        } finally {
+
         }
         return null;
     }

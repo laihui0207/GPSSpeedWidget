@@ -473,17 +473,17 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(buttonView.isChecked()){
-                    boolean enabled=WifiUtils.switchWifiHotspot(getApplicationContext(),"gpswifi","012345678",true);
+                    boolean enabled=WifiUtils.switchWifiHotspot(getApplicationContext(),Constant.WIFI_USERNAME,Constant.WIFI_PASSWORD,true);
                     if(enabled){
                         PrefUtils.setAutoLaunchHotSpot(getApplicationContext(),buttonView.isChecked());
-                        Toast.makeText(getApplicationContext(),"移动热点已启动:gpswifi,密码: 012345678",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),"移动热点已启动:"+Constant.WIFI_USERNAME+",密码:"+Constant.WIFI_PASSWORD,Toast.LENGTH_LONG).show();
                     }
                     else {
                         Toast.makeText(getApplicationContext(),"移动热点启动失败！",Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
-                    boolean enabled=WifiUtils.switchWifiHotspot(getApplicationContext(),"gpswifi","012345678",false);
+                    boolean enabled=WifiUtils.switchWifiHotspot(getApplicationContext(),Constant.WIFI_USERNAME,Constant.WIFI_PASSWORD,false);
                     if(enabled){
                         Toast.makeText(getApplicationContext(),"移动热点已关闭！",Toast.LENGTH_LONG).show();
                     }

@@ -110,6 +110,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             if(key==13012){  // drive way information,but Just support pre-install version
                 String wayInfo=intent.getStringExtra("EXTRA_DRIVE_WAY");
                 //Toast.makeText(context,wayInfo,Toast.LENGTH_SHORT).show();
+                FileUtil.saveLogToFile("WayInfo:"+wayInfo);
             }
             if(key==10056){  // current navi path information
                 String iformationJsonString=intent.getStringExtra("EXTRA_ROAD_INFO");

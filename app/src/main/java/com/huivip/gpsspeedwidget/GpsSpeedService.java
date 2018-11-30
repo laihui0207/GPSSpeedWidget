@@ -123,6 +123,9 @@ public class GpsSpeedService extends Service {
             this.locationTimer.purge();
             this.locationTimer = null;
         }
+        if(gpsUtil!=null){
+            gpsUtil.destory();
+        }
         super.onDestroy();
     }
 
