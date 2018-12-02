@@ -33,6 +33,8 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TimeThread;
 import com.huivip.gpsspeedwidget.view.ImageWheelView;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -131,7 +133,13 @@ public class MapFloatingService extends Service {
         Bundle savedInstanceState=new Bundle();
         mMapView.onCreate(savedInstanceState);
         aMap = mMapView.getMap();
-        aMap.setMapType(AMap.MAP_TYPE_NAVI);
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        if(hour>18 || hour<7) {
+            aMap.setMapType(AMap.MAP_TYPE_NIGHT);
+        } else {
+            aMap.setMapType(AMap.MAP_TYPE_NAVI);
+        }
       /*  AMapNaviViewOptions options = mMapView.getViewOptions();
         options.setLayoutVisible(false);
         mMapView.setNaviMode(AMapNaviView.CAR_UP_MODE);*/

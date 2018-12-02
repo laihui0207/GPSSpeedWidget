@@ -93,6 +93,13 @@ public class MainActivity extends Activity implements TraceListener {
         aMap.setMyLocationStyle(myLocationStyle);
         aMap.getUiSettings().setMyLocationButtonEnabled(true);
         aMap.setMyLocationEnabled(true);
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        if(hour>18 || hour<7) {
+            aMap.setMapType(AMap.MAP_TYPE_NIGHT);
+        } else {
+            aMap.setMapType(AMap.MAP_TYPE_NAVI);
+        }
        /* carMarker = aMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(0f))).setFlat(true));*/
         aMap.setTrafficEnabled(true);

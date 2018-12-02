@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import com.huivip.gpsspeedwidget.listener.*;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -18,7 +19,6 @@ public class BootStartService extends Service {
     boolean started=false;
     boolean autoStarted=false;
     AlarmManager alarm;
-    MediaSession session;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -28,6 +28,7 @@ public class BootStartService extends Service {
     @Override
     public void onCreate() {
         alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
+        CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
 
