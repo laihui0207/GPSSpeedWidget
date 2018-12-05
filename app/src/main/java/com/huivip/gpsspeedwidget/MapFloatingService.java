@@ -92,6 +92,13 @@ public class MapFloatingService extends Service {
             timeThread.running=true;
             timeThread.start();
         }
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        if(hour>=17 || hour<7) {
+            aMap.setMapType(AMap.MAP_TYPE_NIGHT);
+        } else {
+            aMap.setMapType(AMap.MAP_TYPE_NAVI);
+        }
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
@@ -135,7 +142,7 @@ public class MapFloatingService extends Service {
         aMap = mMapView.getMap();
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY);
-        if(hour>18 || hour<7) {
+        if(hour>=17 || hour<7) {
             aMap.setMapType(AMap.MAP_TYPE_NIGHT);
         } else {
             aMap.setMapType(AMap.MAP_TYPE_NAVI);
