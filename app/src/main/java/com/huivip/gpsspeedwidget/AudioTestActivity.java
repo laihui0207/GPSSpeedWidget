@@ -23,6 +23,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.lyric.MusicNotificationListenerService;
+import com.huivip.gpsspeedwidget.speech.SpeechFactory;
+import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.*;
 import com.huivip.gpsspeedwidget.view.LrcView;
 
@@ -272,9 +274,11 @@ public class AudioTestActivity extends Activity {
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent screenSaveActivity=new Intent(getApplicationContext(),ScreenSaveActivity.class);
+                TTS tts= SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.TEXTTTS);
+                tts.speak("语音测试。现在用的TTS引擎，测试测试");
+                /*Intent screenSaveActivity=new Intent(getApplicationContext(),ScreenSaveActivity.class);
                 screenSaveActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(screenSaveActivity);
+                startActivity(screenSaveActivity);*/
                /* Intent playMusic=new Intent();
                 playMusic.setAction("cn.kuwo.kwmusicauto.action.PLAY_MUSIC");
                 getApplicationContext().sendBroadcast(playMusic);*/

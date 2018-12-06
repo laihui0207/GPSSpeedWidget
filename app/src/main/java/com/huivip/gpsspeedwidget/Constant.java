@@ -30,6 +30,6 @@ public class Constant {
     public static String LBSSEARCHWEATHER="http://restapi.amap.com/v3/weather/weatherInfo?key=%s&city=%s";
     public static String AUTONAVI_WEB_KEY="5303c7587d2ae8725d2abde74abee79d";
     public static String AUTONAVI_WEB_KEY2="fa74250f4a56fe716a6de1a5d6ec68c3";
-    public static String WIFI_USERNAME="轿车WIFI";
+    public static String WIFI_USERNAME="车载Wi-Fi";
     public static String WIFI_PASSWORD="88888888";
 }

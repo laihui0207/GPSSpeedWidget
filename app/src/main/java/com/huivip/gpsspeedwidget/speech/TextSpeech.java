@@ -12,7 +12,6 @@ import java.util.Map;
 
 public class TextSpeech extends TTSService implements TextToSpeech.OnInitListener {
     private String TAG="huivip_TxtTTS";
-    Context context;
     TextToSpeech mts;
     private boolean inited=false;
     static TextSpeech instance;
