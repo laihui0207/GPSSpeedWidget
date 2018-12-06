@@ -47,7 +47,7 @@ public abstract class TTSService implements TTS,AudioManager.OnAudioFocusChangeL
                 if(result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
                     return true;
                 }
-                else {
+                /*else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         mFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
                                 .setAudioAttributes(mPlaybackAttributes)
@@ -62,7 +62,7 @@ public abstract class TTSService implements TTS,AudioManager.OnAudioFocusChangeL
                                 AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
                     }
                     return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
-                }
+                }*/
             }
 
         }

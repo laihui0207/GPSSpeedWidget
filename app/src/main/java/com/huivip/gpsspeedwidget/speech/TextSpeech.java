@@ -36,7 +36,7 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
     public void speak(String text, boolean force) {
         if(inited) {
             if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
-                beforeSpeak();
+                //beforeSpeak();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Map<String,String> params=new HashMap<>();
                     params.put("KEY_PARAM_STREAM","STREAM_MUSIC");
@@ -45,7 +45,7 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
                 } else {
                     mts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
                 }
-                afterSpeak();
+               // afterSpeak();
             }
         }
     }
