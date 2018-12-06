@@ -99,9 +99,8 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         }
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
             editor.commit();
-        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+        else
             editor.apply();
-        }
         if (PrefUtils.isLyricEnabled(context)) {
             if (!TextUtils.isEmpty(showString.toString())) {
                 /*            Toast.makeText(context,showString.toString(),Toast.LENGTH_LONG).show();*/

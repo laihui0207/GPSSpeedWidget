@@ -90,7 +90,7 @@ public class FileUtil {
         }
         String fileName=songName.replace("/","_");
         if(!TextUtils.isEmpty(artist)){
-            fileName+="_"+artist.replace("/","_");
+            fileName+="_"+artist.replace("/","_");;
         }
         fileName+=".lrc";
         String lrcFileName=path+fileName;
@@ -107,6 +107,7 @@ public class FileUtil {
 
                 while (line != null) {
                     sb.append(line);
+                    sb.append("\n");
                     line = br.readLine();
                 }
                 content = sb.toString();
@@ -121,6 +122,23 @@ public class FileUtil {
         }
         return content;
     }
+    public static void deleteLric(Context context,String songName,String artist){
+        String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";
+        File dir=new File(path);
+        if(!dir.exists()){
+            return;
+        }
+        String fileName=songName.replace("/","_");
+        if(!TextUtils.isEmpty(artist)){
+            fileName+="_"+artist.replace("/","_");;
+        }
+        fileName+=".lrc";
+        String lrcFileName=path+fileName;
+        File lrcFile=new File(lrcFileName);
+        if(lrcFile.exists()){
+            lrcFile.delete();
+        }
+    }
     public static void saveLric(Context context,String songName,String artist,String content){
         String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";
         File dir=new File(path);
@@ -129,7 +147,7 @@ public class FileUtil {
         }
         String fileName=songName.replace("/","_");
         if(!TextUtils.isEmpty(artist)){
-            fileName+="_"+artist.replace("/","_");
+            fileName+="_"+artist.replace("/","_");;
         }
         fileName+=".lrc";
         String lrcFileName=path+fileName;
@@ -158,10 +176,9 @@ public class FileUtil {
         String result = logContent;
         sb.append(result);
         try {
-            long timestamp = System.currentTimeMillis();
+            //long timestamp = System.currentTimeMillis();
             String time = formatter.format(new Date());
-            String fileName = nameString + "-" + time + "-" + timestamp
-                    + ".log";
+            String fileName = nameString + "-" + time + ".log";
             if (Environment.getExternalStorageState().equals(
                     Environment.MEDIA_MOUNTED)) {
                 String path =Environment.getExternalStorageDirectory().toString()+"/huivip/";
@@ -169,9 +186,17 @@ public class FileUtil {
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-                FileOutputStream fos = new FileOutputStream(path + fileName);
+/*                Files.write(Paths.get(path+fileName),sb.toString().getBytes(), StandardOpenOption.APPEND);*/
+                FileWriter fw=new FileWriter(path+fileName,true);
+                BufferedWriter bw=new BufferedWriter(fw);
+                PrintWriter pw=new PrintWriter(bw);
+                pw.println(sb.toString());
+                pw.close();
+                bw.close();
+                fw.close();
+               /* FileOutputStream fos = new FileOutputStream(path + fileName);
                 fos.write(sb.toString().getBytes());
-                fos.close();
+                fos.close();*/
             }
             return fileName;
         } catch (Exception e) {

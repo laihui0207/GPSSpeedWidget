@@ -18,10 +18,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import com.huivip.gpsspeedwidget.LyricFloatingService;
 import com.huivip.gpsspeedwidget.LyricWidgetService;
+import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
+import com.huivip.gpsspeedwidget.utils.LrcUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class LyricService extends NotificationListenerService implements RemoteController.OnClientUpdateListener  {
@@ -180,10 +183,12 @@ public class LyricService extends NotificationListenerService implements RemoteC
         new Thread(new Runnable() {
             @Override
             public void run() {
+                long startedTime=System.currentTimeMillis();
                 lyricContent = FileUtil.loadLric(getApplicationContext(), inputSongName, inputArtist);
                 if (TextUtils.isEmpty(lyricContent)) {
                     lyricContent = WangYiYunMusic.downloadLyric(inputSongName, inputArtist);
                 }
+                currentPosition=System.currentTimeMillis()-startedTime;
                 songName = inputSongName;
                 artistName = inputArtist;
                 Message msg = new Message();
@@ -196,8 +201,14 @@ public class LyricService extends NotificationListenerService implements RemoteC
         @Override
         public void handleMessage(Message msg) {
             if(!TextUtils.isEmpty(lyricContent)) {
-                FileUtil.saveLric(getApplicationContext(),songName,artistName,lyricContent);
-                launchLrcFloationgWindows(true);
+                List<LrcBean> list= LrcUtil.parseStr2List(lyricContent);
+                if(list!=null && list.size()>0) {
+                    FileUtil.saveLric(getApplicationContext(), songName, artistName, lyricContent);
+                    launchLrcFloationgWindows(true);
+                } else {
+                    launchLrcFloationgWindows(false);
+                    FileUtil.deleteLric(getApplicationContext(),songName,artistName);
+                }
             } else {
                 launchLrcFloationgWindows(false);
             }

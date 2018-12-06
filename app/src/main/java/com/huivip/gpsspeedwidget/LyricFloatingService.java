@@ -66,7 +66,7 @@ public class LyricFloatingService extends Service{
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if(intent!=null){
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableNaviFloating(getApplicationContext())) {
+            if (intent.getBooleanExtra(EXTRA_CLOSE, false)) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
@@ -75,7 +75,7 @@ public class LyricFloatingService extends Service{
             long position=intent.getLongExtra(POSITION,0L);
             Log.d("huivip","Floating Position:"+position);
             duration=intent.getLongExtra(DURATION,-1L);
-            startTime=System.currentTimeMillis()-position;
+            startTime=System.currentTimeMillis()-position-1000;
             lrcView.setLrc(lyrcContent);
             lrcView.init();
             isShowing = true;
