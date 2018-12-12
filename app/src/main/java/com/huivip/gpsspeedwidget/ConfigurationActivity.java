@@ -732,6 +732,19 @@ public class ConfigurationActivity extends Activity {
 
             }
         });*/
+        Button buttonTest=findViewById(R.id.button_test);
+        buttonTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            /*    ComponentName componentToLaunch = new ComponentName(
+                        "com.android.settings",
+                        "com.android.settings.SubSettings");
+                Intent intent = new Intent();
+                intent.setComponent(componentToLaunch);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);*/
+            }
+        });
         CheckBox goToHomeCheckBox=findViewById(R.id.checkBox_gotoHome);
         goToHomeCheckBox.setChecked(PrefUtils.isGoToHomeAfterAutoLanuch(getApplicationContext()));
         goToHomeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

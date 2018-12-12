@@ -429,6 +429,12 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_hideFloating_onAutoNavi" android:layout_above="@+id/enableFloatingWindow"
                     android:layout_toEndOf="@+id/enableOver" android:layout_toRightOf="@+id/enableOver"/>
+            <Button
+                    android:text="测试"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_test" android:layout_alignBottom="@+id/checkBox_Navi_autoSolt"
+                    android:layout_alignStart="@+id/button_pay"/>
         </RelativeLayout>
     </ScrollView>
     <TextView
