@@ -3,19 +3,10 @@ package com.huivip.gpsspeedwidget.lyric;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
-import android.media.MediaMetadataRetriever;
-import android.media.RemoteController;
 import android.os.*;
-import android.service.notification.NotificationListenerService;
-import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
 import com.huivip.gpsspeedwidget.LyricFloatingService;
 import com.huivip.gpsspeedwidget.LyricWidgetService;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
@@ -23,7 +14,6 @@ import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class LyricServiceLowVersion extends Service  {

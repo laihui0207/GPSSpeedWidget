@@ -28,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -155,8 +156,10 @@ public class AutoNaviFloatingService extends Service {
         speedView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent timeIntent =new Intent(getApplicationContext(),MapFloatingService.class);
-                startService(timeIntent);
+               if(!Utils.isServiceRunning(getApplicationContext(),MapFloatingService.class.getName())) {
+                   Intent timeIntent = new Intent(getApplicationContext(), MapFloatingService.class);
+                   startService(timeIntent);
+               }
             }
         });
         super.onCreate();

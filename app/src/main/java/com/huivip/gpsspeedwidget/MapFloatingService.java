@@ -7,7 +7,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -17,7 +16,6 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -25,16 +23,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.amap.api.maps.*;
 import com.amap.api.maps.model.*;
-import com.amap.api.navi.AMapNaviView;
-import com.amap.api.navi.AMapNaviViewOptions;
-import com.amap.api.trace.LBSTraceClient;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TimeThread;
 import com.huivip.gpsspeedwidget.view.ImageWheelView;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -133,6 +127,7 @@ public class MapFloatingService extends Service {
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
+        timeTextView.setOnTouchListener(new FloatingOnTouchListener());
         initMonitorPosition();
         timeThread=new TimeThread(timeTextView);
         CrashHandler.getInstance().init(getApplicationContext());
@@ -212,9 +207,11 @@ public class MapFloatingService extends Service {
             //carMarker.setIcon();
             if (!isLocated || (isNeedFollow && gpsUtil.getSpeed() > 0)) {
                 // 跟随
-                aMap.animateCamera(CameraUpdateFactory.changeLatLng(lastedLatLng));
-                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 0,bearing));
+                //aMap.animateCamera(CameraUpdateFactory.changeLatLng(lastedLatLng));
+                //aMap.animateCamera(CameraUpdateFactory.scrollBy(0,-180));
+                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 30,bearing));
                 aMap.moveCamera(mCameraUpdate);
+                aMap.moveCamera(CameraUpdateFactory.scrollBy(0,-180));
                 isLocated=true;
             }
         }

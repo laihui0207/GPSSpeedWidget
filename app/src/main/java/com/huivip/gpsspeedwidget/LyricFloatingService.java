@@ -1,37 +1,23 @@
 package com.huivip.gpsspeedwidget;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.*;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
-import android.media.MediaMetadataRetriever;
-import android.media.RemoteController;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
-import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.huivip.gpsspeedwidget.listener.DelayTaskReceiver;
-import com.huivip.gpsspeedwidget.lyric.*;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
-import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.ToastUtil;
 import com.huivip.gpsspeedwidget.view.LrcView;
-import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
 
 import java.util.Timer;
 import java.util.TimerTask;

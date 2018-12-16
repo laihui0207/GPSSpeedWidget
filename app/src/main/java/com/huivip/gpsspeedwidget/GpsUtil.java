@@ -157,6 +157,7 @@ public class GpsUtil implements AMapNaviListener {
         if (serviceStarted) return;
         this.locationTimer = new Timer();
         speedAdjust = PrefUtils.getSpeedAdjust(context);
+        Intent trackService=new Intent(context,NaviTrackService.class);
         this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
@@ -173,6 +174,7 @@ public class GpsUtil implements AMapNaviListener {
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         if (Utils.isNetworkConnected(context)) {
             startAimlessNavi();
+            context.startService(trackService);
         } else {
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
@@ -182,6 +184,9 @@ public class GpsUtil implements AMapNaviListener {
                     if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
                         if (!aimlessStatred && serviceStarted) {
                             startAimlessNavi();
+                            if(PrefUtils.isEnableNAVIUploadGPSHistory(context)) {
+                                context.startService(trackService);
+                            }
                         }
                         context.getApplicationContext().unregisterReceiver(broadcastReceiver);
                     }

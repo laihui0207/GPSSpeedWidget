@@ -32,4 +32,8 @@ public class Constant {
     public static String AUTONAVI_WEB_KEY2="fa74250f4a56fe716a6de1a5d6ec68c3";
     public static String WIFI_USERNAME="车载Wi-Fi";
     public static String WIFI_PASSWORD="88888888";
+    public static String AUTONAVI_WEB_KEY_TRACK_SERVICE_ID="15017";
+    public static String AUTONAVI_WEB_KEY_TRACK_SERVICE_NAME="GPSWidgetService";
+    public static String AUTONAVI_WEB_KEY2_TRACK_SERVICE_ID="15618";
+    public static String AUTONAVI_WEB_KEY2_TRACK_SERVICE_NAME="GPSWidgetService";
 }

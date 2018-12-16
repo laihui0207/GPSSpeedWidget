@@ -5,22 +5,16 @@ import android.content.res.AssetManager;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.TextureView;
 import android.widget.Toast;
 import com.alibaba.idst.nls.internal.utils.L;
 import com.amap.api.trace.TraceLocation;
-import com.huivip.gpsspeedwidget.Constant;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Created by fujiayi on 2017/5/19.

@@ -96,6 +96,10 @@
                     android:layout_above="@+id/linearLayout"
                     android:layout_toRightOf="@+id/textView"
                     android:layout_toEndOf="@+id/textView"/>
+            <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/checkBox_naviTrack"
+                    android:layout_weight="1" android:text="猎鹰轨迹服务(高德官方)"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="wrap_content"

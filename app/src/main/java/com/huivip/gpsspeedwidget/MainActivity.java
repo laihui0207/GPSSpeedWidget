@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.*;
@@ -26,16 +27,17 @@ import com.amap.api.trace.LBSTraceClient;
 import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
-import com.huivip.gpsspeedwidget.utils.FileUtil;
-import com.huivip.gpsspeedwidget.utils.HttpUtils;
-import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
+import com.amap.api.track.AMapTrackClient;
+import com.amap.api.track.query.entity.HistoryTrack;
+import com.amap.api.track.query.entity.Point;
+import com.amap.api.track.query.entity.TrackPoint;
+import com.amap.api.track.query.model.*;
+import com.huivip.gpsspeedwidget.utils.*;
 import com.huivip.gpsspeedwidget.view.ImageWheelView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -63,6 +65,17 @@ public class MainActivity extends Activity implements TraceListener {
     List<TraceLocation> startPoints;
     List<TraceLocation> endPoints;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
+    private AMapTrackClient aMapTrackClient;
+    private long terminalId;
+    private long trackId;
+    private String currentOpeation;
+    private long serviceId;
+    private String TERMINAL_NAME;
+    private TextureMapView textureMapView;
+    private List<Polyline> polylines = new LinkedList<>();
+    private List<Marker> endMarkers = new LinkedList<>();
+
+
     DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
 
         @Override
@@ -85,6 +98,9 @@ public class MainActivity extends Activity implements TraceListener {
         aMap = mMapView.getMap();
         mTraceClient = LBSTraceClient.getInstance(this.getApplicationContext());
         initPermission();
+        serviceId= Long.parseLong(PrefUtils.getAmapTrackServiceID(getApplicationContext()));
+        TERMINAL_NAME = "Track_"+PrefUtils.getShortDeviceId(getApplicationContext());
+        aMapTrackClient = new AMapTrackClient(getApplicationContext());
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.interval(2000);
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
@@ -128,14 +144,53 @@ public class MainActivity extends Activity implements TraceListener {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        String deviceId = deviceUuidFactory.getDeviceUuid().toString();//"d9990887-4fae-3cb8-a53a-f95293300290";//
+                        String deviceId=PrefUtils.getShortDeviceId(getApplicationContext());
                         EditText textUid=findViewById(R.id.editText_UID);
                         String inputUid=textUid.getText().toString();
                         if(inputUid!=null && !inputUid.trim().equalsIgnoreCase("")){
                             deviceId=inputUid;
                         }
                         saveDeviceIdString(deviceId);
-                        if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()) && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())) {
+                        if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
+                            serviceId = Long.parseLong(PrefUtils.getAmapTrackServiceID(deviceId));
+                            TERMINAL_NAME = "Track_" + deviceId;
+                            currentOpeation = "QueryLatestPoint";
+                            aMapTrackClient.queryTerminal(new QueryTerminalRequest(serviceId, TERMINAL_NAME), new SimpleOnTrackListener() {
+                                @Override
+                                public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
+                                    if (queryTerminalResponse.isSuccess()) {
+                                        if (queryTerminalResponse.isTerminalExist()) {
+                                            long terminalId = queryTerminalResponse.getTid();
+                                            aMapTrackClient.queryLatestPoint(new LatestPointRequest(serviceId, terminalId), new SimpleOnTrackListener() {
+                                                @Override
+                                                public void onLatestPointCallback(LatestPointResponse latestPointResponse) {
+                                                    if (latestPointResponse.isSuccess()) {
+                                                        aMap.clear();
+                                                        Point point = latestPointResponse.getLatestPoint().getPoint();
+                                                        // 查询实时位置成功，point为实时位置信息
+                                                        aMap.clear();
+                                                        aMap.setMyLocationEnabled(false);
+                                                        LatLng latLng = new LatLng(point.getLat(), point.getLng());
+                                                        Date date = new Date(point.getTime());
+                                                        String dateString = dateFormat.format(date);
+                                                        aMap.addMarker(new MarkerOptions().position(latLng).title("车辆位置").snippet("车辆最后的位置,\n时间:" + dateString)).showInfoWindow();
+                                                        CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 18, 30, 0));
+
+                                                        aMap.moveCamera(mCameraUpdate);
+                                                    } else {
+                                                        // 查询实时位置失败
+                                                        Toast.makeText(getApplicationContext(), "位置查询失败", Toast.LENGTH_LONG).show();
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            });
+
+                        } else if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext())
+                                && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())
+                                && !PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
                             String getLastedURL = "";
                             getLastedURL = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETLASTEDPOSTIONURL, deviceId);
                             String dataResult = HttpUtils.getData(getLastedURL);
@@ -167,6 +222,9 @@ public class MainActivity extends Activity implements TraceListener {
                         } else {
                             //Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
                         }
+
+                   /* }
+                       */
 
                     }
                 }).start();
@@ -203,10 +261,9 @@ public class MainActivity extends Activity implements TraceListener {
             }
         });
         AutoCompleteTextView textUid=findViewById(R.id.editText_UID);
-        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
-        String deviceId=deviceUuidFactory.getDeviceId();
-        String deviceId_shortString=deviceId.substring(0,deviceId.indexOf("-"));
-        PrefUtils.setDeviceIDString(getApplicationContext(),deviceId_shortString);
+        String deviceId_shortString=PrefUtils.getShortDeviceId(getApplicationContext());
+        //String deviceId_shortString=deviceId.substring(0,deviceId.indexOf("-"));
+        //PrefUtils.setDeviceIDString(getApplicationContext(),deviceId_shortString);
         String devices=PrefUtils.getDeviceIdStorage(getApplicationContext());
         if(devices!=null && devices.length()>0) {
             String[] devicesArray=devices.split(",");
@@ -225,78 +282,162 @@ public class MainActivity extends Activity implements TraceListener {
 
             @Override
             public void onClick(View view) {
-                if(selectDateStr==null || selectDateStr.equalsIgnoreCase("")){
+                if (selectDateStr == null || selectDateStr.equalsIgnoreCase("")) {
                     return;
                 }
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String startTime="";
-                        Date startDate=null;
-                        Date endDate=null;
-                        String endTime="";
-                        String deviceId = deviceUuidFactory.getDeviceUuid().toString();//"d9990887-4fae-3cb8-a53a-f95293300290";//
-                        EditText textUid=findViewById(R.id.editText_UID);
-                        String inputUid=textUid.getText().toString();
-                        if(inputUid!=null && !inputUid.trim().equalsIgnoreCase("")){
-                            deviceId=inputUid;
-                        }
-                        try {
-                            Date selectDate=sdf.parse(selectDateStr);
-                            Calendar calendar=Calendar.getInstance();
-                            calendar.setTime(selectDate);
-                            calendar.set(Calendar.MINUTE,0);
-                            calendar.set(Calendar.HOUR,0);
-                            calendar.set(Calendar.SECOND,0);
-                            startTime=Long.toString(calendar.getTimeInMillis());
-                            startDate=calendar.getTime();
-                            calendar.add(Calendar.DAY_OF_MONTH,1);
-                            endTime=Long.toString(calendar.getTimeInMillis());
-                            endDate=calendar.getTime();
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()) && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())) {
-                            String dataUrl = "";
-                            saveDeviceIdString(deviceId);
-                            dataUrl = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETDATA, deviceId, startTime, endTime);
-                            String dataResult = HttpUtils.getData(dataUrl);
-                            Log.d("GPSWidget", "URL:" + dataUrl);
+                String deviceId = PrefUtils.getShortDeviceId(getApplicationContext());
+                EditText textUid = findViewById(R.id.editText_UID);
+                String inputUid = textUid.getText().toString();
+                if (inputUid != null && !inputUid.trim().equalsIgnoreCase("")) {
+                    deviceId = inputUid;
+                }
+                String startTime = "";
+                Date startDate = null;
+                Date endDate = null;
+                String endTime = "";
+                try {
+                    Date selectDate = sdf.parse(selectDateStr);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(selectDate);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.HOUR, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    startTime = Long.toString(calendar.getTimeInMillis());
+                    startDate = calendar.getTime();
+                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+                    endTime = Long.toString(calendar.getTimeInMillis());
+                    Date now=new Date();
+                    endDate = calendar.getTime().getTime() > now.getTime() ? now : calendar.getTime();
 
-                            Message message = Message.obtain();
-                            message.arg1 = Constant.LINE;
-                            message.obj = dataResult;
-                            lastedPositionHandler.handleMessage(message);
-                        } else if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext())) {
-                            DBUtil dbUtil=new DBUtil(getApplicationContext());
-                            List<LocationVO> list=dbUtil.getBetweenDate(startDate,endDate);
-                            if(list!=null && !list.isEmpty()){
-                                JSONArray datas=new JSONArray();
-                                for(LocationVO vo:list) {
-                                    JSONObject data = new JSONObject();
-                                    try {
-                                        data.put("lng", vo.getLng());
-                                        data.put("lat", vo.getLat());
-                                        data.put("createTime", dateFormat.format(new Date(vo.getCreateTime())));
-                                        data.put("bearingValue",vo.getBearingValue());
-                                        data.put("speedValue",vo.getSpeedValue());
-                                        data.put("lineId",vo.getLineId());
-                                        data.put("speed",vo.getSpeed());
-                                        datas.put(data);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                serviceId = Long.parseLong(PrefUtils.getAmapTrackServiceID(deviceId));
+                TERMINAL_NAME = "Track_" + deviceId;
+                Date finalStartDate = startDate;
+                Date finalEndDate = endDate;
+                if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
+                    aMapTrackClient.queryTerminal(new QueryTerminalRequest(serviceId, TERMINAL_NAME), new SimpleOnTrackListener() {
+                        @Override
+                        public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
+                            if (queryTerminalResponse.isSuccess()) {
+                                if (queryTerminalResponse.isTerminalExist()) {
+                                    long tid = queryTerminalResponse.getTid();
+                                    // 搜索最近12小时以内上报的轨迹
+                                    HistoryTrackRequest historyTrackRequest = new HistoryTrackRequest(
+                                            serviceId,
+                                            tid,
+                                            finalStartDate.getTime(),
+                                            finalEndDate.getTime(),
+                                            0,
+                                            0,
+                                            5000,   // 距离补偿，只有超过5km的点才启用距离补偿
+                                            0,  // 由旧到新排序
+                                            1,  // 返回第1页数据
+                                            500,    // 一页不超过100条
+                                            ""  // 暂未实现，该参数无意义，请留空
+                                    );
+                                    aMapTrackClient.queryHistoryTrack(historyTrackRequest, new SimpleOnTrackListener() {
+                                        @Override
+                                        public void onHistoryTrackCallback(HistoryTrackResponse historyTrackResponse) {
+                                            if (historyTrackResponse.isSuccess()) {
+                                                aMap.clear();
+                                                HistoryTrack historyTrack = historyTrackResponse.getHistoryTrack();
+                                                // historyTrack中包含终端轨迹信息
+                                                List<Point> points = historyTrack.getPoints();
+                                                List<LatLng> dataList = new ArrayList<>();
+                                                if (points.size() > 1) {
+                                                    Point firstPoint = points.get(0);
+                                                    LatLng firstLatLng = new LatLng(firstPoint.getLat(), firstPoint.getLng());
+                                                    String firstTime = dateFormat.format(new Date(firstPoint.getTime()));
+                                                    Point lastedPoint = points.get(points.size() - 1);
+                                                    LatLng lastedLatLng = new LatLng(lastedPoint.getLat(), lastedPoint.getLng());
+                                                    String lastedTime = dateFormat.format(new Date(lastedPoint.getTime()));
+                                                    for (Point point : points) {
+                                                        LatLng latLng = new LatLng(point.getLat(), point.getLng());
+                                                        dataList.add(latLng);
+                                                    }
+                                                    drawTrackLine(lastedLatLng, lastedTime, firstTime, firstLatLng, (float) historyTrack.getDistance(), dataList);
+                                                }
+
+                                            } else {
+                                                Toast.makeText(MainActivity.this, "查询历史轨迹点失败，" + historyTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                                                // 查询失败
+                                            }
+                                        /*if (historyTrackResponse.isSuccess()) {
+                                            HistoryTrack historyTrack = historyTrackResponse.getHistoryTrack();
+                                            if (historyTrack == null || historyTrack.getCount() == 0) {
+                                                Toast.makeText(MainActivity.this, "未获取到轨迹点", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                            List<Point> points = historyTrack.getPoints();
+                                            drawTrackOnMap(points);
+                                        } else {
+                                            Toast.makeText(MainActivity.this, "查询历史轨迹点失败，" + historyTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                                        }*/
+                                        }
+                                    });
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Terminal不存在", Toast.LENGTH_SHORT).show();
                                 }
-                                Message message = Message.obtain();
-                                message.obj = datas.toString();
-                                message.arg1 = Constant.LINE;
-                                lastedPositionHandler.handleMessage(message);
+                            } else {
+                                // showNetErrorHint(queryTerminalResponse.getErrorMsg());
                             }
-                        } else {
-                            //Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
                         }
-                    }
-                }).start();
+                    });
+                } else {
+                    String finalDeviceId = deviceId;
+                    String finalStartTime = startTime;
+                    String finalEndTime = endTime;
+                    Date finalStartDate1 = startDate;
+                    Date finalEndDate1 = endDate;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            aMap.clear();
+
+                            if (PrefUtils.isEnableRecordGPSHistory(getApplicationContext()) && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())) {
+                                String dataUrl = "";
+                                saveDeviceIdString(finalDeviceId);
+                                dataUrl = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETDATA, finalDeviceId, finalStartTime, finalEndTime);
+                                String dataResult = HttpUtils.getData(dataUrl);
+                                Log.d("GPSWidget", "URL:" + dataUrl);
+
+                                Message message = Message.obtain();
+                                message.arg1 = Constant.LINE;
+                                message.obj = dataResult;
+                                lastedPositionHandler.handleMessage(message);
+                            } else if (PrefUtils.isEnableRecordGPSHistory(getApplicationContext())) {
+                                DBUtil dbUtil = new DBUtil(getApplicationContext());
+                                List<LocationVO> list = dbUtil.getBetweenDate(finalStartDate1, finalEndDate1);
+                                if (list != null && !list.isEmpty()) {
+                                    JSONArray datas = new JSONArray();
+                                    for (LocationVO vo : list) {
+                                        JSONObject data = new JSONObject();
+                                        try {
+                                            data.put("lng", vo.getLng());
+                                            data.put("lat", vo.getLat());
+                                            data.put("createTime", dateFormat.format(new Date(vo.getCreateTime())));
+                                            data.put("bearingValue", vo.getBearingValue());
+                                            data.put("speedValue", vo.getSpeedValue());
+                                            data.put("lineId", vo.getLineId());
+                                            data.put("speed", vo.getSpeed());
+                                            datas.put(data);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    Message message = Message.obtain();
+                                    message.obj = datas.toString();
+                                    message.arg1 = Constant.LINE;
+                                    lastedPositionHandler.handleMessage(message);
+                                }
+                            } else {
+                                //Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }).start();
+                }
             }
         };
         trackBtn.setOnClickListener(trackBtnListener);
@@ -476,7 +617,7 @@ public class MainActivity extends Activity implements TraceListener {
             e.printStackTrace();
         }
         float totalDistance=getDistance(totalDatas);
-        aMap.clear();
+
         for(String key:lineDatas.keySet()) {
             List<TraceLocation> locationList=lineDatas.get(key);
             List<LatLng> dataList=new ArrayList<>();
@@ -493,18 +634,7 @@ public class MainActivity extends Activity implements TraceListener {
                 //aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置").snippet("时间：" + lastedTime+"\n速度："+location.getSpeed()/3.6F+"km/h").alpha(30F)).hideInfoWindow();
 
             }
-            TraceOverlay mTraceOverlay = new TraceOverlay(aMap, dataList);
-            mTraceOverlay.setProperCamera(dataList);
-            mTraceOverlay.zoopToSpan();
-            localNumberFormat.setMaximumFractionDigits(1);
-            Marker endMarker = aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.end))
-                    .snippet("车辆停驶的位置\n时间:" + lastedTime + "\n此段行程:" + localNumberFormat.format(getDistance(dataList) / 1000) + "公里\n当天总行程："+localNumberFormat.format(totalDistance/1000)+"公里"));
-            endMarker.setClickable(true);
-            endMarker.showInfoWindow();
-            aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.start)).snippet("车辆开始的位置\n时间：" + firstTime));
-            CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, 13, 0, 0));
-            aMap.moveCamera(mCameraUpdate);
+            drawTrackLine(lastedLatLng, lastedTime, firstTime, firstLatLng, totalDistance, dataList);
 
         }
         AMap.OnMarkerClickListener markerClickListener = new AMap.OnMarkerClickListener() {
@@ -525,6 +655,22 @@ public class MainActivity extends Activity implements TraceListener {
 
 
     }
+
+    private void drawTrackLine(LatLng lastedLatLng, String lastedTime, String firstTime, LatLng firstLatLng, float totalDistance, List<LatLng> dataList) {
+        TraceOverlay mTraceOverlay = new TraceOverlay(aMap, dataList);
+        mTraceOverlay.setProperCamera(dataList);
+        mTraceOverlay.zoopToSpan();
+        localNumberFormat.setMaximumFractionDigits(1);
+        Marker endMarker = aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.end))
+                .snippet("车辆停驶的位置\n时间:" + lastedTime + "\n此段行程:" + localNumberFormat.format(getDistance(dataList) / 1000) + "公里\n当天总行程："+localNumberFormat.format(totalDistance/1000)+"公里"));
+        endMarker.setClickable(true);
+        endMarker.showInfoWindow();
+        aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.start)).snippet("车辆开始的位置\n时间：" + firstTime));
+        CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, 13, 0, 0));
+        aMap.moveCamera(mCameraUpdate);
+    }
+
     private void initPermission() {
         String[] permissions = {
                 Manifest.permission.INTERNET,

@@ -164,6 +164,24 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setUploadGPSHistory(getApplicationContext(),checkBoxButton.isChecked());
             }
         });
+        CheckBox naviTrackServiceCheckbox=findViewById(R.id.checkBox_naviTrack);
+        naviTrackServiceCheckbox.setChecked(PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext()));
+        naviTrackServiceCheckbox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setUploadNAVIGPSHistory(getApplicationContext(),buttonView.isChecked());
+                Intent trackService=new Intent(getApplicationContext(),NaviTrackService.class);
+                if(buttonView.isChecked()){
+                    if(!Utils.isServiceRunning(getApplicationContext(),NaviTrackService.class.getName())){
+                        startService(trackService);
+                    }
+                } else {
+                    if(Utils.isServiceRunning(getApplicationContext(),NaviTrackService.class.getName())){
+                        stopService(trackService);
+                    }
+                }
+            }
+        });
         enableFloatingWidnowCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override

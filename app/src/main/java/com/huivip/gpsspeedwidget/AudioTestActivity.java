@@ -22,7 +22,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
-import com.huivip.gpsspeedwidget.lyric.MusicNotificationListenerService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.*;

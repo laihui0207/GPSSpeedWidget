@@ -6,6 +6,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 
@@ -38,6 +39,7 @@ public abstract class PrefUtils {
     public static final String PREF_AUTO_LAUNCH_WIFI_HOTSPOT="AutoStart.Wifi.hotspot";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
+    public static final String UPLOAD_GPS_HISTORY_NAVI_PREFS_NAME="uploadNAVIGpsHistory";
     public static final String AUTO_CLEAN_GPS_HISTORY_PREFS_NAME="AutoCleanGpsHistory";
     public static final String ENABLE_FLATING_WINDOW="com.huivip.Enable.fating.History";
     public static final String ENABLED_LYRIC_PREFS_NAME="com.huivip.Enable.fating.Lyric";
@@ -121,6 +123,11 @@ public abstract class PrefUtils {
     public static String getDeviceIdStorage(Context context){
         return getSharedPreferences(context).getString(DEVICEID_STORAGE,"");
     }
+    public static String getShortDeviceId(Context context){
+        String deviceId =(new DeviceUuidFactory(context)).getDeviceId();
+        setDeviceIDString(context,deviceId);
+        return deviceId.substring(0,deviceId.indexOf("-"));
+    }
     public static void setDeviceIDString(Context context,String value){
         edit(context).putString(CURRENT_DEVICEID,value).apply();
     }
@@ -140,12 +147,28 @@ public abstract class PrefUtils {
         return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.BAIDUTTS);
     }
     public static String getAmapWebKey(Context context){
-        String deviceId=getDeviceIdString(context);
+        String deviceId=getShortDeviceId(context);
         String lastChar=deviceId.substring(deviceId.length()-1);
         if(lastChar.matches("\\d+(?:\\.\\d+)?")){
             return Constant.AUTONAVI_WEB_KEY;
         }
         return Constant.AUTONAVI_WEB_KEY2;
+    }
+    public static String getAmapTrackServiceID(Context context){
+        String deviceId=getShortDeviceId(context);
+        String lastChar=deviceId.substring(deviceId.length()-1);
+        if(lastChar.matches("\\d+(?:\\.\\d+)?")){
+            return Constant.AUTONAVI_WEB_KEY_TRACK_SERVICE_ID;
+        }
+        return Constant.AUTONAVI_WEB_KEY2_TRACK_SERVICE_ID;
+    }
+    public static String getAmapTrackServiceID(String deviceId){
+        //String deviceId=getShortDeviceId(context);
+        String lastChar=deviceId.substring(deviceId.length()-1);
+        if(lastChar.matches("\\d+(?:\\.\\d+)?")){
+            return Constant.AUTONAVI_WEB_KEY_TRACK_SERVICE_ID;
+        }
+        return Constant.AUTONAVI_WEB_KEY2_TRACK_SERVICE_ID;
     }
     public static void setFloattingStyle(Context context,String style){
         edit(context).putString(AUTO_FLOATTING_STYLE, style).apply();
@@ -213,6 +236,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableUploadGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, false);
+    }
+    public static void setUploadNAVIGPSHistory(Context context,boolean uploadHistory){
+        edit(context).putBoolean(UPLOAD_GPS_HISTORY_NAVI_PREFS_NAME, uploadHistory).apply();
+    }
+    public static boolean isEnableNAVIUploadGPSHistory(Context context){
+        return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_NAVI_PREFS_NAME, false);
     }
     public static void setAutoCleanGPSHistory(Context context,boolean cleanHistory){
         edit(context).putBoolean(AUTO_CLEAN_GPS_HISTORY_PREFS_NAME, cleanHistory).apply();

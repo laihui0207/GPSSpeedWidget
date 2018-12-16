@@ -1,15 +1,10 @@
 package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
-import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.amap.api.navi.AMapNavi;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.iflytek.cloud.ErrorCode;

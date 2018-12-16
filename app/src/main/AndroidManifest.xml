@@ -284,6 +284,7 @@
         <service android:name=".TextFloatingService"/>
         <service android:name=".LyricFloatingService"/>
         <service android:name=".GPSNaviService"/>
+        <service android:name=".NaviTrackService"/>
         <service android:name=".RealTimeFloatingService"/>
         <service android:name=".lyric.LyricServiceLowVersion"/>
         <service

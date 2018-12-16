@@ -1,9 +1,5 @@
 package com.huivip.gpsspeedwidget;
 
-import android.animation.AnimatorSet;
-import android.animation.ValueAnimator;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -15,18 +11,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.*;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.huivip.gpsspeedwidget.listener.DelayTaskReceiver;
-import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.TimeThread;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 

@@ -14,10 +14,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
 import butterknife.BindView;
@@ -25,8 +23,6 @@ import butterknife.ButterKnife;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 

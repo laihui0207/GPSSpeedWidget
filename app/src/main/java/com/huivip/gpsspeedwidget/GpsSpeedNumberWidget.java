@@ -4,11 +4,7 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.*;
-import android.text.TextUtils;
-import android.util.Log;
 import android.widget.RemoteViews;
-import com.huivip.gpsspeedwidget.listener.BootStartReceiver;
-import com.huivip.gpsspeedwidget.utils.LrcUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 

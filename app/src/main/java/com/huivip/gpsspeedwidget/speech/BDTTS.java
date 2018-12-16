@@ -1,10 +1,8 @@
 package com.huivip.gpsspeedwidget.speech;
 
-import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.media.AudioManager;
-import android.os.Handler;
 import android.util.Log;
 import com.baidu.tts.auth.AuthInfo;
 import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
@@ -14,12 +12,8 @@ import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import android.os.Handler;
-import android.os.Message;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     private static final String TAG = "huivip_BDTTS";
@@ -97,7 +91,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
             // 检查2个离线资源是否可读
             isSuccess = checkOfflineResources();
             if (!isSuccess) {
-                OfflineResource offlineResource = createOfflineResource(offlineVoice);
+                createOfflineResource(offlineVoice);
             } else {
                 Log.d("huivip","离线资源存在并且可读, 目录：" + TEMP_DIR);
             }
@@ -143,12 +137,13 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE_WIFI wifi状态下使用在线，非wifi离线。在线状态下， 请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_NETWORK ， 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
-        if(!PrefUtils.isEnableAudioMixService(context)){
-            Log.d("huivip","Audio use voice Call");
-            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-        } else {
+        /*if(PrefUtils.isEnableAudioMixService(context)){
+            Log.d("huivip","Audio use voice Call");*/
+/*            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);*/
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        }
+       /* } else {
+            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
+        }*/
         //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
        // mSpeechSynthesizer.setStereoVolume(1.0f,1.0f);
         //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_ALARM);
@@ -187,7 +182,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     /**
      * 检查appId ak sk 是否填写正确，另外检查官网应用内设置的包名是否与运行时的包名一致。本demo的包名定义在build.gradle文件中
      *
-     * @return
+     * @return boolean
      */
     private boolean checkAuth() {
         AuthInfo authInfo = mSpeechSynthesizer.auth(ttsMode);
@@ -205,7 +200,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     /**
      * 检查 TEXT_FILENAME, MODEL_FILENAME 这2个文件是否存在，不存在请自行从assets目录里手动复制
      *
-     * @return
+     * @return boolean
      */
     private boolean checkOfflineResources() {
         String[] filenames = {TEXT_FILENAME, MODEL_FILENAME};
