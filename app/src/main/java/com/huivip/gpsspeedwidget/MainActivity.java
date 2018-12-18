@@ -19,6 +19,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
 import com.amap.api.maps.*;
@@ -28,9 +29,7 @@ import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
 import com.amap.api.track.AMapTrackClient;
-import com.amap.api.track.query.entity.HistoryTrack;
-import com.amap.api.track.query.entity.Point;
-import com.amap.api.track.query.entity.TrackPoint;
+import com.amap.api.track.query.entity.*;
 import com.amap.api.track.query.model.*;
 import com.huivip.gpsspeedwidget.utils.*;
 import com.huivip.gpsspeedwidget.view.ImageWheelView;
@@ -74,8 +73,11 @@ public class MainActivity extends Activity implements TraceListener {
     private TextureMapView textureMapView;
     private List<Polyline> polylines = new LinkedList<>();
     private List<Marker> endMarkers = new LinkedList<>();
-
-
+    private Timer needFollowTimer;
+    // 屏幕静止DELAY_TIME之后，再次跟随
+    private long DELAY_TIME = 5000;
+    // 是否需要跟随定位
+    private boolean isNeedFollow = true;
     DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
 
         @Override
@@ -119,6 +121,7 @@ public class MainActivity extends Activity implements TraceListener {
        /* carMarker = aMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(0f))).setFlat(true));*/
         aMap.setTrafficEnabled(true);
+        setMapInteractiveListener();
         UiSettings mUiSettings=aMap.getUiSettings();
         mUiSettings.setCompassEnabled(true);
         Button lastedPosition= (Button) findViewById(R.id.lastedBtn);
@@ -324,7 +327,7 @@ public class MainActivity extends Activity implements TraceListener {
                                 if (queryTerminalResponse.isTerminalExist()) {
                                     long tid = queryTerminalResponse.getTid();
                                     // 搜索最近12小时以内上报的轨迹
-                                    HistoryTrackRequest historyTrackRequest = new HistoryTrackRequest(
+                                   /* HistoryTrackRequest historyTrackRequest = new HistoryTrackRequest(
                                             serviceId,
                                             tid,
                                             finalStartDate.getTime(),
@@ -364,7 +367,7 @@ public class MainActivity extends Activity implements TraceListener {
                                                 Toast.makeText(MainActivity.this, "查询历史轨迹点失败，" + historyTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
                                                 // 查询失败
                                             }
-                                        /*if (historyTrackResponse.isSuccess()) {
+                                        *//*if (historyTrackResponse.isSuccess()) {
                                             HistoryTrack historyTrack = historyTrackResponse.getHistoryTrack();
                                             if (historyTrack == null || historyTrack.getCount() == 0) {
                                                 Toast.makeText(MainActivity.this, "未获取到轨迹点", Toast.LENGTH_SHORT).show();
@@ -374,7 +377,75 @@ public class MainActivity extends Activity implements TraceListener {
                                             drawTrackOnMap(points);
                                         } else {
                                             Toast.makeText(MainActivity.this, "查询历史轨迹点失败，" + historyTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
-                                        }*/
+                                        }*//*
+                                        }
+                                    });*/
+                                    QueryTrackRequest queryTrackRequest = new QueryTrackRequest(
+                                            serviceId,
+                                            tid,
+                                            -1,     // 轨迹id，不指定，查询所有轨迹，注意分页仅在查询特定轨迹id时生效，查询所有轨迹时无法对轨迹点进行分页
+                                            finalStartDate.getTime(),
+                                            finalEndDate.getTime(),
+                                            0,      // 不启用去噪
+                                            1, // 绑路
+                                            0,      // 不进行精度过滤
+                                            DriveMode.DRIVING,  // 当前仅支持驾车模式
+                                            0,     // 距离补偿
+                                            5000,   // 距离补偿，只有超过5km的点才启用距离补偿
+                                            1,  // 结果应该包含轨迹点信息
+                                            1,  // 返回第1页数据，但由于未指定轨迹，分页将失效
+                                            100    // 一页不超过100条
+                                    );
+                                    aMapTrackClient.queryTerminalTrack(queryTrackRequest, new SimpleOnTrackListener() {
+                                        @Override
+                                        public void onQueryTrackCallback(QueryTrackResponse queryTrackResponse) {
+                                            if (queryTrackResponse.isSuccess()) {
+                                                List<Track> tracks =  queryTrackResponse.getTracks();
+                                                if (tracks != null && !tracks.isEmpty()) {
+                                                    boolean allEmpty = true;
+                                                    int totalDistance=0;
+                                                    for(Track track:tracks){
+                                                        if(track!=null) {
+                                                            totalDistance += track.getDistance();
+                                                        }
+                                                    }
+                                                    for (Track track : tracks) {
+                                                        List<Point> points = track.getPoints();
+                                                        List<LatLng> dataList = new ArrayList<>();
+                                                        if (points.size() > 1) {
+                                                            Point firstPoint = points.get(0);
+                                                            LatLng firstLatLng = new LatLng(firstPoint.getLat(), firstPoint.getLng());
+                                                            Log.d("GPSWidget","first Point Time:"+firstPoint.getTime()+"");
+                                                            String firstTime = dateFormat.format(new Date(firstPoint.getTime()));
+                                                            Point lastedPoint = points.get(points.size() - 1);
+                                                            LatLng lastedLatLng = new LatLng(lastedPoint.getLat(), lastedPoint.getLng());
+                                                            String lastedTime = dateFormat.format(new Date(lastedPoint.getTime()));
+                                                            for (Point point : points) {
+                                                                LatLng latLng = new LatLng(point.getLat(), point.getLng());
+                                                                dataList.add(latLng);
+                                                            }
+                                                            allEmpty=false;
+                                                            drawTrackLine(lastedLatLng, lastedTime, firstTime, firstLatLng, totalDistance,track.getTime(), dataList);
+                                                        }
+                                                    }
+                                                    if (allEmpty) {
+                                                        Toast.makeText(getApplicationContext(),
+                                                                "所有轨迹都无轨迹点", Toast.LENGTH_SHORT).show();
+                                                    } /*else {
+                                                        StringBuilder sb = new StringBuilder();
+                                                        sb.append("共查询到").append(tracks.size()).append("条轨迹，每条轨迹行驶距离分别为：");
+                                                        for (Track track : tracks) {
+                                                            sb.append(track.getDistance()).append("m,");
+                                                        }
+                                                        sb.deleteCharAt(sb.length() - 1);
+                                                        Toast.makeText(getApplicationContext(), sb.toString(), Toast.LENGTH_SHORT).show();
+                                                    }*/
+                                                } else {
+                                                    Toast.makeText(getApplicationContext(), "未获取到轨迹", Toast.LENGTH_SHORT).show();
+                                                }
+                                            } else {
+                                                Toast.makeText(getApplicationContext(), "查询历史轨迹失败，" + queryTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                                            }
                                         }
                                     });
                                 } else {
@@ -634,7 +705,7 @@ public class MainActivity extends Activity implements TraceListener {
                 //aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置").snippet("时间：" + lastedTime+"\n速度："+location.getSpeed()/3.6F+"km/h").alpha(30F)).hideInfoWindow();
 
             }
-            drawTrackLine(lastedLatLng, lastedTime, firstTime, firstLatLng, totalDistance, dataList);
+            drawTrackLine(lastedLatLng, lastedTime, firstTime, firstLatLng, totalDistance,0, dataList);
 
         }
         AMap.OnMarkerClickListener markerClickListener = new AMap.OnMarkerClickListener() {
@@ -655,18 +726,72 @@ public class MainActivity extends Activity implements TraceListener {
 
 
     }
+    private void setMapInteractiveListener() {
 
-    private void drawTrackLine(LatLng lastedLatLng, String lastedTime, String firstTime, LatLng firstLatLng, float totalDistance, List<LatLng> dataList) {
+        aMap.setOnMapTouchListener(new AMap.OnMapTouchListener() {
+
+            @Override
+            public void onTouch(MotionEvent event) {
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // 按下屏幕
+                        // 如果timer在执行，关掉它
+                        clearTimer();
+                        // 改变跟随状态
+                        isNeedFollow = false;
+                        aMap.setMyLocationEnabled(false);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // 离开屏幕
+                        startTimerSomeTimeLater();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+
+    }
+    /**
+     * 取消timer任务
+     */
+    private void clearTimer() {
+        if (needFollowTimer != null) {
+            needFollowTimer.cancel();
+            needFollowTimer = null;
+        }
+    }
+
+    /**
+     * 如果地图在静止的情况下
+     */
+    private void startTimerSomeTimeLater() {
+        // 首先关闭上一个timer
+        clearTimer();
+        needFollowTimer = new Timer();
+        // 开启一个延时任务，改变跟随状态
+        needFollowTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                isNeedFollow = true;
+                aMap.setMyLocationEnabled(true);
+            }
+        }, DELAY_TIME);
+    }
+    private void drawTrackLine(LatLng lastedLatLng, String lastedTime, String firstTime, LatLng firstLatLng, float totalDistance,long durationTime, List<LatLng> dataList) {
         TraceOverlay mTraceOverlay = new TraceOverlay(aMap, dataList);
         mTraceOverlay.setProperCamera(dataList);
         mTraceOverlay.zoopToSpan();
         localNumberFormat.setMaximumFractionDigits(1);
         Marker endMarker = aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.end))
-                .snippet("车辆停驶的位置\n时间:" + lastedTime + "\n此段行程:" + localNumberFormat.format(getDistance(dataList) / 1000) + "公里\n当天总行程："+localNumberFormat.format(totalDistance/1000)+"公里"));
+                .snippet("车辆停驶的位置\n此段行程:" + localNumberFormat.format(getDistance(dataList) / 1000) + "公里,用时:"+Utils.longToTimeString(durationTime)+"\n当天总行程："+localNumberFormat.format(totalDistance/1000)+"公里"));
         endMarker.setClickable(true);
         endMarker.showInfoWindow();
-        aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.start)).snippet("车辆开始的位置\n时间：" + firstTime));
+        aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.start)).snippet("车辆开始的位置"));
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, 13, 0, 0));
         aMap.moveCamera(mCameraUpdate);
     }

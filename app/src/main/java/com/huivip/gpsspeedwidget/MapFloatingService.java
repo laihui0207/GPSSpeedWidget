@@ -211,7 +211,7 @@ public class MapFloatingService extends Service {
                 //aMap.animateCamera(CameraUpdateFactory.scrollBy(0,-180));
                 CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 30,bearing));
                 aMap.moveCamera(mCameraUpdate);
-                aMap.moveCamera(CameraUpdateFactory.scrollBy(0,-180));
+                aMap.moveCamera(CameraUpdateFactory.scrollBy(0,-170));
                 isLocated=true;
             }
         }
