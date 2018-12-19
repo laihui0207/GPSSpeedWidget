@@ -80,9 +80,9 @@ public class NaviTrackService extends Service {
 
             } else {
                 Log.w(TAG, "error onStartTrackCallback, status: " + status + ", msg: " + msg);
-                Toast.makeText(getApplicationContext(),
+                /*Toast.makeText(getApplicationContext(),
                         "error onStartTrackCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_LONG).show();*/
             }
         }
 
@@ -96,9 +96,9 @@ public class NaviTrackService extends Service {
                 /*                updateBtnStatus();*/
             } else {
                 Log.w(TAG, "error onStopTrackCallback, status: " + status + ", msg: " + msg);
-                Toast.makeText(getApplicationContext(),
+              /*  Toast.makeText(getApplicationContext(),
                         "error onStopTrackCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_LONG).show();*/
 
             }
         }
@@ -115,9 +115,9 @@ public class NaviTrackService extends Service {
                 /*                updateBtnStatus();*/
             } else {
                 Log.w(TAG, "error onStartGatherCallback, status: " + status + ", msg: " + msg);
-                Toast.makeText(getApplicationContext(),
+                /*Toast.makeText(getApplicationContext(),
                         "error onStartGatherCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_LONG).show();*/
             }
         }
 
@@ -129,9 +129,9 @@ public class NaviTrackService extends Service {
                 /*                updateBtnStatus();*/
             } else {
                 Log.w(TAG, "error onStopGatherCallback, status: " + status + ", msg: " + msg);
-                Toast.makeText(getApplicationContext(),
+               /* Toast.makeText(getApplicationContext(),
                         "error onStopGatherCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_LONG).show();*/
             }
         }
     };
@@ -175,7 +175,7 @@ public class NaviTrackService extends Service {
                                     }
                                     aMapTrackClient.startTrack(trackParam, onTrackListener);
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "网络请求失败，" + addTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
+/*                                    Toast.makeText(getApplicationContext(), "网络请求失败，" + addTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();*/
                                 }
                             }
                         });

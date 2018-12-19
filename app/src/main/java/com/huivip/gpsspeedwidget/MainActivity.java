@@ -324,82 +324,21 @@ public class MainActivity extends Activity implements TraceListener {
                         @Override
                         public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
                             if (queryTerminalResponse.isSuccess()) {
+                                aMap.clear();
                                 if (queryTerminalResponse.isTerminalExist()) {
                                     long tid = queryTerminalResponse.getTid();
-                                    // 搜索最近12小时以内上报的轨迹
-                                   /* HistoryTrackRequest historyTrackRequest = new HistoryTrackRequest(
-                                            serviceId,
-                                            tid,
-                                            finalStartDate.getTime(),
-                                            finalEndDate.getTime(),
-                                            0,
-                                            0,
-                                            5000,   // 距离补偿，只有超过5km的点才启用距离补偿
-                                            0,  // 由旧到新排序
-                                            1,  // 返回第1页数据
-                                            500,    // 一页不超过100条
-                                            ""  // 暂未实现，该参数无意义，请留空
-                                    );
-                                    aMapTrackClient.queryHistoryTrack(historyTrackRequest, new SimpleOnTrackListener() {
-                                        @Override
-                                        public void onHistoryTrackCallback(HistoryTrackResponse historyTrackResponse) {
-                                            if (historyTrackResponse.isSuccess()) {
-                                                aMap.clear();
-                                                HistoryTrack historyTrack = historyTrackResponse.getHistoryTrack();
-                                                // historyTrack中包含终端轨迹信息
-                                                List<Point> points = historyTrack.getPoints();
-                                                List<LatLng> dataList = new ArrayList<>();
-                                                if (points.size() > 1) {
-                                                    Point firstPoint = points.get(0);
-                                                    LatLng firstLatLng = new LatLng(firstPoint.getLat(), firstPoint.getLng());
-                                                    String firstTime = dateFormat.format(new Date(firstPoint.getTime()));
-                                                    Point lastedPoint = points.get(points.size() - 1);
-                                                    LatLng lastedLatLng = new LatLng(lastedPoint.getLat(), lastedPoint.getLng());
-                                                    String lastedTime = dateFormat.format(new Date(lastedPoint.getTime()));
-                                                    for (Point point : points) {
-                                                        LatLng latLng = new LatLng(point.getLat(), point.getLng());
-                                                        dataList.add(latLng);
-                                                    }
-                                                    drawTrackLine(lastedLatLng, lastedTime, firstTime, firstLatLng, (float) historyTrack.getDistance(), dataList);
-                                                }
-
-                                            } else {
-                                                Toast.makeText(MainActivity.this, "查询历史轨迹点失败，" + historyTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
-                                                // 查询失败
-                                            }
-                                        *//*if (historyTrackResponse.isSuccess()) {
-                                            HistoryTrack historyTrack = historyTrackResponse.getHistoryTrack();
-                                            if (historyTrack == null || historyTrack.getCount() == 0) {
-                                                Toast.makeText(MainActivity.this, "未获取到轨迹点", Toast.LENGTH_SHORT).show();
-                                                return;
-                                            }
-                                            List<Point> points = historyTrack.getPoints();
-                                            drawTrackOnMap(points);
-                                        } else {
-                                            Toast.makeText(MainActivity.this, "查询历史轨迹点失败，" + historyTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
-                                        }*//*
-                                        }
-                                    });*/
                                     QueryTrackRequest queryTrackRequest = new QueryTrackRequest(
                                             serviceId,
                                             tid,
-                                            -1,     // 轨迹id，不指定，查询所有轨迹，注意分页仅在查询特定轨迹id时生效，查询所有轨迹时无法对轨迹点进行分页
+                                            -1,
                                             finalStartDate.getTime(),
-                                            finalEndDate.getTime(),
-                                            0,      // 不启用去噪
-                                            1, // 绑路
-                                            0,      // 不进行精度过滤
-                                            DriveMode.DRIVING,  // 当前仅支持驾车模式
-                                            0,     // 距离补偿
-                                            5000,   // 距离补偿，只有超过5km的点才启用距离补偿
-                                            1,  // 结果应该包含轨迹点信息
-                                            1,  // 返回第1页数据，但由于未指定轨迹，分页将失效
-                                            100    // 一页不超过100条
+                                            finalEndDate.getTime()
                                     );
                                     aMapTrackClient.queryTerminalTrack(queryTrackRequest, new SimpleOnTrackListener() {
                                         @Override
                                         public void onQueryTrackCallback(QueryTrackResponse queryTrackResponse) {
                                             if (queryTrackResponse.isSuccess()) {
+                                                aMap.clear();
                                                 List<Track> tracks =  queryTrackResponse.getTracks();
                                                 if (tracks != null && !tracks.isEmpty()) {
                                                     boolean allEmpty = true;
@@ -431,15 +370,7 @@ public class MainActivity extends Activity implements TraceListener {
                                                     if (allEmpty) {
                                                         Toast.makeText(getApplicationContext(),
                                                                 "所有轨迹都无轨迹点", Toast.LENGTH_SHORT).show();
-                                                    } /*else {
-                                                        StringBuilder sb = new StringBuilder();
-                                                        sb.append("共查询到").append(tracks.size()).append("条轨迹，每条轨迹行驶距离分别为：");
-                                                        for (Track track : tracks) {
-                                                            sb.append(track.getDistance()).append("m,");
-                                                        }
-                                                        sb.deleteCharAt(sb.length() - 1);
-                                                        Toast.makeText(getApplicationContext(), sb.toString(), Toast.LENGTH_SHORT).show();
-                                                    }*/
+                                                    }
                                                 } else {
                                                     Toast.makeText(getApplicationContext(), "未获取到轨迹", Toast.LENGTH_SHORT).show();
                                                 }
@@ -786,12 +717,12 @@ public class MainActivity extends Activity implements TraceListener {
         mTraceOverlay.setProperCamera(dataList);
         mTraceOverlay.zoopToSpan();
         localNumberFormat.setMaximumFractionDigits(1);
-        Marker endMarker = aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆位置")
+        Marker endMarker = aMap.addMarker(new MarkerOptions().position(lastedLatLng).title("车辆停驶位置")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.end))
-                .snippet("车辆停驶的位置\n此段行程:" + localNumberFormat.format(getDistance(dataList) / 1000) + "公里,用时:"+Utils.longToTimeString(durationTime)+"\n当天总行程："+localNumberFormat.format(totalDistance/1000)+"公里"));
+                .snippet("停车时间:"+lastedTime+"\n此段行程:" + localNumberFormat.format(getDistance(dataList) / 1000) + "公里,用时:"+Utils.longToTimeString(durationTime)+"\n当天总行程："+localNumberFormat.format(totalDistance/1000)+"公里"));
         endMarker.setClickable(true);
         endMarker.showInfoWindow();
-        aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.start)).snippet("车辆开始的位置"));
+        aMap.addMarker(new MarkerOptions().position(firstLatLng).title("车辆启驶位置").icon(BitmapDescriptorFactory.fromResource(R.drawable.start)).snippet("启始时间:"+firstTime));
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, 13, 0, 0));
         aMap.moveCamera(mCameraUpdate);
     }
