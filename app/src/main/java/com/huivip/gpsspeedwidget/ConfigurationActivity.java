@@ -483,7 +483,14 @@ public class ConfigurationActivity extends Activity {
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
         String deviceId=deviceUuidFactory.getDeviceUuid().toString();
         uidView.setText("本机ID: "+deviceId.substring(0,deviceId.indexOf("-")));
-
+        CheckBox autoMuted=findViewById(R.id.checkBox_autoMuted);
+        autoMuted.setChecked(PrefUtils.isEnableAutoMute(getApplicationContext()));
+        autoMuted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableAutoMute(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         CheckBox autoLaunchHotSpotCheckBox=findViewById(R.id.checkBox_autoWifi);
         autoLaunchHotSpotCheckBox.setEnabled(WifiUtils.checkMobileAvalible(getApplicationContext()));
         autoLaunchHotSpotCheckBox.setChecked(PrefUtils.isAutoLauchHotSpot(getApplicationContext()));

@@ -208,6 +208,7 @@ public class GpsUtil implements AMapNaviListener {
         }
         if (PrefUtils.isEnableAutoNaviService(context) && !aimlessStatred) {
             aMapNavi = AMapNavi.getInstance(context);
+            aMapNavi.setIgnoreWifiCheck(true);
             aMapNavi.addAMapNaviListener(this);
 
             if(PrefUtils.getTtsEngine(context).equalsIgnoreCase(SpeechFactory.SDKTTS)){

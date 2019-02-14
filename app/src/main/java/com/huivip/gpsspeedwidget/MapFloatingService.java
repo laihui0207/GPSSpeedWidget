@@ -58,9 +58,9 @@ public class MapFloatingService extends Service {
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
-    float mapZoom=17f;
+    float mapZoom=16f;
     CoordinateConverter converter;
-    // 是否需要跟随定位
+    // 是否需要跟随定位s
     private boolean isNeedFollow = true;
     boolean isLocated=false;
 
@@ -209,9 +209,9 @@ public class MapFloatingService extends Service {
                 // 跟随
                 //aMap.animateCamera(CameraUpdateFactory.changeLatLng(lastedLatLng));
                 //aMap.animateCamera(CameraUpdateFactory.scrollBy(0,-180));
-                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 30,bearing));
+                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 60,bearing));
                 aMap.moveCamera(mCameraUpdate);
-                aMap.moveCamera(CameraUpdateFactory.scrollBy(0,-170));
+                aMap.moveCamera(CameraUpdateFactory.scrollBy(0,-100));
                 isLocated=true;
             }
         }
@@ -233,6 +233,7 @@ public class MapFloatingService extends Service {
         }
         return bitmap;
     }
+
     private void setMapInteractiveListener() {
 
         aMap.setOnMapTouchListener(new AMap.OnMapTouchListener() {

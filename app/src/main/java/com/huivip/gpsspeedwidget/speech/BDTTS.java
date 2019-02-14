@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget.speech;
 import android.app.Service;
 import android.content.Context;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.util.Log;
 import com.baidu.tts.auth.AuthInfo;
 import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
@@ -13,6 +14,8 @@ import com.baidu.tts.client.TtsMode;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class BDTTS extends TTSService implements SpeechSynthesizerListener{
@@ -24,8 +27,10 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     protected String offlineVoice = OfflineResource.VOICE_FEMALE;
     protected SpeechSynthesizer mSpeechSynthesizer;
     private static BDTTS BdTTS;
+    private MediaPlayer mediaPlayer = new MediaPlayer();
     AudioManager am;
     boolean inited=false;
+    boolean fromSpeek=true;
     // ================选择TtsMode.ONLINE  不需要设置以下参数; 选择TtsMode.MIX 需要设置下面2个离线资源文件的路径
     private static final String TEMP_DIR = "/sdcard/GPS"; // 重要！请手动将assets目录下的3个dat 文件复制到该目录
 
@@ -57,6 +62,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
 
     @Override
     public void speak(String text, boolean force) {
+        fromSpeek=true;
         if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null && (force || PrefUtils.isEnableTempAudioService(context)))  {
             if(!inited){
                 release();
@@ -74,6 +80,27 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
             mSpeechSynthesizer.stop();
         }
     }
+
+    @Override
+    public void synthesize(String text) {
+        fromSpeek=false;
+        synthesize(text,false);
+    }
+
+    @Override
+    public void synthesize(String text, boolean force) {
+        if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null && (force || PrefUtils.isEnableTempAudioService(context)))  {
+            if(!inited){
+                release();
+                initTTS();
+            }
+            int result = mSpeechSynthesizer.synthesize(text);
+            if(result!=0){
+                Log.d("huivip","语音合成失败");
+            }
+        }
+    }
+
     public void release(){
         if(PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null) {
             mSpeechSynthesizer.release();
@@ -137,13 +164,13 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE_WIFI wifi状态下使用在线，非wifi离线。在线状态下， 请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_NETWORK ， 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
-        /*if(PrefUtils.isEnableAudioMixService(context)){
-            Log.d("huivip","Audio use voice Call");*/
+        if(PrefUtils.isEnableAudioMixService(context)){
+            Log.d("huivip","Audio use voice Call");
 /*            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);*/
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-       /* } else {
+        } else {
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-        }*/
+        }
         //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
        // mSpeechSynthesizer.setStereoVolume(1.0f,1.0f);
         //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_ALARM);
@@ -242,17 +269,31 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     @Override
     public void onSynthesizeDataArrived(String utteranceId, byte[] bytes, int progress) {
         //  Log.i(TAG, "合成进度回调, progress：" + progress + ";序列号:" + utteranceId );
-       /* File tempMp3 = null;
-        try {
-            tempMp3 = File.createTempFile("GPSaudio"+utteranceId, "mp3", context.getCacheDir());
-            tempMp3.deleteOnExit();
-            FileOutputStream fos = new FileOutputStream(tempMp3);
-            fos.write(bytes);
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(!fromSpeek) {
+            File tempMp3 = null;
+            try {
+                tempMp3 = File.createTempFile("GPSaudio" + utteranceId, "mp3", context.getCacheDir());
+                tempMp3.deleteOnExit();
+                FileOutputStream fos = new FileOutputStream(tempMp3);
+                fos.write(bytes);
+                fos.close();
+                mediaPlayer.reset();
+
+                // In case you run into issues with threading consider new instance like:
+                // MediaPlayer mediaPlayer = new MediaPlayer();
+
+                // Tried passing path directly, but kept getting
+                // "Prepare failed.: status=0x1"
+                // so using file descriptor instead
+                FileInputStream fis = new FileInputStream(tempMp3);
+                mediaPlayer.setDataSource(fis.getFD());
+
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-*/
 
     }
 

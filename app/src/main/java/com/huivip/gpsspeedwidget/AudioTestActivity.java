@@ -273,8 +273,8 @@ public class AudioTestActivity extends Activity {
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TTS tts= SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.TEXTTTS);
-                tts.speak("语音测试。现在用的TTS引擎，测试测试");
+                TTS tts= SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.BAIDUTTS);
+                tts.synthesize("语音测试。现在用的TTS引擎，测试测试");
                 /*Intent screenSaveActivity=new Intent(getApplicationContext(),ScreenSaveActivity.class);
                 screenSaveActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(screenSaveActivity);*/

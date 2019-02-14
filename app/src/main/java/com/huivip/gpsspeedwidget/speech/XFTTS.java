@@ -144,6 +144,16 @@ public class XFTTS extends TTSService implements SynthesizerListener {
         /*isPlaying = false;*/
     }
 
+    @Override
+    public void synthesize(String text) {
+
+    }
+
+    @Override
+    public void synthesize(String text, boolean force) {
+
+    }
+
     public void release() {
         /*if (wordList != null) {
             wordList.clear();

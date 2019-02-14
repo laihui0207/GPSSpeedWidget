@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.widget.Toast;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -40,7 +41,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         if(PrefUtils.isHideFloatingWidowOnNaviApp(context)){
                             Utils.startFloatingWindows(context,false);
                         }
-                        PrefUtils.setEnableTempAudioService(context, false);
+                        if (PrefUtils.isEnableAutoMute(context)) {
+                            PrefUtils.setEnableTempAudioService(context,false);
+                        }
                         break;
                     case 4: // auto map in backend
                         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
@@ -52,15 +55,20 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         if(PrefUtils.isHideFloatingWidowOnNaviApp(context) && gpsUtil.getAutoNaviStatus() != Constant.Navi_Status_Started){
                             Utils.startFloatingWindows(context,true);
                         }
-                        PrefUtils.setEnableTempAudioService(context, false);
+                        if (PrefUtils.isEnableAutoMute(context)) {
+                            PrefUtils.setEnableTempAudioService(context,false);
+                        }
                         //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                         break;
                     case 24:  // xun hang
-                        //PrefUtils.setEnableTempAudioService(context, false);
+                        if (PrefUtils.isEnableAutoMute(context)) {
+                            PrefUtils.setEnableTempAudioService(context,false);
+                        }
                         //Toast.makeText(context,"Backend Auto Map into cruising",Toast.LENGTH_SHORT).show();
                         break;
                     case 8: // start navi
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
+                        PrefUtils.setEnableTempAudioService(context,false);
                         lanuchSpeedFloationWindows(context,true);
                         break;
                     case 10:  // simulate navi
@@ -96,7 +104,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         break;
                     case 13:  // TTS speaking start
-                        PrefUtils.setEnableTempAudioService(context, false);
+                        if (PrefUtils.isEnableAutoMute(context)) {
+                            PrefUtils.setEnableTempAudioService(context,false);
+                        }
                         //Toast.makeText(context,"speaking",Toast.LENGTH_SHORT).show();
                         break;
                     case 14:  // TTS Speak End

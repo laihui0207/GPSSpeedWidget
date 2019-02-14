@@ -190,8 +190,12 @@
                     android:text="高德内置语音(路况)"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     android:id="@+id/checkBox_natviAudio"/>
+            <CheckBox
+                    android:text="高德启动自动静音"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/checkBox_autoMuted"
+                    android:layout_weight="1"/>
 
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -486,6 +490,12 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_hideFloating_onAutoNavi" android:layout_above="@+id/enableFloatingWindow"
                     android:layout_toEndOf="@+id/enableOver"/>
+            <TextView
+                    android:text="点击速度弹出悬浮地图"
+                    android:layout_width="wrap_content"
+                    android:layout_height="29dp"
+                    android:id="@+id/textView12" android:layout_alignBottom="@+id/checkBox_showSpeed"
+                    android:layout_alignStart="@+id/button_pay"/>
 
 
         </RelativeLayout>

@@ -112,9 +112,11 @@ public class NaviFloatingService extends Service{
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 getWindowType(),
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.START;
+       /* params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+                | WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;*/
         params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
@@ -153,14 +155,14 @@ public class NaviFloatingService extends Service{
         if(gpsUtil.getNavi_turn_icon()>0) {
             naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
         }
-        if(gpsUtil.getCameraSpeed()>0){
-            navicameraSpeedTextView.setText(gpsUtil.getCameraSpeed()+"");
+        if(gpsUtil.getLimitSpeed()>0){
+            navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed()+"");
         }
         else {
             navicameraSpeedTextView.setText("0");
         }
-        if(gpsUtil.getCameraDistance()>0){
-            navicameraDistanceTextView.setText(gpsUtil.getCameraDistance()+"米");
+        if(gpsUtil.getLimitDistance()>0){
+            navicameraDistanceTextView.setText(gpsUtil.getLimitDistance()+"米");
             limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
         }
         else {
@@ -179,9 +181,7 @@ public class NaviFloatingService extends Service{
         speedTextView.setTextColor(color);
     }
     private int getWindowType() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
-                WindowManager.LayoutParams.TYPE_PHONE;
+        return WindowManager.LayoutParams.TYPE_SYSTEM_ALERT | WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY ;
     }
     private void openSettings(String settingsAction, String packageName) {
         Intent intent = new Intent(settingsAction);
