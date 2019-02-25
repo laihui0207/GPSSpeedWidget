@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="numberSigned"
                     android:ems="5"
-                    android:hint="0(-15,15)"
+                    android:hint="0(-100,100)"
                     android:id="@+id/editText_speedadjust"
                     android:layout_above="@+id/linearLayout"
                     android:layout_toRightOf="@+id/textView"
