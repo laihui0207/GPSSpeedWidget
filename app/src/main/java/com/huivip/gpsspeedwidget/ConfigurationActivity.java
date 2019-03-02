@@ -904,7 +904,7 @@ public class ConfigurationActivity extends Activity {
 
             };
         });
-        checkIfCanIncreaseMusic();
+        //checkIfCanIncreaseMusic();
         AutoStartPermissionHelper.getInstance().getAutoStartPermission(getApplicationContext());
 
     }
