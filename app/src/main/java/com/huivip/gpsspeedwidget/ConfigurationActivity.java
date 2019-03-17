@@ -787,6 +787,14 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setPlayWeather(getApplicationContext(),buttonView.isChecked());
             }
         });
+        CheckBox playWarnCheckBox=findViewById(R.id.checkBox_playWarn);
+        playWarnCheckBox.setChecked(PrefUtils.isPlayWarn(getApplicationContext()));
+        playWarnCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setPlayWarn(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         CheckBox naviFloatingFixedCheckbox=findViewById(R.id.checkBox_navi_fixed_position);
         naviFloatingFixedCheckbox.setChecked(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext()));
         naviFloatingFixedCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

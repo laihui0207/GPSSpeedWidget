@@ -248,7 +248,7 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
             PrefUtils.setAutoLaunchApps(this, mSelectedApps);
             PrefUtils.setAutoLaunchAppsName(this,mSelectedAppsName);
             if (AppDetectionService.get() != null) {
-                AppDetectionService.get().updateSelectedApps();
+                AppDetectionService.get().updateDesktopApps();
             }
         }
     }

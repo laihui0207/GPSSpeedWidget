@@ -156,9 +156,13 @@ public class FloatingService extends Service implements FloatingViewListener {
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
 
         boolean isShowLimit=PrefUtils.getShowLimits(getApplicationContext());
-        mLimitView.setVisibility(isShowLimit ? View.VISIBLE : View.GONE);
+        if(mLimitArcView!=null) {
+            mLimitView.setVisibility(isShowLimit ? View.VISIBLE : View.GONE);
+        }
         boolean isShowSpeed=PrefUtils.getShowSpeedometer(getApplicationContext());
-        mSpeedometerView.setVisibility(isShowSpeed ? View.VISIBLE : View.GONE);
+        if(mSpeedometerView!=null) {
+            mSpeedometerView.setVisibility(isShowSpeed ? View.VISIBLE : View.GONE);
+        }
         if(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext())) {
             RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
             speedLayout.addRule(RelativeLayout.RIGHT_OF, R.id.limit);

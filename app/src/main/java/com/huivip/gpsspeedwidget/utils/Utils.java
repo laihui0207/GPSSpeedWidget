@@ -287,24 +287,59 @@ public abstract class Utils {
     }
     public static void startFloatingWindows(Context context, boolean enabled){
         Intent defaultFloatingService=new Intent(context,FloatingService.class);
-        Intent autoNavifloatService=new Intent(context,AutoNaviFloatingService.class);
+        Intent autoNaviFloatService=new Intent(context,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(context,MeterFloatingService.class);
+        boolean needClose=false;
         if(enabled){
             GpsUtil gpsUtil=GpsUtil.getInstance(context);
-            if(gpsUtil.isAutoNavi_on_Frontend() && PrefUtils.isHideFloatingWidowOnNaviApp(context)){
+           /* if(gpsUtil.isAutoNavi_on_Frontend() && PrefUtils.isHideFloatingWidowOnNaviApp(context)){
                 return;
+            }*/
+            boolean onDesktop =PrefUtils.isOnDesktop(context);
+            if(!PrefUtils.isEnableFlatingWindow(context)){
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                needClose=true;
+            }
+
+            if(PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP) && onDesktop){
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                needClose=true;
+            }
+
+            if(!onDesktop && PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                needClose=true;
+            }
+            if (PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
+                    !gpsUtil.isAutoNavi_on_Frontend()){
+                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                needClose=true;
             }
             String floatingStyle=PrefUtils.getFloatingStyle(context);
             if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
                 if(Utils.isServiceRunning(context,MeterFloatingService.class.getName())){
-                    meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                    meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE, true);
                     context.startService(meterFloatingService);
                 }
                 if(Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName())){
-                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                    context.startService(autoNavifloatService);
+                    autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    context.startService(autoNaviFloatService);
                 }
-                if(!Utils.isServiceRunning(context,FloatingService.class.getName())) {
+                if(Utils.isServiceRunning(context,FloatingService.class.getName()) && needClose) {
+                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE,true);
+                    context.startService(defaultFloatingService);
+                }
+                if((!needClose && !Utils.isServiceRunning(context,FloatingService.class.getName())) ||
+                        (PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
+                                gpsUtil.isAutoNavi_on_Frontend())){
                     context.startService(defaultFloatingService);
                 }
 
@@ -317,8 +352,14 @@ public abstract class Utils {
                     meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
                     context.startService(meterFloatingService);
                 }
-                if(!Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName())) {
-                    context.startService(autoNavifloatService);
+                if(Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName()) && needClose) {
+                    autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    context.startService(autoNaviFloatService);
+                }
+                if((!Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName()) && !needClose) ||
+                        (PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
+                                gpsUtil.isAutoNavi_on_Frontend())){
+                    context.startService(autoNaviFloatService);
                 }
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
                 if(Utils.isServiceRunning(context,FloatingService.class.getName())){
@@ -326,10 +367,16 @@ public abstract class Utils {
                     context.startService(defaultFloatingService);
                 }
                 if(Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName())){
-                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                    context.startService(autoNavifloatService);
+                    autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    context.startService(autoNaviFloatService);
                 }
-                if(!Utils.isServiceRunning(context,MeterFloatingService.class.getName())) {
+                if(Utils.isServiceRunning(context,MeterFloatingService.class.getName()) && needClose) {
+                     meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
+                    context.startService(meterFloatingService);
+                }
+                if ((!Utils.isServiceRunning(context,MeterFloatingService.class.getName()) && !needClose) ||
+                        (PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
+                                gpsUtil.isAutoNavi_on_Frontend())){
                     context.startService(meterFloatingService);
                 }
             }
@@ -341,8 +388,8 @@ public abstract class Utils {
                 context.startService(defaultFloatingService);
             }
             if(Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName())){
-                autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                context.startService(autoNavifloatService);
+                autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                context.startService(autoNaviFloatService);
             }
             if(Utils.isServiceRunning(context,MeterFloatingService.class.getName())){
                 meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);

@@ -4,7 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.media.session.MediaSession;
+import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -24,12 +24,13 @@ public class BootStartService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-
+    MediaPlayer mPlayer;
     @Override
     public void onCreate() {
         alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
+        mPlayer = MediaPlayer.create(this, R.raw.warn);
     }
 
     @Override
@@ -43,14 +44,21 @@ public class BootStartService extends Service {
                     PendingIntent thirdIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), ThirdSoftLaunchReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 100L, thirdIntent);
 
-                    PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), 0);
-                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, autoLaunchIntent);
-
-                    PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), 0);
-                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 120000L, autoFtpBackupIntent);
-
-                    PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), 0);
-                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 60000L, weatherServiceIntent);
+                    if(PrefUtils.isAutoLauchHotSpot(getApplicationContext())) {
+                        PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), 0);
+                        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, autoLaunchIntent);
+                    }
+                    if (PrefUtils.isFTPAutoBackup(getApplicationContext())) {
+                        PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), 0);
+                        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 120000L, autoFtpBackupIntent);
+                    }
+                    if(PrefUtils.isPlayTime(getApplicationContext()) || PrefUtils.isPlayWeather(getApplicationContext()) || PrefUtils.isShowAddressWhenStop(getApplicationContext())) {
+                        PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), 0);
+                        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 60000L, weatherServiceIntent);
+                    }
+                }
+                if(PrefUtils.isPlayWarn(getApplicationContext())){
+                    mPlayer.start();
                 }
             }
         }

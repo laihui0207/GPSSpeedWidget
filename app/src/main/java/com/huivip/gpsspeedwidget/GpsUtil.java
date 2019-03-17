@@ -68,6 +68,7 @@ public class GpsUtil implements AMapNaviListener {
     LocationManager locationManager;
     TTS tts;
     WeatherService weatherService;
+    boolean isOnDesktop=true;
     boolean limitSpeaked = false;
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
@@ -809,6 +810,13 @@ public class GpsUtil implements AMapNaviListener {
 
     String speakText = "";
 
+    public boolean isOnDesktop() {
+        return isOnDesktop;
+    }
+
+    public void setOnDesktop(boolean onDesktop) {
+        isOnDesktop = onDesktop;
+    }
 
     @Override
     public void onInitNaviFailure() {

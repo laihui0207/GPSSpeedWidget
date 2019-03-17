@@ -83,6 +83,7 @@ public abstract class PrefUtils {
     public static final String TTS_ENGINE="com.huivip.TTS.Type";
     private static final String APP_PLAY_TIME="com.huivip.play.time";
     private static final String APP_PLAY_WEATHER="com.huivip.play.weather";
+    private static final String APP_PLAY_WARN="com.huivip.play.warn";
     private static final String NOTIFY_ROAD_LIMIT="com.huivip.Limit.Notify";
 
 
@@ -225,6 +226,12 @@ public abstract class PrefUtils {
     }
     public static boolean isPlayWeather(Context context){
         return getSharedPreferences(context).getBoolean(APP_PLAY_WEATHER, true);
+    }
+    public static void setPlayWarn(Context context,boolean value){
+        edit(context).putBoolean(APP_PLAY_WARN, value).apply();
+    }
+    public static boolean isPlayWarn(Context context){
+        return getSharedPreferences(context).getBoolean(APP_PLAY_WARN, false);
     }
     public static void setAppFirstRun(Context context,boolean firstRun){
         edit(context).putBoolean(APP_FIRST_RUN, firstRun).apply();

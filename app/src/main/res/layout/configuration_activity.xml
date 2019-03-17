@@ -31,6 +31,10 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_notifiction"/>
             <CheckBox
+                    android:text="安全提醒语音"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/checkBox_playWarn"/>
+            <CheckBox
                     android:text="桌面歌词"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/checkBox_lyric" android:layout_weight="1"/>
@@ -161,7 +165,7 @@
                     android:id="@+id/enableAudio"
                     android:checked="false"/>
             <CheckBox
-                    android:text="讯飞语音（粤语）"
+                    android:text="讯飞语音"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_xftts"/>

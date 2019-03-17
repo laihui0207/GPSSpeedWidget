@@ -5,10 +5,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import com.huivip.gpsspeedwidget.*;
-import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -36,7 +34,7 @@ public class AppDetectionService extends AccessibilityService {
         INSTANCE = null;
     }
 
-    public void updateSelectedApps() {
+    public void updateDesktopApps() {
         enabledApps = PrefUtils.getApps(getApplicationContext());
     }
 
@@ -44,7 +42,7 @@ public class AppDetectionService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (enabledApps == null) {
-            updateSelectedApps();
+            updateDesktopApps();
         }
         if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())){
             Intent bootService=new Intent(getApplicationContext(),BootStartService.class);
@@ -73,14 +71,17 @@ public class AppDetectionService extends AccessibilityService {
         if (!isActivity) {
             return;
         }
-        boolean onAutoNavi=false;
+       // boolean onAutoNavi=false;
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
        // when in auto navi or auto navi lite app, temp disable audio service
-       if(componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
-               || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)){
-           PrefUtils.setEnableTempAudioService(getApplicationContext(),false);
-           onAutoNavi=true;
-       }
+        if (componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
+                || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)) {
+            if (PrefUtils.isEnableAutoMute(getApplicationContext())) {
+                PrefUtils.setEnableTempAudioService(getApplicationContext(), false);
+            }
+            gpsUtil.setAutoNavi_on_Frontend(true);
+            //onAutoNavi=true;
+        }
       /* else {
            gpsUtil=GpsUtil.getInstance(getApplicationContext());
            if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) {
@@ -90,7 +91,7 @@ public class AppDetectionService extends AccessibilityService {
 
         boolean onDesktop = enabledApps.contains(componentName.getPackageName());
         PrefUtils.setOnDesktop(getApplicationContext(),onDesktop);
-        Intent floatService = new Intent(this, FloatingService.class);
+        /*Intent floatService = new Intent(this, FloatingService.class);
         Intent autoNaviFloatingService=new Intent(this,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
@@ -129,7 +130,8 @@ public class AppDetectionService extends AccessibilityService {
             }
         } catch (Exception e) {
             Log.d("huivip","Start Floating server Failed"+e.getMessage());
-        }
+        }*/
+        Utils.startFloatingWindows(getApplicationContext(),true);
     }
 
    private ActivityInfo tryGetActivity(ComponentName componentName) {

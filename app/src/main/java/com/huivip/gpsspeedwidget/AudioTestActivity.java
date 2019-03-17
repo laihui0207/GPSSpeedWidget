@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
@@ -270,11 +271,17 @@ public class AudioTestActivity extends Activity {
         CrashHandler.getInstance().init(getApplicationContext());
         reloadVolume();
         Button rebootBtn=findViewById(R.id.button_reboot);
+        MediaPlayer mPlayer = MediaPlayer.create(this, R.raw.warn);
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+               /* mPlayer.start();*/
+               /*int eTime = mPlayer.getDuration();
+                int sTime = mPlayer.getCurrentPosition();
+                Toast.makeText(AudioTestActivity.this, "Play:"+eTime, Toast.LENGTH_SHORT).show();*/
                 TTS tts= SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.BAIDUTTS);
-                tts.synthesize("语音测试。现在用的TTS引擎，测试测试");
+                tts.synthesize("语音测试。现在用的百度引擎，测试测试");
                 /*Intent screenSaveActivity=new Intent(getApplicationContext(),ScreenSaveActivity.class);
                 screenSaveActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(screenSaveActivity);*/

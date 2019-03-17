@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Environment;
 import android.util.Log;
 import com.baidu.tts.auth.AuthInfo;
 import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
@@ -12,6 +13,7 @@ import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import java.io.File;
 import java.io.FileInputStream;
@@ -272,24 +274,29 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         if(!fromSpeek) {
             File tempMp3 = null;
             try {
-                tempMp3 = File.createTempFile("GPSaudio" + utteranceId, "mp3", context.getCacheDir());
-                tempMp3.deleteOnExit();
+                String path = Environment.getExternalStorageDirectory().toString()+"/GPSAudio/";
+                File dir=new File(path);
+                if(!dir.exists()){
+                    dir.mkdirs();
+                }
+                tempMp3 = File.createTempFile("GPSAudio" + utteranceId, ".mp3",dir);
+                //tempMp3.deleteOnExit();
                 FileOutputStream fos = new FileOutputStream(tempMp3);
                 fos.write(bytes);
                 fos.close();
-                mediaPlayer.reset();
+               /* mediaPlayer.reset();*/
 
                 // In case you run into issues with threading consider new instance like:
-                // MediaPlayer mediaPlayer = new MediaPlayer();
+                // MediaPlayer mediaPlayer = new MediaPlayer()
 
                 // Tried passing path directly, but kept getting
                 // "Prepare failed.: status=0x1"
                 // so using file descriptor instead
-                FileInputStream fis = new FileInputStream(tempMp3);
+               /* FileInputStream fis = new FileInputStream(tempMp3);
                 mediaPlayer.setDataSource(fis.getFD());
 
                 mediaPlayer.prepare();
-                mediaPlayer.start();
+                mediaPlayer.start();*/
             } catch (IOException e) {
                 e.printStackTrace();
             }
