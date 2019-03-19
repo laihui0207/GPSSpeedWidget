@@ -412,7 +412,7 @@ public class GpsUtil implements AMapNaviListener {
 
         mphSpeed = (int) (this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         kmhSpeed = (int) (this.speed.doubleValue() * 3.6D);
-        //kmhSpeed = (int) (this.speed.doubleValue() * 3.6D/1.609344D);
+        // kmhSpeed = mphSpeed;
         if (speedAdjust != 0) {
             if (kmhSpeed > 0 && kmhSpeed > Math.abs(speedAdjust)) {
                 kmhSpeed += speedAdjust;
