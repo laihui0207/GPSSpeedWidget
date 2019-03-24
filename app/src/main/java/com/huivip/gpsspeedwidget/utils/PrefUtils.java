@@ -408,7 +408,7 @@ public abstract class PrefUtils {
     }
 
     public static boolean isShowNotification(Context context) {
-        return getSharedPreferences(context).getBoolean(SPEED_SHOW_NOTIFICATION, false);
+        return getSharedPreferences(context).getBoolean(SPEED_SHOW_NOTIFICATION, true);
     }
     public static void setEnabledWatchWidget(Context context, boolean value) {
         edit(context).putBoolean(ENABLE_WATCH_WIDGET, value).apply();

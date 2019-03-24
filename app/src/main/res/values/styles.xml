@@ -39,4 +39,11 @@
     <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
     </style>
+    <style name="Interval">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@color/main_interval_color</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">0.100000024dip</item>
+    </style>
+
 </resources>

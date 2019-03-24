@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.widget.Toast;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -16,6 +15,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         GpsUtil gpsUtil=GpsUtil.getInstance(context);
         if( intent!=null && !TextUtils.isEmpty(intent.getAction()) && intent.getAction().equalsIgnoreCase(Constant.AMAP_SEND_ACTION)){
+
             int key=intent.getIntExtra("KEY_TYPE",-1);
             if(key==10019){
                 int status=intent.getIntExtra("EXTRA_STATE",-1);
@@ -34,7 +34,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     case 3: // auto map in frontend
                         if(gpsUtil.getNaviFloatingStatus()==Constant.Navi_Floating_Enabled) {
                             stopFloatingService(context);
-                            lanuchSpeedFloationWindows(context,true);
+                            launchSpeedFloatingWindows(context,true);
                             gpsUtil.setAutoMapBackendProcessStarted(true);
                         }
                         gpsUtil.setAutoNavi_on_Frontend(true);
@@ -48,7 +48,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     case 4: // auto map in backend
                         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
                             startFloatingService(context);
-                            lanuchSpeedFloationWindows(context,false);
+                            launchSpeedFloatingWindows(context,false);
                             gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
                         }
                         gpsUtil.setAutoNavi_on_Frontend(false);
@@ -69,12 +69,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     case 8: // start navi
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
                         PrefUtils.setEnableTempAudioService(context,false);
-                        lanuchSpeedFloationWindows(context,true);
+                        launchSpeedFloatingWindows(context,true);
                         break;
                     case 10:  // simulate navi
                        // Toast.makeText(context,"Heated Checked",Toast.LENGTH_SHORT).show();
                         startFloatingService(context);
-                        lanuchSpeedFloationWindows(context,true);
+                        launchSpeedFloatingWindows(context,true);
                         gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
                         break;
                     case 2: // auto map in end
@@ -90,7 +90,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                     case 12:
                         stopFloatingService(context);
-                        lanuchSpeedFloationWindows(context,false);
+                        launchSpeedFloatingWindows(context,false);
                         gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Disabled);
                         //Toast.makeText(context,"Ended",Toast.LENGTH_SHORT).show();
                         break;
@@ -99,7 +99,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         break;
                     case 39:
                         stopFloatingService(context);
-                        lanuchSpeedFloationWindows(context,false);
+                        launchSpeedFloatingWindows(context,false);
                         gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Disabled);
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         break;
@@ -244,6 +244,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
 
             }*/
         }
+        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
+            Intent bootService=new Intent(context,BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            context.startService(bootService);
+        }
     }
     private void startFloatingService(Context context){
         if(PrefUtils.isEnableNaviFloating(context)) {
@@ -259,7 +264,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             context.startService(floatService);
         }
     }
-    private void lanuchSpeedFloationWindows(Context context,boolean enabled){
+    private void launchSpeedFloatingWindows(Context context, boolean enabled){
         if(!PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)){
             return;
         }
