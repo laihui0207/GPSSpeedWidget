@@ -3,7 +3,9 @@ package com.huivip.gpsspeedwidget.speech;
 import android.content.Context;
 
 public class SpeechFactory {
+    public static String TAG="GPS";
     public static String BAIDUTTS="baiduTTS";
+    public static String SIBICHITTS="SBCTTS";
     public static String XUNFEITTS="xunfeiTTS";
     public static String TEXTTTS="textTTS";
     public static String SDKTTS="SDKTTS";
@@ -24,8 +26,10 @@ public class SpeechFactory {
         if(type==null) return null;
         if(XUNFEITTS.equalsIgnoreCase(type)){
             return XFTTS.getInstance(context);
-        } if(TEXTTTS.equalsIgnoreCase(type)){
+        } else if(TEXTTTS.equalsIgnoreCase(type)){
             return TextSpeech.getInstance(context);
+        } else if(SIBICHITTS.equalsIgnoreCase(type)){
+            return SBCTTS.getInstance(context);
         }
         else {
             return BDTTS.getInstance(context);

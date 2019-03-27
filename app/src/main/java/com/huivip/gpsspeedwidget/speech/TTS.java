@@ -8,4 +8,6 @@ public interface TTS {
     void synthesize(String text);
     void synthesize(String text,boolean force);
     void release();
+    void initTTS();
+    void auth();
 }

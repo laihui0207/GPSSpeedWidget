@@ -280,11 +280,11 @@ public class AudioTestActivity extends Activity {
                /*int eTime = mPlayer.getDuration();
                 int sTime = mPlayer.getCurrentPosition();
                 Toast.makeText(AudioTestActivity.this, "Play:"+eTime, Toast.LENGTH_SHORT).show();*/
-               /* TTS tts= SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.BAIDUTTS);
-                tts.synthesize("语音测试。现在用的百度引擎，测试测试");*/
-                Intent screenSaveActivity=new Intent(getApplicationContext(),SettingsActivity.class);
+                TTS tts= SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.SIBICHITTS);
+                tts.synthesize("语音测试。现在用的思必驰引擎，测试测试");
+              /*  Intent screenSaveActivity=new Intent(getApplicationContext(),SettingsActivity.class);
                 screenSaveActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(screenSaveActivity);
+                startActivity(screenSaveActivity);*/
                /* Intent playMusic=new Intent();
                 playMusic.setAction("cn.kuwo.kwmusicauto.action.PLAY_MUSIC");
                 getApplicationContext().sendBroadcast(playMusic);*/

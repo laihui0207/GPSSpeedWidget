@@ -106,9 +106,10 @@ public class WeatherService implements AMapLocationListener {
                                     + cityWeather.getString("winddirection") + "风" +cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
                             if(PrefUtils.isPlayWeather(context)) {
-                                SpeechFactory.getInstance(context)
+                                /*SpeechFactory.getInstance(context)
                                         .getTTSEngine(PrefUtils.getTtsEngine(context))
-                                        .speak(resultText, true);
+                                        .speak(resultText, true);*/
+                                gpsUtil.getTts().speak(resultText,true);
                                 handler.post(runnableUi);
                             }
                         }
@@ -198,9 +199,10 @@ public class WeatherService implements AMapLocationListener {
                                 @Override
                                 public void run() {
                                     if(gpsUtil.getSpeed()==0) {
-                                        SpeechFactory.getInstance(context)
+                                        /*SpeechFactory.getInstance(context)
                                                 .getTTSEngine(PrefUtils.getTtsEngine(context))
-                                                .speak(address, true);
+                                                .speak(address, true);*/
+                                        gpsUtil.getTts().speak(address,true);
                                         handler.post(runnableUi);
                                     }
                                 }

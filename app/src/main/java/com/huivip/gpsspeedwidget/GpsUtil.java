@@ -498,7 +498,9 @@ public class GpsUtil implements AMapNaviListener {
     public void setTts(TTS tts) {
         this.tts = tts;
     }
-
+    public TTS getTts(){
+        return tts;
+    }
     public Float getLimitDistance() {
         return limitDistance;
     }
@@ -861,9 +863,9 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void onGetNavigationText(String s) {
-        if(!PrefUtils.getTtsEngine(context).equalsIgnoreCase(SpeechFactory.SDKTTS)) {
+       // if(!PrefUtils.getTtsEngine(context).equalsIgnoreCase(SpeechFactory.SDKTTS)) {
             tts.speak(s);
-        }
+       // }
     }
 
     @Override

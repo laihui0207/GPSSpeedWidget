@@ -163,6 +163,7 @@ public class XFTTS extends TTSService implements SynthesizerListener {
         }
     }
 
+    @Override
     public void initTTS() {
         //设置发音人
         mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan");
@@ -180,6 +181,10 @@ public class XFTTS extends TTSService implements SynthesizerListener {
             mTts.setParameter(SpeechConstant.STREAM_TYPE,"AudioManager.STREAM_VOICE_CALL");
         }*/
 
+    }
+
+    @Override
+    public void auth() {
     }
 
     @Override

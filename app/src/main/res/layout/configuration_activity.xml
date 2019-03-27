@@ -165,7 +165,7 @@
                     android:id="@+id/enableAudio"
                     android:checked="false"/>
             <CheckBox
-                    android:text="讯飞语音"
+                    android:text="思必驰语音"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_xftts"/>

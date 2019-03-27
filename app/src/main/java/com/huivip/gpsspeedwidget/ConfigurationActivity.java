@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
 import butterknife.BindView;
+import com.aispeech.DUILiteSDK;
 import com.bumptech.glide.Glide;
 import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
@@ -111,7 +112,7 @@ public class ConfigurationActivity extends Activity {
         audidMixCheckBox.setChecked(PrefUtils.isEnableAudioMixService(getApplicationContext()));
         audidMixCheckBox.setEnabled(enableAudioCheckBox.isChecked());
         CheckBox XFEngineCheckBox=findViewById(R.id.checkBox_xftts);
-        XFEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.XUNFEITTS));
+        XFEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.SIBICHITTS));
         XFEngineCheckBox.setEnabled(enableAudioCheckBox.isChecked());
         CheckBox natviAudioCheckBox=findViewById(R.id.checkBox_natviAudio);
         natviAudioCheckBox.setChecked(SpeechFactory.SDKTTS.equalsIgnoreCase(PrefUtils.getTtsEngine(getApplicationContext())));
@@ -228,8 +229,8 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 PrefUtils.setEnableAudioMixService(getApplicationContext(),compoundButton.isChecked());
-                BDTTS bdtts =BDTTS.getInstance(getApplicationContext());
-                bdtts.release();
+               /* BDTTS bdtts =BDTTS.getInstance(getApplicationContext());
+                bdtts.release();*/
             }
         });
 
@@ -238,8 +239,8 @@ public class ConfigurationActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String speakText="";
                 if(buttonView.isChecked()){
-                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.XUNFEITTS);
-                    speakText="使用讯飞语音";
+                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.SIBICHITTS);
+                    speakText="使用思必驰语音";
                     natviAudioCheckBox.setChecked(false);
                 }
                 else {
@@ -250,7 +251,7 @@ public class ConfigurationActivity extends Activity {
                 int volume=seekBarVolume.getProgress();
                 PrefUtils.setAudioVolume(getApplicationContext(),volume);
                 TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
-                tts.speak(speakText);
+/*                tts.speak(speakText);*/
                 GpsUtil.getInstance(getApplicationContext()).setTts(tts);
             }
         });
@@ -924,6 +925,7 @@ public class ConfigurationActivity extends Activity {
             invalidateStates();
         }
     }
+
    /* private void startFloatingWindows(boolean enabled){
         Intent defaultFloatingService=new Intent(this,FloatingService.class);
         Intent autoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
@@ -1063,14 +1065,14 @@ public class ConfigurationActivity extends Activity {
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(!Settings.System.canWrite(this)){
                 Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
                         Uri.parse("package:" + getPackageName()));
-                intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivityForResult(intentWriteSetting, 124);
             }
-        }
+        }*/
 
        /* boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
         if(overlayEnabled && !PrefUtils.isEnableAccessibilityService(getApplicationContext())){

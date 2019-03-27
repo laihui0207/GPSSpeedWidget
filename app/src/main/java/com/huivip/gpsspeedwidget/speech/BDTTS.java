@@ -110,8 +110,8 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
             //mSpeechSynthesizer=null;
         }
     }
-
-    private void initTTS() {
+    @Override
+    public void initTTS() {
         LoggerProxy.printable(true); // 日志打印在logcat中
         boolean isMix = ttsMode.equals(TtsMode.MIX);
         boolean isSuccess;
@@ -208,6 +208,12 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         Log.d("huivip","TTS Init:"+result);
 
     }
+
+    @Override
+    public void auth() {
+
+    }
+
     /**
      * 检查appId ak sk 是否填写正确，另外检查官网应用内设置的包名是否与运行时的包名一致。本demo的包名定义在build.gradle文件中
      *
@@ -274,29 +280,16 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         if(!fromSpeek) {
             File tempMp3 = null;
             try {
-                String path = Environment.getExternalStorageDirectory().toString()+"/GPSAudio/";
+                String path = Environment.getExternalStorageDirectory().toString()+"/gps_tts/";
                 File dir=new File(path);
                 if(!dir.exists()){
                     dir.mkdirs();
                 }
-                tempMp3 = File.createTempFile("GPSAudio" + utteranceId, ".mp3",dir);
+                tempMp3 = File.createTempFile("bd_" + utteranceId, ".mp3",dir);
                 //tempMp3.deleteOnExit();
-                FileOutputStream fos = new FileOutputStream(tempMp3);
+                FileOutputStream fos = new FileOutputStream(tempMp3,true);
                 fos.write(bytes);
                 fos.close();
-               /* mediaPlayer.reset();*/
-
-                // In case you run into issues with threading consider new instance like:
-                // MediaPlayer mediaPlayer = new MediaPlayer()
-
-                // Tried passing path directly, but kept getting
-                // "Prepare failed.: status=0x1"
-                // so using file descriptor instead
-               /* FileInputStream fis = new FileInputStream(tempMp3);
-                mediaPlayer.setDataSource(fis.getFD());
-
-                mediaPlayer.prepare();
-                mediaPlayer.start();*/
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -312,7 +305,8 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     @Override
     public void onSynthesizeFinish(String utteranceId) {
         sendMessage("合成结束回调, 序列号:" + utteranceId);
-
+        String path = Environment.getExternalStorageDirectory().toString()+"/gps_tts/"+"bd_"+utteranceId+".mp3";
+        playAudio(path);
     }
     private  int currentMusicVolume;
     @Override
@@ -347,7 +341,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
         //am.setSpeakerphoneOn(false);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
+        //am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
         //afterSpeak();
     }
 
@@ -361,9 +355,9 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     public void onError(String utteranceId, SpeechError speechError) {
         sendErrorMessage("错误发生：" + speechError.description + "，错误编码："
                 + speechError.code + "，序列号:" + utteranceId);
-        if(currentMusicVolume!=0){
+        /*if(currentMusicVolume!=0){
             am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
-        }
+        }*/
     }
 
     private void sendErrorMessage(String message) {

@@ -25,6 +25,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import com.aispeech.DUILiteSDK;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 

@@ -51,6 +51,8 @@
 -keep class android.support.** {*;}
 -keep class com.autonavi.** {*;}
 -keep class com.baidu.** {*;}
+-dontwarn okhttp3.**
+-dontwarn okio.**
 -keepclasseswithmembernames class * {
     native <methods>;
 }
@@ -125,6 +127,35 @@
 -keep class com.baidu.speechsynthesizer.**{*;}
 # ify
 -keep class com.iflytek.**{*;}
+#keep Util
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+-keep public class com.aispeech.common.Util{public *;}
+-keep public class com.aispeech.common.WavFileWriter{public *;}
+-keep public class com.aispeech.common.AITimer{public *;}
+-keep public class com.aispeech.common.JSONResultParser{public *;}
+-keep public class com.aispeech.common.AIConstant{public *;}
+-keep public class com.aispeech.common.FileUtil{public *;}
+-keep public class com.aispeech.DUILiteSDK{public *;}
+-keep public class com.aispeech.fdm.**{public *;}
+-keep public class com.aispeech.echo.**{public *;}
+
+-keep class com.aispeech.upload.**{*;}
+
+-keepclassmembers class com.aispeech.kernel.**{
+	public static native <methods>;
+}
+
+-keep interface com.aispeech.kernel.**$*{
+	public *;
+}
+
+-keep class com.aispeech.kernel.**$*{
+	public *;
+}
+
+-keep interface com.aispeech.DUILiteSDK$*{
+    public *;
+}
 #---------------------------------------------------------------------------------------------------
 #glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
