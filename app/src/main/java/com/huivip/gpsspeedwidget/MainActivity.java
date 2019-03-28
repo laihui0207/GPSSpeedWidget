@@ -7,11 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
 import android.os.*;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -263,6 +260,7 @@ public class MainActivity extends Activity implements TraceListener {
                 startActivity(new Intent(MainActivity.this,BackupGPSHistoryActivity.class));
             }
         });
+        PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
         AutoCompleteTextView textUid=findViewById(R.id.editText_UID);
         String deviceId_shortString=PrefUtils.getShortDeviceId(getApplicationContext());
         //String deviceId_shortString=deviceId.substring(0,deviceId.indexOf("-"));
@@ -454,7 +452,7 @@ public class MainActivity extends Activity implements TraceListener {
                         .setPositiveButton("关闭", null).show();
             }
         });
-        startFloationgWindows(true);
+        startBootService(true);
 
         Button gpxButton = findViewById(R.id.button_gpx);
         gpxButton.setOnClickListener(new View.OnClickListener() {
@@ -532,7 +530,7 @@ public class MainActivity extends Activity implements TraceListener {
         }
         return bitmap;
     }
-    private void startFloationgWindows(boolean enabled){
+    private void startBootService(boolean enabled){
            Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);
            startService(bootStartService);
     }

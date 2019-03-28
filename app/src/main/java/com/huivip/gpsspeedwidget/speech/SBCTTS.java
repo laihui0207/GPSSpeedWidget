@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
@@ -68,7 +67,9 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
                         NetworkInfo activeNetwork = connectMgr.getActiveNetworkInfo();
                         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
                             auth();
-                            context.getApplicationContext().unregisterReceiver(broadcastReceiver);
+                            if(haveAuth) {
+                                context.getApplicationContext().unregisterReceiver(broadcastReceiver);
+                            }
                         }
                     }
                 };
@@ -84,16 +85,15 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             mEngine.setFrontResBin(Constant.TTS_FRONT_RES, Constant.TTS_FRONT_RES_MD5);//设置assets目录下前端合成资源名和相应的Md5文件名
             mEngine.setDictDb(Constant.TTS_DICT_RES, Constant.TTS_DICT_MD5);//设置assets目录下合成字典名和相应的Md5文件名
             mEngine.setBackResBinArray(mBackResBinArray, mBackResBinMd5sumArray);//设置后端合成音色资源，如果只需设置一个，则array只需要传一个成员值就可以，init前设置setBackResBin接口无效
-            mEngine.init(new AILocalTTSListenerImpl());//初始化合成引擎
             mEngine.setSpeechRate(1.0f);//设置合成音语速，范围为0.5～2.0
-            if(PrefUtils.isEnableAudioMixService(context)) {
+            /*if(PrefUtils.isEnableAudioMixService(context)) {
                 mEngine.setStreamType(AudioManager.STREAM_MUSIC);//设置audioTrack的播放流，默认为music
             } else {
                 mEngine.setStreamType(AudioManager.STREAM_VOICE_CALL);
-            }
+            }*/
             mEngine.setUseSSML(false);//设置是否使用ssml合成语法，默认为false
-            int volume=PrefUtils.getAudioVolume(context);
-            mEngine.setSpeechVolume(500*(volume/100));//设置合成音频的音量，范围为1～500
+            mEngine.setSpeechVolume(400);//设置合成音频的音量，范围为1～500
+            mEngine.init(new AILocalTTSListenerImpl());//初始化合成引擎
         }
     }
     @Override

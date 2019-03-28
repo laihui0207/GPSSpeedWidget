@@ -37,14 +37,24 @@ public abstract class TTSService implements TTS,AudioManager.OnAudioFocusChangeL
         if (vIsActive) {//播放状态
            // Log.d(TAG, "in Music!");
             AudioAttributes mPlaybackAttributes = null;
+            int focusType=-1;
+            int streamType=-1;
+            if(PrefUtils.isEnableAudioMixService(context)){
+                focusType=AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK;
+                streamType = AudioManager.STREAM_MUSIC;
+            }
+             else {
+                focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
+                streamType = AudioManager.STREAM_VOICE_CALL;
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mPlaybackAttributes = new AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setContentType(streamType)
                         .build();
                 int result = -1;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    mFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+                    mFocusRequest = new AudioFocusRequest.Builder(focusType)
                             .setAudioAttributes(mPlaybackAttributes)
                             .setAcceptsDelayedFocusGain(true)
                             .setWillPauseWhenDucked(true)
@@ -53,39 +63,20 @@ public abstract class TTSService implements TTS,AudioManager.OnAudioFocusChangeL
                     result = mAudioManager.requestAudioFocus(mFocusRequest);
 
                 } else {
-                    result = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
-                            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+                    result = mAudioManager.requestAudioFocus(this, streamType, focusType);
                 }
                 Log.d("huivip", "Audio request Focus:" + result);
                 if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                     return true;
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        mFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
-                                .setAudioAttributes(mPlaybackAttributes)
-                                .setAcceptsDelayedFocusGain(true)
-                                .setWillPauseWhenDucked(true)
-                                .setOnAudioFocusChangeListener(this)
-                                .build();
-                        result = mAudioManager.requestAudioFocus(mFocusRequest);
-
-                    } else {
-                        result = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
-                                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-                    }
-                    return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
                 }
             }
+
 
         }
         return false;
     }
 
     protected void beforeSpeak(){
-      /*   if(mAudioManager==null){
-             mAudioManager = (AudioManager) this.context.getSystemService(
-                     Context.AUDIO_SERVICE);
-         }*/
         requestAudioFocus();
     }
 
@@ -98,19 +89,46 @@ public abstract class TTSService implements TTS,AudioManager.OnAudioFocusChangeL
             } else {
                 mAudioManager.abandonAudioFocus(this);
             }
+            Log.d("GPS","Abandon Audio forces");
         }
     }
     @Override
     public void onAudioFocusChange(int focusChange) {
-        if(AudioManager.AUDIOFOCUS_GAIN==focusChange){
-            if(focusChange==AudioManager.AUDIOFOCUS_GAIN){
+        Log.d("GPS_Audio","focus change:"+focusChange);
+       switch (focusChange){
+           case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
+           case AudioManager.AUDIOFOCUS_GAIN:
+           case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
+               Log.d("GPS_Audio","GET Audio Focus");
+               if(!mediaPlayer.isPlaying()){
+                   mediaPlayer.start();
+               }
+               int volume=PrefUtils.getAudioVolume(context);
+               mediaPlayer.setVolume(volume/100f,volume/100f);
+               break;
+           case AudioManager.AUDIOFOCUS_LOSS:
+               if(mediaPlayer.isPlaying()){
+                   mediaPlayer.stop();
+               }
+               mediaPlayer.release();
+               mediaPlayer=null;
+               break;
+           case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                }
+                break;
+           case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+               Log.d("GPS_Audio","Loss Audio Focus");
+               if(mediaPlayer.isPlaying()){
+                   mediaPlayer.setVolume(0.1f,0.1f);
+               }
+               break;
 
-            }
-        }
+       }
     }
     public void playAudio(String fileName){
         try {
-            beforeSpeak();
             mediaPlayer = new MediaPlayer();
             FileInputStream fis = new FileInputStream(fileName);
             mediaPlayer.setDataSource(fis.getFD());
@@ -123,20 +141,25 @@ public abstract class TTSService implements TTS,AudioManager.OnAudioFocusChangeL
                 attrBuilder.setLegacyStreamType(AudioManager.STREAM_VOICE_CALL);
             }
             mediaPlayer.setAudioAttributes(attrBuilder.build());
-            mediaPlayer.prepare();
-            mediaPlayer.start();
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     mp.release();
-                    afterSpeak();
+                    //if(PrefUtils.isEnableAudioMixService(context)){
+                        afterSpeak();
+                    //}
                     isPlaying=false;
-                    /*File file=new File(fileName);
-                    file.delete();*/
+                    if (!PrefUtils.isEnableCacheAudioFile(context)) {
+                        File file = new File(fileName);
+                        file.delete();
+                    }
                     speakNext();
                     Log.d("GPS","MediaPlayer play finish!");
                 }
             });
+            beforeSpeak();
+            mediaPlayer.prepare();
+            mediaPlayer.start();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

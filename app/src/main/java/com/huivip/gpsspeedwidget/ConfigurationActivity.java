@@ -300,6 +300,14 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setShowLimits(getApplicationContext(),compoundButton.isChecked());
             }
         });
+        CheckBox cacheAudioFileCheckBox=findViewById(R.id.checkBox_cacheAudioFile);
+        cacheAudioFileCheckBox.setChecked(PrefUtils.isEnableCacheAudioFile(getApplicationContext()));
+        cacheAudioFileCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableCacheAudioFile(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         CheckBox floatingSmallType=findViewById(R.id.checkBox_smallType);
         floatingSmallType.setChecked(PrefUtils.isShowSmallFloatingStyle(getApplicationContext()));
         floatingSmallType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

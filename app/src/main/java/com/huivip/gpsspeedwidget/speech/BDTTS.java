@@ -3,7 +3,6 @@ package com.huivip.gpsspeedwidget.speech;
 import android.app.Service;
 import android.content.Context;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -15,7 +14,6 @@ import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
-import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.*;
@@ -23,7 +21,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.LinkedList;
 
-public class BDTTS extends TTSService implements SpeechSynthesizerListener{
+public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     private static final String TAG = "huivip_BDTTS";
     protected String appId = "10875643";
     protected String appKey = "645OiDA3l2baAATnci6lTzC6";
@@ -32,10 +30,8 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     protected String offlineVoice = OfflineResource.VOICE_FEMALE;
     protected SpeechSynthesizer mSpeechSynthesizer;
     private static BDTTS BdTTS;
-    private MediaPlayer mediaPlayer = new MediaPlayer();
-    AudioManager am;
-    boolean inited=false;
-    boolean fromSpeek=true;
+    boolean inited = false;
+    boolean fromSpeek = true;
     // ================选择TtsMode.ONLINE  不需要设置以下参数; 选择TtsMode.MIX 需要设置下面2个离线资源文件的路径
     private static final String TEMP_DIR = "/sdcard/GPS"; // 重要！请手动将assets目录下的3个dat 文件复制到该目录
 
@@ -45,29 +41,30 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     // 请确保该PATH下有这个文件 ，m15是离线男声
     private static final String MODEL_FILENAME =
             TEMP_DIR + "/" + "bd_etts_common_speech_f7_mand_eng_high_am-mix_v3.0.0_20170512.dat";
+
     private BDTTS(Context context) {
-        this.context=context;
-        am= (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);
+        this.context = context;
         CrashHandler.getInstance().init(context);
         initTTS();
     }
 
     public static BDTTS getInstance(Context context) {
         if (BdTTS == null) {
-            synchronized(BDTTS.class) {
-                    BdTTS = new BDTTS(context);
+            synchronized (BDTTS.class) {
+                BdTTS = new BDTTS(context);
             }
         }
         return BdTTS;
     }
+
     @Override
     public void speak(String text) {
-        speak(text,false);
+        speak(text, false);
     }
 
     @Override
     public void speak(String text, boolean force) {
-        fromSpeek=true;
+        fromSpeek = true;
       /*  if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null && (force || PrefUtils.isEnableTempAudioService(context)))  {
             if(!inited){
                 release();
@@ -79,11 +76,11 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
                 Log.d("huivip","语音播放失败");
             }
         }*/
-      synthesize(text,force);
+        synthesize(text, force);
     }
 
-    public void stop(){
-        if(PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null) {
+    public void stop() {
+        if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null) {
             wordList.clear();
             mSpeechSynthesizer.stop();
         }
@@ -96,14 +93,14 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
 
     @Override
     public void synthesize(String text) {
-        fromSpeek=false;
-        synthesize(text,false);
+        fromSpeek = false;
+        synthesize(text, false);
     }
 
     @Override
     public void synthesize(String text, boolean force) {
-        if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null && (force || PrefUtils.isEnableTempAudioService(context)))  {
-            if(!inited){
+        if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null && (force || PrefUtils.isEnableTempAudioService(context))) {
+            if (!inited) {
                 //release();
                 initTTS();
             }
@@ -122,16 +119,17 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         }
     }
 
-    public void release(){
-        if(PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null) {
+    public void release() {
+        if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null) {
             mSpeechSynthesizer.release();
-            inited=false;
+            inited = false;
             //mSpeechSynthesizer=null;
         }
     }
+
     @Override
     public void initTTS() {
-        LoggerProxy.printable(true); // 日志打印在logcat中
+       // LoggerProxy.printable(true); // 日志打印在logcat中
         boolean isMix = ttsMode.equals(TtsMode.MIX);
         boolean isSuccess;
 
@@ -141,7 +139,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
             if (!isSuccess) {
                 createOfflineResource(offlineVoice);
             } else {
-                Log.d("huivip","离线资源存在并且可读, 目录：" + TEMP_DIR);
+                Log.d("huivip", "离线资源存在并且可读, 目录：" + TEMP_DIR);
             }
         }
         // 1. 获取实例
@@ -185,46 +183,15 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE_WIFI wifi状态下使用在线，非wifi离线。在线状态下， 请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_NETWORK ， 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
-        if(PrefUtils.isEnableAudioMixService(context)){
-            Log.d("huivip","Audio use voice Call");
-/*            mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);*/
+       /* if (PrefUtils.isEnableAudioMixService(context)) {
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         } else {
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-        }
-        //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-       // mSpeechSynthesizer.setStereoVolume(1.0f,1.0f);
-        //mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_ALARM);
-       // mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
-
-        // x. 额外 ： 自动so文件是否复制正确及上面设置的参数
-       /* Map<String, String> params = new HashMap<>();
-        // 复制下上面的 mSpeechSynthesizer.setParam参数
-        // 上线时请删除AutoCheck的调用
-        if (isMix) {
-            params.put(SpeechSynthesizer.PARAM_TTS_TEXT_MODEL_FILE, TEXT_FILENAME);
-            params.put(SpeechSynthesizer.PARAM_TTS_SPEECH_MODEL_FILE, MODEL_FILENAME);
-        }
-        InitConfig initConfig =  new InitConfig(appId, appKey, secretKey, ttsMode, params, this);
-        AutoCheck.getInstance(context).check(initConfig, new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                if (msg.what == 100) {
-                    AutoCheck autoCheck = (AutoCheck) msg.obj;
-                    synchronized (autoCheck) {
-                        String message = autoCheck.obtainDebugMessage();
-                        //print(message); // 可以用下面一行替代，在logcat中查看代码
-                         Log.w("AutoCheckMessage", message);
-                    }
-                }
-            }
-
-        });
-*/
+        }*/
         // 6. 初始化
-       int result = mSpeechSynthesizer.initTts(ttsMode);
-       inited = result ==0;
-        Log.d("huivip","TTS Init:"+result);
+        int result = mSpeechSynthesizer.initTts(ttsMode);
+        inited = result == 0;
+        Log.d("huivip", "TTS Init:" + result);
 
     }
 
@@ -243,10 +210,10 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         if (!authInfo.isSuccess()) {
             // 离线授权需要网站上的应用填写包名。本demo的包名是com.baidu.tts.sample，定义在build.gradle中
             String errorMsg = authInfo.getTtsError().getDetailMessage();
-            Log.d("huivip","【error】鉴权失败 errorMsg=" + errorMsg);
+            Log.d("huivip", "【error】鉴权失败 errorMsg=" + errorMsg);
             return false;
         } else {
-            Log.d("huivip","验证通过，离线正式授权文件存在。");
+            Log.d("huivip", "验证通过，离线正式授权文件存在。");
             return true;
         }
     }
@@ -261,8 +228,8 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         for (String path : filenames) {
             File f = new File(path);
             if (!f.canRead()) {
-                Log.d("huivip","[ERROR] 文件不存在或者不可读取，请从assets目录复制同名文件到：" + path);
-                Log.d("huivip","[ERROR] 初始化失败！！！");
+                Log.d("huivip", "[ERROR] 文件不存在或者不可读取，请从assets目录复制同名文件到：" + path);
+                Log.d("huivip", "[ERROR] 初始化失败！！！");
                 return false;
             }
         }
@@ -277,10 +244,11 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         } catch (IOException e) {
             // IO 错误自行处理
             e.printStackTrace();
-            Log.w("GPS","【error】:copy files from assets failed." + e.getMessage());
+            Log.w("GPS", "【error】:copy files from assets failed." + e.getMessage());
         }
         return offlineResource;
     }
+
     @Override
     public void onSynthesizeStart(String utteranceId) {
         sendMessage("准备开始合成,序列号:" + utteranceId);
@@ -296,24 +264,20 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     @Override
     public void onSynthesizeDataArrived(String utteranceId, byte[] bytes, int progress) {
         //  Log.i(TAG, "合成进度回调, progress：" + progress + ";序列号:" + utteranceId );
-        /*if(!fromSpeek) {*/
-            File tempMp3 = null;
-            try {
-                String path = Environment.getExternalStorageDirectory().toString()+"/gps_tts/";
-                File dir=new File(path);
-                if(!dir.exists()){
-                    dir.mkdirs();
-                }
-                Log.d("GPS","BD_utteranceID:"+utteranceId);
-                tempMp3 = new File(dir+"/"+utteranceId+".pcm");
-                //tempMp3.deleteOnExit();
-                FileOutputStream fos = new FileOutputStream(tempMp3,true);
-                fos.write(bytes);
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        File tempAudioFile = null;
+        try {
+            String path = Environment.getExternalStorageDirectory().toString() + "/gps_tts/";
+            File dir = new File(path);
+            if (!dir.exists()) {
+                dir.mkdirs();
             }
-        /*}*/
+            tempAudioFile = new File(dir + "/" + utteranceId + ".pcm");
+            FileOutputStream fos = new FileOutputStream(tempAudioFile, true);
+            fos.write(bytes);
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -325,28 +289,18 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     @Override
     public void onSynthesizeFinish(String utteranceId) {
         sendMessage("合成结束回调, 序列号:" + utteranceId);
-
-/*        if(!fromSpeek){*/
-            String pcmFile = Environment.getExternalStorageDirectory().toString()+"/gps_tts/"+utteranceId+".pcm";
-            String wavFile = Environment.getExternalStorageDirectory().toString()+"/gps_tts/"+utteranceId+".wav";
-            try {
-                rawToWave(new File(pcmFile),new File(wavFile));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            playAudio(wavFile);
-       /* }*/
+        String pcmFile = Environment.getExternalStorageDirectory().toString() + "/gps_tts/" + utteranceId + ".pcm";
+        String wavFile = Environment.getExternalStorageDirectory().toString() + "/gps_tts/" + utteranceId + ".wav";
+        try {
+            rawToWave(new File(pcmFile), new File(wavFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        playAudio(wavFile);
     }
-    private  int currentMusicVolume;
+
     @Override
     public void onSpeechStart(String utteranceId) {
-        currentMusicVolume=am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        if (!PrefUtils.isEnableAudioMixService(context) && PrefUtils.isSeparatedVolume(context)) {
-            am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume/2,0);
-        }
-      // requestAudioFocus();
-       int volume=PrefUtils.getAudioVolume(context);
-       mSpeechSynthesizer.setStereoVolume(volume/100f,volume/100f);
         sendMessage("播放开始回调, 序列号:" + utteranceId);
     }
 
@@ -404,13 +358,13 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
         }
 
     }
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
                 case TTS_PLAY:
-                    //while (wordList.size() > 0) {
                     if (!isPlaying && mSpeechSynthesizer != null && wordList.size() > 0) {
                         isPlaying = true;
                         String playString = wordList.removeFirst();
@@ -424,10 +378,9 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
                         if (file.exists()) {
                             playAudio(fileName);
                         } else {
-                            mSpeechSynthesizer.synthesize(playString,Integer.toString(trackID));//合成并保存到文件
+                            mSpeechSynthesizer.synthesize(playString, Integer.toString(trackID));//合成并保存到文件
                         }
                     }
-                    //}
                     break;
                 case CHECK_TTS_PLAY:
                     if (!isPlaying) {
@@ -438,6 +391,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
 
         }
     };
+
     private void rawToWave(final File rawFile, final File waveFile) throws IOException {
 
         byte[] rawData = new byte[(int) rawFile.length()];
@@ -449,7 +403,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
             if (input != null) {
                 input.close();
             }
-            rawFile.delete();
         }
 
         DataOutputStream output = null;
@@ -464,8 +417,8 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
             writeInt(output, 16); // subchunk 1 size
             writeShort(output, (short) 1); // audio format (1 = PCM)
             writeShort(output, (short) 1); // number of channels
-            writeInt(output, 44100); // sample rate
-            writeInt(output, 44100 * 2); // byte rate
+            writeInt(output, 16000); // sample rate
+            writeInt(output, 16000 *2); // byte rate
             writeShort(output, (short) 2); // block align
             writeShort(output, (short) 16); // bits per sample
             writeString(output, "data"); // subchunk 2 id
@@ -483,13 +436,15 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
             if (output != null) {
                 output.close();
             }
+            rawFile.delete();
         }
     }
+
     byte[] fullyReadFileToBytes(File f) throws IOException {
         int size = (int) f.length();
         byte bytes[] = new byte[size];
         byte tmpBuff[] = new byte[size];
-        FileInputStream fis= new FileInputStream(f);
+        FileInputStream fis = new FileInputStream(f);
         try {
 
             int read = fis.read(bytes, 0, size);
@@ -501,7 +456,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
                     remain -= read;
                 }
             }
-        }  catch (IOException e){
+        } catch (IOException e) {
             throw e;
         } finally {
             fis.close();
@@ -509,6 +464,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
 
         return bytes;
     }
+
     private void writeInt(final DataOutputStream output, final int value) throws IOException {
         output.write(value >> 0);
         output.write(value >> 8);

@@ -85,6 +85,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/recordGPS"/>
+
+            <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/checkBox_naviTrack"
+                     android:text="猎鹰轨迹服务(高德官方)"/>
             <TextView
                     android:text="    GPS速度调整:"
                     android:layout_width="wrap_content"
@@ -100,10 +105,6 @@
                     android:layout_above="@+id/linearLayout"
                     android:layout_toRightOf="@+id/textView"
                     android:layout_toEndOf="@+id/textView"/>
-            <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/checkBox_naviTrack"
-                    android:layout_weight="1" android:text="猎鹰轨迹服务(高德官方)"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="wrap_content"
@@ -116,7 +117,7 @@
                     android:id="@+id/uploadGPSData"
                     android:layout_below="@+id/recordGPS"
                     android:layout_alignLeft="@+id/recordGPS"
-                    android:layout_alignStart="@+id/recordGPS"/>
+                    android:layout_alignStart="@+id/recordGPS" android:visibility="gone"/>
             <Space
                     android:layout_width="10dp"
                     android:layout_height="wrap_content"/>
@@ -126,7 +127,7 @@
                     android:inputType="textUri"
                     android:text=""
                     android:hint="记录轨迹服务器地址,不填为空使用默认服务器"
-                    android:ems="5"
+                    android:ems="5" android:visibility="gone"
                     android:id="@+id/editText_remoteURL" android:layout_weight="4"/>
             <CheckBox
                     android:text="定期清理数据(只保留一个月)"
@@ -134,7 +135,7 @@
                     android:layout_height="wrap_content" android:layout_below="@+id/radioGroup_flattingStyleSelect"
                     android:layout_toRightOf="@+id/checkBox_timeFloating"
                     android:layout_toEndOf="@+id/checkBox_timeFloating" android:id="@+id/checkBox_cleanData"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" android:visibility="gone"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                       android:orientation="horizontal">
@@ -154,6 +155,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_roadLimitNotify"/>
+            <TextView
+                    android:text="路况数据来自高德在线数据"
+                    android:layout_width="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_showmessage" />
 
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -204,16 +211,20 @@
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                       android:orientation="horizontal">
+            <CheckBox android:layout_width="wrap_content" android:id="@+id/checkBox_cacheAudioFile"
+                      android:text="缓存语音文件" android:layout_height="wrap_content"/>
+
+            <SeekBar
+                    android:layout_width="433dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/seekBar_audioVolume"
+                    android:maxWidth="100dp"
+                    android:max="100" android:progress="50" android:layout_gravity="center_vertical"/>
             <Button
                     android:text="测试语音音量"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/button_testAudio"/>
-            <SeekBar
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/seekBar_audioVolume"
-                    android:max="100" android:progress="50" android:layout_gravity="center_vertical"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                       android:orientation="horizontal">
@@ -267,17 +278,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/button_select_app"
                     android:visibility="gone"/>
-            <Button
-                    android:id="@+id/confirm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/str_btn_ok"
-                    android:layout_weight="1"
-                    android:elevation="21dp"
-                    android:layout_below="@+id/checkBox_navfloatiing"
-                    android:layout_alignStart="@+id/radioGroup_flatingSelect"
-                    android:layout_alignLeft="@+id/radioGroup_flatingSelect"
-                    android:layout_marginTop="16dp"/>
+
             <Button
                     android:text="1. 允许顶层显示功能"
                     android:layout_width="wrap_content"
@@ -401,29 +402,16 @@
                     android:layout_toRightOf="@+id/button_select_app"
                     android:layout_toEndOf="@+id/button_select_app"/>
 
-            <Button
-                    android:text="检查更新"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/button_update"
-                    android:layout_alignBaseline="@+id/confirm" android:layout_alignBottom="@+id/confirm"
-                    android:layout_toRightOf="@+id/confirm"
-                    android:layout_toEndOf="@+id/confirm"/>
+
             <Button
                     android:text="反馈问题"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/button_feedback"
+                    android:id="@+id/button_feedback" android:visibility="gone"
                     android:layout_alignBaseline="@+id/button_update" android:layout_alignBottom="@+id/button_update"
                     android:layout_toRightOf="@+id/button_update"
                     android:layout_toEndOf="@+id/button_update"/>
-            <TextView
-                    android:text="路况数据来自高德在线数据"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_showmessage"
-                    android:layout_toEndOf="@+id/EnableFalting"
-                    android:layout_below="@+id/radioGroup_flattingStyleSelect"/>
+
             <CheckBox
                     android:text="高德样式"
                     android:layout_width="wrap_content"
@@ -432,13 +420,7 @@
                     android:layout_alignBaseline="@+id/checkBox_h_direction"
                     android:layout_alignBottom="@+id/checkBox_h_direction"
                     android:visibility="gone"/>
-            <Button
-                    android:text="打赏"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/button_pay"
-                    android:layout_toEndOf="@+id/button_uploadLog"
-                    android:layout_alignTop="@+id/confirm"/>
+
 
             <CheckBox
                     android:text="固定位置"
@@ -458,13 +440,6 @@
                     android:layout_alignBottom="@+id/checkBox_Navi_autoSolt"
                     android:layout_toRightOf="@+id/checkBox_Navi_autoSolt"
                     android:layout_toEndOf="@+id/checkBox_Navi_autoSolt"/>
-            <Button
-                    android:text="提交异常日志"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/button_uploadLog"
-                    android:layout_alignTop="@+id/confirm"
-                    android:layout_toEndOf="@+id/checkBox_showLimit"/>
 
             <TextView
                     android:text="长按悬浮窗2秒以上取消位置固定"
@@ -497,14 +472,40 @@
             <TextView
                     android:text="点击速度弹出悬浮地图"
                     android:layout_width="wrap_content"
-                    android:layout_height="29dp"
-                    android:id="@+id/textView12" android:layout_alignBottom="@+id/checkBox_showSpeed"
-                    android:layout_alignStart="@+id/button_pay"/>
+                    android:layout_height="29dp" android:textColor="@color/red500"
+                    android:id="@+id/textView12"
+                    android:layout_below="@+id/checkBox_showLimit"
+                    android:layout_alignEnd="@+id/checkBox_returnHome_afterAutoStart"/>
 
 
         </RelativeLayout>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <Button
+                    android:id="@+id/confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_btn_ok"
+                    android:layout_weight="1"
+                    android:elevation="21dp"
+                    />
+            <Button
+                    android:text="检查更新"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_update" />
+            <Button
+                    android:text="提交异常日志"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_uploadLog" />
+            <Button
+                    android:text="打赏"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_pay" />
+        </LinearLayout>
         <!-- </ScrollView>-->
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        <LinearLayout  android:layout_width="match_parent" android:layout_height="wrap_content"
                       android:orientation="horizontal">
             <TextView
                     android:text="作者QQ： 478722925, 交流群：613841801"
@@ -519,7 +520,8 @@
                     android:layout_marginLeft="52dp"
                     android:layout_marginStart="52dp"/>
             <TextView
-                    android:text="TextView"
+                    android:text="TextView" android:layout_marginLeft="52dp"
+                    android:layout_marginStart="52dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_uid"/>

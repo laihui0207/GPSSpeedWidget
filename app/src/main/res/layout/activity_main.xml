@@ -4,17 +4,11 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent" android:orientation="vertical">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="50dp" android:orientation="horizontal">
-        <Button
-                android:text="配置"
-                android:layout_width="wrap_content"
-                android:id="@+id/button_config" android:layout_height="match_parent" android:layout_weight="6"/>
-        <Button
-                android:text="返回桌面"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/button_goHome"/>
+    <LinearLayout android:layout_width="match_parent" android:visibility="gone" android:layout_height="50dp" android:orientation="horizontal">
+
     </LinearLayout>
-    <LinearLayout android:layout_width="match_parent" android:layout_height="50dp" android:orientation="horizontal">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="50dp"
+                  android:orientation="horizontal" android:visibility="gone">
         <Button
                 android:text="备份行车记录"
                 android:layout_width="wrap_content"
@@ -29,35 +23,42 @@
                 android:layout_height="wrap_content" android:id="@+id/button_paymain" android:layout_weight="0.04"/>
 
     </LinearLayout>
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:weightSum="5">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
 
         <AutoCompleteTextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:inputType="textPersonName"
                 android:text=""
                 android:hint="本机ID"
-                android:ems="8"
+                android:ems="6"
                 android:layout_weight="1"
                 android:id="@+id/editText_UID"/>
         <EditText
                 android:id="@+id/selectDate"
                 android:layout_weight="1"
                 android:clickable="true" android:layout_width="wrap_content"
-                android:hint="选择查询日期" android:layout_height="wrap_content"
+                android:hint="选择日期" android:layout_height="wrap_content"
         />
         <Button android:layout_width="wrap_content" android:id="@+id/TrackBtn"
                 android:layout_weight="1" android:layout_height="wrap_content"
                 android:text="行车轨迹"/>
         <Button
-                android:text="车辆当前位置"
+                android:text="车辆位置"
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/lastedBtn"
-        />
+                android:layout_height="wrap_content" android:id="@+id/lastedBtn" />
+        <Button
+                android:text="配置"
+                android:layout_width="wrap_content"
+                android:id="@+id/button_config" android:layout_height="wrap_content" android:layout_weight="1"/>
+        <Button
+                android:text="桌面"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/button_goHome"/>
         <Button
                 android:text="生成gpx"
-                android:layout_width="wrap_content"
+                android:layout_width="wrap_content" android:visibility="gone"
                 android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/button_gpx"
         />
     </LinearLayout>

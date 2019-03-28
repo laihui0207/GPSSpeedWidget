@@ -65,6 +65,7 @@ public abstract class PrefUtils {
     public static final String LYRC_FLOATTING_WINDOW_XY="com.huivip.widget.lyrc.xy";
     public static final String SEPARATED_VOLUME ="com.huivip.widget.separated.volume";
     public static final String AUDIO_VOLUME="com.huivipo.widget.audio.volume";
+    public static final String CACHE_AUDIO_FILE="com.huivipo.widget.audio.cache.file";
     public static final String AUDIO_AUTO_MUTE="com.huivipo.widget.audio.auto.mute";
     public static final String USER_CLOSED_SERVER="com.huivip.widget.Close.serviced";
     public static final String ENABLE_ACCESSIBILITY_SEVICE="com.huivip.widget.cant.enalble.Accessibility.serviced";
@@ -202,6 +203,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableAutoMute(Context context){
         return getSharedPreferences(context).getBoolean(AUDIO_AUTO_MUTE, true);
+    }
+    public static void setEnableCacheAudioFile(Context context, boolean value){
+        edit(context).putBoolean(CACHE_AUDIO_FILE, value).apply();
+    }
+    public static boolean isEnableCacheAudioFile(Context context){
+        return getSharedPreferences(context).getBoolean(CACHE_AUDIO_FILE, true);
     }
     public static void setHideFloatingWidowOnNaviApp(Context context, boolean value){
         edit(context).putBoolean(ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI, value).apply();
