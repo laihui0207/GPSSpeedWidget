@@ -1,7 +1,12 @@
 package com.huivip.gpsspeedwidget.speech;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -14,9 +19,12 @@ import com.aispeech.export.engines.AILocalTTSEngine;
 import com.aispeech.export.listeners.AILocalTTSListener;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.io.File;
 import java.util.LinkedList;
+
+import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     private static final String TAG = "GPS_SBC_TAG";
@@ -30,7 +38,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     private static SBCTTS tts=null;
     private int mauthCount=0;
     private boolean onlySynthesize=false;
-
+    BroadcastReceiver broadcastReceiver;
 
     private SBCTTS(Context context){
         this.context =context;
@@ -50,7 +58,24 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     public void initTTS() {
         boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
         if(!isAuthorized){
-            auth();
+            if (Utils.isNetworkConnected(context)) {
+                auth();
+            } else {
+                broadcastReceiver = new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        ConnectivityManager connectMgr = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
+                        NetworkInfo activeNetwork = connectMgr.getActiveNetworkInfo();
+                        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+                            auth();
+                            context.getApplicationContext().unregisterReceiver(broadcastReceiver);
+                        }
+                    }
+                };
+                IntentFilter intentFilter = new IntentFilter();
+                intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+                context.getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
+            }
         } else {
             if (mEngine != null) {
                 mEngine.destroy();
@@ -114,6 +139,11 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     }
 
     @Override
+    public void speakNext() {
+        handler.obtainMessage(CHECK_TTS_PLAY).sendToTarget();
+    }
+
+    @Override
     public void synthesize(String text) {
         synthesize(text,false);
     }
@@ -128,14 +158,16 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
                 wordList = new LinkedList<>();
                 wordList.add(text);
             }
-            handler.obtainMessage(TTS_PLAY).sendToTarget();
+            handler.obtainMessage(CHECK_TTS_PLAY).sendToTarget();
         }
 
     }
 
     @Override
     public void release() {
+        stop();
         mEngine.destroy();
+        mEngine=null;
     }
 
     @Override
@@ -247,26 +279,24 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             super.handleMessage(msg);
             switch (msg.what) {
                 case TTS_PLAY:
-                    synchronized (mEngine) {
-                        while(wordList.size()>0) {
-                            if (!isPlaying && mEngine != null && wordList.size() > 0) {
-                                isPlaying = true;
-                                String playString = wordList.removeFirst();
-                                if (mEngine == null) {
-                                    initTTS();
-                                }
-                                int trackID = playString.hashCode();
-                                String fileName = Environment.getExternalStorageDirectory() + "/gps_tts/"
-                                        + trackID + ".wav";
-                                File file=new File(fileName);
-                                if(file.exists()){
-                                    playAudio(fileName);
-                                } else {
-                                    mEngine.synthesizeToFile(playString, fileName, Integer.toString(trackID));//合成并保存到文件
-                                }
+                    //while (wordList.size() > 0) {
+                        if (!isPlaying && mEngine != null && wordList.size() > 0) {
+                            isPlaying = true;
+                            String playString = wordList.removeFirst();
+                            if (mEngine == null) {
+                                initTTS();
+                            }
+                            int trackID = playString.hashCode();
+                            String fileName = Environment.getExternalStorageDirectory() + "/gps_tts/"
+                                    + trackID + ".wav";
+                            File file = new File(fileName);
+                            if (file.exists()) {
+                                playAudio(fileName);
+                            } else {
+                                mEngine.synthesizeToFile(playString, fileName, Integer.toString(trackID));//合成并保存到文件
                             }
                         }
-                    }
+                    //}
                     break;
                 case CHECK_TTS_PLAY:
                     if (!isPlaying) {

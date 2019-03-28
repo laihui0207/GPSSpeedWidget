@@ -6,6 +6,7 @@ import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -113,6 +114,8 @@ public abstract class TTSService implements TTS,AudioManager.OnAudioFocusChangeL
             mediaPlayer = new MediaPlayer();
             FileInputStream fis = new FileInputStream(fileName);
             mediaPlayer.setDataSource(fis.getFD());
+            int volume=PrefUtils.getAudioVolume(context);
+            mediaPlayer.setVolume(volume/100f,volume/100f);
             AudioAttributes.Builder attrBuilder = new AudioAttributes.Builder();
             if(PrefUtils.isEnableAudioMixService(context)) {
                 attrBuilder.setLegacyStreamType(AudioManager.STREAM_MUSIC);
@@ -130,6 +133,7 @@ public abstract class TTSService implements TTS,AudioManager.OnAudioFocusChangeL
                     isPlaying=false;
                     /*File file=new File(fileName);
                     file.delete();*/
+                    speakNext();
                     Log.d("GPS","MediaPlayer play finish!");
                 }
             });

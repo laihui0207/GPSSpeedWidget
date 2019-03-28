@@ -5,6 +5,8 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import com.baidu.tts.auth.AuthInfo;
 import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
@@ -15,10 +17,11 @@ import com.baidu.tts.client.TtsMode;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.LinkedList;
 
 public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     private static final String TAG = "huivip_BDTTS";
@@ -65,22 +68,30 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     @Override
     public void speak(String text, boolean force) {
         fromSpeek=true;
-        if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null && (force || PrefUtils.isEnableTempAudioService(context)))  {
+      /*  if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null && (force || PrefUtils.isEnableTempAudioService(context)))  {
             if(!inited){
                 release();
                 initTTS();
             }
+            beforeSpeak();
             int result = mSpeechSynthesizer.speak(text);
             if(result!=0){
                 Log.d("huivip","语音播放失败");
             }
-        }
+        }*/
+      synthesize(text,force);
     }
 
     public void stop(){
         if(PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null) {
+            wordList.clear();
             mSpeechSynthesizer.stop();
         }
+    }
+
+    @Override
+    public void speakNext() {
+        handler.obtainMessage(CHECK_TTS_PLAY).sendToTarget();
     }
 
     @Override
@@ -93,13 +104,21 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     public void synthesize(String text, boolean force) {
         if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null && (force || PrefUtils.isEnableTempAudioService(context)))  {
             if(!inited){
-                release();
+                //release();
                 initTTS();
             }
-            int result = mSpeechSynthesizer.synthesize(text);
+            //String utteranceId=Integer.toString(text.hashCode());
+           /* int result = mSpeechSynthesizer.synthesize(text,utteranceId);
             if(result!=0){
                 Log.d("huivip","语音合成失败");
+            }*/
+            if (wordList != null)
+                wordList.addLast(text);
+            else {
+                wordList = new LinkedList<>();
+                wordList.add(text);
             }
+            handler.obtainMessage(CHECK_TTS_PLAY).sendToTarget();
         }
     }
 
@@ -277,7 +296,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     @Override
     public void onSynthesizeDataArrived(String utteranceId, byte[] bytes, int progress) {
         //  Log.i(TAG, "合成进度回调, progress：" + progress + ";序列号:" + utteranceId );
-        if(!fromSpeek) {
+        /*if(!fromSpeek) {*/
             File tempMp3 = null;
             try {
                 String path = Environment.getExternalStorageDirectory().toString()+"/gps_tts/";
@@ -285,7 +304,8 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
                 if(!dir.exists()){
                     dir.mkdirs();
                 }
-                tempMp3 = File.createTempFile("bd_" + utteranceId, ".mp3",dir);
+                Log.d("GPS","BD_utteranceID:"+utteranceId);
+                tempMp3 = new File(dir+"/"+utteranceId+".pcm");
                 //tempMp3.deleteOnExit();
                 FileOutputStream fos = new FileOutputStream(tempMp3,true);
                 fos.write(bytes);
@@ -293,7 +313,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        /*}*/
 
     }
 
@@ -305,8 +325,17 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     @Override
     public void onSynthesizeFinish(String utteranceId) {
         sendMessage("合成结束回调, 序列号:" + utteranceId);
-        String path = Environment.getExternalStorageDirectory().toString()+"/gps_tts/"+"bd_"+utteranceId+".mp3";
-        playAudio(path);
+
+/*        if(!fromSpeek){*/
+            String pcmFile = Environment.getExternalStorageDirectory().toString()+"/gps_tts/"+utteranceId+".pcm";
+            String wavFile = Environment.getExternalStorageDirectory().toString()+"/gps_tts/"+utteranceId+".wav";
+            try {
+                rawToWave(new File(pcmFile),new File(wavFile));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            playAudio(wavFile);
+       /* }*/
     }
     private  int currentMusicVolume;
     @Override
@@ -340,9 +369,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
-        //am.setSpeakerphoneOn(false);
-        //am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
-        //afterSpeak();
+        afterSpeak();
     }
 
     /**
@@ -376,5 +403,127 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener{
             Log.i(TAG, message);
         }
 
+    }
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case TTS_PLAY:
+                    //while (wordList.size() > 0) {
+                    if (!isPlaying && mSpeechSynthesizer != null && wordList.size() > 0) {
+                        isPlaying = true;
+                        String playString = wordList.removeFirst();
+                        if (mSpeechSynthesizer == null) {
+                            initTTS();
+                        }
+                        int trackID = playString.hashCode();
+                        String fileName = Environment.getExternalStorageDirectory() + "/gps_tts/"
+                                + trackID + ".wav";
+                        File file = new File(fileName);
+                        if (file.exists()) {
+                            playAudio(fileName);
+                        } else {
+                            mSpeechSynthesizer.synthesize(playString,Integer.toString(trackID));//合成并保存到文件
+                        }
+                    }
+                    //}
+                    break;
+                case CHECK_TTS_PLAY:
+                    if (!isPlaying) {
+                        handler.obtainMessage(TTS_PLAY).sendToTarget();
+                    }
+                    break;
+            }
+
+        }
+    };
+    private void rawToWave(final File rawFile, final File waveFile) throws IOException {
+
+        byte[] rawData = new byte[(int) rawFile.length()];
+        DataInputStream input = null;
+        try {
+            input = new DataInputStream(new FileInputStream(rawFile));
+            input.read(rawData);
+        } finally {
+            if (input != null) {
+                input.close();
+            }
+            rawFile.delete();
+        }
+
+        DataOutputStream output = null;
+        try {
+            output = new DataOutputStream(new FileOutputStream(waveFile));
+            // WAVE header
+            // see http://ccrma.stanford.edu/courses/422/projects/WaveFormat/
+            writeString(output, "RIFF"); // chunk id
+            writeInt(output, 36 + rawData.length); // chunk size
+            writeString(output, "WAVE"); // format
+            writeString(output, "fmt "); // subchunk 1 id
+            writeInt(output, 16); // subchunk 1 size
+            writeShort(output, (short) 1); // audio format (1 = PCM)
+            writeShort(output, (short) 1); // number of channels
+            writeInt(output, 44100); // sample rate
+            writeInt(output, 44100 * 2); // byte rate
+            writeShort(output, (short) 2); // block align
+            writeShort(output, (short) 16); // bits per sample
+            writeString(output, "data"); // subchunk 2 id
+            writeInt(output, rawData.length); // subchunk 2 size
+            // Audio data (conversion big endian -> little endian)
+            short[] shorts = new short[rawData.length / 2];
+            ByteBuffer.wrap(rawData).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(shorts);
+            ByteBuffer bytes = ByteBuffer.allocate(shorts.length * 2);
+            for (short s : shorts) {
+                bytes.putShort(s);
+            }
+
+            output.write(fullyReadFileToBytes(rawFile));
+        } finally {
+            if (output != null) {
+                output.close();
+            }
+        }
+    }
+    byte[] fullyReadFileToBytes(File f) throws IOException {
+        int size = (int) f.length();
+        byte bytes[] = new byte[size];
+        byte tmpBuff[] = new byte[size];
+        FileInputStream fis= new FileInputStream(f);
+        try {
+
+            int read = fis.read(bytes, 0, size);
+            if (read < size) {
+                int remain = size - read;
+                while (remain > 0) {
+                    read = fis.read(tmpBuff, 0, remain);
+                    System.arraycopy(tmpBuff, 0, bytes, size - remain, read);
+                    remain -= read;
+                }
+            }
+        }  catch (IOException e){
+            throw e;
+        } finally {
+            fis.close();
+        }
+
+        return bytes;
+    }
+    private void writeInt(final DataOutputStream output, final int value) throws IOException {
+        output.write(value >> 0);
+        output.write(value >> 8);
+        output.write(value >> 16);
+        output.write(value >> 24);
+    }
+
+    private void writeShort(final DataOutputStream output, final short value) throws IOException {
+        output.write(value >> 0);
+        output.write(value >> 8);
+    }
+
+    private void writeString(final DataOutputStream output, final String value) throws IOException {
+        for (int i = 0; i < value.length(); i++) {
+            output.write(value.charAt(i));
+        }
     }
 }

@@ -145,6 +145,11 @@ public class XFTTS extends TTSService implements SynthesizerListener {
     }
 
     @Override
+    public void speakNext() {
+
+    }
+
+    @Override
     public void synthesize(String text) {
 
     }

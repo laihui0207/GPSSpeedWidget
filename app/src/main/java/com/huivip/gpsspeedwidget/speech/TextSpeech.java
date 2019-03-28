@@ -57,6 +57,11 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
     }
 
     @Override
+    public void speakNext() {
+
+    }
+
+    @Override
     public void synthesize(String text) {
 
     }

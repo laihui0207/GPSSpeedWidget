@@ -280,8 +280,9 @@ public class AudioTestActivity extends Activity {
                /*int eTime = mPlayer.getDuration();
                 int sTime = mPlayer.getCurrentPosition();
                 Toast.makeText(AudioTestActivity.this, "Play:"+eTime, Toast.LENGTH_SHORT).show();*/
-                TTS tts= SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.SIBICHITTS);
-                tts.synthesize("语音测试。现在用的思必驰引擎，测试测试");
+                TTS tts= SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+                String ttsName=PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.SIBICHITTS) ? "思必驰" : "百度";
+                tts.synthesize("语音测试。现在用的是"+ttsName+"引擎，测试测试");
               /*  Intent screenSaveActivity=new Intent(getApplicationContext(),SettingsActivity.class);
                 screenSaveActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(screenSaveActivity);*/
