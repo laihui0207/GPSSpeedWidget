@@ -45,7 +45,7 @@ public class WeatherService implements AMapLocationListener {
     private WeatherService(Context context){
         this.context=context;
         handler=new Handler();
-        gpsUtil=GpsUtil.getInstance(context);
+        gpsUtil=GpsUtil.getInstance(context.getApplicationContext());
         mLocationClient = new AMapLocationClient(context);
         mLocationClient.setLocationListener(this);
         startLocation();

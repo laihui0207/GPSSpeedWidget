@@ -58,6 +58,14 @@ public class BootStartService extends Service {
                     }
                 }
                 if(PrefUtils.isPlayWarn(getApplicationContext())){
+                    mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            mPlayer.reset();
+                            mPlayer.release();
+                            mPlayer=null;
+                        }
+                    });
                     mPlayer.start();
                 }
             }

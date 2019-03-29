@@ -13,7 +13,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        GpsUtil gpsUtil=GpsUtil.getInstance(context);
+        GpsUtil gpsUtil=GpsUtil.getInstance(context.getApplicationContext());
         if( intent!=null && !TextUtils.isEmpty(intent.getAction()) && intent.getAction().equalsIgnoreCase(Constant.AMAP_SEND_ACTION)){
 
             int key=intent.getIntExtra("KEY_TYPE",-1);

@@ -16,7 +16,7 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
     private boolean inited=false;
     static TextSpeech instance;
     private TextSpeech(Context context){
-        this.context=context;
+        super(context);
         if(mts==null){
             mts=new TextToSpeech(context,this);
         }

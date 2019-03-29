@@ -14,7 +14,7 @@ import static android.content.ContentValues.TAG;
  * Created by fujiayi on 2017/5/19.
  */
 
-public class OfflineResource {
+public class BDOfflineResource {
 
     public static final String VOICE_FEMALE = "F";
 
@@ -32,7 +32,7 @@ public class OfflineResource {
     private String textFilename;
     private String modelFilename;
 
-    public OfflineResource(Context context, String voiceType) throws IOException {
+    public BDOfflineResource(Context context, String voiceType) throws IOException {
         context = context.getApplicationContext();
         this.assets = context.getApplicationContext().getAssets();
         this.destPath = FileUtil.createTmpDir(context);

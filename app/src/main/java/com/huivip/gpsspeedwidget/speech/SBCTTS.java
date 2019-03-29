@@ -40,7 +40,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     BroadcastReceiver broadcastReceiver;
 
     private SBCTTS(Context context){
-        this.context =context;
+        super(context);
         boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
         Log.d("GPS","SBC TTS init, isAuth:"+isAuthorized);
         if(!isAuthorized){
@@ -290,7 +290,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
                             String fileName = Environment.getExternalStorageDirectory() + "/gps_tts/"
                                     + trackID + ".wav";
                             File file = new File(fileName);
-                            if (file.exists()) {
+                            if (PrefUtils.isEnableCacheAudioFile(context) && file.exists()) {
                                 playAudio(fileName);
                             } else {
                                 mEngine.synthesizeToFile(playString, fileName, Integer.toString(trackID));//合成并保存到文件

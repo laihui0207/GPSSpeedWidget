@@ -277,7 +277,6 @@
         <service android:name=".NaviFloatingService"/>
         <service android:name=".AutoNaviFloatingService"/>
         <service android:name=".MeterFloatingService"/>
-        <service android:name=".speech.AudioFocusService"/>
         <service android:name=".BootStartService"/>
         <service android:name=".DriveWayFloatingService"/>
         <service android:name=".MapFloatingService"/>
@@ -285,6 +284,7 @@
         <service android:name=".LyricFloatingService"/>
         <service android:name=".GPSNaviService"/>
         <service android:name=".NaviTrackService"/>
+        <service android:name=".speech.PlayAudioService"/>
         <service android:name=".RealTimeFloatingService"/>
         <service android:name=".lyric.LyricServiceLowVersion"/>
         <service

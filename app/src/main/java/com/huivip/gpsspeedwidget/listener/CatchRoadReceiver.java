@@ -29,7 +29,7 @@ public class CatchRoadReceiver extends BroadcastReceiver {
         String dateStr = "";
         String bearingStr = "";
         String speedStr = "";
-        GpsUtil gpsUtil = GpsUtil.getInstance(context);
+        GpsUtil gpsUtil = GpsUtil.getInstance(context.getApplicationContext());
         Log.d("huivip","Catch Road Started");
        /* if (!gpsUtil.isGpsLocationChanged()) {
             Log.d("huivip","Catch Road: GPS is no Ready, quit!");

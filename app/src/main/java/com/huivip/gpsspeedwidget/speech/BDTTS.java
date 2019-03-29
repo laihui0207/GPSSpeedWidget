@@ -1,14 +1,11 @@
 package com.huivip.gpsspeedwidget.speech;
 
-import android.app.Service;
 import android.content.Context;
-import android.media.AudioManager;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import com.baidu.tts.auth.AuthInfo;
-import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
 import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
@@ -27,7 +24,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     protected String appKey = "645OiDA3l2baAATnci6lTzC6";
     protected String secretKey = "222af7afd5d975f91d7247700de1ac99";
     protected TtsMode ttsMode = TtsMode.MIX;
-    protected String offlineVoice = OfflineResource.VOICE_FEMALE;
+    protected String offlineVoice = BDOfflineResource.VOICE_FEMALE;
     protected SpeechSynthesizer mSpeechSynthesizer;
     private static BDTTS BdTTS;
     boolean inited = false;
@@ -43,7 +40,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
             TEMP_DIR + "/" + "bd_etts_common_speech_f7_mand_eng_high_am-mix_v3.0.0_20170512.dat";
 
     private BDTTS(Context context) {
-        this.context = context;
+        super(context);
         CrashHandler.getInstance().init(context);
         initTTS();
     }
@@ -237,16 +234,16 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     }
 
 
-    protected OfflineResource createOfflineResource(String voiceType) {
-        OfflineResource offlineResource = null;
+    protected BDOfflineResource createOfflineResource(String voiceType) {
+        BDOfflineResource BDOfflineResource = null;
         try {
-            offlineResource = new OfflineResource(this.context, voiceType);
+            BDOfflineResource = new BDOfflineResource(this.context, voiceType);
         } catch (IOException e) {
             // IO 错误自行处理
             e.printStackTrace();
             Log.w("GPS", "【error】:copy files from assets failed." + e.getMessage());
         }
-        return offlineResource;
+        return BDOfflineResource;
     }
 
     @Override
@@ -323,7 +320,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     @Override
     public void onSpeechFinish(String utteranceId) {
         sendMessage("播放结束回调, 序列号:" + utteranceId);
-        afterSpeak();
+/*        afterSpeak();*/
     }
 
     /**
@@ -375,7 +372,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
                         String fileName = Environment.getExternalStorageDirectory() + "/gps_tts/"
                                 + trackID + ".wav";
                         File file = new File(fileName);
-                        if (file.exists()) {
+                        if (PrefUtils.isEnableCacheAudioFile(context) && file.exists()) {
                             playAudio(fileName);
                         } else {
                             mSpeechSynthesizer.synthesize(playString, Integer.toString(trackID));//合成并保存到文件
