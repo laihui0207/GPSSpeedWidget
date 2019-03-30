@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.widget.Toast;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -126,6 +127,37 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 String iformationJsonString=intent.getStringExtra("EXTRA_ROAD_INFO");
                 FileUtil.saveLogToFile(iformationJsonString);
 
+            }
+            if(key == 10046){
+                /*
+                POINAME:poi名称 (String)
+                LON:经度参数（double）
+                LAT:纬度参数（double）
+                DISTANCE:距离 (int)
+                CATEGORY:类别(1:表示家,2:表示公司)（int）
+                ADDRESS:地址(String)
+                 */
+                String poiString=intent.getStringExtra("POINAME");
+                int poiType=intent.getIntExtra("CATEGORY",1);
+                double lon = intent.getDoubleExtra("LON",-1);
+                double lat = intent.getDoubleExtra("LAT",-1);
+                String address = intent.getStringExtra("ADDRESS");
+                if(lon==-1 || lat==-1){
+                    gpsUtil.setHomeSet(null);
+                } else {
+                    gpsUtil.setHomeSet(address);
+                }
+               /* Toast.makeText(context,"即将导航到:"+address,Toast.LENGTH_LONG).show();
+                Intent sendIntent = new Intent();
+                sendIntent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+                sendIntent.putExtra("KEY_TYPE", 10038);
+                sendIntent.putExtra("POINAME",poiString);
+                sendIntent.putExtra("LAT",lat);
+                sendIntent.putExtra("LON",lon);
+                sendIntent.putExtra("DEV",0);
+                sendIntent.putExtra("STYLE",0);
+                sendIntent.putExtra("SOURCE_APP","GPSWidget");
+                context.getApplicationContext().sendBroadcast(sendIntent);*/
             }
             if(key == 10041){  // Get AutoMap Version
                 String versionNumber=intent.getStringExtra("VERSION_NUM");

@@ -81,7 +81,7 @@
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                       android:orientation="horizontal">
             <CheckBox
-                    android:text="记录GPS轨迹"
+                    android:text="记录GPS轨迹(本机)"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/recordGPS"/>
@@ -181,6 +181,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_mix"/>
+            <CheckBox
+                    android:text="压低音乐"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox_audioDepress"/>
             <TextView
                     android:text="   语音音量:"
                     android:layout_width="wrap_content"

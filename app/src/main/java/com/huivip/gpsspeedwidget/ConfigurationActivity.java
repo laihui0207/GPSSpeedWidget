@@ -316,6 +316,14 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setShowSmallFloatingStyle(getApplicationContext(),buttonView.isChecked());
             }
         });
+        CheckBox audioVolumeDepressCheckBox=findViewById(R.id.checkBox_audioDepress);
+        audidMixCheckBox.setChecked(PrefUtils.isEnableAudioVolumeDepress(getApplicationContext()));
+        audioVolumeDepressCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableAudioVolumeDepress(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         CheckBox floatingHideWhenStop=findViewById(R.id.checkBox_hideFloating);
         floatingHideWhenStop.setChecked(PrefUtils.isHideFlatingWindowWhenStop(getApplicationContext()));
         floatingHideWhenStop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

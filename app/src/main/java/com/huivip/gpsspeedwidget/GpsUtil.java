@@ -99,6 +99,7 @@ public class GpsUtil implements AMapNaviListener {
     Location catchRoadLocation;
     int recordLocationDistance=2;
     int catchRoadDistance=10;
+    String homeSet;
     AlarmManager alarm ;
     int locationUpdateCount=0;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
@@ -307,6 +308,14 @@ public class GpsUtil implements AMapNaviListener {
 
     public Double getSpeed() {
         return speed;
+    }
+
+    public String getHomeSet() {
+        return homeSet;
+    }
+
+    public void setHomeSet(String homeSet) {
+        this.homeSet = homeSet;
     }
 
     public String getDistance() {

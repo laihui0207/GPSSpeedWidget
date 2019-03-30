@@ -98,7 +98,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     }
     @Override
     public void auth(){
-            DUILiteSDK.setParameter(DUILiteSDK.KEY_AUTH_TIMEOUT, "5000");//设置授权连接超时时长，默认5000ms
+            DUILiteSDK.setParameter(DUILiteSDK.KEY_AUTH_TIMEOUT, "30000");//设置授权连接超时时长，默认5000ms
 //        DUILiteSDK.setParameter(DUILiteSDK.KEY_DEVICE_PROFILE_PATH, "/sdcard/speech");//自定义设置授权文件的保存路径,需要确保该路径事先存在
             boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
             Log.d(TAG, "DUILite SDK is isAuthorized ？ " + isAuthorized);

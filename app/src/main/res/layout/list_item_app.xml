@@ -43,11 +43,19 @@
     </LinearLayout>
 
     <CheckBox
-        android:id="@+id/checkbox"
+        android:id="@+id/checkbox_backLanch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null"
+        android:text="后台启动"
         android:clickable="false"
         android:focusable="false" />
+    <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:clickable="false"
+            android:focusable="false" />
 
 </LinearLayout>

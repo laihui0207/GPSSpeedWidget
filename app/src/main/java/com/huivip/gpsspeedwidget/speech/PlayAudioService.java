@@ -59,6 +59,9 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             mAudioManager = (AudioManager) getSystemService(
                     Context.AUDIO_SERVICE);
         }
+        if(!PrefUtils.isEnableAudioVolumeDepress(getApplicationContext())){
+            return true;
+        }
         int focusType = -1;
         int streamType = -1;
         if (PrefUtils.isEnableAudioMixService(getApplicationContext())) {
@@ -66,8 +69,8 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             streamType = AudioManager.STREAM_MUSIC;
         } else {
             focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
-            //streamType = AudioManager.STREAM_VOICE_CALL;
-            streamType = AudioManager.STREAM_MUSIC;
+            streamType = AudioManager.STREAM_VOICE_CALL;
+            //streamType = AudioManager.STREAM_MUSIC;
         }
         int result = -1;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -76,8 +79,8 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                             .setUsage(AudioAttributes.USAGE_MEDIA)
                             .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                             .build())
-                    // .setAcceptsDelayedFocusGain(true)
-                    //.setWillPauseWhenDucked(true)
+                     .setAcceptsDelayedFocusGain(true)
+                    .setWillPauseWhenDucked(true)
                     .setOnAudioFocusChangeListener(this)
                     .build();
             result = mAudioManager.requestAudioFocus(mFocusRequest);
@@ -149,13 +152,13 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             mediaPlayer.setDataSource(fis.getFD());
             int volume=PrefUtils.getAudioVolume(getApplicationContext());
             mediaPlayer.setVolume(volume/100f,volume/100f);
-           /* AudioAttributes.Builder attrBuilder = new AudioAttributes.Builder();
+            AudioAttributes.Builder attrBuilder = new AudioAttributes.Builder();
             if(PrefUtils.isEnableAudioMixService(getApplicationContext())) {
                 attrBuilder.setLegacyStreamType(AudioManager.STREAM_MUSIC);
             } else {
                 attrBuilder.setLegacyStreamType(AudioManager.STREAM_VOICE_CALL);
             }
-            mediaPlayer.setAudioAttributes(attrBuilder.build());*/
+            mediaPlayer.setAudioAttributes(attrBuilder.build());
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {

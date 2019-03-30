@@ -2,6 +2,7 @@ package com.huivip.gpsspeedwidget.listener;
 
 import android.content.*;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.os.BadParcelableException;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +17,7 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
     private String preSongName;
     private static boolean spotifyPlaying = false;
     private static final String KW_PLAYER_STATUS = "cn.kuwo.kwmusicauto.action.PLAYER_STATUS";
-
+    AudioManager audioManager;
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
@@ -55,10 +56,6 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         if (artistName != null && artistName.trim().startsWith("<") && artistName.trim().endsWith(">") && artistName.contains("unknown"))
             artistName = "";
 
-       /* if (!TextUtils.isEmpty(player) && player.contains("youtube") && (TextUtils.isEmpty(artistName) || TextUtils.isEmpty(songName) ||
-                (!artistName.contains("VEVO") && !songName.contains("-")))) {
-            return;
-        }*/
         StringBuffer showString=new StringBuffer();
         if (artistName != null && artistName.trim().startsWith("<") && artistName.trim().endsWith(">") && artistName.contains("unknown")) {
             artistName = "";
@@ -71,8 +68,8 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         }
         /*if(!TextUtils.isEmpty(album)){
             showString.append("唱片:"+album).append("\n");
-        }
-        showString.append("长度:").append(longToTimeString(duration)).append("\n");
+        }*/
+        /*showString.append("长度:").append(longToTimeString(duration)).append("\n");
         if(isPlaying){
             showString.append("播放中").append("\n");
         } else {
@@ -84,13 +81,17 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         SharedPreferences current = context.getSharedPreferences("current_music", Context.MODE_PRIVATE);
         String currentArtist = current.getString("artist", "");
         String currentTrack = current.getString("track", "");
-
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        if(currentArtist!=null && currentArtist.equalsIgnoreCase(artistName) && audioManager.isMusicActive() ){
+            return;
+        }
         SharedPreferences.Editor editor = current.edit();
         editor.putString("artist", artistName);
         editor.putString("track", songName);
         editor.putString("player", player);
-        if (!(currentArtist.equals(artistName) && currentTrack.equals(songName) && position == -1))
+        if (!(currentArtist.equals(artistName) && currentTrack.equals(songName) && position == -1)){
             editor.putLong("position", position);
+        }
         editor.putBoolean("playing", isPlaying);
         editor.putLong("duration", duration);
         if (isPlaying) {
@@ -102,7 +103,6 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
             editor.apply();
         if (PrefUtils.isLyricEnabled(context)) {
             if (!TextUtils.isEmpty(showString.toString())) {
-                /*            Toast.makeText(context,showString.toString(),Toast.LENGTH_LONG).show();*/
                 Intent textFloat = new Intent(context, TextFloatingService.class);
                 textFloat.putExtra(TextFloatingService.SHOW_TEXT, showString.toString());
                 textFloat.putExtra(TextFloatingService.SHOW_TIME, 10);

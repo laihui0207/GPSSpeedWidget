@@ -18,16 +18,20 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         super.onReceive(context, paramIntent);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.speednumberwidget);
         Intent service = new Intent(context, GpsSpeedService.class);
-        views.setOnClickPendingIntent(R.id.speedlayout, PendingIntent.getService(context, 0,
+        views.setOnClickPendingIntent(R.id.number_speed, PendingIntent.getService(context, 0,
                 service, 0));
         Intent mapFloatingService=new Intent(context,MapFloatingService.class);
         PendingIntent launchMapFloatingService=PendingIntent.getService(context,1,mapFloatingService,0);
-        views.setOnClickPendingIntent(R.id.limitLayout,launchMapFloatingService);
+        views.setOnClickPendingIntent(R.id.number_limit,launchMapFloatingService);
         if(!Utils.isServiceRunning(context,BootStartService.class.getName())){
             Intent bootService=new Intent(context,BootStartService.class);
             bootService.putExtra(BootStartService.START_BOOT,true);
             context.startService(bootService);
         }
+        PendingIntent goHomeIntent=sendAutoBroadCase(context,1);
+        PendingIntent goCompanyIntent=sendAutoBroadCase(context,2);
+        views.setOnClickPendingIntent(R.id.image_home,goHomeIntent);
+        views.setOnClickPendingIntent(R.id.image_company,goCompanyIntent);
         ComponentName localComponentName = new ComponentName(context, GpsSpeedNumberWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
@@ -72,5 +76,18 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         PrefUtils.setEnabledNumberWidget(context,false);
         PrefUtils.setWidgetActived(context,false);
         super.onDisabled(context);
+    }
+    private PendingIntent sendAutoBroadCase(Context context,int type){
+        Intent intent = new Intent();
+       /* intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+        intent.putExtra("KEY_TYPE", 10045);
+        intent.putExtra("EXTRA_TYPE",type);*/
+
+        intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+        intent.putExtra("KEY_TYPE", 10040);
+        intent.putExtra("DEST", type);
+        intent.putExtra("IS_START_NAVI", 0);
+        intent.putExtra("SOURCE_APP","GPSWidget");
+        return PendingIntent.getBroadcast(context,type+10,intent,0);
     }
 }
