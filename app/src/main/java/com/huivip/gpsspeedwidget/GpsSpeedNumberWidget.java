@@ -28,29 +28,21 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
             bootService.putExtra(BootStartService.START_BOOT,true);
             context.startService(bootService);
         }
-        PendingIntent goHomeIntent=sendAutoBroadCase(context,1);
-        PendingIntent goCompanyIntent=sendAutoBroadCase(context,2);
+        Intent mainActivity=new Intent(context,MainActivity.class);
+        PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,mainActivity,0);
+        views.setOnClickPendingIntent(R.id.image_config,mainActivityPendingIntent);
+        PendingIntent goHomeIntent=sendAutoBroadCase(context,10040,0);
+        PendingIntent goCompanyIntent=sendAutoBroadCase(context,10040,1);
+        PendingIntent goAutoIntent = sendAutoBroadCase(context,10034,200);
         views.setOnClickPendingIntent(R.id.image_home,goHomeIntent);
         views.setOnClickPendingIntent(R.id.image_company,goCompanyIntent);
+        views.setOnClickPendingIntent(R.id.image_auto,goAutoIntent);
         ComponentName localComponentName = new ComponentName(context, GpsSpeedNumberWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-       /* for (int i = 0; i < appWidgetIds.length; i++) {
-            int appWidgetId = appWidgetIds[i];
-
-            Intent intent = new Intent(context, GpsSpeedService.class);
-            intent.setAction(GpsSpeedService.EXTRA_ACION_SPEED_CLICK);
-            intent.putExtra("Key",appWidgetId);
-            Log.d("huivip","Widget Id:"+appWidgetId);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.speednumberwidget);
-            views.setOnClickPendingIntent(R.id.number_speed, pendingIntent);
-            appWidgetManager.updateAppWidget(appWidgetId, views);
-        }*/
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
@@ -77,17 +69,20 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         PrefUtils.setWidgetActived(context,false);
         super.onDisabled(context);
     }
-    private PendingIntent sendAutoBroadCase(Context context,int type){
+    private PendingIntent sendAutoBroadCase(Context context,int key,int type){
         Intent intent = new Intent();
        /* intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
-        intent.putExtra("KEY_TYPE", 10045);
+        intent.putExtra("KEY_TYPE", 10045);  // 查询家，公司的地址
         intent.putExtra("EXTRA_TYPE",type);*/
 
         intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
-        intent.putExtra("KEY_TYPE", 10040);
-        intent.putExtra("DEST", type);
-        intent.putExtra("IS_START_NAVI", 0);
+        intent.putExtra("KEY_TYPE", key);
+        if(key==10040) {
+            intent.putExtra("DEST", type);
+            intent.putExtra("IS_START_NAVI", 0);
+        }
         intent.putExtra("SOURCE_APP","GPSWidget");
         return PendingIntent.getBroadcast(context,type+10,intent,0);
     }
+
 }

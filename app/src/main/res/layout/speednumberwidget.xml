@@ -6,10 +6,16 @@
                 android:layout_height="wrap_content" android:background="@drawable/speed_border"
 >
     <ImageView android:layout_width="70dp" android:layout_height="60dp"
-               android:src="@drawable/gohome" android:visibility="gone" android:layout_gravity="top|center" android:id="@+id/image_home"/>
+               android:src="@drawable/gohome"  android:layout_gravity="top|center" android:id="@+id/image_home"/>
     <ImageView android:layout_width="70dp" android:layout_height="60dp"
-               android:src="@drawable/gocompany" android:visibility="gone" android:layout_gravity="bottom|center"
+               android:src="@drawable/gocompany"  android:layout_gravity="bottom|center"
                android:id="@+id/image_company"/>
+    <ImageView android:layout_width="40dp" android:layout_height="40dp"
+               android:src="@mipmap/ic_launcher"  android:layout_gravity="top|right"
+               android:id="@+id/image_config"/>
+    <ImageView android:layout_width="40dp" android:layout_height="40dp"
+               android:src="@drawable/autonavi_icon" android:layout_gravity="top|left"
+               android:id="@+id/image_auto"/>
     <LinearLayout android:id="@+id/number_widget"
                   android:orientation="horizontal"
                   android:layout_width="400dp"
