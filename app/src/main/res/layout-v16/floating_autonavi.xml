@@ -113,4 +113,10 @@
     <ImageView android:layout_width="50dp" android:layout_height="50dp"
                android:src="@drawable/gocompany"  android:layout_gravity="top|right"
                android:id="@+id/image_company_navi"/>
+    <ImageView android:layout_width="40dp" android:layout_height="40dp"
+               android:src="@mipmap/ic_launcher"  android:layout_gravity="bottom|right"
+               android:id="@+id/image_main_navi"/>
+    <ImageView android:layout_width="40dp" android:layout_height="40dp"
+               android:src="@drawable/autonavi_icon" android:layout_gravity="bottom|left"
+               android:id="@+id/image_auto_navi"/>
 </FrameLayout>

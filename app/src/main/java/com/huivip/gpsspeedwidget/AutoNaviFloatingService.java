@@ -68,6 +68,10 @@ public class AutoNaviFloatingService extends Service {
     ImageView goHomeImage;
     @BindView(R.id.image_company_navi)
     ImageView goCompanyImage;
+    @BindView(R.id.image_main_navi)
+    ImageView goMainImage;
+    @BindView(R.id.image_auto_navi)
+    ImageView goAutoNaviImage;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
@@ -176,6 +180,20 @@ public class AutoNaviFloatingService extends Service {
             @Override
             public void onClick(View v) {
                 sendBroadcast(sendAutoBroadCase(getApplicationContext(),10040,1));
+            }
+        });
+        goMainImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+                intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+        goAutoNaviImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10034,100));
             }
         });
         super.onCreate();
