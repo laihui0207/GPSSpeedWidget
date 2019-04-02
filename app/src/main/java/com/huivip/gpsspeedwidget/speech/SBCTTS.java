@@ -41,11 +41,32 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     private SBCTTS(Context context){
         super(context);
-        boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
-        Log.d("GPS","SBC TTS init, isAuth:"+isAuthorized);
-        if(!isAuthorized){
-            auth();
+        if (Utils.isNetworkConnected(context)) {
+            boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
+            if (!isAuthorized) {
+                auth();
+            } else {
+                initTTS();
+            }
+        } else {
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    ConnectivityManager connectMgr = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
+                    NetworkInfo activeNetwork = connectMgr.getActiveNetworkInfo();
+                    if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+                        auth();
+                        if (haveAuth) {
+                            context.getApplicationContext().unregisterReceiver(broadcastReceiver);
+                        }
+                    }
+                }
+            };
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            context.getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
         }
+
     }
     public static SBCTTS getInstance(Context context){
         if(tts==null){
@@ -55,46 +76,22 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     }
     @Override
     public void initTTS() {
-        boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
-        if(!isAuthorized){
-            if (Utils.isNetworkConnected(context)) {
-                auth();
-            } else {
-                broadcastReceiver = new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        ConnectivityManager connectMgr = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
-                        NetworkInfo activeNetwork = connectMgr.getActiveNetworkInfo();
-                        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                            auth();
-                            if(haveAuth) {
-                                context.getApplicationContext().unregisterReceiver(broadcastReceiver);
-                            }
-                        }
-                    }
-                };
-                IntentFilter intentFilter = new IntentFilter();
-                intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-                context.getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
-            }
-        } else {
-            if (mEngine != null) {
-                mEngine.destroy();
-            }
-            mEngine = AILocalTTSEngine.createInstance();//创建实例
-            mEngine.setFrontResBin(Constant.TTS_FRONT_RES, Constant.TTS_FRONT_RES_MD5);//设置assets目录下前端合成资源名和相应的Md5文件名
-            mEngine.setDictDb(Constant.TTS_DICT_RES, Constant.TTS_DICT_MD5);//设置assets目录下合成字典名和相应的Md5文件名
-            mEngine.setBackResBinArray(mBackResBinArray, mBackResBinMd5sumArray);//设置后端合成音色资源，如果只需设置一个，则array只需要传一个成员值就可以，init前设置setBackResBin接口无效
-            mEngine.setSpeechRate(1.0f);//设置合成音语速，范围为0.5～2.0
+        if (mEngine != null) {
+            mEngine.destroy();
+        }
+        mEngine = AILocalTTSEngine.createInstance();//创建实例
+        mEngine.setFrontResBin(Constant.TTS_FRONT_RES, Constant.TTS_FRONT_RES_MD5);//设置assets目录下前端合成资源名和相应的Md5文件名
+        mEngine.setDictDb(Constant.TTS_DICT_RES, Constant.TTS_DICT_MD5);//设置assets目录下合成字典名和相应的Md5文件名
+        mEngine.setBackResBinArray(mBackResBinArray, mBackResBinMd5sumArray);//设置后端合成音色资源，如果只需设置一个，则array只需要传一个成员值就可以，init前设置setBackResBin接口无效
+        mEngine.setSpeechRate(1.0f);//设置合成音语速，范围为0.5～2.0
             /*if(PrefUtils.isEnableAudioMixService(context)) {
                 mEngine.setStreamType(AudioManager.STREAM_MUSIC);//设置audioTrack的播放流，默认为music
             } else {
                 mEngine.setStreamType(AudioManager.STREAM_VOICE_CALL);
             }*/
-            mEngine.setUseSSML(false);//设置是否使用ssml合成语法，默认为false
-            mEngine.setSpeechVolume(400);//设置合成音频的音量，范围为1～500
-            mEngine.init(new AILocalTTSListenerImpl());//初始化合成引擎
-        }
+        mEngine.setUseSSML(false);//设置是否使用ssml合成语法，默认为false
+        mEngine.setSpeechVolume(400);//设置合成音频的音量，范围为1～500
+        mEngine.init(new AILocalTTSListenerImpl());//初始化合成引擎
     }
     @Override
     public void auth(){
