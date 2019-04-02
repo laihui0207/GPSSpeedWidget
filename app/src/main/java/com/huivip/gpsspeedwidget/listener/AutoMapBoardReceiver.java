@@ -40,7 +40,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         }
                         gpsUtil.setAutoNavi_on_Frontend(true);
                         if(PrefUtils.isHideFloatingWidowOnNaviApp(context)){
-                            Utils.startFloatingWindows(context,false);
+                            Utils.startFloatingWindows(context.getApplicationContext(),false);
                         }
                         if (PrefUtils.isEnableAutoMute(context)) {
                             PrefUtils.setEnableTempAudioService(context,false);
@@ -54,7 +54,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         }
                         gpsUtil.setAutoNavi_on_Frontend(false);
                         if(PrefUtils.isHideFloatingWidowOnNaviApp(context) && gpsUtil.getAutoNaviStatus() != Constant.Navi_Status_Started){
-                            Utils.startFloatingWindows(context,true);
+                            Utils.startFloatingWindows(context.getApplicationContext(),true);
                         }
                         if (PrefUtils.isEnableAutoMute(context)) {
                             PrefUtils.setEnableTempAudioService(context,false);
@@ -84,7 +84,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setAutoMapBackendProcessStarted(false);
                         PrefUtils.setEnableTempAudioService(context, true);
                         if(PrefUtils.isHideFloatingWidowOnNaviApp(context)){
-                            Utils.startFloatingWindows(context,true);
+                            Utils.startFloatingWindows(context.getApplicationContext(),true);
                         }
                     case 25:  // xunhang end
                     case 9:  // navi end
@@ -300,6 +300,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
         if(!PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)){
             return;
         }
-       Utils.startFloatingWindows(context,enabled);
+       Utils.startFloatingWindows(context.getApplicationContext(),enabled);
     }
 }

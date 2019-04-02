@@ -292,7 +292,7 @@ public abstract class Utils {
         Intent meterFloatingService=new Intent(context,MeterFloatingService.class);
         boolean needClose=false;
         if(enabled){
-            GpsUtil gpsUtil=GpsUtil.getInstance(context);
+            GpsUtil gpsUtil=GpsUtil.getInstance(context.getApplicationContext());
            /* if(gpsUtil.isAutoNavi_on_Frontend() && PrefUtils.isHideFloatingWidowOnNaviApp(context)){
                 return;
             }*/

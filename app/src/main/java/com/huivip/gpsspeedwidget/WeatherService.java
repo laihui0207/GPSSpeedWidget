@@ -169,7 +169,7 @@ public class WeatherService implements AMapLocationListener {
                     }
                 }
                 if(!running && gpsUtil.getKmhSpeed()>0 && PrefUtils.isHideFlatingWindowWhenStop(context)){
-                    Utils.startFloatingWindows(context,true);
+                    Utils.startFloatingWindows(context.getApplicationContext(),true);
                 }
                 if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>50){
                     if(lastedLocation!=null && lastedLocation!=aMapLocation) {
@@ -190,7 +190,7 @@ public class WeatherService implements AMapLocationListener {
                 if (gpsUtil.getSpeed() == 0 && running) {
                     running = false;
                     if (PrefUtils.isHideFlatingWindowWhenStop(context)) {
-                        Utils.startFloatingWindows(context, false);
+                        Utils.startFloatingWindows(context.getApplicationContext(), false);
                     }
                     if(PrefUtils.isShowAddressWhenStop(context)) {
                         if (!address.equalsIgnoreCase(pre_address)) {
