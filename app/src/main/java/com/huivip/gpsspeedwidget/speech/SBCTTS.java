@@ -166,8 +166,10 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     @Override
     public void release() {
         stop();
-        mEngine.destroy();
-        mEngine=null;
+        if(mEngine!=null) {
+            mEngine.destroy();
+            mEngine = null;
+        }
     }
 
     @Override

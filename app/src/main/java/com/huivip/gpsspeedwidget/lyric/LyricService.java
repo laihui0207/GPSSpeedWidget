@@ -21,6 +21,7 @@ import com.huivip.gpsspeedwidget.LyricWidgetService;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.lang.ref.WeakReference;
@@ -156,6 +157,9 @@ public class LyricService extends NotificationListenerService implements RemoteC
         Log.d("huivip","stateChangeTimes:"+stateChangeTimeMs);
         Log.d("huivip","CurrentPost:"+currentPosMs);
         Log.d("huivip","Speed:"+speed);
+        if(!PrefUtils.isLyricEnabled(getApplicationContext())){
+           return;
+        }
         if(state==RemoteControlClient.PLAYSTATE_PAUSED){
             launchLrcFloationgWindows(false);
         } else if(state== RemoteControlClient.PLAYSTATE_PLAYING){
@@ -200,6 +204,9 @@ public class LyricService extends NotificationListenerService implements RemoteC
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            if(!PrefUtils.isLyricEnabled(getApplicationContext())){
+                return;
+            }
             if(!TextUtils.isEmpty(lyricContent)) {
                 List<LrcBean> list= LrcUtil.parseStr2List(lyricContent);
                 if(list!=null && list.size()>0) {

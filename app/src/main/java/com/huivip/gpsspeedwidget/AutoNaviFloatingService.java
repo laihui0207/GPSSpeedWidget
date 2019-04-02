@@ -64,6 +64,10 @@ public class AutoNaviFloatingService extends Service {
     @BindView(R.id.textView_autonavi_speedUnit)
     TextView speedUnitTextView;
     TimerTask locationScanTask;
+    @BindView(R.id.image_home_navi)
+    ImageView goHomeImage;
+    @BindView(R.id.image_company_navi)
+    ImageView goCompanyImage;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
@@ -162,7 +166,30 @@ public class AutoNaviFloatingService extends Service {
                }
             }
         });
+        goHomeImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10040,0));
+            }
+        });
+        goCompanyImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10040,1));
+            }
+        });
         super.onCreate();
+    }
+    private Intent sendAutoBroadCase(Context context, int key,int type){
+        Intent intent = new Intent();
+        intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+        intent.putExtra("KEY_TYPE", key);
+        if(key==10040) {
+            intent.putExtra("DEST", type);
+            intent.putExtra("IS_START_NAVI", 0);
+        }
+        intent.putExtra("SOURCE_APP","GPSWidget");
+        return intent;
     }
     void checkLocationData() {
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {

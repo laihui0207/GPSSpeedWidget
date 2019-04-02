@@ -30,7 +30,6 @@ public class BootStartService extends Service {
         alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
-        mPlayer = MediaPlayer.create(this, R.raw.warn);
     }
 
     @Override
@@ -58,15 +57,20 @@ public class BootStartService extends Service {
                     }
                 }
                 if(PrefUtils.isPlayWarn(getApplicationContext())){
-                    mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            mPlayer.reset();
-                            mPlayer.release();
-                            mPlayer=null;
-                        }
-                    });
-                    mPlayer.start();
+                    mPlayer = MediaPlayer.create(this, R.raw.warn);
+                    if(mPlayer!=null) {
+                        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                if (mPlayer != null) {
+                                    mPlayer.reset();
+                                    mPlayer.release();
+                                }
+                                mPlayer = null;
+                            }
+                        });
+                        mPlayer.start();
+                    }
                 }
             }
         }
