@@ -49,7 +49,7 @@ public abstract class PrefUtils {
     public static final String ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI="com.huivip.enable.hide.FloatingWindow.OnNaviApp";
     public static final String ENABLE_AUTO_GOHOME_AFTER_NAVI_STARTED="com.huivip.enable.auto.goHome.afterNavi";
     public static final String ENABLE_AUDIO_MIX="com.huivip.enable.AudioMix";
-    public static final String ENABLE_AUDIO__VOLUME_DEPRESS="com.huivip.enable.Audio.volume.depress";
+    public static final String ENABLE_AUDIO_VOLUME_DEPRESS="com.huivip.enable.Audio.volume.depress";
     public static final String ENABLE_TEMP_AUDIO_SERVICE="com.huivip.enable.temp.AudioService";
     public static final String ENABLE_AUTONAVI_SERVICE="com.huivip.enable.autoNavi.Service";
     public static final String WIDGET_ACTIVED="com.huivip.widget.actived";
@@ -352,10 +352,10 @@ public abstract class PrefUtils {
         edit(context).putBoolean(ENABLE_AUDIO_MIX, enableService).apply();
     }
     public static boolean isEnableAudioVolumeDepress(Context context){
-        return getSharedPreferences(context).getBoolean(ENABLE_AUDIO__VOLUME_DEPRESS, false);
+        return getSharedPreferences(context).getBoolean(ENABLE_AUDIO_VOLUME_DEPRESS, false);
     }
     public static void setEnableAudioVolumeDepress(Context context,boolean enableService){
-        edit(context).putBoolean(ENABLE_AUDIO__VOLUME_DEPRESS, enableService).apply();
+        edit(context).putBoolean(ENABLE_AUDIO_VOLUME_DEPRESS, enableService).apply();
     }
     public static boolean isEnableAutoNaviService(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_AUTONAVI_SERVICE, true);

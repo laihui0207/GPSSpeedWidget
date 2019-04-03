@@ -317,7 +317,7 @@ public class ConfigurationActivity extends Activity {
             }
         });
         CheckBox audioVolumeDepressCheckBox=findViewById(R.id.checkBox_audioDepress);
-        audidMixCheckBox.setChecked(PrefUtils.isEnableAudioVolumeDepress(getApplicationContext()));
+        audioVolumeDepressCheckBox.setChecked(PrefUtils.isEnableAudioVolumeDepress(getApplicationContext()));
         audioVolumeDepressCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
