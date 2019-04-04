@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
@@ -36,7 +37,6 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     boolean haveAuth=false;
     private static SBCTTS tts=null;
     private int mauthCount=0;
-    private boolean onlySynthesize=false;
     BroadcastReceiver broadcastReceiver;
 
     private SBCTTS(Context context){
@@ -84,11 +84,11 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         mEngine.setDictDb(Constant.TTS_DICT_RES, Constant.TTS_DICT_MD5);//设置assets目录下合成字典名和相应的Md5文件名
         mEngine.setBackResBinArray(mBackResBinArray, mBackResBinMd5sumArray);//设置后端合成音色资源，如果只需设置一个，则array只需要传一个成员值就可以，init前设置setBackResBin接口无效
         mEngine.setSpeechRate(1.0f);//设置合成音语速，范围为0.5～2.0
-            /*if(PrefUtils.isEnableAudioMixService(context)) {
-                mEngine.setStreamType(AudioManager.STREAM_MUSIC);//设置audioTrack的播放流，默认为music
-            } else {
-                mEngine.setStreamType(AudioManager.STREAM_VOICE_CALL);
-            }*/
+        if (PrefUtils.isEnableAudioMixService(context)) {
+            mEngine.setStreamType(AudioManager.STREAM_MUSIC);//设置audioTrack的播放流，默认为music
+        } else {
+            mEngine.setStreamType(AudioManager.STREAM_VOICE_CALL);
+        }
         mEngine.setUseSSML(false);//设置是否使用ssml合成语法，默认为false
         mEngine.setSpeechVolume(400);//设置合成音频的音量，范围为1～500
         mEngine.init(new AILocalTTSListenerImpl());//初始化合成引擎
@@ -127,7 +127,15 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     @Override
     public void speak(String text, boolean force) {
         Log.d("GPS","Speak:"+text);
-        synthesize(text,force);
+        if(PrefUtils.isEnableAudioVolumeDepress(context)) {
+            customPlayer=true;
+            synthesize(text, force);
+        } else {
+            if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
+                customPlayer=false;
+                mEngine.speak(text, "1024");
+            }
+        }
     }
 
     @Override
@@ -148,7 +156,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     @Override
     public void synthesize(String text, boolean force) {
         if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
-            onlySynthesize = true;
+            customPlayer=true;
             if (wordList != null)
                 wordList.addLast(text);
             else {
@@ -243,11 +251,11 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
                     Log.d(Tag, "合成结束");
                 }
             });*/
-           if(!onlySynthesize) {
+           if(!customPlayer) {
                return;
            }
             String fileName=Environment.getExternalStorageDirectory() + "/gps_tts/"
-                    + utteranceId + ".wav" ;
+                    + utteranceId ;
             playAudio(fileName);
 
         }
@@ -287,7 +295,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
                             }
                             int trackID = playString.hashCode();
                             String fileName = Environment.getExternalStorageDirectory() + "/gps_tts/"
-                                    + trackID + ".wav";
+                                    + trackID ;
                             File file = new File(fileName);
                             if (PrefUtils.isEnableCacheAudioFile(context) && file.exists()) {
                                 playAudio(fileName);

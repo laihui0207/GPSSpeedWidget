@@ -25,6 +25,7 @@ public abstract class TTSService implements TTS {
     PlayAudioService.PlayBinder playBinder;
     private ServiceConnection mServiceConnection;
     Context context;
+    protected boolean customPlayer=false;
 
     public TTSService(Context context) {
         this.context = context;

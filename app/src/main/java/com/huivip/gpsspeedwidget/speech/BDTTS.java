@@ -1,6 +1,7 @@
 package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -28,7 +29,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     protected SpeechSynthesizer mSpeechSynthesizer;
     private static BDTTS BdTTS;
     boolean inited = false;
-    boolean fromSpeek = true;
     // ================选择TtsMode.ONLINE  不需要设置以下参数; 选择TtsMode.MIX 需要设置下面2个离线资源文件的路径
     private static final String TEMP_DIR = "/sdcard/GPS"; // 重要！请手动将assets目录下的3个dat 文件复制到该目录
 
@@ -61,7 +61,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     @Override
     public void speak(String text, boolean force) {
-        fromSpeek = true;
       /*  if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null && (force || PrefUtils.isEnableTempAudioService(context)))  {
             if(!inited){
                 release();
@@ -73,7 +72,15 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
                 Log.d("huivip","语音播放失败");
             }
         }*/
-        synthesize(text, force);
+        if(PrefUtils.isEnableAudioVolumeDepress(context)) {
+            customPlayer =true;
+            synthesize(text, force);
+        } else {
+            if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null && (force || PrefUtils.isEnableTempAudioService(context))) {
+                customPlayer = false;
+                mSpeechSynthesizer.speak(text);
+            }
+        }
     }
 
     public void stop() {
@@ -90,7 +97,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     @Override
     public void synthesize(String text) {
-        fromSpeek = false;
         synthesize(text, false);
     }
 
@@ -101,6 +107,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
                 //release();
                 initTTS();
             }
+            customPlayer = true;
             //String utteranceId=Integer.toString(text.hashCode());
            /* int result = mSpeechSynthesizer.synthesize(text,utteranceId);
             if(result!=0){
@@ -180,11 +187,11 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE_WIFI wifi状态下使用在线，非wifi离线。在线状态下， 请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_NETWORK ， 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
-       /* if (PrefUtils.isEnableAudioMixService(context)) {
+        if (PrefUtils.isEnableAudioMixService(context)) {
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         } else {
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-        }*/
+        }
         // 6. 初始化
         int result = mSpeechSynthesizer.initTts(ttsMode);
         inited = result == 0;
@@ -261,6 +268,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     @Override
     public void onSynthesizeDataArrived(String utteranceId, byte[] bytes, int progress) {
         //  Log.i(TAG, "合成进度回调, progress：" + progress + ";序列号:" + utteranceId );
+        if(!customPlayer) return;
         File tempAudioFile = null;
         try {
             String path = Environment.getExternalStorageDirectory().toString() + "/gps_tts/";
@@ -286,8 +294,9 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     @Override
     public void onSynthesizeFinish(String utteranceId) {
         sendMessage("合成结束回调, 序列号:" + utteranceId);
+        if(!customPlayer) return;
         String pcmFile = Environment.getExternalStorageDirectory().toString() + "/gps_tts/" + utteranceId + ".pcm";
-        String wavFile = Environment.getExternalStorageDirectory().toString() + "/gps_tts/" + utteranceId + ".wav";
+        String wavFile = Environment.getExternalStorageDirectory().toString() + "/gps_tts/" + utteranceId ;
         try {
             rawToWave(new File(pcmFile), new File(wavFile));
         } catch (IOException e) {
@@ -370,7 +379,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
                         }
                         int trackID = playString.hashCode();
                         String fileName = Environment.getExternalStorageDirectory() + "/gps_tts/"
-                                + trackID + ".wav";
+                                + trackID ;
                         File file = new File(fileName);
                         if (PrefUtils.isEnableCacheAudioFile(context) && file.exists()) {
                             playAudio(fileName);

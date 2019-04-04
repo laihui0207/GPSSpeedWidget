@@ -90,17 +90,6 @@ public class FloatingService extends Service implements FloatingViewListener {
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
-           /* LayoutInflater inflater = LayoutInflater.from(this);
-            DisplayMetrics metrics = new DisplayMetrics();
-            mWindowManager.getDefaultDisplay().getMetrics(metrics);
-            mFloatingView = inflater.inflate(R.layout.floating_default_limit, null);
-            // final ImageView iconView = (ImageView) inflater.inflate(R.layout.floating_default_limit, null, false);
-            mFloatingViewManager = new FloatingViewManager(this, this);
-            mFloatingViewManager.setFixedTrashIconImage(R.drawable.ic_overlay_close);
-            mFloatingViewManager.setActionTrashIconImage(R.drawable.ic_overlay_action);
-            final FloatingViewManager.Options options = new FloatingViewManager.Options();
-            options.overMargin = (int) (16 * metrics.density);
-            mFloatingViewManager.addViewToWindow(mFloatingView, options);*/
             gpsUtil.startLocationService();
         }
         return Service.START_REDELIVER_INTENT;

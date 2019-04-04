@@ -139,7 +139,7 @@
         <receiver android:name=".listener.AutoFTPBackupReceiver"/>
         <receiver android:name=".listener.AutoLaunchSystemConfigReceiver"/>
         <receiver android:name=".listener.BootStartReceiver">
-            <intent-filter android:priority="1000">
+            <intent-filter android:priority="9999">
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
 
                 <category android:name="android.intent.category.HOME"/>
