@@ -28,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -63,6 +64,14 @@ public class AutoNaviFloatingService extends Service {
     @BindView(R.id.textView_autonavi_speedUnit)
     TextView speedUnitTextView;
     TimerTask locationScanTask;
+    @BindView(R.id.image_home_navi)
+    ImageView goHomeImage;
+    @BindView(R.id.image_company_navi)
+    ImageView goCompanyImage;
+    @BindView(R.id.image_main_navi)
+    ImageView goMainImage;
+    @BindView(R.id.image_auto_navi)
+    ImageView goAutoNaviImage;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
@@ -152,12 +161,51 @@ public class AutoNaviFloatingService extends Service {
         };
         CrashHandler.getInstance().init(getApplicationContext());
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+
+        goHomeImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10040,0));
+            }
+        });
+        goCompanyImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10040,1));
+            }
+        });
+        goMainImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+                intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+        goAutoNaviImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10034,100));
+            }
+        });
         super.onCreate();
+    }
+    private Intent sendAutoBroadCase(Context context, int key,int type){
+        Intent intent = new Intent();
+        intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+        intent.putExtra("KEY_TYPE", key);
+        if(key==10040) {
+            intent.putExtra("DEST", type);
+            intent.putExtra("IS_START_NAVI", 0);
+        }
+        intent.putExtra("SOURCE_APP","GPSWidget");
+        return intent;
     }
     void checkLocationData() {
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             speedView.setText(gpsUtil.getKmhSpeedStr() + "");
-            speedWheelView.setRotation((float) (gpsUtil.getSpeedometerPercentage() / 100d * 280f));
+            //speedWheelView.setRotation((float) (gpsUtil.getSpeedometerPercentage() / 100d * 280f));
+            speedWheelView.setRotation(360-gpsUtil.getBearing());
             setSpeedOveral(gpsUtil.isHasLimited());
             directionTextView.setText(gpsUtil.getDirection() + "");
             altitudeTextView.setText("海拔： " + gpsUtil.getAltitude() + "米");

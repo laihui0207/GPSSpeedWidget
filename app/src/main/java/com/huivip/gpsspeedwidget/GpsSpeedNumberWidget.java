@@ -3,12 +3,10 @@ package com.huivip.gpsspeedwidget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
+import android.content.*;
 import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 
 /**
@@ -20,18 +18,22 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         super.onReceive(context, paramIntent);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.speednumberwidget);
         Intent service = new Intent(context, GpsSpeedService.class);
-        views.setOnClickPendingIntent(R.id.number_widget, PendingIntent.getService(context, 0,
+        views.setOnClickPendingIntent(R.id.number_speed, PendingIntent.getService(context, 0,
                 service, 0));
-        /*if(paramIntent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)
-                || paramIntent.getAction().equalsIgnoreCase("android.intent.action.QUICKBOOT_POWERON")
-                || paramIntent.getAction().equalsIgnoreCase(Intent.ACTION_REBOOT)){
-            boolean start = PrefUtils.isEnableAutoStart(context);
-            if(start) {
-                service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT,true);
-                context.startService(service);
-            }
-        }*/
-
+        if(!Utils.isServiceRunning(context,BootStartService.class.getName())){
+            Intent bootService=new Intent(context,BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            context.startService(bootService);
+        }
+        Intent mainActivity=new Intent(context,MainActivity.class);
+        PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,mainActivity,0);
+        views.setOnClickPendingIntent(R.id.image_config,mainActivityPendingIntent);
+        PendingIntent goHomeIntent=sendAutoBroadCase(context,10040,0);
+        PendingIntent goCompanyIntent=sendAutoBroadCase(context,10040,1);
+        PendingIntent goAutoIntent = sendAutoBroadCase(context,10034,200);
+        views.setOnClickPendingIntent(R.id.image_home,goHomeIntent);
+        views.setOnClickPendingIntent(R.id.image_company,goCompanyIntent);
+        views.setOnClickPendingIntent(R.id.image_auto,goAutoIntent);
         ComponentName localComponentName = new ComponentName(context, GpsSpeedNumberWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
@@ -63,6 +65,17 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         PrefUtils.setEnabledNumberWidget(context,false);
         PrefUtils.setWidgetActived(context,false);
         super.onDisabled(context);
+    }
+    private PendingIntent sendAutoBroadCase(Context context,int key,int type){
+        Intent intent = new Intent();
+        intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+        intent.putExtra("KEY_TYPE", key);
+        if(key==10040) {
+            intent.putExtra("DEST", type);
+            intent.putExtra("IS_START_NAVI", 0);
+        }
+        intent.putExtra("SOURCE_APP","GPSWidget");
+        return PendingIntent.getBroadcast(context,type+10,intent,0);
     }
 
 }
