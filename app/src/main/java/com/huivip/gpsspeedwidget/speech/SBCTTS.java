@@ -133,7 +133,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         } else {
             if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
                 customPlayer=false;
-                mEngine.speak(text, "1024");
+                mEngine.speak(text, text.hashCode()+"");
             }
         }
     }
