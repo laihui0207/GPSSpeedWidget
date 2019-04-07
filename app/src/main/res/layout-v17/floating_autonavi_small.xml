@@ -113,7 +113,7 @@
                android:id="@+id/image_company_navi"/>
     <ImageView android:layout_width="30dp" android:layout_height="30dp"
                android:src="@mipmap/ic_launcher"  android:layout_gravity="bottom|right"
-               android:id="@+id/image_main_navi"/>
+               android:id="@+id/image_main_navi" android:visibility="gone"/>
     <ImageView android:layout_width="30dp" android:layout_height="30dp"
                android:src="@drawable/autonavi_icon" android:layout_gravity="bottom|left"
                android:id="@+id/image_auto_navi"/>

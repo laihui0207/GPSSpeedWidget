@@ -77,8 +77,8 @@ public class GpsSpeedService extends Service {
                     this.numberRemoteViews.setTextViewText(R.id.number_speed, "...");
                     this.numberRemoteViews.setTextViewText(R.id.number_limit, "...");
                     this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, 0, false);
-                    this.numberRemoteViews.setViewVisibility(R.id.image_home,View.INVISIBLE);
-                    this.numberRemoteViews.setViewVisibility(R.id.image_company,View.INVISIBLE);
+                /*    this.numberRemoteViews.setViewVisibility(R.id.image_home,View.INVISIBLE);
+                    this.numberRemoteViews.setViewVisibility(R.id.image_company,View.INVISIBLE);*/
                     this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
                     this.numberRemoteViews = null;
                     gpsUtil.startLocationService();
@@ -88,13 +88,6 @@ public class GpsSpeedService extends Service {
                         PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
                     }
                 }
-                // Sync home info
-                Intent syncHomeIntent = new Intent();
-                syncHomeIntent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
-                syncHomeIntent.putExtra("KEY_TYPE", 10045);
-                syncHomeIntent.putExtra("EXTRA_TYPE",1);
-                sendBroadcast(syncHomeIntent);
-
             } else {
                 serviceStoped = true;
                 this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "关");

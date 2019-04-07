@@ -71,10 +71,6 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
     }
     private PendingIntent sendAutoBroadCase(Context context,int key,int type){
         Intent intent = new Intent();
-       /* intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
-        intent.putExtra("KEY_TYPE", 10045);  // 查询家，公司的地址
-        intent.putExtra("EXTRA_TYPE",type);*/
-
         intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
         intent.putExtra("KEY_TYPE", key);
         if(key==10040) {

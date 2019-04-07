@@ -202,6 +202,12 @@ public class GpsUtil implements AMapNaviListener {
         context.startService(recordService);
         serviceStarted = true;
         weatherService=WeatherService.getInstance(context);
+        // Sync home info
+        Intent syncHomeIntent = new Intent();
+        syncHomeIntent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+        syncHomeIntent.putExtra("KEY_TYPE", 10045);
+        syncHomeIntent.putExtra("EXTRA_TYPE",1);
+        context.sendBroadcast(syncHomeIntent);
     }
 
     private void startAimlessNavi() {
