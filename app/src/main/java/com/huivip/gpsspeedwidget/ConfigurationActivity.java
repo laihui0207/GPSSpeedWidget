@@ -514,25 +514,36 @@ public class ConfigurationActivity extends Activity {
         autoLaunchHotSpotCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(buttonView.isChecked()){
-                    boolean enabled=WifiUtils.switchWifiHotspot(getApplicationContext(),Constant.WIFI_USERNAME,Constant.WIFI_PASSWORD,true);
-                    if(enabled){
-                        PrefUtils.setAutoLaunchHotSpot(getApplicationContext(),buttonView.isChecked());
-                        Toast.makeText(getApplicationContext(),"移动热点已启动:"+Constant.WIFI_USERNAME+",密码:"+Constant.WIFI_PASSWORD,Toast.LENGTH_LONG).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (!Settings.System.canWrite(ConfigurationActivity.this)) {
+                        Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                                Uri.parse("package:" + getPackageName()));
+                        //intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivityForResult(intentWriteSetting, 1240);
+                    } else {
+                        autoLaunchChanged(buttonView);
                     }
-                    else {
-                        Toast.makeText(getApplicationContext(),"移动热点启动失败！",Toast.LENGTH_SHORT).show();
+                } else
+                    autoLaunchChanged(buttonView);
+            }
+
+            private void autoLaunchChanged(CompoundButton buttonView) {
+                if (buttonView.isChecked()) {
+                    boolean enabled = WifiUtils.switchWifiHotspot(getApplicationContext(), Constant.WIFI_USERNAME, Constant.WIFI_PASSWORD, true);
+                    if (enabled) {
+                        PrefUtils.setAutoLaunchHotSpot(getApplicationContext(), buttonView.isChecked());
+                        Toast.makeText(getApplicationContext(), "移动热点已启动:" + Constant.WIFI_USERNAME + ",密码:" + Constant.WIFI_PASSWORD, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "移动热点启动失败！", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else {
-                    boolean enabled=WifiUtils.switchWifiHotspot(getApplicationContext(),Constant.WIFI_USERNAME,Constant.WIFI_PASSWORD,false);
-                    if(enabled){
-                        Toast.makeText(getApplicationContext(),"移动热点已关闭！",Toast.LENGTH_LONG).show();
+                } else {
+                    boolean enabled = WifiUtils.switchWifiHotspot(getApplicationContext(), Constant.WIFI_USERNAME, Constant.WIFI_PASSWORD, false);
+                    if (enabled) {
+                        Toast.makeText(getApplicationContext(), "移动热点已关闭！", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "移动热点关闭失败！", Toast.LENGTH_SHORT).show();
                     }
-                    else {
-                        Toast.makeText(getApplicationContext(),"移动热点关闭失败！",Toast.LENGTH_SHORT).show();
-                    }
-                    PrefUtils.setAutoLaunchHotSpot(getApplicationContext(),buttonView.isChecked());
+                    PrefUtils.setAutoLaunchHotSpot(getApplicationContext(), buttonView.isChecked());
                 }
             }
         });
@@ -1031,7 +1042,9 @@ public class ConfigurationActivity extends Activity {
         noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         boolean serviceReady=Utils.isServiceReady(this);
-
+        CheckBox autoLaunchHotSpotCheckBox=findViewById(R.id.checkBox_autoWifi);
+        autoLaunchHotSpotCheckBox.setEnabled(WifiUtils.checkMobileAvalible(getApplicationContext()));
+        autoLaunchHotSpotCheckBox.setChecked(PrefUtils.isAutoLauchHotSpot(getApplicationContext()));
         mAppList = PrefUtils.getAutoLaunchAppsName(getApplicationContext());
         String selectApps = "";
         if (mAppList != null && mAppList.size() > 0) {
@@ -1088,18 +1101,18 @@ public class ConfigurationActivity extends Activity {
                 //intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivityForResult(intentWriteSetting, 124);
             }
-        }*/
+        }
 
-       /* boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
+        boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
         if(overlayEnabled && !PrefUtils.isEnableAccessibilityService(getApplicationContext())){
 
-          *//*  if(upgradeRootPermission(BuildConfig.APPLICATION_ID)) {
-                 *//**//*Settings.Secure.putString(getContentResolver(),
+            if(upgradeRootPermission(BuildConfig.APPLICATION_ID)) {
+                 Settings.Secure.putString(getContentResolver(),
                     Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,BuildConfig.APPLICATION_ID+"/"+AppDetectionService.class.getName());
             Settings.Secure.putString(getContentResolver(),
-                    Settings.Secure.ACCESSIBILITY_ENABLED, "1");*//**//*
+                    Settings.Secure.ACCESSIBILITY_ENABLED, "1");
                 //updateAccessibility(BuildConfig.APPLICATION_ID + "/" + AppDetectionService.class.getName());
-            }*//*
+            }
         }*/
     }
     private void updateAccessibility(String serviceName) {
@@ -1136,6 +1149,7 @@ public class ConfigurationActivity extends Activity {
         Settings.Secure.putInt(getContentResolver(),
                 Settings.Secure.ACCESSIBILITY_ENABLED, accessibilityEnabled ? 1 : 0);
     }
+
     private static Set<ComponentName> getEnabledServicesFromSettings(Context context,String serviceName) {
         String enabledServicesSetting = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);

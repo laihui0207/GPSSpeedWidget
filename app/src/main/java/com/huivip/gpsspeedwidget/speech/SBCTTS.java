@@ -195,7 +195,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         if(mauthCount<5){
             auth();
         } else {
-            Toast.makeText(context,"思必驰语音授权失败",Toast.LENGTH_SHORT).show();;
+            //Toast.makeText(context,"思必驰语音授权失败",Toast.LENGTH_SHORT).show();;
         }
     }
 

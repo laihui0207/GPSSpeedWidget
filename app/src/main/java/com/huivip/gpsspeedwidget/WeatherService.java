@@ -168,7 +168,7 @@ public class WeatherService implements AMapLocationListener {
                         pre_adCode =adCode;
                     }
                 }
-                if(!running && gpsUtil.getKmhSpeed()>0 && PrefUtils.isHideFlatingWindowWhenStop(context)){
+                if(!running && gpsUtil.getKmhSpeed()>0){
                     Utils.startFloatingWindows(context.getApplicationContext(),true);
                 }
                 if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>50){

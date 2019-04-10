@@ -20,11 +20,16 @@ public class TimeThread extends Thread {
     public boolean running=true;
     public TextView tvDate;
     private int msgKey1 = 22;
-
+    private String dateFormat="HH:mm:ss";
     public TimeThread(TextView tvDate) {
         this.tvDate = tvDate;
     }
-
+    public TimeThread(TextView tvDate,String dateFormat) {
+        this.tvDate = tvDate;
+        if(dateFormat!=null){
+            this.dateFormat = dateFormat;
+        }
+    }
     @Override
     public void run() {
         do {
@@ -46,7 +51,7 @@ public class TimeThread extends Thread {
             switch (msg.what) {
                 case 22:
 
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                    SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
                     String date = sdf.format(new Date());
 
                     tvDate.setText(date + " "+ getWeek());

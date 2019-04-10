@@ -20,6 +20,7 @@ import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,6 +72,8 @@ public class FloatingService extends Service implements FloatingViewListener {
     TextView speedUnitTextView;
     @BindView(R.id.textView_default_altitude)
     TextView textViewAltitude;
+    @BindView(R.id.floating_close)
+    ImageView closeImage;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
@@ -168,12 +171,19 @@ public class FloatingService extends Service implements FloatingViewListener {
             mSpeedometerView.setLayoutParams(speedLayout);
         }
         initMonitorPosition();
+        closeImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onStop();
+                stopSelf();
+            }
+        });
         mSpeedometerText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!Utils.isServiceRunning(getApplicationContext(),MapFloatingService.class.getName())) {
-                    Intent timeIntent = new Intent(getApplicationContext(), MapFloatingService.class);
-                    startService(timeIntent);
+                    Intent floatingMapIntent = new Intent(getApplicationContext(), MapFloatingService.class);
+                    startService(floatingMapIntent);
                 }
             }
         });

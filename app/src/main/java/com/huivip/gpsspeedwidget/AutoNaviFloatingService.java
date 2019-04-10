@@ -193,7 +193,9 @@ public class AutoNaviFloatingService extends Service {
         goAutoNaviImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10034,100));
+                //sendBroadcast(sendAutoBroadCase(getApplicationContext(),10034,100));
+                onStop();
+                stopSelf();
             }
         });
         super.onCreate();

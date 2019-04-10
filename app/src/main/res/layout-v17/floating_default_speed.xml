@@ -23,7 +23,7 @@
             app:apsv_start_angle="135"
             app:apsv_sweep_angle="270"
             tools:visibility="gone"/>
-    <RelativeLayout
+    <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
@@ -31,44 +31,46 @@
         <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/speed"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal|center_vertical"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:textSize="23dp"
+                android:textSize="70dp"
                 android:text="80"
                 android:textColor="#000"
                 app:autoSizeTextType="uniform"
-                android:gravity="center_vertical|center"
-                android:layout_alignParentTop="true" android:layout_alignLeft="@+id/speedUnits"
-                android:layout_alignStart="@+id/speedUnits" android:layout_above="@+id/speedUnits"/>
+                android:layout_marginBottom="5px"
+                android:layout_marginLeft="10px"
+                android:layout_marginRight="10px"
+                android:gravity="center_vertical|center"/>
 
         <TextView
                 android:id="@+id/speedUnits"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="bottom|center_horizontal"
                 android:includeFontPadding="false"
                 android:gravity="center_vertical|center_horizontal"
                 android:textColor="#000"
-                android:textSize="15dp"
+                android:textSize="15dp" android:visibility="gone"
                 tools:text="km/h" android:text="km/h"
-                android:layout_alignParentBottom="true" android:layout_centerHorizontal="true"
                 android:layout_marginBottom="2dp"/>
         <TextView
                 android:text="北" android:textColor="#000"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
                 android:id="@+id/textView_number_direction"
-                android:textSize="15dp"
-                android:layout_centerVertical="false" android:layout_centerInParent="false"
-                android:layout_alignParentTop="true" android:layout_centerHorizontal="true"/>
+                android:textSize="15dp" />
         <TextView
                 android:text="海拔：0米"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:layout_above="@+id/speedUnits"
-                android:layout_centerHorizontal="true" android:id="@+id/textView_default_altitude"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10px"
+                android:layout_gravity="bottom|center_horizontal"
+                 android:id="@+id/textView_default_altitude"
                 android:textSize="15dp" android:textColor="#000"/>
 
-    </RelativeLayout>
+    </FrameLayout>
 
 </RelativeLayout>

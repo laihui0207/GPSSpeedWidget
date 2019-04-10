@@ -22,12 +22,11 @@
                    android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
         />
-        <TextView android:textSize="80dp"
+        <TextView android:textSize="70dp"
                   android:id="@+id/SpeedText" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:text="80"
+                  android:text="808"
                   android:textStyle="bold" android:textColor="#000"
                   android:layout_centerVertical="true"
-                  android:layout_marginTop="20dp"
                   android:layout_centerHorizontal="true" android:layout_centerInParent="true"/>
         <com.huivip.gpsspeedwidget.SpeedWheel android:id="@+id/imageView_pointer" android:layout_width="match_parent"
                                               android:layout_height="match_parent"
@@ -111,12 +110,12 @@
     <ImageView android:layout_width="50dp" android:layout_height="50dp"
                android:src="@drawable/gohome"  android:layout_gravity="top|left" android:id="@+id/image_home_navi"/>
     <ImageView android:layout_width="50dp" android:layout_height="50dp"
-               android:src="@drawable/gocompany"  android:layout_gravity="top|right"
+               android:src="@drawable/gocompany"  android:layout_gravity="bottom|left"
                android:id="@+id/image_company_navi"/>
     <ImageView android:layout_width="40dp" android:layout_height="40dp"
                android:src="@mipmap/ic_launcher"  android:layout_gravity="bottom|right"
                android:id="@+id/image_main_navi" android:visibility="gone"/>
     <ImageView android:layout_width="40dp" android:layout_height="40dp"
-               android:src="@drawable/autonavi_icon" android:layout_gravity="bottom|left"
+               android:src="@drawable/close" android:layout_gravity="top|right"
                android:id="@+id/image_auto_navi"/>
 </FrameLayout>
