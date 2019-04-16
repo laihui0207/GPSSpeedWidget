@@ -1064,8 +1064,9 @@ public class ConfigurationActivity extends Activity {
         //TextView selectAppsTextView = findViewById(R.id.textView_selectApps);
         //selectAppsTextView.setText("已选择:"+selectApps);
         if(!TextUtils.isEmpty(selectApps)){
+            autoLaunchAppView.removeAllViews();
             String[] apps=selectApps.split(",");
-            int index=2;
+            int index=0;
             for(String app:apps){
                 TextView textView=new TextView(getApplicationContext());
                 textView.setText(app+"   ");
