@@ -2,6 +2,7 @@ package com.huivip.gpsspeedwidget.listener;
 
 import android.content.*;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.os.BadParcelableException;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +17,7 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
     private String preSongName;
     private static boolean spotifyPlaying = false;
     private static final String KW_PLAYER_STATUS = "cn.kuwo.kwmusicauto.action.PLAYER_STATUS";
-
+    AudioManager audioManager;
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
@@ -85,7 +86,10 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         SharedPreferences current = context.getSharedPreferences("current_music", Context.MODE_PRIVATE);
         String currentArtist = current.getString("artist", "");
         String currentTrack = current.getString("track", "");
-
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        if(currentArtist!=null && currentArtist.equalsIgnoreCase(artistName) && audioManager.isMusicActive() ){
+            return;
+        }
         SharedPreferences.Editor editor = current.edit();
         editor.putString("artist", artistName);
         editor.putString("track", songName);

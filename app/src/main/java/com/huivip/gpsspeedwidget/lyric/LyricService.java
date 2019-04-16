@@ -21,6 +21,7 @@ import com.huivip.gpsspeedwidget.LyricWidgetService;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.lang.ref.WeakReference;
@@ -156,6 +157,9 @@ public class LyricService extends NotificationListenerService implements RemoteC
         Log.d("huivip","stateChangeTimes:"+stateChangeTimeMs);
         Log.d("huivip","CurrentPost:"+currentPosMs);
         Log.d("huivip","Speed:"+speed);
+        if(!PrefUtils.isLyricEnabled(getApplicationContext())){
+           return;
+        }
         if(state==RemoteControlClient.PLAYSTATE_PAUSED){
             launchLrcFloationgWindows(false);
         } else if(state== RemoteControlClient.PLAYSTATE_PLAYING){
