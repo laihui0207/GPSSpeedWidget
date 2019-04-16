@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.*;
@@ -60,7 +61,7 @@ public class ConfigurationActivity extends Activity {
     RadioButton noDesktopButton;
     RadioButton onAutoNaviButton;
     private Handler handler=null;
-    private Set<String> mAppList;
+    private List<String> mAppList;
     String resultText="";
     private static final int REQUEST_LOCATION = 105;
     private static  final int REQUEST_STORAGE=106;
@@ -364,6 +365,15 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setRoadLimitNotify(getApplicationContext(),buttonView.isChecked());
             }
         });
+        CheckBox gpsUseMPHCheckbox=findViewById(R.id.checkbox_speedType_mph);
+        gpsUseMPHCheckbox.setChecked(PrefUtils.isEnableGPSUseMPH(getApplicationContext()));
+        gpsUseMPHCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableGPSUseMPH(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+
         CheckBox enableLyricCheckBox=findViewById(R.id.checkBox_lyric);
         enableLyricCheckBox.setChecked(PrefUtils.isLyricEnabled(getApplicationContext()));
         enableLyricCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1045,13 +1055,28 @@ public class ConfigurationActivity extends Activity {
         CheckBox autoLaunchHotSpotCheckBox=findViewById(R.id.checkBox_autoWifi);
         autoLaunchHotSpotCheckBox.setEnabled(WifiUtils.checkMobileAvalible(getApplicationContext()));
         autoLaunchHotSpotCheckBox.setChecked(PrefUtils.isAutoLauchHotSpot(getApplicationContext()));
-        mAppList = PrefUtils.getAutoLaunchAppsName(getApplicationContext());
-        String selectApps = "";
-        if (mAppList != null && mAppList.size() > 0) {
+        //mAppList
+        String selectApps = PrefUtils.getAutoLaunchAppsName(getApplicationContext());
+        /*if (mAppList != null && mAppList.size() > 0) {
             selectApps=mAppList.toString();
+        }*/
+        LinearLayout autoLaunchAppView=findViewById(R.id.autoStartAppView);
+        //TextView selectAppsTextView = findViewById(R.id.textView_selectApps);
+        //selectAppsTextView.setText("已选择:"+selectApps);
+        if(!TextUtils.isEmpty(selectApps)){
+            String[] apps=selectApps.split(",");
+            int index=2;
+            for(String app:apps){
+                TextView textView=new TextView(getApplicationContext());
+                textView.setText(app+"   ");
+                textView.setId(index);
+                textView.setTextColor(Color.BLACK);
+                textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                autoLaunchAppView.addView(textView,index++);
+            }
+        } else {
+            autoLaunchAppView.removeAllViews();
         }
-        TextView selectAppsTextView = findViewById(R.id.textView_selectApps);
-        selectAppsTextView.setText("已选择:"+selectApps);
         Button btnOk= (Button) findViewById(R.id.confirm);
         if(serviceReady){
             btnOk.setEnabled(true);

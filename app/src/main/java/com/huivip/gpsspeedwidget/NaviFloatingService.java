@@ -140,9 +140,25 @@ public class NaviFloatingService extends Service{
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         CrashHandler.getInstance().init(getApplicationContext());
+        /*naveIconImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10034,100));
+            }
+        });*/
         super.onCreate();
     }
-
+    private Intent sendAutoBroadCase(Context context, int key,int type){
+        Intent intent = new Intent();
+        intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+        intent.putExtra("KEY_TYPE", key);
+        if(key==10040) {
+            intent.putExtra("DEST", type);
+            intent.putExtra("IS_START_NAVI", 0);
+        }
+        intent.putExtra("SOURCE_APP","GPSWidget");
+        return intent;
+    }
     void checkLocationData() {
         if(!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
             currentRoadTextView.setText(gpsUtil.getCurrentRoadName()+"");

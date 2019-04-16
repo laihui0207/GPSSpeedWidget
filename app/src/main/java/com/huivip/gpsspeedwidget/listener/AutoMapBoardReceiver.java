@@ -3,12 +3,20 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class AutoMapBoardReceiver extends BroadcastReceiver {
 
@@ -16,8 +24,14 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         GpsUtil gpsUtil=GpsUtil.getInstance(context.getApplicationContext());
         if( intent!=null && !TextUtils.isEmpty(intent.getAction()) && intent.getAction().equalsIgnoreCase(Constant.AMAP_SEND_ACTION)){
-
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String time=formatter.format(new Date());
+            Bundle bundle=intent.getExtras();
             int key=intent.getIntExtra("KEY_TYPE",-1);
+            for(String keyStr:bundle.keySet()){
+                FileUtil.saveLogToFile("key_Type:"+key+",Key:"+keyStr+",value:"+bundle.get(keyStr));
+            }
+            FileUtil.saveLogToFile(time+",Get Key:"+key);
             if(key==10019){
                 int status=intent.getIntExtra("EXTRA_STATE",-1);
                 switch (status) {
@@ -79,7 +93,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
                         break;
                     case 2: // auto map in end
-                        gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
+                        //gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         gpsUtil.setCurrentRoadName("");
                         gpsUtil.setAutoMapBackendProcessStarted(false);
                         PrefUtils.setEnableTempAudioService(context, true);
@@ -121,7 +135,26 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             if(key==13012){  // drive way information,but Just support pre-install version
                 String wayInfo=intent.getStringExtra("EXTRA_DRIVE_WAY");
                 //Toast.makeText(context,wayInfo,Toast.LENGTH_SHORT).show();
-                FileUtil.saveLogToFile("WayInfo:"+wayInfo);
+
+                try {
+                    JSONObject object=new JSONObject(wayInfo);
+                    Intent driveWayFloatingService=new Intent(context,DriveWayFloatingService.class);
+                    if(object.getBoolean("drive_way_enabled")){
+                        Intent sinpIntent = new Intent();
+                        sinpIntent.setAction("AUTONAVI_STANDARD_BROADCAST_SEND");
+                        sinpIntent.putExtra("KEY_TYPE", 10060);
+                        sinpIntent.putExtra("EXTRA_SCREENSHOT_PATH",
+                                Environment.getExternalStorageDirectory().toString() + "/" + "huivip/");
+                        context.sendBroadcast(sinpIntent);
+                       // context.startService(driveWayFloatingService);
+                    } else {
+                        driveWayFloatingService.putExtra(DriveWayFloatingService.EXTRA_CLOSE,true);
+                       // context.startService(driveWayFloatingService);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                FileUtil.saveLogToFile("time:"+time+",WayInfo:"+wayInfo);
             }
             if(key==10056){  // current navi path information
                 String iformationJsonString=intent.getStringExtra("EXTRA_ROAD_INFO");

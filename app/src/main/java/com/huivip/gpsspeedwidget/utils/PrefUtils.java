@@ -11,9 +11,7 @@ import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 public abstract class PrefUtils {
 
@@ -39,6 +37,7 @@ public abstract class PrefUtils {
     public static final String AUTO_START_PREFS_NAME="AutoStart";
     public static final String PREF_AUTO_LAUNCH_WIFI_HOTSPOT="AutoStart.Wifi.hotspot";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
+    public static final String GPS_SPEED_TYPE_MPH_PREFS_NAME="com.huivip.use.mph";
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
     public static final String UPLOAD_GPS_HISTORY_NAVI_PREFS_NAME="uploadNAVIGpsHistory";
     public static final String AUTO_CLEAN_GPS_HISTORY_PREFS_NAME="AutoCleanGpsHistory";
@@ -193,7 +192,12 @@ public abstract class PrefUtils {
     public static boolean isEnableRecordGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, true);
     }
-
+    public static void setEnableGPSUseMPH(Context context,boolean recordHistory){
+        edit(context).putBoolean(GPS_SPEED_TYPE_MPH_PREFS_NAME, recordHistory).apply();
+    }
+    public static boolean isEnableGPSUseMPH(Context context){
+        return getSharedPreferences(context).getBoolean(GPS_SPEED_TYPE_MPH_PREFS_NAME, false);
+    }
     public static void setEnableTimeFloatingWidow(Context context, boolean value){
         edit(context).putBoolean(ENABLE_TIME_FLOATING_WINDOW, value).apply();
     }
@@ -589,19 +593,19 @@ public abstract class PrefUtils {
     public static void setDefaultLaunchApp(Context context, String packageName) {
         edit(context).putString(PREF_DEFAULT_LAUNCHE_APP, packageName).apply();
     }
-    public static Set<String> getAutoLaunchApps(Context context) {
-        return new HashSet<>(getSharedPreferences(context).getStringSet(PREF_AUTO_LAUNCH_APPS, new HashSet<String>()));
+    public static String getAutoLaunchApps(Context context) {
+        return getSharedPreferences(context).getString(PREF_AUTO_LAUNCH_APPS, "");
     }
 
-    public static void setAutoLaunchApps(Context context, Set<String> packageNames) {
-        edit(context).putStringSet(PREF_AUTO_LAUNCH_APPS, packageNames).apply();
+    public static void setAutoLaunchApps(Context context,String packageNames) {
+        edit(context).putString(PREF_AUTO_LAUNCH_APPS, packageNames).apply();
     }
-    public static Set<String> getAutoLaunchAppsName(Context context) {
-        return new HashSet<>(getSharedPreferences(context).getStringSet(PREF_AUTO_LAUNCH_APPS_NAME, new HashSet<String>()));
+    public static String getAutoLaunchAppsName(Context context) {
+        return getSharedPreferences(context).getString(PREF_AUTO_LAUNCH_APPS_NAME, "");
     }
 
-    public static void setAutoLaunchAppsName(Context context, Set<String> packageNames) {
-        edit(context).putStringSet(PREF_AUTO_LAUNCH_APPS_NAME, packageNames).apply();
+    public static void setAutoLaunchAppsName(Context context, String packageNames) {
+        edit(context).putString(PREF_AUTO_LAUNCH_APPS_NAME, packageNames).apply();
     }
     public static void setFtpUrl(Context context,String url){
         edit(context).putString(FTP_URL,url).apply();

@@ -34,9 +34,11 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         PendingIntent goHomeIntent=sendAutoBroadCase(context,10040,0);
         PendingIntent goCompanyIntent=sendAutoBroadCase(context,10040,1);
         PendingIntent goAutoIntent = sendAutoBroadCase(context,10034,200);
+        PendingIntent goGasStationIntent=sendAutoBroadCase(context,10036,201);
         views.setOnClickPendingIntent(R.id.image_home,goHomeIntent);
         views.setOnClickPendingIntent(R.id.image_company,goCompanyIntent);
         views.setOnClickPendingIntent(R.id.image_auto,goAutoIntent);
+        views.setOnClickPendingIntent(R.id.image_gas_station,goGasStationIntent);
         ComponentName localComponentName = new ComponentName(context, GpsSpeedNumberWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
@@ -76,6 +78,8 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         if(key==10040) {
             intent.putExtra("DEST", type);
             intent.putExtra("IS_START_NAVI", 0);
+        } else if(key==10036){
+            intent.putExtra("KEYWORDS","加油站");
         }
         intent.putExtra("SOURCE_APP","GPSWidget");
         return PendingIntent.getBroadcast(context,type+10,intent,0);

@@ -64,8 +64,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_gotoHome"/>
+
+
+        </LinearLayout>
+        <LinearLayout android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/autoStartAppView">
             <Button
-                    android:text="启动其它应用"
+                    android:text="选择启动应用"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/button_selectApp"/>
@@ -76,7 +80,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_selectApps"
                     android:gravity="center_vertical"/>
-
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                       android:orientation="horizontal">
@@ -105,6 +108,8 @@
                     android:layout_above="@+id/linearLayout"
                     android:layout_toRightOf="@+id/textView"
                     android:layout_toEndOf="@+id/textView"/>
+            <CheckBox android:layout_width="wrap_content"
+                      android:id="@+id/checkbox_speedType_mph" android:text="使用英里单位MPH" android:layout_height="wrap_content"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="wrap_content"

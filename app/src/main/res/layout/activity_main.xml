@@ -13,10 +13,7 @@
                 android:text="备份行车记录"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/button_backup" android:layout_weight="0.04"/>
-        <Button
-                android:text="测试功能"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/button_test"/>
+
         <Button
                 android:text="打赏支持"
                 android:layout_width="wrap_content"
@@ -61,6 +58,10 @@
                 android:layout_width="wrap_content" android:visibility="gone"
                 android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/button_gpx"
         />
+        <Button
+                android:text="测试功能"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/button_test"/>
     </LinearLayout>
     <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
         <com.amap.api.maps.MapView

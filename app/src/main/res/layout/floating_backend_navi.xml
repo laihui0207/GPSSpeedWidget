@@ -7,7 +7,7 @@
                   xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="330dp"
                   android:layout_height="130dp"
                   android:background="@drawable/navi_floating_border"
-                  android:orientation="horizontal">
+                  android:orientation="horizontal" android:id="@+id/backend_navi">
         <RelativeLayout
                 android:layout_width="100dp"
                 android:layout_height="120dp">

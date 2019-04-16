@@ -210,7 +210,7 @@ public class GpsUtil implements AMapNaviListener {
         context.sendBroadcast(syncHomeIntent);
     }
 
-    private void startAimlessNavi() {
+    public void startAimlessNavi() {
         if (!PrefUtils.isWidgetActived(context) && !PrefUtils.isEnableFlatingWindow(context)) {
             return;
         }
@@ -238,7 +238,7 @@ public class GpsUtil implements AMapNaviListener {
         }
     }
 
-    private void stopAimlessNavi() {
+    public void stopAimlessNavi() {
         if (aMapNavi != null) {
             aMapNavi.stopAimlessMode();
             aMapNavi.removeAMapNaviListener(this);
@@ -371,12 +371,14 @@ public class GpsUtil implements AMapNaviListener {
             if (catchRoadLocation == null) {
                 catchRoadLocation = paramLocation;
             } else if (paramLocation.distanceTo(catchRoadLocation) > catchRoadDistance) {
-                Log.d("huivip", "Launch CatchRoad receiver");
-                PendingIntent catchRoadIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, CatchRoadReceiver.class), 0);
-                alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);
-                catchRoadLocation=paramLocation;
-                recordLocationDistance=10;
-                catchRoadDistance=100;
+                if(getAutoNaviStatus()!=Constant.Navi_Status_Started) { // Auto Navi started then disable catch road service
+                    Log.d("huivip", "Launch CatchRoad receiver");
+                    PendingIntent catchRoadIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, CatchRoadReceiver.class), 0);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);
+                    catchRoadLocation = paramLocation;
+                    recordLocationDistance = 10;
+                    catchRoadDistance = 100;
+                }
             }
             if(PrefUtils.isEnableAutoGoHomeAfterNaviStarted(context) && kmhSpeed>0 && autoNavi_on_Frontend && naviFloatingStatus == Constant.Navi_Status_Started ){
                 new Handler().postDelayed(new Runnable() {
@@ -427,7 +429,9 @@ public class GpsUtil implements AMapNaviListener {
 
         mphSpeed = (int) (this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         kmhSpeed = (int) (this.speed.doubleValue() * 3.6D);
-        // kmhSpeed = mphSpeed;
+        if (PrefUtils.isEnableGPSUseMPH(context)) {
+            kmhSpeed = mphSpeed;
+        }
         if (speedAdjust != 0) {
             if (kmhSpeed > 0 && kmhSpeed > Math.abs(speedAdjust)) {
                 kmhSpeed += speedAdjust;
@@ -822,6 +826,13 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     public void setAutoNaviStatus(int autoNaviStatus) {
+        if(autoNaviStatus == Constant.Navi_Status_Started){
+            Toast.makeText(context,"导航开始，巡航暂时关闭",Toast.LENGTH_SHORT).show();
+            stopAimlessNavi();
+        } else if(this.autoNaviStatus == Constant.Navi_Status_Started && autoNaviStatus == Constant.Navi_Status_Ended){
+            Toast.makeText(context,"导航结束，巡航开启",Toast.LENGTH_SHORT).show();
+            startAimlessNavi();
+        }
         this.autoNaviStatus = autoNaviStatus;
     }
 
@@ -987,7 +998,7 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void showLaneInfo(AMapLaneInfo aMapLaneInfo) {
-        Toast.makeText(context,aMapLaneInfo.getLaneTypeIdArray().toString(),Toast.LENGTH_SHORT).show();
+       // Toast.makeText(context,aMapLaneInfo.getLaneTypeIdArray().toString(),Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -1046,7 +1057,7 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void onPlayRing(int status) {
-        if (status == AMapNaviRingType.RING_EDOG || status == AMapNaviRingType.RING_CAMERA) {
+        if (getAutoNaviStatus()!=Constant.Navi_Status_Started && (status == AMapNaviRingType.RING_EDOG || status == AMapNaviRingType.RING_CAMERA)) {
             setCameraSpeed(0);
             limitDistance = 0F;
             cameraType=-1;
@@ -1055,7 +1066,7 @@ public class GpsUtil implements AMapNaviListener {
                 public void run() {
                     tts.speak("已通过");
                 }
-            }, 2000L);
+            }, 5000L);
 
         }
     }

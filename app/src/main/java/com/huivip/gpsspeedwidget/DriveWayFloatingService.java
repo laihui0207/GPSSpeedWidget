@@ -20,6 +20,9 @@ import android.view.*;
 import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.amap.api.navi.model.AMapLaneInfo;
+import com.amap.api.navi.view.DriveWayView;
+import com.autonavi.ae.guide.model.LaneInfo;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -36,10 +39,9 @@ public class DriveWayFloatingService extends Service{
     private WindowManager mWindowManager;
     private View mFloatingView;
     GpsUtil gpsUtil;
+    @BindView(R.id.autoDriveWayView)
+    LinearLayout driveWayView;
     final Handler locationHandler = new Handler();
-    @BindView(R.id.layout_driveway)
-    LinearLayout wayLinear;
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -55,7 +57,8 @@ public class DriveWayFloatingService extends Service{
                 return super.onStartCommand(intent, flags, startId);
             }
         }
-
+        AMapLaneInfo aMapLaneInfo=new AMapLaneInfo();
+        LaneInfo laneInfo=new LaneInfo();
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
@@ -91,9 +94,6 @@ public class DriveWayFloatingService extends Service{
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         initMonitorPosition();
-        Button b1 = new Button(this);
-        b1.setText("取消");
-        wayLinear.addView(b1);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
@@ -108,72 +108,6 @@ public class DriveWayFloatingService extends Service{
         intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
         intent.setData(Uri.parse("package:" + packageName));
         startActivity(intent);
-    }
-    private int getTurnIcon(int iconValue){
-        int returnValue=-1;
-        switch (iconValue) {
-            case 1:
-                returnValue = R.drawable.sou0_night;
-                break;
-            case 2:
-                returnValue = R.drawable.sou2_night;
-                break;
-            case 3:
-                returnValue = R.drawable.sou3_night;
-                break;
-            case 4:
-                returnValue = R.drawable.sou4_night;
-                break;
-            case 5:
-                returnValue = R.drawable.sou5_night;
-                break;
-            case 6:
-                returnValue = R.drawable.sou6_night;
-                break;
-            case 7:
-                returnValue = R.drawable.sou7_night;
-                break;
-            case 8:
-                returnValue = R.drawable.sou8_night;
-                break;
-            case 9:
-                returnValue = R.drawable.sou9_night;
-                break;
-            case 10:
-                returnValue = R.drawable.sou10_night;
-                break;
-            case 11:
-                returnValue = R.drawable.sou11_night;
-                break;
-            case 12:
-                returnValue = R.drawable.sou12_night;
-                break;
-            case 13:
-                returnValue = R.drawable.sou13_night;
-                break;
-            case 14:
-                returnValue = R.drawable.sou14_night;
-                break;
-            case 15:
-                returnValue = R.drawable.sou15_night;
-                break;
-            case 16:
-                returnValue = R.drawable.sou16_night;
-                break;
-            case 17:
-                returnValue = R.drawable.sou17_night;
-                break;
-            case 18:
-                returnValue = R.drawable.sou18_night;
-                break;
-            case 19:
-                returnValue = R.drawable.sou19_night;
-                break;
-            case 20:
-                returnValue = R.drawable.sou20_night;
-                break;
-        }
-        return returnValue;
     }
     private void initMonitorPosition() {
         if (mFloatingView == null) {

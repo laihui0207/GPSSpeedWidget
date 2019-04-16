@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,40 +36,29 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class AppSelectionActivity extends AppCompatActivity /*Activity implements AppCompatCallback */{
+public class AppSelectionActivity extends AppCompatActivity /*Activity implements AppCompatCallback */ {
 
     public static final String STATE_SELECTED_APPS = "state_selected_apps";
     public static final String STATE_SELECTED_APPS_NAME = "state_selected_apps_name";
     public static final String STATE_APPS = "state_apps";
-    //public static final String STATE_MAP_APPS = "state_map_apps";
-    //public static final String STATE_MAPS_ONLY = "state_maps_only";
 
     private AppAdapter mAdapter;
     private RecyclerFastScroller mScroller;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private Set<String> mSelectedApps;
-    private Set<String> mSelectedAppsName;
+    private List<String> mSelectedApps;
+    private List<String> mSelectedAppsName;
     private List<AppInfo> mAppList;
-    private AppCompatDelegate delegate;
-    //private List<AppInfo> mMapApps;
-
-   // private boolean mMapsOnly;
 
     private CompositeSubscription mLoadAppsSubscription;
     private boolean mLoadingAppList;
-    //private boolean mLoadingMapApps;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appselection);
-      /*  delegate = AppCompatDelegate.create(this, this);
-        delegate.onCreate(savedInstanceState);
-        delegate.setContentView(R.layout.activity_appselection);*/
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        //delegate.setSupportActionBar(toolbar);
         setSupportActionBar(toolbar);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
@@ -83,11 +73,7 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                /*if (mMapsOnly) {
-                    reloadMapApps();
-                } else {*/
-                    reloadInstalledApps();
-                /*}*/
+                reloadInstalledApps();
                 mAdapter.setAppInfos(new ArrayList<AppInfo>());
             }
         });
@@ -95,25 +81,14 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
 
         mLoadAppsSubscription = new CompositeSubscription();
         if (savedInstanceState != null) {
-         /*   mMapsOnly = true;
-        } else {*/
             mAppList = savedInstanceState.getParcelableArrayList(STATE_APPS);
-           // mMapApps = savedInstanceState.getParcelableArrayList(STATE_MAP_APPS);
-            //mMapsOnly = false;// savedInstanceState.getBoolean(STATE_MAPS_ONLY);
-            mSelectedApps = new HashSet<>(savedInstanceState.getStringArrayList(STATE_SELECTED_APPS));
-            mSelectedAppsName = new HashSet<>(savedInstanceState.getStringArrayList(STATE_SELECTED_APPS_NAME));
+            mSelectedApps = savedInstanceState.getStringArrayList(STATE_SELECTED_APPS);
+            mSelectedAppsName = savedInstanceState.getStringArrayList(STATE_SELECTED_APPS_NAME);
 
         }
-
-        /*if (mMapApps == null) {
-            reloadMapApps();
-        } else if (mMapsOnly) {
-            mAdapter.setAppInfos(mMapApps);
-        }*/
-
         if (mAppList == null) {
             reloadInstalledApps();
-        } else /*if (!mMapsOnly) */{
+        } else {
             mAdapter.setAppInfos(mAppList);
         }
 
@@ -131,17 +106,31 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
     private void reloadInstalledApps() {
         mLoadingAppList = true;
         mSwipeRefreshLayout.setRefreshing(true);
-        mSelectedApps = new HashSet<>(PrefUtils.getAutoLaunchApps(this));
-        mSelectedAppsName=new HashSet<>(PrefUtils.getAutoLaunchAppsName(this));
+        mSelectedApps=new ArrayList<>();
+        mSelectedAppsName = new ArrayList<>();
+        String selectApps=PrefUtils.getAutoLaunchApps(this);
+        if(!TextUtils.isEmpty(selectApps)){
+            String[] apps=selectApps.split(",");
+            for(String app:apps){
+                mSelectedApps.add(app);
+            }
+        }
+        String appNames= PrefUtils.getAutoLaunchAppsName(this);
+        if(!TextUtils.isEmpty(appNames)){
+            String[] names=appNames.split(",");
+            for(String name:names){
+               mSelectedAppsName.add(name);
+            }
+        }
         Subscription subscription = SelectedAppDatabase.getInstalledApps(this)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleSubscriber<List<AppInfo>>() {
                     @Override
                     public void onSuccess(List<AppInfo> installedApps) {
-                       /* if (!mMapsOnly) {*/
-                            mAdapter.setAppInfos(installedApps);
-                            mSwipeRefreshLayout.setRefreshing(false);
-                      /*  }*/
+                        /* if (!mMapsOnly) {*/
+                        mAdapter.setAppInfos(installedApps);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        /*  }*/
                         mAppList = installedApps;
 
                         mLoadingAppList = false;
@@ -158,32 +147,6 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
         mLoadAppsSubscription.add(subscription);
     }
 
-    /*private void reloadMapApps() {
-        mLoadingMapApps = true;
-        mSwipeRefreshLayout.setRefreshing(true);
-        mSelectedApps = PrefUtils.getAutoLaunchApps(this);
-        Subscription subscription = SelectedAppDatabase.getMapApps(this)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleSubscriber<List<AppInfo>>() {
-                    @Override
-                    public void onSuccess(List<AppInfo> mapApps) {
-                        if (mMapsOnly) {
-                            mAdapter.setAppInfos(mapApps);
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                        mMapApps = mapApps;
-
-                        mLoadingMapApps = false;
-                    }
-
-                    @Override
-                    public void onError(Throwable error) {
-
-                    }
-                });
-        mLoadAppsSubscription.add(subscription);
-    }*/
-
     @Override
     protected void onDestroy() {
         mLoadAppsSubscription.unsubscribe();
@@ -194,13 +157,6 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_app_selection, menu);
-       // MenuItem item = menu.findItem(R.id.menu_app_selection_maps);
-      /*  Drawable drawable-v17 = AppCompatResources.getDrawable(this, R.drawable-v17.ic_map_white_24dp).mutate();
-        drawable-v17 = DrawableCompat.wrap(drawable-v17);*/
-       /* if (mMapsOnly) {
-            DrawableCompat.setTint(drawable-v17, ContextCompat.getColor(this, R.color.colorAccent));
-        }*/
-       // item.setIcon(drawable-v17);
         return true;
     }
 
@@ -210,14 +166,6 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
             case R.id.menu_app_selection_done:
                 finish();
                 return true;
-            /*case R.id.menu_app_selection_maps:
-                //mMapsOnly = !mMapsOnly;
-                invalidateOptionsMenu();
-                mAdapter.setAppInfos(mAppList);
-                *//*mSwipeRefreshLayout.setRefreshing(
-                        mMapsOnly && mLoadingMapApps ||
-                                !mMapsOnly && mLoadingAppList);*//*
-                return true;*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -232,7 +180,7 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
                 mSelectedAppsName.remove(appInfo.name);
             }
 
-            SingleSubscriber<Object> subscriber = new SingleSubscriber<Object>() {
+        /*    SingleSubscriber<Object> subscriber = new SingleSubscriber<Object>() {
                 @Override
                 public void onSuccess(Object value) {
 
@@ -244,9 +192,25 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
                     if (!BuildConfig.DEBUG)
                         Crashlytics.logException(error);
                 }
-            };
-            PrefUtils.setAutoLaunchApps(this, mSelectedApps);
-            PrefUtils.setAutoLaunchAppsName(this,mSelectedAppsName);
+            };*/
+            String selectApps="";
+            for(String packageName:mSelectedApps){
+                if(TextUtils.isEmpty(selectApps)){
+                    selectApps=packageName;
+                }else {
+                    selectApps+=","+packageName;
+                }
+            }
+            String selectAppNames="";
+            for(String name:mSelectedAppsName){
+                if(TextUtils.isEmpty(selectAppNames)){
+                    selectAppNames=name;
+                }else {
+                    selectAppNames+=","+name;
+                }
+            }
+            PrefUtils.setAutoLaunchApps(this, selectApps);
+            PrefUtils.setAutoLaunchAppsName(this, selectAppNames);
             if (AppDetectionService.get() != null) {
                 AppDetectionService.get().updateDesktopApps();
             }
@@ -256,28 +220,10 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(STATE_APPS, (ArrayList<AppInfo>) mAppList);
-        //outState.putParcelableArrayList(STATE_MAP_APPS, (ArrayList<AppInfo>) mMapApps);
-        //outState.putBoolean(STATE_MAPS_ONLY, mMapsOnly);
         outState.putStringArrayList(STATE_SELECTED_APPS, new ArrayList<>(mSelectedApps));
-        outState.putStringArrayList(STATE_SELECTED_APPS_NAME,new ArrayList<>(mSelectedAppsName));
+        outState.putStringArrayList(STATE_SELECTED_APPS_NAME, new ArrayList<>(mSelectedAppsName));
         super.onSaveInstanceState(outState);
     }
-
-  /*  @Override
-    public void onSupportActionModeStarted(ActionMode mode) {
-
-    }
-
-    @Override
-    public void onSupportActionModeFinished(ActionMode mode) {
-
-    }
-
-    @Nullable
-    @Override
-    public ActionMode onWindowStartingSupportActionMode(ActionMode.Callback callback) {
-        return null;
-    }*/
 
     private class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
         private List<AppInfo> mAppInfos;
@@ -316,7 +262,7 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
             holder.title.setText(app.name);
             holder.desc.setText(app.packageName);
             holder.checkbox.setChecked(mSelectedApps.contains(app.packageName));
-
+            //holder.backendLaunch.setChecked();
         }
 
         @Override
@@ -334,6 +280,7 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
             TextView title;
             TextView desc;
             CheckBox checkbox;
+            CheckBox backendLaunch;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -342,6 +289,7 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
                 title = (TextView) itemView.findViewById(R.id.text_name);
                 desc = (TextView) itemView.findViewById(R.id.text_desc);
                 checkbox = (CheckBox) itemView.findViewById(R.id.checkbox);
+                backendLaunch = itemView.findViewById(R.id.checkbox_backLaunch);
 
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override

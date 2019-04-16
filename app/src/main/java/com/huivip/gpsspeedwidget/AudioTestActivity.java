@@ -27,7 +27,12 @@ import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.*;
 import com.huivip.gpsspeedwidget.view.LrcView;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class AudioTestActivity extends Activity {
@@ -275,14 +280,23 @@ public class AudioTestActivity extends Activity {
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String time = formatter.format(new Date());
+                Intent sinpIntent = new Intent();
+                sinpIntent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+                sinpIntent.putExtra("KEY_TYPE", 10036);
+                sinpIntent.putExtra("KEYWORDS","加油站");
+                sinpIntent.putExtra("SOURCE_APP","GPSWidget");
+               /* sinpIntent.putExtra("EXTRA_SCREENSHOT_PATH",
+                        Environment.getExternalStorageDirectory().toString() + "/" + "huivip/way" + time + ".jpg");*/
+                sendBroadcast(sinpIntent);
                /* mPlayer.start();*/
                /*int eTime = mPlayer.getDuration();
                 int sTime = mPlayer.getCurrentPosition();
                 Toast.makeText(AudioTestActivity.this, "Play:"+eTime, Toast.LENGTH_SHORT).show();*/
-                TTS tts= SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+             /*   TTS tts= SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
                 String ttsName=PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.SIBICHITTS) ? "思必驰" : "百度";
-                tts.synthesize("语音测试。现在用的是"+ttsName+"引擎，测试测试");
+                tts.synthesize("语音测试。现在用的是"+ttsName+"引擎，测试测试");*/
               /*  Intent screenSaveActivity=new Intent(getApplicationContext(),SettingsActivity.class);
                 screenSaveActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(screenSaveActivity);*/

@@ -19,6 +19,7 @@ public class AppInfo implements Comparable<AppInfo>, Parcelable {
     };
     public String packageName;
     public String name;
+    public int backendLaunch;
 
     public AppInfo() {
         name = "";
@@ -27,6 +28,7 @@ public class AppInfo implements Comparable<AppInfo>, Parcelable {
     protected AppInfo(Parcel in) {
         this.packageName = in.readString();
         this.name = in.readString();
+        this.backendLaunch=in.readInt();
     }
 
     @Override
