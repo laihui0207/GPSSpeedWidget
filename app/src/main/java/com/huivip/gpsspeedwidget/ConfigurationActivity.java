@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.*;
@@ -900,14 +901,32 @@ public class ConfigurationActivity extends Activity {
         noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         boolean serviceReady=Utils.isServiceReady(this);
-
-        mAppList = PrefUtils.getAutoLaunchAppsName(getApplicationContext());
-        String selectApps = "";
-        if (mAppList != null && mAppList.size() > 0) {
+        CheckBox autoLaunchHotSpotCheckBox=findViewById(R.id.checkBox_autoWifi);
+        autoLaunchHotSpotCheckBox.setEnabled(WifiUtils.checkMobileAvalible(getApplicationContext()));
+        autoLaunchHotSpotCheckBox.setChecked(PrefUtils.isAutoLauchHotSpot(getApplicationContext()));
+        //mAppList
+        String selectApps = PrefUtils.getAutoLaunchAppsName(getApplicationContext());
+        /*if (mAppList != null && mAppList.size() > 0) {
             selectApps=mAppList.toString();
+        }*/
+        LinearLayout autoLaunchAppView=findViewById(R.id.autoStartAppView);
+        //TextView selectAppsTextView = findViewById(R.id.textView_selectApps);
+        //selectAppsTextView.setText("已选择:"+selectApps);
+        if(!TextUtils.isEmpty(selectApps)){
+            autoLaunchAppView.removeAllViews();
+            String[] apps=selectApps.split(",");
+            int index=0;
+            for(String app:apps){
+                TextView textView=new TextView(getApplicationContext());
+                textView.setText(app+"   ");
+                textView.setId(index);
+                textView.setTextColor(Color.BLACK);
+                textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                autoLaunchAppView.addView(textView,index++);
+            }
+        } else {
+            autoLaunchAppView.removeAllViews();
         }
-        TextView selectAppsTextView = findViewById(R.id.textView_selectApps);
-        selectAppsTextView.setText("已选择:"+selectApps);
         Button btnOk= (Button) findViewById(R.id.confirm);
         if(serviceReady){
             btnOk.setEnabled(true);

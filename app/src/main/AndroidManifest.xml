@@ -38,14 +38,14 @@
                 android:name="com.amap.api.v2.apikey"
                 android:value="6d91e53ca05dee32ec58c9d257224e7b"/>
 
-        <activity android:name=".MainActivity" android:excludeFromRecents="true" android:windowSoftInputMode="stateHidden|stateUnchanged">
+      <!--  <activity android:name=".MainActivity"  android:windowSoftInputMode="stateHidden|stateUnchanged">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-<!--                <category android:name="android.intent.category.HOME" />-->
-               <!-- <category android:name="android.intent.category.DEFAULT" />-->
+               &lt;!&ndash; <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>&ndash;&gt;
+&lt;!&ndash;                <category android:name="android.intent.category.HOME" />&ndash;&gt;
+               &lt;!&ndash; <category android:name="android.intent.category.DEFAULT" />&ndash;&gt;
             </intent-filter>
-        </activity>
+        </activity>-->
        <!-- <activity android:name=".GPSLauncher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -53,8 +53,10 @@
 
             </intent-filter>
         </activity>-->
-        <activity android:name=".ConfigurationActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
+        <activity android:name=".ConfigurationActivity" android:excludeFromRecents="true" android:windowSoftInputMode="stateHidden|stateUnchanged">
             <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>

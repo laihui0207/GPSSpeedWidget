@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -14,8 +15,10 @@ import java.util.Set;
 public class ThirdSoftLaunchReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Set<String> autoApps = PrefUtils.getAutoLaunchApps(context);
-        if(autoApps!=null || autoApps.size()>0) {
+        String apps = PrefUtils.getAutoLaunchApps(context);
+        if(TextUtils.isEmpty(apps)) return;
+        String[] autoApps=apps.split(",");
+        if(autoApps!=null || autoApps.length>0) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
