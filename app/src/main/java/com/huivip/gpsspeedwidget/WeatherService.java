@@ -1,7 +1,10 @@
 package com.huivip.gpsspeedwidget;
 
 import android.annotation.SuppressLint;
-import android.app.*;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,9 +17,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
-import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.ToastUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;

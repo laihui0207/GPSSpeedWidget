@@ -1,15 +1,7 @@
 package com.huivip.gpsspeedwidget.utils;
 
 
-import com.amap.api.track.query.model.AddTerminalResponse;
-import com.amap.api.track.query.model.AddTrackResponse;
-import com.amap.api.track.query.model.DistanceResponse;
-import com.amap.api.track.query.model.HistoryTrackResponse;
-import com.amap.api.track.query.model.LatestPointResponse;
-import com.amap.api.track.query.model.OnTrackListener;
-import com.amap.api.track.query.model.ParamErrorResponse;
-import com.amap.api.track.query.model.QueryTerminalResponse;
-import com.amap.api.track.query.model.QueryTrackResponse;
+import com.amap.api.track.query.model.*;
 
 public class SimpleOnTrackListener implements OnTrackListener {
     @Override

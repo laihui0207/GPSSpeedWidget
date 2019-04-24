@@ -10,9 +10,6 @@ import android.text.TextUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
-import java.util.List;
-import java.util.Set;
-
 public class ThirdSoftLaunchReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

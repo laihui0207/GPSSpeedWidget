@@ -11,7 +11,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 import com.aispeech.AIError;
 import com.aispeech.DUILiteSDK;
 import com.aispeech.common.AIConstant;
@@ -121,7 +120,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     @Override
     public void speak(String text) {
-        speak(text,false);
+        speak(text,true);
     }
 
     @Override

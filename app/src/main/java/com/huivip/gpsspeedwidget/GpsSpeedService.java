@@ -1,8 +1,9 @@
 package com.huivip.gpsspeedwidget;
 
-import android.app.*;
+import android.app.Service;
 import android.appwidget.AppWidgetManager;
-import android.content.*;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;

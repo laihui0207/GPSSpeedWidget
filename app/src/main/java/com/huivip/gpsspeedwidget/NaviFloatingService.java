@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -19,12 +18,19 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
 import android.view.*;
-import android.widget.*;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.huivip.gpsspeedwidget.beans.TMCSegment;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -67,6 +73,8 @@ public class NaviFloatingService extends Service{
     View naviCameraView;
     @BindView(R.id.textView_autonavi_speedText)
     TextView speedTextView;
+    @BindView(R.id.lukuanview)
+    TmcSegmentView tmcSegmentView;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -195,6 +203,14 @@ public class NaviFloatingService extends Service{
         int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
         int color = ContextCompat.getColor(this, colorRes);
         speedTextView.setTextColor(color);
+        List<TmcSegmentView.LukuangModel> models = new ArrayList<>();
+        for (TMCSegment.TmcInfo tmcInfo : gpsUtil.getTMCSegment().getTmc_info()) {
+            models.add(new TmcSegmentView.LukuangModel()
+                    .setDistance(tmcInfo.getTmc_segment_distance())
+                    .setStatus(tmcInfo.getTmc_status())
+                    .setNumber(tmcInfo.getTmc_segment_number()));
+        }
+        tmcSegmentView.setLukuangs(models);
     }
     private int getWindowType() {
         return WindowManager.LayoutParams.TYPE_SYSTEM_ALERT | WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY ;

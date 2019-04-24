@@ -8,7 +8,10 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import com.huivip.gpsspeedwidget.listener.*;
+import com.huivip.gpsspeedwidget.listener.AutoFTPBackupReceiver;
+import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
+import com.huivip.gpsspeedwidget.listener.ThirdSoftLaunchReceiver;
+import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -47,7 +50,7 @@ public class BootStartService extends Service {
                         PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), 0);
                         alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, autoLaunchIntent);
                     }
-                    if (PrefUtils.isFTPAutoBackup(getApplicationContext())) {
+                    if (PrefUtils.isFTPAutoBackup(getApplicationContext()) || PrefUtils.isEnableAutoCleanGPSHistory(getApplicationContext())) {
                         PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), 0);
                         alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 120000L, autoFtpBackupIntent);
                     }

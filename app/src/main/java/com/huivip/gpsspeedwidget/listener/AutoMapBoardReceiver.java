@@ -6,8 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.widget.Toast;
+import com.google.gson.Gson;
 import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.beans.TMCSegment;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -79,6 +80,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         if (PrefUtils.isEnableAutoMute(context)) {
                             PrefUtils.setEnableTempAudioService(context,false);
                         }
+                        gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Started);
                         //Toast.makeText(context,"Backend Auto Map into cruising",Toast.LENGTH_SHORT).show();
                         break;
                     case 8: // start navi
@@ -101,6 +103,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             Utils.startFloatingWindows(context.getApplicationContext(),true);
                         }
                     case 25:  // xunhang end
+                        if (PrefUtils.isEnableAutoMute(context)) {
+                            PrefUtils.setEnableTempAudioService(context,true);
+                        }
+                        gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
                     case 9:  // navi end
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                     case 12:
@@ -131,6 +137,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         //Toast.makeText(context,"speaking End",Toast.LENGTH_SHORT).show();
                         break;
                 }
+            }
+            if(key==13011){
+                String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");
+                TMCSegment TMCSegment =new Gson().fromJson(info, TMCSegment.class);
+                gpsUtil.setTMCSegment(TMCSegment);
             }
             if(key==13012){  // drive way information,but Just support pre-install version
                 String wayInfo=intent.getStringExtra("EXTRA_DRIVE_WAY");
@@ -301,6 +312,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setCameraSpeed(0);
                     }*/
                 }
+
             }
             /*if(key==10072){  // return mute status
                 Toast.makeText(context,"静音状态:"+intent.getIntExtra("EXTRA_MUTE",-1)+",临时静音:"+

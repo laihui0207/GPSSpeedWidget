@@ -6,7 +6,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.*;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -19,6 +22,7 @@ import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.enums.*;
 import com.amap.api.navi.model.*;
 import com.autonavi.tbt.TrafficFacilityInfo;
+import com.huivip.gpsspeedwidget.beans.TMCSegment;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
@@ -94,6 +98,7 @@ public class GpsUtil implements AMapNaviListener {
     String cityName="";
     int naviFloatingStatus = 0; // 0 disabled 1 visible
     int autoNaviStatus = 0; // 0 no started  1 started
+    int autoXunHangStatus=0; // 0 no started 1 started
     CycleQueue<Location> locationVOCycleQueue=new CycleQueue<>(5);
     Location lastedRecoredLocation;
     Location catchRoadLocation;
@@ -102,6 +107,7 @@ public class GpsUtil implements AMapNaviListener {
     String homeSet;
     AlarmManager alarm ;
     int locationUpdateCount=0;
+    TMCSegment TMCSegment;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     LocationListener locationListener = new LocationListener() {
         @Override
@@ -318,6 +324,14 @@ public class GpsUtil implements AMapNaviListener {
 
     public String getHomeSet() {
         return homeSet;
+    }
+
+    public TMCSegment getTMCSegment() {
+        return TMCSegment;
+    }
+
+    public void setTMCSegment(TMCSegment TMCSegment) {
+        this.TMCSegment = TMCSegment;
     }
 
     public void setHomeSet(String homeSet) {
@@ -835,7 +849,16 @@ public class GpsUtil implements AMapNaviListener {
         }
         this.autoNaviStatus = autoNaviStatus;
     }
-
+    public void setAutoXunHangStatus(int autoXunHangStatus){
+        if(autoXunHangStatus == Constant.XunHang_Status_Started){
+            Toast.makeText(context,"高德巡航开始，插件巡航暂时关闭",Toast.LENGTH_SHORT).show();
+            stopAimlessNavi();
+        } else if(this.autoXunHangStatus == Constant.XunHang_Status_Started && autoXunHangStatus == Constant.XunHang_Status_Ended){
+            Toast.makeText(context,"高德巡航结束，插件巡航开启",Toast.LENGTH_SHORT).show();
+            startAimlessNavi();
+        }
+        this.autoXunHangStatus=autoXunHangStatus;
+    }
     String speakText = "";
 
     public boolean isOnDesktop() {
@@ -1066,7 +1089,7 @@ public class GpsUtil implements AMapNaviListener {
                 public void run() {
                     tts.speak("已通过");
                 }
-            }, 5000L);
+            }, 500L);
 
         }
     }

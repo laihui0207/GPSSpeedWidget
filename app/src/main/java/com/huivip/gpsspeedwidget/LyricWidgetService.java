@@ -3,7 +3,6 @@ package com.huivip.gpsspeedwidget;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
-import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.media.AudioManager;
 import android.os.Handler;

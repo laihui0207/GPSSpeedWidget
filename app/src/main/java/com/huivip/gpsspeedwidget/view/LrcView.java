@@ -7,15 +7,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
 
-
 import java.util.List;
-import java.util.logging.Handler;
 
 /**
  * Created by 王松 on 2016/10/21.
@@ -97,7 +94,7 @@ public class LrcView extends View {
     protected void onDraw(Canvas canvas) {
         if (width == 0 || height == 0) {
             width = getMeasuredWidth();
-            height = getMeasuredHeight();
+            height =100;// getMeasuredHeight();
         }
         if (list == null || list.size() == 0) {
             canvas.drawText("暂无歌词", width / 2, height / 2, gPaint);

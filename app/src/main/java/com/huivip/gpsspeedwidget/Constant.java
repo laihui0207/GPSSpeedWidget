@@ -23,6 +23,8 @@ public class Constant {
     public static int Navi_Floating_Disabled=0;
     public static int Navi_Status_Started=1;
     public static  int Navi_Status_Ended=0;
+    public static int  XunHang_Status_Started=1;
+    public static int XunHang_Status_Ended=0;
     public static int LINE=1;
     public static int POINT=0;
 

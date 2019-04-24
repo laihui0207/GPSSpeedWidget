@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.BootStartService;
 
 public class BootStartReceiver extends BroadcastReceiver {
     @Override

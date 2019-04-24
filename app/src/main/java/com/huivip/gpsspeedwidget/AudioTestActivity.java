@@ -21,14 +21,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
-import com.huivip.gpsspeedwidget.speech.SpeechFactory;
-import com.huivip.gpsspeedwidget.speech.TTS;
-import com.huivip.gpsspeedwidget.utils.*;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.ToastUtil;
 import com.huivip.gpsspeedwidget.view.LrcView;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

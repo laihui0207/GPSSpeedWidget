@@ -56,7 +56,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     @Override
     public void speak(String text) {
-        speak(text, false);
+        speak(text, true);
     }
 
     @Override

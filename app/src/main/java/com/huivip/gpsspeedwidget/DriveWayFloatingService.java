@@ -17,15 +17,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.view.*;
-import android.widget.*;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.amap.api.navi.model.AMapLaneInfo;
-import com.amap.api.navi.view.DriveWayView;
-import com.autonavi.ae.guide.model.LaneInfo;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -57,8 +54,6 @@ public class DriveWayFloatingService extends Service{
                 return super.onStartCommand(intent, flags, startId);
             }
         }
-        AMapLaneInfo aMapLaneInfo=new AMapLaneInfo();
-        LaneInfo laneInfo=new LaneInfo();
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){

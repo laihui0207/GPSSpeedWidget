@@ -1,7 +1,6 @@
 package com.huivip.gpsspeedwidget.lyric;
 
 import android.text.TextUtils;
-import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import org.json.JSONArray;
 import org.json.JSONException;

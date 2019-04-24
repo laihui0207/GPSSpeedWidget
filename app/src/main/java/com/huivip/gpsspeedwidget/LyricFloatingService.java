@@ -1,7 +1,9 @@
 package com.huivip.gpsspeedwidget;
 
 import android.app.Service;
-import android.content.*;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.net.Uri;

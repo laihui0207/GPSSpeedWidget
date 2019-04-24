@@ -5,13 +5,14 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.widget.Toast;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 public abstract class PrefUtils {
 
@@ -274,7 +275,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(AUTO_CLEAN_GPS_HISTORY_PREFS_NAME, cleanHistory).apply();
     }
     public static boolean isEnableAutoCleanGPSHistory(Context context){
-        return getSharedPreferences(context).getBoolean(AUTO_CLEAN_GPS_HISTORY_PREFS_NAME, false);
+        return getSharedPreferences(context).getBoolean(AUTO_CLEAN_GPS_HISTORY_PREFS_NAME, true);
     }
     public static void setLyricEnabled(Context context,boolean cleanHistory){
         edit(context).putBoolean(ENABLED_LYRIC_PREFS_NAME, cleanHistory).apply();

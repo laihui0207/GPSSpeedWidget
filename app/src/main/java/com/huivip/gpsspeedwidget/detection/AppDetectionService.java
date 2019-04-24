@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
-import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.BootStartService;
+import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 

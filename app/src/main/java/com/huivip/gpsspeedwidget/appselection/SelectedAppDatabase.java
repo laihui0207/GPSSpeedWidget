@@ -7,17 +7,16 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-
 import com.huivip.gpsspeedwidget.BuildConfig;
 import rx.Observable;
 import rx.Single;
 import rx.SingleSubscriber;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 public class SelectedAppDatabase {
 

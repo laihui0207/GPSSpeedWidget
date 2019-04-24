@@ -32,6 +32,7 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         ) {
             return;
         }
+        Log.d("huivip","Media Action:"+intent.getAction());
         long position = extras.containsKey("position") && extras.get("position") instanceof Long ?
                 extras.getLong("position") : -1;
         if (extras.get("position") instanceof Double)
