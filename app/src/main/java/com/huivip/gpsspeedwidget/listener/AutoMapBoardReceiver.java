@@ -9,9 +9,11 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.beans.TMCSegment;
+import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -125,9 +127,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         break;
                     case 13:  // TTS speaking start
-                        if (PrefUtils.isEnableAutoMute(context)) {
+                       /* if (PrefUtils.isEnableAutoMute(context)) {
                             PrefUtils.setEnableTempAudioService(context,false);
-                        }
+                        }*/
                         //Toast.makeText(context,"speaking",Toast.LENGTH_SHORT).show();
                         break;
                     case 14:  // TTS Speak End
@@ -140,8 +142,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             }
             if(key==13011){
                 String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");
-                TMCSegment TMCSegment =new Gson().fromJson(info, TMCSegment.class);
-                gpsUtil.setTMCSegment(TMCSegment);
+                TMCSegment tMCSegment =new Gson().fromJson(info, TMCSegment.class);
+                TMCSegmentEvent event=new TMCSegmentEvent();
+                event.setTmcSegment(tMCSegment);
+                EventBus.getDefault().post(event);
             }
             if(key==13012){  // drive way information,but Just support pre-install version
                 String wayInfo=intent.getStringExtra("EXTRA_DRIVE_WAY");

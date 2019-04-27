@@ -151,7 +151,7 @@
                     android:layout_toRightOf="@+id/textView_nextdistance"
                     android:layout_toEndOf="@+id/textView_nextdistance"/>
         </RelativeLayout>
-        <com.huivip.gpsspeedwidget.view.TmcSegmentView android:id="@+id/lukuanview" android:layout_width="10dp"
+        <com.huivip.gpsspeedwidget.view.TmcSegmentView android:id="@+id/lukuanview" android:layout_width="20dp"
                                                        android:layout_height="wrap_content"/>
     </LinearLayout>
 </LinearLayout>

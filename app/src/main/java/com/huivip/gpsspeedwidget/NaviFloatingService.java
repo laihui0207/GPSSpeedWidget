@@ -25,9 +25,13 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.huivip.gpsspeedwidget.beans.TMCSegment;
+import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +94,7 @@ public class NaviFloatingService extends Service{
                 return super.onStartCommand(intent, flags, startId);
             }
         }
+        EventBus.getDefault().register(this);
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
@@ -100,6 +105,7 @@ public class NaviFloatingService extends Service{
             locationTimer.cancel();
             locationTimer.purge();
         }
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -203,9 +209,16 @@ public class NaviFloatingService extends Service{
         int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
         int color = ContextCompat.getColor(this, colorRes);
         speedTextView.setTextColor(color);
-        List<TmcSegmentView.LukuangModel> models = new ArrayList<>();
-        for (TMCSegment.TmcInfo tmcInfo : gpsUtil.getTMCSegment().getTmc_info()) {
-            models.add(new TmcSegmentView.LukuangModel()
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(TMCSegmentEvent event) {
+        if (event == null || event.getTmcSegment() == null) return;
+        TMCSegment tmcSegment = event.getTmcSegment();
+        List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
+        for (TMCSegment.TmcInfo tmcInfo : tmcSegment.getTmc_info()) {
+            models.add(new TmcSegmentView.SegmentModel()
                     .setDistance(tmcInfo.getTmc_segment_distance())
                     .setStatus(tmcInfo.getTmc_status())
                     .setNumber(tmcInfo.getTmc_segment_number()));

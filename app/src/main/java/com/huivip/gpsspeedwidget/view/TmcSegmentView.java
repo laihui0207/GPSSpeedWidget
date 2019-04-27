@@ -14,7 +14,7 @@ import java.util.List;
 
 
 public class TmcSegmentView extends View {
-    public static final String TAG = "LukuangView";
+    public static final String TAG = "TMcSegmentView";
 
     public TmcSegmentView(Context context) {
         super(context);
@@ -31,23 +31,23 @@ public class TmcSegmentView extends View {
         lukuangs = new ArrayList<>();
     }
 
-    private List<LukuangModel> lukuangs;
+    private List<SegmentModel> lukuangs;
 
-    public void setLukuangs(List<LukuangModel> lukuangs) {
+    public void setLukuangs(List<SegmentModel> lukuangs) {
         if (lukuangs == null) {
             return;
         }
         this.lukuangs.clear();
         this.total = 0;
-        for (LukuangModel lukuang : lukuangs) {
+        for (SegmentModel lukuang : lukuangs) {
             if (lukuang.status >= 0 && lukuang.status <= 4) {
                 total = total + lukuang.distance;
                 this.lukuangs.add(lukuang);
             }
         }
-        Collections.sort(this.lukuangs, new Comparator<LukuangModel>() {
+        Collections.sort(this.lukuangs, new Comparator<SegmentModel>() {
             @Override
-            public int compare(LukuangModel o1, LukuangModel o2) {
+            public int compare(SegmentModel o1, SegmentModel o2) {
                 return o2.number - o1.number;
             }
         });
@@ -73,7 +73,7 @@ public class TmcSegmentView extends View {
             return;
         }
         int top = 0;
-        for (LukuangModel lukuang : lukuangs) {
+        for (SegmentModel lukuang : lukuangs) {
             if (lukuang.status < 0 || lukuang.status > 4) {
                 lukuang.status = 5;
             }
@@ -85,7 +85,7 @@ public class TmcSegmentView extends View {
         }
     }
 
-    public static class LukuangModel {
+    public static class SegmentModel {
         private int status;//每段柱状图信息 -1 无效, 0 无交通流(蓝色), 1 畅通（绿色）, 2 缓行（黄色）, 3 拥堵（红色）, 4 严重拥堵（深红色）, 10 行驶过的路段（灰色）
         private int number;//路况柱状图每段的编号，编号越小越靠近起点
         private int distance;// 路况柱状图每段的路程距离，单位米，所有段加起来的距离等于剩余总路程距离（每段柱状图的百分比为tmc_segment_distance除以residual_distance的值）
@@ -94,7 +94,7 @@ public class TmcSegmentView extends View {
             return status;
         }
 
-        public LukuangModel setStatus(int status) {
+        public SegmentModel setStatus(int status) {
             this.status = status;
             return this;
         }
@@ -103,7 +103,7 @@ public class TmcSegmentView extends View {
             return number;
         }
 
-        public LukuangModel setNumber(int number) {
+        public SegmentModel setNumber(int number) {
             this.number = number;
             return this;
         }
@@ -112,14 +112,14 @@ public class TmcSegmentView extends View {
             return distance;
         }
 
-        public LukuangModel setDistance(int distance) {
+        public SegmentModel setDistance(int distance) {
             this.distance = distance;
             return this;
         }
 
         @Override
         public String toString() {
-            return "LukuangModel{" +
+            return "SegmentModel{" +
                     "status=" + status +
                     ", number=" + number +
                     ", distance=" + distance +

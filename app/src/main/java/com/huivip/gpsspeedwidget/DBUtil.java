@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,27 +37,43 @@ public class DBUtil extends SQLiteOpenHelper {
     }
 
     public void insert(String deviceId,String lng, String lat,String speed,double speedValue,double bearingValue, Date date,long lineId) {
-        ContentValues cv = new ContentValues();
-        cv.put("deviceId",deviceId);
-        cv.put("lng", lng);
-        cv.put("lat", lat);
-        cv.put("speed",speed);
-        cv.put("speedValue",speedValue);
-        cv.put("bearingValue",bearingValue);
-        cv.put("createTime", date.getTime());
-        cv.put("lineId",lineId);
-        SQLiteDatabase db = getWritableDatabase();
-        db.insertOrThrow(tableName, null, cv);
-        db.close();
+        SQLiteDatabase db=null;
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put("deviceId", deviceId);
+            cv.put("lng", lng);
+            cv.put("lat", lat);
+            cv.put("speed", speed);
+            cv.put("speedValue", speedValue);
+            cv.put("bearingValue", bearingValue);
+            cv.put("createTime", date.getTime());
+            cv.put("lineId", lineId);
+            db = getWritableDatabase();
+            db.insertOrThrow(tableName, null, cv);
+        }catch (Exception e){
+            Log.d("huivip","insert data failed");
+        }finally {
+            if(db!=null){
+                db.close();
+            }
+        }
     }
 
     public void delete(Date fromDate){
-        String sql="delete from "+tableName+" where createTime <"+fromDate.getTime();
-        SQLiteDatabase db = getWritableDatabase();
-        db.execSQL(sql);
-        sql="VACUUM";
-        db.execSQL(sql);
-        db.close();
+        SQLiteDatabase db=null;
+        try {
+            String sql = "delete from " + tableName + " where createTime <" + fromDate.getTime();
+            db = getWritableDatabase();
+            db.execSQL(sql);
+            sql = "VACUUM";
+            db.execSQL(sql);
+        }catch (Exception e){
+            Log.d("huivip","delete history data failed");
+        }finally {
+            if(db!=null){
+                db.close();
+            }
+        }
     }
     public List<LocationVO> getLastedData(String limitNumber){
         List<LocationVO> list=new ArrayList<>();

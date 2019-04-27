@@ -22,7 +22,6 @@ import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.enums.*;
 import com.amap.api.navi.model.*;
 import com.autonavi.tbt.TrafficFacilityInfo;
-import com.huivip.gpsspeedwidget.beans.TMCSegment;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
@@ -107,7 +106,6 @@ public class GpsUtil implements AMapNaviListener {
     String homeSet;
     AlarmManager alarm ;
     int locationUpdateCount=0;
-    TMCSegment TMCSegment;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     LocationListener locationListener = new LocationListener() {
         @Override
@@ -245,7 +243,7 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     public void stopAimlessNavi() {
-        if (aMapNavi != null) {
+        if (aMapNavi != null && aimlessStatred) {
             aMapNavi.stopAimlessMode();
             aMapNavi.removeAMapNaviListener(this);
             aMapNavi.destroy();
@@ -326,13 +324,6 @@ public class GpsUtil implements AMapNaviListener {
         return homeSet;
     }
 
-    public TMCSegment getTMCSegment() {
-        return TMCSegment;
-    }
-
-    public void setTMCSegment(TMCSegment TMCSegment) {
-        this.TMCSegment = TMCSegment;
-    }
 
     public void setHomeSet(String homeSet) {
         this.homeSet = homeSet;
@@ -853,7 +844,8 @@ public class GpsUtil implements AMapNaviListener {
         if(autoXunHangStatus == Constant.XunHang_Status_Started){
             Toast.makeText(context,"高德巡航开始，插件巡航暂时关闭",Toast.LENGTH_SHORT).show();
             stopAimlessNavi();
-        } else if(this.autoXunHangStatus == Constant.XunHang_Status_Started && autoXunHangStatus == Constant.XunHang_Status_Ended){
+        } else if(this.autoXunHangStatus == Constant.XunHang_Status_Started
+                && autoXunHangStatus == Constant.XunHang_Status_Ended && this.autoNaviStatus!=Constant.Navi_Status_Started){
             Toast.makeText(context,"高德巡航结束，插件巡航开启",Toast.LENGTH_SHORT).show();
             startAimlessNavi();
         }

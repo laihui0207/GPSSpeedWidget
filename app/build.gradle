@@ -15,6 +15,8 @@ android {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
             abiFilters "armeabi-v7a"
         }
+        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled = true
 
     }
     lintOptions {
@@ -58,10 +60,6 @@ android {
                             + buildType.name + "_v" + defaultConfig.versionName + ".apk");
             }
     }
-    defaultConfig {
-        vectorDrawables.useSupportLibrary = true
-        multiDexEnabled true
-    }
 }
 
 def releaseTime() {
@@ -93,6 +91,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.5'
     compile 'devlight.io:arcprogressstackview:1.0.4'
     compile 'com.jakewharton.timber:timber:4.6.0'
+    compile 'org.greenrobot:eventbus:3.1.1'
     testCompile 'junit:junit:4.12'
     compile 'com.judemanutd:autostarter:1.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
