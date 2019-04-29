@@ -28,6 +28,9 @@ public class Constant {
     public static int LINE=1;
     public static int POINT=0;
 
+    public static final int APP_WIDGET_HOST_ID = 0x200;
+    public static final int SELECT_AMAP_PLUGIN_REQUEST_CODE=2001;
+
     public static String AUTONAVI_CATCH_ROAD_WEBSERVICE="http://restapi.amap.com/v3/autograsp?carid=%s&locations=%s&time=%s&direction=%s&speed=%s&output=json&key=%s";
     public static String LBSSEARCHWEATHER="http://restapi.amap.com/v3/weather/weatherInfo?key=%s&city=%s";
     public static String AUTONAVI_WEB_KEY="5303c7587d2ae8725d2abde74abee79d";

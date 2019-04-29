@@ -23,6 +23,9 @@ import com.amap.api.navi.enums.*;
 import com.amap.api.navi.model.*;
 import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
+import com.huivip.gpsspeedwidget.service.NaviTrackService;
+import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
+import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.CycleQueue;
@@ -163,7 +166,7 @@ public class GpsUtil implements AMapNaviListener {
         if (serviceStarted) return;
         this.locationTimer = new Timer();
         speedAdjust = PrefUtils.getSpeedAdjust(context);
-        Intent trackService=new Intent(context,NaviTrackService.class);
+        Intent trackService=new Intent(context, NaviTrackService.class);
         this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
@@ -207,11 +210,11 @@ public class GpsUtil implements AMapNaviListener {
         serviceStarted = true;
         weatherService=WeatherService.getInstance(context);
         // Sync home info
-        Intent syncHomeIntent = new Intent();
+       /* Intent syncHomeIntent = new Intent();
         syncHomeIntent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
         syncHomeIntent.putExtra("KEY_TYPE", 10045);
         syncHomeIntent.putExtra("EXTRA_TYPE",1);
-        context.sendBroadcast(syncHomeIntent);
+        context.sendBroadcast(syncHomeIntent);*/
     }
 
     public void startAimlessNavi() {
@@ -250,6 +253,14 @@ public class GpsUtil implements AMapNaviListener {
             aMapNavi = null;
             aimlessStatred = false;
         }
+    }
+
+    public boolean isAimlessStatred() {
+        return aimlessStatred;
+    }
+
+    public void setAimlessStatred(boolean aimlessStatred) {
+        this.aimlessStatred = aimlessStatred;
     }
 
     public void stopLocationService(boolean stop) {
@@ -831,7 +842,7 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     public void setAutoNaviStatus(int autoNaviStatus) {
-        if(autoNaviStatus == Constant.Navi_Status_Started){
+        if(autoNaviStatus == Constant.Navi_Status_Started && this.autoNaviStatus == Constant.Navi_Status_Started){
             Toast.makeText(context,"导航开始，巡航暂时关闭",Toast.LENGTH_SHORT).show();
             stopAimlessNavi();
         } else if(this.autoNaviStatus == Constant.Navi_Status_Started && autoNaviStatus == Constant.Navi_Status_Ended){
@@ -841,7 +852,7 @@ public class GpsUtil implements AMapNaviListener {
         this.autoNaviStatus = autoNaviStatus;
     }
     public void setAutoXunHangStatus(int autoXunHangStatus){
-        if(autoXunHangStatus == Constant.XunHang_Status_Started){
+        if(autoXunHangStatus == Constant.XunHang_Status_Started && this.autoXunHangStatus == Constant.XunHang_Status_Ended){
             Toast.makeText(context,"高德巡航开始，插件巡航暂时关闭",Toast.LENGTH_SHORT).show();
             stopAimlessNavi();
         } else if(this.autoXunHangStatus == Constant.XunHang_Status_Started

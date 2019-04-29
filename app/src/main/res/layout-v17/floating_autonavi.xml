@@ -22,10 +22,10 @@
                    android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
         />
-        <com.huivip.gpsspeedwidget.SpeedWheel android:id="@+id/imageView_pointer" android:layout_width="match_parent"
-                                              android:layout_height="match_parent"
-                                              android:layout_centerHorizontal="true"
-                                              android:layout_centerVertical="true"/>
+        <com.huivip.gpsspeedwidget.view.SpeedWheel android:id="@+id/imageView_pointer" android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:layout_centerHorizontal="true"
+                                                   android:layout_centerVertical="true"/>
         <TextView android:textSize="80dp"
                   android:id="@+id/SpeedText" android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:text="80"

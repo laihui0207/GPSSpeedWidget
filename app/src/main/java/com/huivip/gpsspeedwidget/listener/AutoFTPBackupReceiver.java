@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import com.huivip.gpsspeedwidget.DBUtil;
+import com.huivip.gpsspeedwidget.utils.DBUtil;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
-import com.huivip.gpsspeedwidget.WeatherService;
+import com.huivip.gpsspeedwidget.service.WeatherService;
 
 public class WeatherServiceReceiver extends BroadcastReceiver {
     @Override

@@ -8,7 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import com.huivip.gpsspeedwidget.TextFloatingService;
+import com.huivip.gpsspeedwidget.service.TextFloatingService;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.lyric.LyricServiceLowVersion;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;

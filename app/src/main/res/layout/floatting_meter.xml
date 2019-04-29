@@ -7,15 +7,15 @@
                    android:layout_width="match_parent" android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
         />
-        <com.huivip.gpsspeedwidget.MeterWheel android:id="@+id/imageView_meter_pointer"
-                                              android:layout_width="match_parent"
-                                              android:layout_height="match_parent"
-                                              android:layout_centerHorizontal="true"
-                                              android:layout_centerVertical="true" android:padding="10dp"/>
-        <TextView android:textSize="40dp"
+        <com.huivip.gpsspeedwidget.view.MeterWheel android:id="@+id/imageView_meter_pointer"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:layout_centerHorizontal="true"
+                                                   android:layout_centerVertical="true" android:padding="10dp"/>
+        <com.huivip.gpsspeedwidget.view.DigtalView android:textSize="40dp"
                   android:id="@+id/textview_meter_SpeedText" android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="--"
+                  android:text="80"
                   android:textStyle="bold" android:textColor="#fff"
                   android:layout_alignParentBottom="true" android:layout_centerHorizontal="true"
                   android:layout_marginBottom="24dp"/>

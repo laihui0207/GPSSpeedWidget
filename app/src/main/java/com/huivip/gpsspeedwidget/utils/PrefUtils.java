@@ -88,7 +88,7 @@ public abstract class PrefUtils {
     private static final String APP_PLAY_WEATHER="com.huivip.play.weather";
     private static final String APP_PLAY_WARN="com.huivip.play.warn";
     private static final String NOTIFY_ROAD_LIMIT="com.huivip.Limit.Notify";
-
+    private static final String SELECT_AMAP_PLUGIN_ID="com.huivip.select.amap.plugin";
 
     public static final String FLOATING_DEFAULT="0";
     public static final String FLOATING_METER="2";
@@ -127,6 +127,12 @@ public abstract class PrefUtils {
     }
     public static String getDeviceIdStorage(Context context){
         return getSharedPreferences(context).getString(DEVICEID_STORAGE,"");
+    }
+    public static int getSelectAMAPPLUGIN(Context context){
+        return getSharedPreferences(context).getInt(SELECT_AMAP_PLUGIN_ID,-1);
+    }
+    public static void setSelectAmapPluginId(Context context,int selectAMAPPlugin){
+        edit(context).putInt(SELECT_AMAP_PLUGIN_ID,selectAMAPPlugin).apply();
     }
     public static String getShortDeviceId(Context context){
         String deviceId =(new DeviceUuidFactory(context)).getDeviceId();

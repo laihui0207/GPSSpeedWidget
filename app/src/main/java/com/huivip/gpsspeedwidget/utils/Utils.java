@@ -25,8 +25,15 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
 import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
+import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
+import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
+import com.huivip.gpsspeedwidget.service.LyricFloatingService;
+import com.huivip.gpsspeedwidget.service.MeterFloatingService;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -162,6 +169,36 @@ public abstract class Utils {
         }
         return new HashSet<>(names);
     }
+    public static View getViewByIds(View view, Object[] ids) {
+        View r = view;
+        for (int i = 0; i < ids.length; i++) {
+            r = getViewById(r, ids[i]);
+            if (r == null) {
+                return null;
+            }
+        }
+        return r;
+    }
+
+    public static View getViewById(View view, Object id) {
+        if (view instanceof ViewGroup) {
+            ViewGroup vg = (ViewGroup) view;
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                View cc1 = vg.getChildAt(i);
+                if (id instanceof Integer) {
+                    if (id.equals(i)) {
+                        return cc1;
+                    }
+                } else if (id instanceof String) {
+                    if (cc1.toString().endsWith("id/" + id + "}")) {
+                        return cc1;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public static void goHome(Context context){
      /*   PackageManager packageManager = context.getPackageManager();
         Intent intentLauncher = new Intent(Intent.ACTION_MAIN);
@@ -286,7 +323,7 @@ public abstract class Utils {
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
     public static void startFloatingWindows(Context context, boolean enabled){
-        Intent defaultFloatingService=new Intent(context,FloatingService.class);
+        Intent defaultFloatingService=new Intent(context, DefaultFloatingService.class);
         Intent autoNaviFloatService=new Intent(context,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(context,MeterFloatingService.class);
         boolean needClose=false;
@@ -297,30 +334,30 @@ public abstract class Utils {
             }*/
             boolean onDesktop =PrefUtils.isOnDesktop(context);
             if(!PrefUtils.isEnableFlatingWindow(context)){
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+                autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 needClose=true;
             }
 
             if(PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP) && onDesktop){
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+                autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 needClose=true;
             }
 
             if(!onDesktop && PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+                autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 needClose=true;
             }
             if (PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
                     !gpsUtil.isAutoNavi_on_Frontend()){
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-                meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+                autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+                meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 needClose=true;
             }
             String floatingStyle=PrefUtils.getFloatingStyle(context);
@@ -330,30 +367,30 @@ public abstract class Utils {
                     context.startService(meterFloatingService);
                 }
                 if(Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName())){
-                    autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     context.startService(autoNaviFloatService);
                 }
-                if(Utils.isServiceRunning(context,FloatingService.class.getName()) && needClose) {
-                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE,true);
+                if(Utils.isServiceRunning(context, DefaultFloatingService.class.getName()) && needClose) {
+                    defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE,true);
                     context.startService(defaultFloatingService);
                 }
-                if((!needClose && !Utils.isServiceRunning(context,FloatingService.class.getName())) ||
+                if((!needClose && !Utils.isServiceRunning(context, DefaultFloatingService.class.getName())) ||
                         (PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
                                 gpsUtil.isAutoNavi_on_Frontend())){
                     context.startService(defaultFloatingService);
                 }
 
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                if(Utils.isServiceRunning(context,FloatingService.class.getName())){
-                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                if(Utils.isServiceRunning(context, DefaultFloatingService.class.getName())){
+                    defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     context.startService(defaultFloatingService);
                 }
                 if(Utils.isServiceRunning(context,MeterFloatingService.class.getName())){
                     meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
                     context.startService(meterFloatingService);
                 }
-                if(Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName()) && needClose) {
-                    autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                if(Utils.isServiceRunning(context, AutoNaviFloatingService.class.getName()) && needClose) {
+                    autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     context.startService(autoNaviFloatService);
                 }
                 if((!Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName()) && !needClose) ||
@@ -362,12 +399,12 @@ public abstract class Utils {
                     context.startService(autoNaviFloatService);
                 }
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-                if(Utils.isServiceRunning(context,FloatingService.class.getName())){
-                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                if(Utils.isServiceRunning(context, DefaultFloatingService.class.getName())){
+                    defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     context.startService(defaultFloatingService);
                 }
                 if(Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName())){
-                    autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     context.startService(autoNaviFloatService);
                 }
                 if(Utils.isServiceRunning(context,MeterFloatingService.class.getName()) && needClose) {
@@ -383,12 +420,12 @@ public abstract class Utils {
 
         }
         else {
-            if(Utils.isServiceRunning(context,FloatingService.class.getName())){
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            if(Utils.isServiceRunning(context, DefaultFloatingService.class.getName())){
+                defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 context.startService(defaultFloatingService);
             }
             if(Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName())){
-                autoNaviFloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 context.startService(autoNaviFloatService);
             }
             if(Utils.isServiceRunning(context,MeterFloatingService.class.getName())){

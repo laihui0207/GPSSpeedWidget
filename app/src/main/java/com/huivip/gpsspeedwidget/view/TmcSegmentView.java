@@ -28,24 +28,24 @@ public class TmcSegmentView extends View {
 
     private void init() {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        lukuangs = new ArrayList<>();
+        segments = new ArrayList<>();
     }
 
-    private List<SegmentModel> lukuangs;
+    private List<SegmentModel> segments;
 
-    public void setLukuangs(List<SegmentModel> lukuangs) {
-        if (lukuangs == null) {
+    public void setSegments(List<SegmentModel> segments) {
+        if (segments == null) {
             return;
         }
-        this.lukuangs.clear();
+        this.segments.clear();
         this.total = 0;
-        for (SegmentModel lukuang : lukuangs) {
-            if (lukuang.status >= 0 && lukuang.status <= 4) {
-                total = total + lukuang.distance;
-                this.lukuangs.add(lukuang);
+        for (SegmentModel segment : segments) {
+            if (segment.status >= 0 && segment.status <= 4) {
+                total = total + segment.distance;
+                this.segments.add(segment);
             }
         }
-        Collections.sort(this.lukuangs, new Comparator<SegmentModel>() {
+        Collections.sort(this.segments, new Comparator<SegmentModel>() {
             @Override
             public int compare(SegmentModel o1, SegmentModel o2) {
                 return o2.number - o1.number;
@@ -69,16 +69,16 @@ public class TmcSegmentView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (lukuangs == null) {
+        if (segments == null) {
             return;
         }
         int top = 0;
-        for (SegmentModel lukuang : lukuangs) {
-            if (lukuang.status < 0 || lukuang.status > 4) {
-                lukuang.status = 5;
+        for (SegmentModel segment : segments) {
+            if (segment.status < 0 || segment.status > 4) {
+                segment.status = 5;
             }
-            mPaint.setColor(color[lukuang.status]);
-            int h = (int) (getHeight() * (lukuang.distance * 1f / total));
+            mPaint.setColor(color[segment.status]);
+            int h = (int) (getHeight() * (segment.distance * 1f / total));
             int bottom = top + h;
             canvas.drawRect(0, top, getWidth(), bottom, mPaint);
             top = bottom;

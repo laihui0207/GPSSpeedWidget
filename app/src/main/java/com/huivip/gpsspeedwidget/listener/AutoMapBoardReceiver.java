@@ -10,6 +10,9 @@ import com.google.gson.Gson;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.beans.TMCSegment;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
+import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.service.DriveWayFloatingService;
+import com.huivip.gpsspeedwidget.service.NaviFloatingService;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -31,10 +34,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             String time=formatter.format(new Date());
             Bundle bundle=intent.getExtras();
             int key=intent.getIntExtra("KEY_TYPE",-1);
-            for(String keyStr:bundle.keySet()){
+           /* for(String keyStr:bundle.keySet()){
                 FileUtil.saveLogToFile("key_Type:"+key+",Key:"+keyStr+",value:"+bundle.get(keyStr));
             }
-            FileUtil.saveLogToFile(time+",Get Key:"+key);
+            FileUtil.saveLogToFile(time+",Get Key:"+key);*/
             if(key==10019){
                 int status=intent.getIntExtra("EXTRA_STATE",-1);
                 switch (status) {
@@ -62,6 +65,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         if (PrefUtils.isEnableAutoMute(context)) {
                             PrefUtils.setEnableTempAudioService(context,false);
                         }
+                        gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Started);
                         break;
                     case 4: // auto map in backend
                         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
@@ -79,10 +83,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                         break;
                     case 24:  // xun hang
-                        if (PrefUtils.isEnableAutoMute(context)) {
+                       /* if (PrefUtils.isEnableAutoMute(context)) {
                             PrefUtils.setEnableTempAudioService(context,false);
-                        }
-                        gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Started);
+                        }*/
+
                         //Toast.makeText(context,"Backend Auto Map into cruising",Toast.LENGTH_SHORT).show();
                         break;
                     case 8: // start navi
@@ -161,10 +165,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         sinpIntent.putExtra("EXTRA_SCREENSHOT_PATH",
                                 Environment.getExternalStorageDirectory().toString() + "/" + "huivip/");
                         context.sendBroadcast(sinpIntent);
-                       // context.startService(driveWayFloatingService);
+                        //context.startService(driveWayFloatingService);
                     } else {
                         driveWayFloatingService.putExtra(DriveWayFloatingService.EXTRA_CLOSE,true);
-                       // context.startService(driveWayFloatingService);
+                        //context.startService(driveWayFloatingService);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -336,13 +340,20 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             Intent floatService = new Intent(context, NaviFloatingService.class);
             context.startService(floatService);
             PrefUtils.setEnableTempAudioService(context, false);
+            Intent driveWayFloatingService=new Intent(context,DriveWayFloatingService.class);
+            context.startService(driveWayFloatingService);
         }
+        Intent driveWayFloatingService=new Intent(context,DriveWayFloatingService.class);
+        context.startService(driveWayFloatingService);
     }
     private void stopFloatingService(Context context){
         if(PrefUtils.isEnableNaviFloating(context)) {
             Intent floatService = new Intent(context, NaviFloatingService.class);
             floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
             context.startService(floatService);
+            Intent driveWayFloatingService=new Intent(context,DriveWayFloatingService.class);
+            driveWayFloatingService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
+            context.startService(driveWayFloatingService);
         }
     }
     private void launchSpeedFloatingWindows(Context context, boolean enabled){
