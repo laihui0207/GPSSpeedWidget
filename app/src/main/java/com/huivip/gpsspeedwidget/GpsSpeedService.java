@@ -98,7 +98,7 @@ public class GpsSpeedService extends Service {
                     this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
                     this.remoteViews = null;
                     this.numberRemoteViews.setTextViewText(R.id.number_speed, "...");
-                    this.numberRemoteViews.setTextViewText(R.id.number_limit, "...");
+                    this.numberRemoteViews.setTextViewText(R.id.number_altitude, "...");
                     this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, 0, false);
                     this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
                     this.numberRemoteViews = null;
@@ -515,12 +515,18 @@ public class GpsSpeedService extends Service {
             this.remoteViews.setTextViewText(R.id.textView_limit_label,"限速");
             this.numberRemoteViews.setTextViewText(R.id.textView_limit_label,"限速");
         } else {*/
+
+        if(gpsUtil.getLimitSpeed()>0){
+            this.numberRemoteViews.setTextViewText(R.id.number_limit,gpsUtil.getLimitSpeed()+"");
+        } else {
+            this.numberRemoteViews.setTextViewText(R.id.number_limit,"");
+        }
             this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getAltitude()+ "");
-            this.numberRemoteViews.setTextViewText(R.id.number_limit, gpsUtil.getAltitude()+ "");
+            this.numberRemoteViews.setTextViewText(R.id.number_altitude, gpsUtil.getAltitude()+ "");
             this.remoteViews.setTextViewText(R.id.textView_limit_label,"海拔");
-            this.numberRemoteViews.setTextViewText(R.id.textView_limit_label,"海拔");
+            this.numberRemoteViews.setTextViewText(R.id.textView_limit_label,gpsUtil.getCityName());
         /*}*/
-       /* if (gpsUtil.getCameraType() > -1) {
+       /* if (gpsUtil.getCameraType() > -1) {textView_direction
             this.numberRemoteViews.setTextViewText(R.id.textView_limit_label, gpsUtil.getCameraTypeName());
             this.remoteViews.setTextViewText(R.id.textView_watch_limit_label, gpsUtil.getCameraTypeName());
         } else {
@@ -531,7 +537,7 @@ public class GpsSpeedService extends Service {
        /* if (gpsUtil.getLimitDistance() > 0) {
             this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getLimitDistance() + "米");
         } else {*/
-            this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getDistance() + "");
+/*            this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getDistance() + "");*/
         /*}*/
 
         if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
