@@ -845,10 +845,10 @@ public class GpsUtil implements AMapNaviListener {
         if(autoNaviStatus == Constant.Navi_Status_Started && this.autoNaviStatus == Constant.Navi_Status_Started){
             Toast.makeText(context,"导航开始，巡航暂时关闭",Toast.LENGTH_SHORT).show();
             stopAimlessNavi();
-        } else if(this.autoNaviStatus == Constant.Navi_Status_Started && autoNaviStatus == Constant.Navi_Status_Ended){
+        }/* else if(this.autoNaviStatus == Constant.Navi_Status_Started && autoNaviStatus == Constant.Navi_Status_Ended){
             Toast.makeText(context,"导航结束，巡航开启",Toast.LENGTH_SHORT).show();
             startAimlessNavi();
-        }
+        }*/
         this.autoNaviStatus = autoNaviStatus;
     }
     public void setAutoXunHangStatus(int autoXunHangStatus){

@@ -48,7 +48,7 @@ public class TmcSegmentView extends View {
         Collections.sort(this.segments, new Comparator<SegmentModel>() {
             @Override
             public int compare(SegmentModel o1, SegmentModel o2) {
-                return o2.number - o1.number;
+                return o1.number - o2.number;
             }
         });
         invalidate();
@@ -72,16 +72,16 @@ public class TmcSegmentView extends View {
         if (segments == null) {
             return;
         }
-        int top = 0;
+        int left = 0;
         for (SegmentModel segment : segments) {
             if (segment.status < 0 || segment.status > 4) {
                 segment.status = 5;
             }
             mPaint.setColor(color[segment.status]);
-            int h = (int) (getHeight() * (segment.distance * 1f / total));
-            int bottom = top + h;
-            canvas.drawRect(0, top, getWidth(), bottom, mPaint);
-            top = bottom;
+            int w = (int) (getWidth() * (segment.distance * 1f / total));
+            int right = left + w;
+            canvas.drawRect(left, 0, right, getHeight(), mPaint);
+            left = right;
         }
     }
 

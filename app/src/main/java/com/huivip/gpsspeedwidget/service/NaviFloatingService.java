@@ -2,6 +2,7 @@ package com.huivip.gpsspeedwidget.service;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -17,13 +18,18 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
-import android.view.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
@@ -33,21 +39,24 @@ import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Created by laisun on 28/02/2018.
  */
-
+@SuppressLint("RtlHardcoded")
 public class NaviFloatingService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
 
@@ -98,7 +107,11 @@ public class NaviFloatingService extends Service{
                 return super.onStartCommand(intent, flags, startId);
             }
         }
-        EventBus.getDefault().register(this);
+        try {
+            EventBus.getDefault().register(this);
+        }catch (Exception e){
+
+        }
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
@@ -216,8 +229,8 @@ public class NaviFloatingService extends Service{
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(TMCSegmentEvent event) {
+    @Subscribe
+    public void onEvent(final TMCSegmentEvent event) {
         if (event == null || event.getTmcSegment() == null) return;
         TMCSegment tmcSegment = event.getTmcSegment();
         List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
