@@ -234,6 +234,11 @@
         <receiver android:name=".listener.GoToHomeReceiver"/>
         <receiver android:name=".listener.WeatherServiceReceiver"/>
         <receiver android:name=".listener.DateChangeReceiver"/>
+        <receiver android:name=".listener.SwitchReceiver">
+            <intent-filter>
+                <action android:name="com.huivip.switch.event"/>
+            </intent-filter>
+        </receiver>
         <service android:name=".GpsSpeedService"/>
         <service android:name=".LyricWidgetService">
             <intent-filter>

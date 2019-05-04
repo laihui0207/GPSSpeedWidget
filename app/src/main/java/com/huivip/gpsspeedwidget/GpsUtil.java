@@ -547,7 +547,7 @@ public class GpsUtil {
         return cameraSpeed;
     }
     public String getAltitude(){
-        localNumberFormat.setMaximumFractionDigits(1);
+        localNumberFormat.setMaximumFractionDigits(0);
         return localNumberFormat.format(altitude);
     }
     public void setCameraSpeed(int cameraSpeed) {

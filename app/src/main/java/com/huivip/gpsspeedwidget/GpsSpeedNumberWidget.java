@@ -3,8 +3,12 @@ package com.huivip.gpsspeedwidget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.*;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.widget.RemoteViews;
+
+import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -25,12 +29,12 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
             bootService.putExtra(BootStartService.START_BOOT,true);
             context.startService(bootService);
         }
-        Intent mainActivity=new Intent(context,MainActivity.class);
-        PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,mainActivity,0);
+        Intent configActivity=new Intent(context,ConfigurationActivity.class);
+        PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,configActivity,0);
         views.setOnClickPendingIntent(R.id.image_config,mainActivityPendingIntent);
         PendingIntent goHomeIntent=sendAutoBroadCase(context,10040,0);
         PendingIntent goCompanyIntent=sendAutoBroadCase(context,10040,1);
-        PendingIntent goAutoIntent = sendAutoBroadCase(context,10034,200);
+        PendingIntent goAutoIntent = sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_AUTOAMAP,10000);
         views.setOnClickPendingIntent(R.id.image_home,goHomeIntent);
         views.setOnClickPendingIntent(R.id.image_company,goCompanyIntent);
         views.setOnClickPendingIntent(R.id.image_auto,goAutoIntent);
@@ -77,5 +81,10 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         intent.putExtra("SOURCE_APP","GPSWidget");
         return PendingIntent.getBroadcast(context,type+10,intent,0);
     }
-
+    private PendingIntent sendSwitchBroadCast(Context context,String target,int type){
+        Intent intent = new Intent();
+        intent.setAction(SwitchReceiver.SWITCH_EVENT);
+        intent.putExtra("TARGET", target);
+        return PendingIntent.getBroadcast(context,10099+type,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+    }
 }
