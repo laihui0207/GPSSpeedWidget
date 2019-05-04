@@ -6,17 +6,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
-import com.google.gson.Gson;
-import com.huivip.gpsspeedwidget.*;
-import com.huivip.gpsspeedwidget.beans.TMCSegment;
-import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
+
+import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.DriveWayFloatingService;
 import com.huivip.gpsspeedwidget.service.NaviFloatingService;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
-import org.greenrobot.eventbus.EventBus;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,10 +33,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             String time=formatter.format(new Date());
             Bundle bundle=intent.getExtras();
             int key=intent.getIntExtra("KEY_TYPE",-1);
-           /* for(String keyStr:bundle.keySet()){
+            for(String keyStr:bundle.keySet()){
                 FileUtil.saveLogToFile("key_Type:"+key+",Key:"+keyStr+",value:"+bundle.get(keyStr));
             }
-            FileUtil.saveLogToFile(time+",Get Key:"+key);*/
+           // FileUtil.saveLogToFile(time+",Get Key:"+key);
             if(key==10019){
                 int status=intent.getIntExtra("EXTRA_STATE",-1);
                 switch (status) {
@@ -146,10 +145,16 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             }
             if(key==13011){
                 String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");
-                TMCSegment tMCSegment =new Gson().fromJson(info, TMCSegment.class);
-                TMCSegmentEvent event=new TMCSegmentEvent();
-                event.setTmcSegment(tMCSegment);
-                EventBus.getDefault().post(event);
+
+                /*TMCSegmentEvent event=new TMCSegmentEvent();
+                event.setTmcSegment(tMCSegment);*/
+               // gpsUtil.setTmcSegment(tMCSegment);
+                //EventBus.getDefault().post(event);
+                Intent eventIntent=new Intent();
+                eventIntent.putExtra("segment",info);
+                eventIntent.setAction(Constant.UPDATE_SEGMENT_EVENT_ACTION);
+                context.sendBroadcast(eventIntent);
+
             }
             if(key==13012){  // drive way information,but Just support pre-install version
                 String wayInfo=intent.getStringExtra("EXTRA_DRIVE_WAY");
@@ -339,18 +344,19 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
         if(PrefUtils.isEnableNaviFloating(context)) {
             Intent floatService = new Intent(context, NaviFloatingService.class);
             context.startService(floatService);
-            PrefUtils.setEnableTempAudioService(context, false);
+        }
+        if(PrefUtils.isEnableAutoWidgetFloatingWidow(context)){
             Intent driveWayFloatingService=new Intent(context,DriveWayFloatingService.class);
             context.startService(driveWayFloatingService);
         }
-        Intent driveWayFloatingService=new Intent(context,DriveWayFloatingService.class);
-        context.startService(driveWayFloatingService);
     }
     private void stopFloatingService(Context context){
-        if(PrefUtils.isEnableNaviFloating(context)) {
+        if(Utils.isServiceRunning(context,NaviFloatingService.class.getName())) {
             Intent floatService = new Intent(context, NaviFloatingService.class);
             floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
             context.startService(floatService);
+        }
+        if(Utils.isServiceRunning(context,DriveWayFloatingService.class.getName())){
             Intent driveWayFloatingService=new Intent(context,DriveWayFloatingService.class);
             driveWayFloatingService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
             context.startService(driveWayFloatingService);

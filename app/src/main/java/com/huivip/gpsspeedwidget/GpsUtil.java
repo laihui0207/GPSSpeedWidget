@@ -22,6 +22,7 @@ import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.enums.*;
 import com.amap.api.navi.model.*;
 import com.autonavi.tbt.TrafficFacilityInfo;
+import com.huivip.gpsspeedwidget.beans.TMCSegment;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
@@ -107,6 +108,7 @@ public class GpsUtil implements AMapNaviListener {
     int recordLocationDistance=2;
     int catchRoadDistance=10;
     String homeSet;
+    TMCSegment tmcSegment;
     AlarmManager alarm ;
     int locationUpdateCount=0;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
@@ -280,6 +282,14 @@ public class GpsUtil implements AMapNaviListener {
             weatherService.stopLocation();
         }
 
+    }
+
+    public TMCSegment getTmcSegment() {
+        return tmcSegment;
+    }
+
+    public void setTmcSegment(TMCSegment tmcSegment) {
+        this.tmcSegment = tmcSegment;
     }
 
     public String getDirection() {

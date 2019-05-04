@@ -27,6 +27,7 @@
         <Button
                 android:text="X"
                 android:layout_width="52dp"
+                android:background="@drawable/widget_close"
                 android:layout_height="wrap_content" android:id="@+id/button_map_close" android:layout_weight="1"
                 android:visibility="gone"/>
     </LinearLayout>

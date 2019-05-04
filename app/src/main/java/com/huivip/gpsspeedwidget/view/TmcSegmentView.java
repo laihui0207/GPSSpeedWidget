@@ -40,10 +40,10 @@ public class TmcSegmentView extends View {
         this.segments.clear();
         this.total = 0;
         for (SegmentModel segment : segments) {
-            if (segment.status >= 0 && segment.status <= 4) {
+/*            if (segment.status >= 0 && segment.status <= 4) {*/
                 total = total + segment.distance;
                 this.segments.add(segment);
-            }
+            /*}*/
         }
         Collections.sort(this.segments, new Comparator<SegmentModel>() {
             @Override

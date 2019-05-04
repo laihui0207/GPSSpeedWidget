@@ -19,6 +19,7 @@ public abstract class PrefUtils {
     private static final String PREF_METRIC = "pref_metric";
     private static final String PREF_FLOATING_LOCATION = "pref_floating_location";
     private static final String PREF_NAVI_FLOATING_LOCATION= "pref_navi_floating_location";
+    private static final String PREF_DRIVE_FLOATING_LOCATION= "pref_driveWay_floating_location";
     private static final String PREF_TIME_FLOATING_LOCATION= "pref_time_floating_location";
     private static final String PREF_TEXT_FLOATING_LOCATION= "pref_text_floating_location";
     private static final String PREF_OPACITY = "pref_opacity";
@@ -46,6 +47,7 @@ public abstract class PrefUtils {
     public static final String ENABLED_LYRIC_PREFS_NAME="com.huivip.Enable.fating.Lyric";
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enable.AudioService";
     public static final String ENABLE_TIME_FLOATING_WINDOW="com.huivip.enable.Time.FloatingWindow";
+    public static final String ENABLE_AUTO_WIDGET_FLOATING_WINDOW="com.huivip.enable.auto.widget.FloatingWindow";
     public static final String ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI="com.huivip.enable.hide.FloatingWindow.OnNaviApp";
     public static final String ENABLE_AUTO_GOHOME_AFTER_NAVI_STARTED="com.huivip.enable.auto.goHome.afterNavi";
     public static final String ENABLE_AUDIO_MIX="com.huivip.enable.AudioMix";
@@ -60,6 +62,7 @@ public abstract class PrefUtils {
     public static final String FLOATING_WINDWS_DIRECTION_horizontal="com.huivip.widget.Direction";
     public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
+    public static final String DRIVE_WAY_FLOATTING_WINDOW_XY="com.huivip.widget.xy";
     public static final String NAVI_FLOATTING_WINDOW_XY="com.huivip.widget.navi.xy";
     public static final String TIME_FLOATTING_WINDOW_XY="com.huivip.widget.Time.xy";
     public static final String MAP_FLOATTING_WINDOW_XY="com.huivip.widget.Map.xy";
@@ -210,6 +213,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableTimeFloatingWidow(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_TIME_FLOATING_WINDOW, false);
+    }
+    public static void setEnableAutoWidgetFloatingWidow(Context context, boolean value){
+        edit(context).putBoolean(ENABLE_AUTO_WIDGET_FLOATING_WINDOW, value).apply();
+    }
+    public static boolean isEnableAutoWidgetFloatingWidow(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_AUTO_WIDGET_FLOATING_WINDOW, false);
     }
     public static void setEnableAutoMute(Context context, boolean value){
         edit(context).putBoolean(AUDIO_AUTO_MUTE, value).apply();
@@ -461,6 +470,9 @@ public abstract class PrefUtils {
     public static void setFloatingSolidLocation(Context context, float x, float y) {
         edit(context).putString(FLOATTING_WINDOW_XY, x + "," + y).apply();
     }
+    public static void setDriveWayFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(DRIVE_WAY_FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
     public static void setNaviFloatingSolidLocation(Context context, float x, float y) {
         edit(context).putString(NAVI_FLOATTING_WINDOW_XY, x + "," + y).apply();
     }
@@ -469,6 +481,9 @@ public abstract class PrefUtils {
     }
     public static String getFloatingSolidLocation(Context context) {
         return getSharedPreferences(context).getString(FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static String getDriveWayFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(DRIVE_WAY_FLOATTING_WINDOW_XY, "0,0");
     }
     public static void setFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_FLOATING_LOCATION, left + "," + screenYRatio).apply();
@@ -501,11 +516,17 @@ public abstract class PrefUtils {
     public static void setNaviFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_NAVI_FLOATING_LOCATION, left + "," + screenYRatio).apply();
     }
+    public static void setDriveWayFloatingLocation(Context context, float screenYRatio, boolean left) {
+        edit(context).putString(PREF_DRIVE_FLOATING_LOCATION, left + "," + screenYRatio).apply();
+    }
     public static String getFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_FLOATING_LOCATION, "true,0");
     }
     public static String getNaviFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_NAVI_FLOATING_LOCATION, "true,0");
+    }
+    public static String getDriveWayFloatingLocation(Context context) {
+        return getSharedPreferences(context).getString(PREF_DRIVE_FLOATING_LOCATION, "true,0");
     }
     public static String getTimeFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_TIME_FLOATING_LOCATION, "true,0");

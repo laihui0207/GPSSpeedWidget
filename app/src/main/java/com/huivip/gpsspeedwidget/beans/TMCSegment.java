@@ -69,6 +69,7 @@ public class TMCSegment {
         private int tmc_segment_number;//路况柱状图每段的编号，编号越小越靠近起点
         private int tmc_segment_distance;// 路况柱状图每段的路程距离，单位米，所有段加起来的距离等于剩余总路程距离（每段柱状图的百分比为tmc_segment_distance除以residual_distance的值）
         private int tmc_segment_percent;//每段路况柱状图占总路程的百分比
+        private int tmc_traveltime; // 行驶的时间
 
         public int getTmc_status() {
             return tmc_status;
@@ -104,6 +105,14 @@ public class TMCSegment {
         public TmcInfo setTmc_segment_percent(int tmc_segment_percent) {
             this.tmc_segment_percent = tmc_segment_percent;
             return this;
+        }
+
+        public int getTmc_traveltime() {
+            return tmc_traveltime;
+        }
+
+        public void setTmc_traveltime(int tmc_traveltime) {
+            this.tmc_traveltime = tmc_traveltime;
         }
     }
 //

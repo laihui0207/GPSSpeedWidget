@@ -5,12 +5,21 @@ import android.app.Activity;
 import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
-import android.content.*;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.*;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -22,25 +31,59 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.*;
-import butterknife.BindView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
-import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.DeviceUuidFactory;
+import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
-import com.huivip.gpsspeedwidget.service.*;
+import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
+import com.huivip.gpsspeedwidget.service.LyricFloatingService;
+import com.huivip.gpsspeedwidget.service.NaviTrackService;
+import com.huivip.gpsspeedwidget.service.RealTimeFloatingService;
+import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
-import com.huivip.gpsspeedwidget.utils.*;
+import com.huivip.gpsspeedwidget.utils.FTPUtils;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
+import com.huivip.gpsspeedwidget.utils.HttpUtils;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
+import com.huivip.gpsspeedwidget.utils.WifiUtils;
 import com.judemanutd.autostarter.AutoStartPermissionHelper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
-import java.lang.Process;
-import java.util.*;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import butterknife.BindView;
 
 /**
  * @author sunlaihui
@@ -413,6 +456,14 @@ public class ConfigurationActivity extends Activity {
                         startService(lycFloatingService);
                     }
                 }
+            }
+        });
+        CheckBox autoWidgetFloatingCheckBox=findViewById(R.id.checkBox_Auto_widget_floating);
+        autoWidgetFloatingCheckBox.setChecked(PrefUtils.isEnableAutoWidgetFloatingWidow(getApplicationContext()));
+        autoWidgetFloatingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableAutoWidgetFloatingWidow(getApplicationContext(),buttonView.isChecked());
             }
         });
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);

@@ -2,11 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="330dp"
               android:layout_height="wrap_content"
+              android:background="@drawable/navi_floating_border"
               android:orientation="vertical">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="330dp"
                   android:layout_height="130dp"
-                  android:background="@drawable/navi_floating_border"
                   android:orientation="horizontal" android:id="@+id/backend_navi">
         <RelativeLayout
                 android:layout_width="100dp"
@@ -153,6 +153,6 @@
         </RelativeLayout>
 
     </LinearLayout>
-    <com.huivip.gpsspeedwidget.view.TmcSegmentView android:id="@+id/lukuanview" android:layout_width="match_parent"
+    <com.huivip.gpsspeedwidget.view.TmcSegmentView android:id="@+id/segmentView" android:layout_width="match_parent"
         android:layout_height="10dp"/>
 </LinearLayout>

@@ -5,8 +5,10 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
@@ -18,6 +20,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -31,17 +34,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.beans.TMCSegment;
-import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +70,7 @@ public class NaviFloatingService extends Service{
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
-
+    BroadcastReceiver broadcastReceiver;
     @BindView(R.id.textView_currentroad)
     TextView currentRoadTextView;
     @BindView(R.id.textView_nextroadname)
@@ -90,8 +94,9 @@ public class NaviFloatingService extends Service{
     View naviCameraView;
     @BindView(R.id.textView_autonavi_speedText)
     TextView speedTextView;
-    @BindView(R.id.lukuanview)
+    @BindView(R.id.segmentView)
     TmcSegmentView tmcSegmentView;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -107,11 +112,12 @@ public class NaviFloatingService extends Service{
                 return super.onStartCommand(intent, flags, startId);
             }
         }
-        try {
+       /* try {
             EventBus.getDefault().register(this);
         }catch (Exception e){
 
-        }
+        }*/
+
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
@@ -122,7 +128,13 @@ public class NaviFloatingService extends Service{
             locationTimer.cancel();
             locationTimer.purge();
         }
-        EventBus.getDefault().unregister(this);
+        //EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        unRegisterTMCSegmentBroadcast();
+        super.onDestroy();
     }
 
     @Override
@@ -171,6 +183,7 @@ public class NaviFloatingService extends Service{
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         CrashHandler.getInstance().init(getApplicationContext());
+        registerTMCSegmentBroadcast();
         /*naveIconImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -228,8 +241,76 @@ public class NaviFloatingService extends Service{
         speedTextView.setTextColor(color);
 
     }
-
-    @Subscribe
+    public void registerTMCSegmentBroadcast(){
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(!Constant.UPDATE_SEGMENT_EVENT_ACTION.equalsIgnoreCase(intent.getAction())) return;
+                String info=intent.getStringExtra("segment");
+                if(TextUtils.isEmpty(info)){
+                    Log.d("huivip","Get segment info is empty");
+                    return ;
+                }
+                else {
+                    Log.d("huivip","segment:"+info);
+                }
+                TMCSegment tmcSegment =new TMCSegment();
+                try {
+                    JSONObject tmc=new JSONObject(info);
+                    if(tmc!=null){
+                        JSONArray segmentArray=tmc.getJSONArray("tmc_info");
+                        List<TMCSegment.TmcInfo> list=new ArrayList<>();
+                        if(segmentArray!=null && segmentArray.length()>0){
+                            for(int i=0;i<segmentArray.length();i++) {
+                                TMCSegment.TmcInfo tmcInfo = new TMCSegment.TmcInfo();
+                                JSONObject obj=segmentArray.getJSONObject(i);
+                                if(obj!=null) {
+                                    tmcInfo.setTmc_segment_distance(obj.getInt("tmc_segment_distance"))
+                                            .setTmc_segment_number(obj.getInt("tmc_segment_number"))
+                                            .setTmc_segment_percent(obj.getInt("tmc_segment_percent"))
+                                            .setTmc_status(obj.getInt("tmc_status"));
+                                    if(obj.has("tmc_traveltime")){
+                                        tmcInfo.setTmc_traveltime(obj.getInt("tmc_traveltime"));
+                                    }
+                                }
+                                list.add(tmcInfo);
+                            }
+                        }
+                        tmcSegment.setFinish_distance(tmc.getInt("finish_distance"))
+                        .setResidual_distance(tmc.getInt("residual_distance"))
+                                .setTmc_segment_enabled(tmc.getBoolean("tmc_segment_enabled"))
+                                .setTmc_segment_size(tmc.getInt("tmc_segment_size"))
+                                .setTotal_distance(tmc.getInt("total_distance")).setTmc_info(list);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                 ;//new Gson().fromJson(info, TMCSegment.class);
+                //TMCSegment tmcSegment = gpsUtil.getTmcSegment();
+                if(tmcSegment==null || tmcSegment.getTmc_info()==null){
+                    Log.d("huivip","Segment parse failed");
+                    return;
+                }
+                List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
+                for (TMCSegment.TmcInfo tmcInfo : tmcSegment.getTmc_info()) {
+                    models.add(new TmcSegmentView.SegmentModel()
+                            .setDistance(tmcInfo.getTmc_segment_distance())
+                            .setStatus(tmcInfo.getTmc_status())
+                            .setNumber(tmcInfo.getTmc_segment_number()));
+                }
+                tmcSegmentView.setSegments(models);
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constant.UPDATE_SEGMENT_EVENT_ACTION);
+        getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
+    }
+    public void unRegisterTMCSegmentBroadcast(){
+        if(broadcastReceiver!=null){
+            getApplicationContext().unregisterReceiver(broadcastReceiver);
+        }
+    }
+    /*@Subscribe
     public void onEvent(final TMCSegmentEvent event) {
         if (event == null || event.getTmcSegment() == null) return;
         TMCSegment tmcSegment = event.getTmcSegment();
@@ -241,7 +322,7 @@ public class NaviFloatingService extends Service{
                     .setNumber(tmcInfo.getTmc_segment_number()));
         }
         tmcSegmentView.setSegments(models);
-    }
+    }*/
     private int getWindowType() {
         return WindowManager.LayoutParams.TYPE_SYSTEM_ALERT | WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY ;
     }

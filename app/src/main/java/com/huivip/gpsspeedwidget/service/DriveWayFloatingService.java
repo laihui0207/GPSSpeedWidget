@@ -19,12 +19,18 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.view.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
@@ -36,6 +42,10 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -55,6 +65,8 @@ public class DriveWayFloatingService extends Service{
     ImageView imageView;
     @BindView(R.id.imageView_autoNvi_close)
     ImageView closeImage;
+    @BindView(R.id.imageView_autoNvi_move)
+    ImageView moveImage;
     AppWidgetHost appWidgetHost;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
@@ -68,12 +80,12 @@ public class DriveWayFloatingService extends Service{
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent!=null){
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableNaviFloating(getApplicationContext())) {
+            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableAutoWidgetFloatingWidow(getApplicationContext())) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
-            showPluginContnet();
+            showPluginContent();
         }
         return Service.START_REDELIVER_INTENT;
     }
@@ -83,7 +95,7 @@ public class DriveWayFloatingService extends Service{
         }
 
     }
-    private void showPluginContnet() {
+    private void showPluginContent() {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
         if (id != -1) {
@@ -131,7 +143,7 @@ public class DriveWayFloatingService extends Service{
         params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
-        mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
+        //mFloatingView.setOnTouchListener( );
         initMonitorPosition();
         this.locationScanTask = new TimerTask()
         {
@@ -143,7 +155,7 @@ public class DriveWayFloatingService extends Service{
                     @Override
                     public void run()
                     {
-                        showPluginContnet();
+                        showPluginContent();
                         //Log.d("huivip","Float Service Check Location");
                     }
                 });
@@ -151,24 +163,15 @@ public class DriveWayFloatingService extends Service{
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         CrashHandler.getInstance().init(getApplicationContext());
-        closeImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onStop();
-                stopSelf();
-            }
-        });
+        moveImage.setOnTouchListener(new FloatingOnTouchListener());
         super.onCreate();
     }
-    /*@Event(value = {R.id.autoDriveWayView})
-    private void clickEvent(View view) {
-        switch (view.getId()) {
-            case R.id.autoDriveWayView: {
-                onStop();
-                stopSelf();
-            }
-        }
-    }*/
+
+    @OnClick(value = {R.id.imageView_autoNvi_close})
+    public void onCloseEvent(View view){
+        onStop();
+        stopSelf();
+    }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
@@ -188,7 +191,7 @@ public class DriveWayFloatingService extends Service{
             @Override
             public void onGlobalLayout() {
                 WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-                String[] split = PrefUtils.getNaviFloatingLocation(getApplicationContext()).split(",");
+                String[] split = PrefUtils.getDriveWayFloatingLocation(getApplicationContext()).split(",");
                 boolean left = Boolean.parseBoolean(split[0]);
                 float yRatio = Float.parseFloat(split[1]);
                 if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
@@ -198,7 +201,7 @@ public class DriveWayFloatingService extends Service{
                     params.y = (int) (yRatio * screenSize.y + 0.5f);
                 }
                 else {
-                    String[] xy=PrefUtils.getNaviFloatingSolidLocation(getApplicationContext()).split(",");
+                    String[] xy=PrefUtils.getDriveWayFloatingSolidLocation(getApplicationContext()).split(",");
                     params.x=(int)Float.parseFloat(xy[0]);
                     params.y=(int)Float.parseFloat(xy[1]);
                 }
@@ -226,7 +229,7 @@ public class DriveWayFloatingService extends Service{
             endX = 0;
         }
 
-        PrefUtils.setNaviFloatingLocation(getApplicationContext(), (float) params.y / screenSize.y, endX == 0);
+        PrefUtils.setDriveWayFloatingLocation(getApplicationContext(), (float) params.y / screenSize.y, endX == 0);
         ValueAnimator valueAnimator = ValueAnimator.ofInt(params.x, endX)
                 .setDuration(300);
         valueAnimator.setInterpolator(new LinearOutSlowInInterpolator());
@@ -289,9 +292,9 @@ public class DriveWayFloatingService extends Service{
                     mIsClick = true;
                     return true;
                 case MotionEvent.ACTION_MOVE:
-                    if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())){
+                    /*if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())){
                         return true;
-                    }
+                    }*/
                     float dX = event.getRawX() - mInitialTouchX;
                     float dY = event.getRawY() - mInitialTouchY;
                     if ((mIsClick && (Math.abs(dX) > 10 || Math.abs(dY) > 10))
@@ -334,7 +337,7 @@ public class DriveWayFloatingService extends Service{
                         if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
                              animateViewToSideSlot();
                         } else {
-                            PrefUtils.setNaviFloatingSolidLocation(getApplicationContext(),params.x,params.y);
+                            PrefUtils.setDriveWayFloatingSolidLocation(getApplicationContext(),params.x,params.y);
                         }
                     }
                     if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
