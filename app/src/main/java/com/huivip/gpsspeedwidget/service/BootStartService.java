@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.service;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.listener.AutoFTPBackupReceiver;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
@@ -88,7 +89,7 @@ public class BootStartService extends Service {
             if(start) {
                 started=true;
                 if(PrefUtils.isWidgetActived(getApplicationContext())) {
-                    if(!Utils.isServiceRunning(getApplicationContext(),GpsSpeedService.class.getName())) {
+                    if(!Utils.isServiceRunning(getApplicationContext(), GpsSpeedService.class.getName())) {
                         Intent service = new Intent(getApplicationContext(), GpsSpeedService.class);
                         service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT, true);
                         startService(service);

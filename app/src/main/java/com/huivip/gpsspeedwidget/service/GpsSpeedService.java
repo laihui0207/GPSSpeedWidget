@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.service;
 
 import android.app.*;
 import android.appwidget.AppWidgetManager;
@@ -10,6 +10,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
+
+import com.huivip.gpsspeedwidget.widget.GpsSpeedNumberWidget;
+import com.huivip.gpsspeedwidget.widget.GpsSpeedWidget;
+import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;

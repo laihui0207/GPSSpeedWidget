@@ -3,13 +3,11 @@ package com.huivip.gpsspeedwidget.utils;
 import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.*;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -23,19 +21,20 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.KeyEvent;
+
 import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
-import com.huivip.gpsspeedwidget.lyric.MusicNotificationListenerService;
+import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
+import com.huivip.gpsspeedwidget.service.FloatingService;
+import com.huivip.gpsspeedwidget.service.LyricFloatingService;
+import com.huivip.gpsspeedwidget.service.MeterFloatingService;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -295,7 +294,7 @@ public abstract class Utils {
     public static void startFloatingWindows(Context context, boolean enabled){
         Intent defaultFloatingService=new Intent(context,FloatingService.class);
         Intent autoNavifloatService=new Intent(context,AutoNaviFloatingService.class);
-        Intent meterFloatingService=new Intent(context,MeterFloatingService.class);
+        Intent meterFloatingService=new Intent(context, MeterFloatingService.class);
         if(enabled){
             String floatingStyle=PrefUtils.getFloatingStyle(context);
             if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
@@ -303,7 +302,7 @@ public abstract class Utils {
                     meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
                     context.startService(meterFloatingService);
                 }
-                if(Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName())){
+                if(Utils.isServiceRunning(context, AutoNaviFloatingService.class.getName())){
                     autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
                     context.startService(autoNavifloatService);
                 }

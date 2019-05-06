@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.service;
 
 import android.annotation.SuppressLint;
 import android.app.*;
@@ -13,6 +13,10 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.utils.DeviceUuidFactory;
+import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;

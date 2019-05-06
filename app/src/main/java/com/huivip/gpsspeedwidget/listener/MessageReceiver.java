@@ -1,17 +1,21 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.listener;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.DBUtil;
+import com.huivip.gpsspeedwidget.beans.LocationVO;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
+import com.huivip.gpsspeedwidget.utils.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.util.*;
 
 /**

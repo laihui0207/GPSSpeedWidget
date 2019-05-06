@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.service.NaviFloatingService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 

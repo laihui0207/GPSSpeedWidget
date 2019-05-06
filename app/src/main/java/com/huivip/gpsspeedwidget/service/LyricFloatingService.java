@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.service;
 
 import android.app.Service;
 import android.content.*;
@@ -15,7 +15,9 @@ import android.view.*;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.huivip.gpsspeedwidget.lyric.*;
+
+import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.LrcView;

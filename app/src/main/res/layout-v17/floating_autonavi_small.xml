@@ -27,7 +27,8 @@
                   android:text="80"
                   android:textStyle="bold" android:textColor="#000"
                   android:layout_centerInParent="true"/>
-        <com.huivip.gpsspeedwidget.SpeedWheel android:id="@+id/imageView_pointer" android:layout_width="match_parent"
+        <com.huivip.gpsspeedwidget.view.SpeedWheel
+            android:id="@+id/imageView_pointer" android:layout_width="match_parent"
                                               android:layout_height="match_parent"
                                               android:layout_alignParentStart="true"
                                               android:layout_alignParentTop="true"/>

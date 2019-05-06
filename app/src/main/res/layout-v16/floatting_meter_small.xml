@@ -7,7 +7,8 @@
                    android:layout_width="match_parent" android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"
         />
-        <com.huivip.gpsspeedwidget.MeterWheel android:id="@+id/imageView_meter_pointer"
+        <com.huivip.gpsspeedwidget.view.MeterWheel
+            android:id="@+id/imageView_meter_pointer"
                                               android:layout_width="match_parent"
                                               android:layout_height="match_parent"
                                               android:layout_centerHorizontal="true"

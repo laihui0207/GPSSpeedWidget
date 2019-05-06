@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -7,6 +7,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
+
+import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.service.GpsSpeedService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 

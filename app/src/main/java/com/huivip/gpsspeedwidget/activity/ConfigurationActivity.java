@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -24,6 +24,14 @@ import android.view.View;
 import android.widget.*;
 import butterknife.BindView;
 import com.bumptech.glide.Glide;
+import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
+import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.utils.DeviceUuidFactory;
+import com.huivip.gpsspeedwidget.service.FloatingService;
+import com.huivip.gpsspeedwidget.service.LyricFloatingService;
+import com.huivip.gpsspeedwidget.service.MeterFloatingService;
+import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
@@ -818,8 +826,8 @@ public class ConfigurationActivity extends Activity {
     }
     private void startFloationgWindows(boolean enabled){
         Intent defaultFloatingService=new Intent(this,FloatingService.class);
-        Intent autoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
-        Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
+        Intent autoNavifloatService=new Intent(this, AutoNaviFloatingService.class);
+        Intent meterFloatingService=new Intent(this, MeterFloatingService.class);
         if(enabled){
             String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
             if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){

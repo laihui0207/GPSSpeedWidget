@@ -53,7 +53,7 @@
 
             </intent-filter>
         </activity>-->
-        <activity android:name=".ConfigurationActivity" android:excludeFromRecents="true" android:windowSoftInputMode="stateHidden|stateUnchanged">
+        <activity android:name=".activity.ConfigurationActivity" android:excludeFromRecents="true" android:windowSoftInputMode="stateHidden|stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -61,7 +61,7 @@
             </intent-filter>
         </activity>
         <receiver
-                android:name=".GpsSpeedWidget"
+                android:name=".widget.GpsSpeedWidget"
                 android:icon="@drawable/icon"
                 android:label="SpeedMeter">
             <intent-filter>
@@ -74,7 +74,7 @@
                     android:resource="@xml/watch_widget_provider"/>
         </receiver>
         <receiver
-                android:name=".GpsSpeedNumberWidget"
+                android:name=".widget.GpsSpeedNumberWidget"
                 android:icon="@drawable/icon_number"
                 android:label="SpeedNumber">
             <intent-filter>
@@ -87,7 +87,7 @@
                     android:resource="@xml/number_widget_provider"/>
         </receiver>
         <receiver
-                android:name=".LyricWidgetProvider"
+                android:name=".widget.LyricWidgetProvider"
                 android:label="LyricWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -239,20 +239,20 @@
                 <action android:name="com.huivip.switch.event"/>
             </intent-filter>
         </receiver>
-        <service android:name=".GpsSpeedService"/>
-        <service android:name=".LyricWidgetService">
+        <service android:name=".service.GpsSpeedService"/>
+        <service android:name=".service.LyricWidgetService">
             <intent-filter>
                 <action android:name="com.huivip.widget.lyric.changed"/>
             </intent-filter>
         </service>
-        <service android:name=".FloatingService"/>
-        <service android:name=".RecordGpsHistoryService"/>
-        <service android:name=".NaviFloatingService"/>
-        <service android:name=".AutoNaviFloatingService"/>
-        <service android:name=".MeterFloatingService"/>
-        <service android:name=".BootStartService"/>
-        <service android:name=".TextFloatingService"/>
-        <service android:name=".LyricFloatingService"/>
+        <service android:name=".service.FloatingService"/>
+        <service android:name=".service.RecordGpsHistoryService"/>
+        <service android:name=".service.NaviFloatingService"/>
+        <service android:name=".service.AutoNaviFloatingService"/>
+        <service android:name=".service.MeterFloatingService"/>
+        <service android:name=".service.BootStartService"/>
+        <service android:name=".service.TextFloatingService"/>
+        <service android:name=".service.LyricFloatingService"/>
         <service android:name=".lyric.LyricServiceLowVersion"/>
         <service
                 android:name=".detection.AppDetectionService"
@@ -282,7 +282,7 @@
         </service>-->
        <!-- <activity android:name=".AudioTestActivity" android:windowSoftInputMode="stateHidden|stateUnchanged">
         </activity>-->
-        <activity android:name=".BackupGPSHistoryActivity" android:windowSoftInputMode="stateHidden|stateUnchanged"></activity>
+        <activity android:name=".activity.BackupGPSHistoryActivity" android:windowSoftInputMode="stateHidden|stateUnchanged"></activity>
         <activity android:name=".appselection.AppSelectionActivity"></activity>
     </application>
 

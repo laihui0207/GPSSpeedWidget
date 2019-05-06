@@ -1,18 +1,20 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.activity;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.*;
-import android.provider.Settings;
 import android.support.v13.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
+
+import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.utils.DeviceUuidFactory;
+import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.*;
@@ -32,7 +34,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         initPermission();
         Button configButton=findViewById(R.id.button_config);
-        configButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this,ConfigurationActivity.class)));
+        configButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ConfigurationActivity.class)));
 
         Button testbutton=(Button)findViewById(R.id.button_test);
         testbutton.setOnClickListener(new View.OnClickListener(){
@@ -47,7 +49,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,BackupGPSHistoryActivity.class));
+                startActivity(new Intent(MainActivity.this, BackupGPSHistoryActivity.class));
             }
         });
         Button buttonPay=findViewById(R.id.button_paymain);
@@ -63,7 +65,7 @@ public class MainActivity extends Activity {
         startFloatingWindows(true);
     }
     private void startFloatingWindows(boolean enabled){
-           Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);
+           Intent bootStartService=new Intent(getApplicationContext(), BootStartService.class);
            startService(bootStartService);
     }
     private void initPermission() {

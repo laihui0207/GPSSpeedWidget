@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+
+import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;

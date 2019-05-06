@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
+import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.text.NumberFormat;

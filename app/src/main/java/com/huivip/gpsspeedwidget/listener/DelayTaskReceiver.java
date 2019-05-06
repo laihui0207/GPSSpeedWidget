@@ -3,8 +3,8 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import com.huivip.gpsspeedwidget.LyricFloatingService;
-import com.huivip.gpsspeedwidget.TextFloatingService;
+import com.huivip.gpsspeedwidget.service.LyricFloatingService;
+import com.huivip.gpsspeedwidget.service.TextFloatingService;
 
 public class DelayTaskReceiver extends BroadcastReceiver {
     public static String TARGET="delayTask.Target";

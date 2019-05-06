@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.service;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -6,12 +6,16 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
+
+import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.DBUtil;
+import com.huivip.gpsspeedwidget.utils.DeviceUuidFactory;
+import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.listener.MessageReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.Date;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 

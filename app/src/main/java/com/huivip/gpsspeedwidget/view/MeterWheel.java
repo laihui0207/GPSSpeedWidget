@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -7,18 +7,20 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import com.huivip.gpsspeedwidget.R;
+
 @SuppressLint("AppCompatCustomView")
-public class SpeedWheel extends ImageView
+public class MeterWheel extends ImageView
 {
     private Resources mResources;
     Paint mBorderPaint = new Paint(1);
 
-    public SpeedWheel(Context paramContext)
+    public MeterWheel(Context paramContext)
     {
         this(paramContext, null);
     }
 
-    public SpeedWheel(Context paramContext, AttributeSet paramAttributeSet)
+    public MeterWheel(Context paramContext, AttributeSet paramAttributeSet)
     {
         super(paramContext, paramAttributeSet);
         this.mResources = paramContext.getResources();
@@ -26,7 +28,7 @@ public class SpeedWheel extends ImageView
         this.mBorderPaint.setStyle(Paint.Style.STROKE);
         this.mBorderPaint.setColor(-1);
         this.mBorderPaint.setAlpha(0);
-        setImageResource(R.drawable.index_bg_move);
+        setImageResource(R.drawable.alt_0);
     }
 }
 

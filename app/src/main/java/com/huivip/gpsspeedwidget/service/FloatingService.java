@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.service;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
@@ -17,45 +17,62 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import devlight.io.library.ArcProgressStackView;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
-public class MeterFloatingService extends Service {
+/**
+ * Created by laisun on 28/02/2018.
+ */
+
+public class FloatingService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
+
     private WindowManager mWindowManager;
     private View mFloatingView;
-    @BindView(R.id.imageView_meter_pointer)
-    MeterWheel speedWheelView;
-    @BindView(R.id.textview_meter_SpeedText)
-    TextView speedView;
-    @BindView(R.id.meter_limitLayout)
-    View limitView;
-    @BindView(R.id.textView_meter_distance)
-    TextView limitDistanceTextView;
-    @BindView(R.id.meter_number_limit)
-    TextView limitTextView;
-    @BindView(R.id.textView_meter_limit_label)
-    TextView limitTypeTextView;
-    @BindView(R.id.textView_meter_direction)
-    TextView meterDirection;
-    @BindView(R.id.meter_progressBarLimit)
-    ProgressBar limitProgressBar;
+    @BindView(R.id.limit)
+    View mLimitView;
+    @BindView(R.id.speedometer)
+    View mSpeedometerView;
+    GpsUtil gpsUtil;
+    @BindView(R.id.arcview)
+    ArcProgressStackView mArcView;
+    @BindView(R.id.arcviewLimit)
+    ArcProgressStackView mLimitArcView;
+    @BindView(R.id.speed)
+    TextView mSpeedometerText;
+    @BindView(R.id.limit_text)
+    TextView mLimitText;
+    @BindView(R.id.textView_number_direction)
+    TextView mSpeedDirectionText;
+    @BindView(R.id.textView_floating_distance)
+    TextView mFloatingimitDistance;
+    @BindView(R.id.limit_show)
+    TextView limitShowLabel;
+    @BindView(R.id.speedUnits)
+    TextView speedUnitTextView;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
-    GpsUtil gpsUtil;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -93,6 +110,7 @@ public class MeterFloatingService extends Service {
             gpsUtil.stopLocationService(false);
         }*/
     }
+
     @Override
     public void onCreate() {
         if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
@@ -107,9 +125,10 @@ public class MeterFloatingService extends Service {
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
         if(PrefUtils.isShowSmallFloatingStyle(getApplicationContext())){
-            mFloatingView = inflater.inflate(R.layout.floatting_meter_small, null);
-        } else {
-            mFloatingView = inflater.inflate(R.layout.floatting_meter, null);
+            mFloatingView = inflater.inflate(R.layout.floating_default_limit_small, null);
+        }
+        else {
+            mFloatingView = inflater.inflate(R.layout.floating_default_limit, null);
         }
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -122,20 +141,68 @@ public class MeterFloatingService extends Service {
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
-        //speedWheelView.setRotation((float)(50/100d*252f));
-        //speedView.setText("134");
+       /* mFloatingView.setOnLongClickListener(new View.OnLongClickListener(){
+
+            @Override
+            public boolean onLongClick(View v) {
+                if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
+                    Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
+                    PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
+                }
+                Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
+                configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                startActivity(configActivity);
+                return true;
+            }
+        });*/
+        boolean isShowLimit=PrefUtils.getShowLimits(getApplicationContext());
+        mLimitView.setVisibility(isShowLimit ? View.VISIBLE : View.GONE);
+        boolean isShowSpeed=PrefUtils.getShowSpeedometer(getApplicationContext());
+        mSpeedometerView.setVisibility(isShowSpeed ? View.VISIBLE : View.GONE);
+        if(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext())) {
+            RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
+            speedLayout.addRule(RelativeLayout.RIGHT_OF, R.id.limit);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                speedLayout.removeRule(RelativeLayout.BELOW);
+            }
+            mSpeedometerView.setLayoutParams(speedLayout);
+        } else {
+            RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
+            speedLayout.addRule(RelativeLayout.BELOW, R.id.limit);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                speedLayout.removeRule(RelativeLayout.RIGHT_OF);
+            }
+            mSpeedometerView.setLayoutParams(speedLayout);
+        }
         initMonitorPosition();
+
+        final ArrayList<ArcProgressStackView.Model> models = new ArrayList<>();
+        models.add(new ArcProgressStackView.Model("", 0,
+                ContextCompat.getColor(this, R.color.colorPrimary800),
+                ContextCompat.getColor(this, R.color.colorAccent)));
+        mArcView.setTextColor(ContextCompat.getColor(this, android.R.color.transparent));
+        mArcView.setInterpolator(new FastOutSlowInInterpolator());
+        mArcView.setModels(models);
+
+        final ArrayList<ArcProgressStackView.Model> limitModels = new ArrayList<>();
+        limitModels.add(new ArcProgressStackView.Model("", 0,
+                        ContextCompat.getColor(this, R.color.red500),
+                ContextCompat.getColor(this, R.color.colorPrimary800)));
+        mLimitArcView.setTextColor(ContextCompat.getColor(this, android.R.color.transparent));
+        mLimitArcView.setInterpolator(new FastOutSlowInInterpolator());
+        mLimitArcView.setModels(limitModels);
+        //setLimit(30);
         this.locationScanTask = new TimerTask()
         {
             @Override
             public void run()
             {
-                MeterFloatingService.this.locationHandler.post(new Runnable()
+                FloatingService.this.locationHandler.post(new Runnable()
                 {
                     @Override
                     public void run()
                     {
-                        MeterFloatingService.this.checkLocationData();
+                        FloatingService.this.checkLocationData();
                         //Log.d("huivip","Float Service Check Location");
                     }
                 });
@@ -145,45 +212,63 @@ public class MeterFloatingService extends Service {
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
-    void checkLocationData() {
-        if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
-            //if(gpsUtil.isGpsLocationChanged()){
-                speedWheelView.setRotation((float)(gpsUtil.getSpeedometerPercentage()/100d*252f));
-                setSpeedOveral(gpsUtil.isHasLimited());
-                speedView.setText(gpsUtil.getKmhSpeedStr()+"");
-                meterDirection.setText(gpsUtil.getDirection());
-           // }
-        }
-        else {
-            speedView.setText("...");
-        }
-    }
-    public void setSpeedOveral(boolean speeding) {
-        int colorRes = speeding ? R.color.red500 : R.color.cardview_light_background;
-
-        int color = ContextCompat.getColor(this, colorRes);
-        speedView.setTextColor(color);
-        limitView.setVisibility(( gpsUtil.getLimitDistance()>0 || gpsUtil.getLimitSpeed() > 0) ? View.VISIBLE : View.GONE);
-        limitTextView.setText(gpsUtil.getLimitSpeed()+"");
-        limitDistanceTextView.setText(gpsUtil.getLimitDistance()+"");
-        limitProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
-        limitTypeTextView.setText(gpsUtil.getCameraTypeName()+"");
-    }
-
-    /*public void setSpeed(String speed) {
-        speedView.setText(speed);
-    }*/
-    private int getWindowType() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
-                WindowManager.LayoutParams.TYPE_PHONE;
-    }
     private void openSettings(String settingsAction, String packageName) {
         Intent intent = new Intent(settingsAction);
         intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
         intent.setData(Uri.parse("package:" + packageName));
         startActivity(intent);
     }
+    void checkLocationData() {
+        if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
+            //if(gpsUtil.isGpsLocationChanged()){
+                setSpeed(gpsUtil.getKmhSpeedStr(),gpsUtil.getSpeedometerPercentage());
+                mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
+                setSpeeding(gpsUtil.isHasLimited());
+                setLimit(gpsUtil.getLimitDistancePercentage());
+                if(gpsUtil.getCameraType()>-1){
+                    limitShowLabel.setText(gpsUtil.getCameraTypeName());
+                }
+                else {
+                    limitShowLabel.setText("限速");
+                }
+                mSpeedDirectionText.setText(gpsUtil.getDirection());
+                if(TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
+                    speedUnitTextView.setText("km/h");
+                }
+                else {
+                    speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
+                }
+           // }
+        }
+        else {
+           mSpeedometerText.setText("--");
+        }
+    }
+    private int getWindowType() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                WindowManager.LayoutParams.TYPE_PHONE;
+    }
+    public void setLimit(int percentOfLimit){
+        if(PrefUtils.getShowLimits(this)) {
+            mLimitArcView.getModels().get(0).setProgress(percentOfLimit);
+            mLimitArcView.animateProgress();
+            if(gpsUtil.getLimitDistance()>0){
+                mFloatingimitDistance.setText(Float.toString(gpsUtil.getLimitDistance())+"米");
+            }
+            else {
+                mFloatingimitDistance.setText(gpsUtil.getDistance());
+            }
+        }
+    }
+    public void setSpeed(String speed, int percentOfWarning) {
+        if (PrefUtils.getShowSpeedometer(this) && mSpeedometerText != null) {
+            mSpeedometerText.setText(speed);
+            mArcView.getModels().get(0).setProgress(percentOfWarning);
+            mArcView.animateProgress();
+        }
+    }
+
     private void initMonitorPosition() {
         if (mFloatingView == null) {
             return;
@@ -213,9 +298,20 @@ public class MeterFloatingService extends Service {
 
                 mFloatingView.setVisibility(View.VISIBLE);
 
-                mFloatingView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mFloatingView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
             }
         });
+    }
+
+    public void setSpeeding(boolean speeding) {
+        int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN){
+            colorRes = speeding ? R.color.red500 : R.color.cardview_light_background;
+        }
+        int color = ContextCompat.getColor(this, colorRes);
+        mSpeedometerText.setTextColor(color);
     }
     private void animateViewToSideSlot() {
         Point screenSize = new Point();
@@ -257,7 +353,7 @@ public class MeterFloatingService extends Service {
         private float initialAlpha;
         private ValueAnimator fadeOut;
         private ValueAnimator fadeIn;
-
+        private boolean tempMove=false;
         public FloatingOnTouchListener() {
             final WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
             fadeOut = ValueAnimator.ofFloat(params.alpha, 0.1F);
@@ -278,6 +374,7 @@ public class MeterFloatingService extends Service {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             final WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
+
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mInitialTouchX = event.getRawX();
@@ -306,15 +403,16 @@ public class MeterFloatingService extends Service {
                         params.y = (int) (dY + mInitialY);
 
                         try {
+
                             mWindowManager.updateViewLayout(mFloatingView, params);
                         } catch (IllegalArgumentException ignore) {
                         }
                     }
                     return true;
                 case MotionEvent.ACTION_POINTER_UP:
-                    Toast.makeText(getApplicationContext(),"双指单击关闭悬浮窗",Toast.LENGTH_SHORT).show();
-                    onStop();
-                    stopSelf();
+                        Toast.makeText(getApplicationContext(),"双指单击关闭悬浮窗",Toast.LENGTH_SHORT).show();
+                        onStop();
+                        stopSelf();
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
@@ -335,7 +433,7 @@ public class MeterFloatingService extends Service {
                     }
                     else {
                         if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
-                            animateViewToSideSlot();
+                             animateViewToSideSlot();
                         } else {
                             PrefUtils.setFloatingSolidLocation(getApplicationContext(),params.x,params.y);
                         }
@@ -345,11 +443,11 @@ public class MeterFloatingService extends Service {
                             Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
                             PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
                         }
-                        Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
+                        Intent configActivity=new Intent(getApplicationContext(), ConfigurationActivity.class);
                         configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
                         startActivity(configActivity);
                     }
-                    return true;
+                    return false;
             }
             return false;
         }

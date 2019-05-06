@@ -8,6 +8,9 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
+import com.huivip.gpsspeedwidget.service.FloatingService;
+import com.huivip.gpsspeedwidget.service.MeterFloatingService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import java.util.Set;
 
@@ -81,8 +84,8 @@ public class AppDetectionService extends AccessibilityService {
         boolean onDesktop = enabledApps.contains(componentName.getPackageName());
         PrefUtils.setOnDesktop(getApplicationContext(),onDesktop);
         Intent floatService = new Intent(this, FloatingService.class);
-        Intent autoNaviFloatingService=new Intent(this,AutoNaviFloatingService.class);
-        Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
+        Intent autoNaviFloatingService=new Intent(this, AutoNaviFloatingService.class);
+        Intent meterFloatingService=new Intent(this, MeterFloatingService.class);
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
             floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
             autoNaviFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);

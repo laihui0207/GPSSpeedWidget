@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import com.huivip.gpsspeedwidget.WeatherService;
+import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;

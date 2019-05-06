@@ -1,12 +1,14 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.widget;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
+
+import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.service.GpsSpeedService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 
@@ -45,7 +47,7 @@ public class LyricWidgetProvider extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         PrefUtils.setWidgetActived(context,false);
         PrefUtils.setEnabledNumberWidget(context,false);
-        context.stopService(new Intent(context,GpsSpeedService.class));
+        context.stopService(new Intent(context, GpsSpeedService.class));
         super.onDeleted(context, appWidgetIds);
     }
 

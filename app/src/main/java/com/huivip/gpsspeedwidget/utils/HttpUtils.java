@@ -2,11 +2,8 @@ package com.huivip.gpsspeedwidget.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
-import com.huivip.gpsspeedwidget.LocationVO;
+import com.huivip.gpsspeedwidget.beans.LocationVO;
 import org.json.JSONArray;
 
 import java.io.*;

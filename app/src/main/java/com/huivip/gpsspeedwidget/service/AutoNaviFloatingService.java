@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget;
+package com.huivip.gpsspeedwidget.service;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
@@ -18,10 +18,21 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.*;
-import android.widget.*;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.view.SpeedWheel;
+import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
+import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -30,43 +41,46 @@ import java.util.TimerTask;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
-/**
- * Created by laisun on 28/02/2018.
- */
-
-public class NaviFloatingService extends Service{
+public class AutoNaviFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
-
     private WindowManager mWindowManager;
     private View mFloatingView;
-    GpsUtil gpsUtil;
+    @BindView(R.id.imageView_pointer)
+    SpeedWheel speedWheelView;
+    @BindView(R.id.SpeedText)
+    TextView speedView;
+    @BindView(R.id.imageview_nomove_night)
+    ImageView moveImageView;
+    @BindView(R.id.imageview_red_night)
+    ImageView speedOveralView;
+    @BindView(R.id.autoNavi_limitLayout)
+    View limitView;
+    @BindView(R.id.textView_autoNavi_distance)
+    TextView limitDistanceTextView;
+    @BindView(R.id.autoNavi_number_limit)
+    TextView limitTextView;
+    @BindView(R.id.textView_autoNavi_limit_label)
+    TextView limitTypeTextView;
+    @BindView(R.id.autoNavi_progressBarLimit)
+    ProgressBar limitProgressBar;
+    @BindView(R.id.textView_autonavi_direction)
+    TextView directionTextView;
+    @BindView(R.id.textView_autonavi_altitude)
+    TextView altitudeTextView;
+    @BindView(R.id.textView_autonavi_speedUnit)
+    TextView speedUnitTextView;
     TimerTask locationScanTask;
+    @BindView(R.id.image_home_navi)
+    ImageView goHomeImage;
+    @BindView(R.id.image_company_navi)
+    ImageView goCompanyImage;
+    @BindView(R.id.image_main_navi)
+    ImageView goMainImage;
+    @BindView(R.id.image_auto_navi)
+    ImageView goAutoNaviImage;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
-
-    @BindView(R.id.textView_currentroad)
-    TextView currentRoadTextView;
-    @BindView(R.id.textView_nextroadname)
-    TextView nextRoadNameTextView;
-    @BindView(R.id.textView_nextdistance)
-    TextView nextRoadDistanceTextView;
-
-    @BindView(R.id.textView_totalleft)
-    TextView naviLeftTextView;
-    @BindView(R.id.imageView_turnicon)
-    ImageView naveIconImageView;
-    @BindView(R.id.navi_number_limit)
-    TextView navicameraSpeedTextView;
-    @BindView(R.id.textView_navi_distance)
-    TextView navicameraDistanceTextView;
-    @BindView(R.id.navi_progressBarLimit)
-    ProgressBar limitDistanceProgressBar;
-    @BindView(R.id.textView_navi_limit_label)
-    TextView cameraTypeNameTextView;
-    @BindView(R.id.navi_limit_view)
-    View naviCameraView;
-    @BindView(R.id.textView_autonavi_speedText)
-    TextView speedTextView;
+    GpsUtil gpsUtil;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -76,24 +90,34 @@ public class NaviFloatingService extends Service{
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent!=null){
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableNaviFloating(getApplicationContext())) {
+            boolean enableFloatingService=PrefUtils.isEnableFlatingWindow(getApplicationContext());
+            boolean userClosedService=PrefUtils.isUserManualClosedService(getApplicationContext());
+            if (!enableFloatingService || userClosedService || intent.getBooleanExtra(EXTRA_CLOSE, false)) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
+            gpsUtil.startLocationService();
         }
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
-            mWindowManager.removeView(mFloatingView);
+            try {
+                mWindowManager.removeView(mFloatingView);
+            }catch (Exception e){
+                Log.d("huivip",e.getLocalizedMessage());
+                e.printStackTrace();
+            }
         }
         if(locationTimer!=null){
             locationTimer.cancel();
             locationTimer.purge();
         }
+       /* if(gpsUtil!= null) {
+            gpsUtil.stopLocationService(false);
+        }*/
     }
-
     @Override
     public void onCreate() {
         if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
@@ -107,7 +131,11 @@ public class NaviFloatingService extends Service{
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        mFloatingView = inflater.inflate(R.layout.floating_backend_navi, null);
+        if(PrefUtils.isShowSmallFloatingStyle(getApplicationContext())){
+            mFloatingView = inflater.inflate(R.layout.floating_autonavi_small, null);
+        } else{
+            mFloatingView = inflater.inflate(R.layout.floating_autonavi, null);
+        }
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -119,65 +147,99 @@ public class NaviFloatingService extends Service{
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
+        //speedWheelView.setRotation((float)(50/100d*280f));
         initMonitorPosition();
         this.locationScanTask = new TimerTask()
         {
             @Override
             public void run()
             {
-                NaviFloatingService.this.locationHandler.post(new Runnable()
+                AutoNaviFloatingService.this.locationHandler.post(new Runnable()
                 {
                     @Override
                     public void run()
                     {
-                        NaviFloatingService.this.checkLocationData();
+                        AutoNaviFloatingService.this.checkLocationData();
                         //Log.d("huivip","Float Service Check Location");
                     }
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         CrashHandler.getInstance().init(getApplicationContext());
+        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+
+        goHomeImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10040,0));
+            }
+        });
+        goCompanyImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10040,1));
+            }
+        });
+        goMainImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+        goAutoNaviImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10034,100));
+            }
+        });
         super.onCreate();
     }
-
-    void checkLocationData() {
-        if(!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
-            currentRoadTextView.setText(gpsUtil.getCurrentRoadName()+"");
+    private Intent sendAutoBroadCase(Context context, int key,int type){
+        Intent intent = new Intent();
+        intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+        intent.putExtra("KEY_TYPE", key);
+        if(key==10040) {
+            intent.putExtra("DEST", type);
+            intent.putExtra("IS_START_NAVI", 0);
         }
-        if(!TextUtils.isEmpty(gpsUtil.getNextRoadName())){
-            nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
-        }
-        nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
-        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+"/"+gpsUtil.getTotalLeftTime());
-        if(gpsUtil.getNavi_turn_icon()>0) {
-            naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
-        }
-        if(gpsUtil.getCameraSpeed()>0){
-            navicameraSpeedTextView.setText(gpsUtil.getCameraSpeed()+"");
-        }
-        else {
-            navicameraSpeedTextView.setText("0");
-        }
-        if(gpsUtil.getCameraDistance()>0){
-            navicameraDistanceTextView.setText(gpsUtil.getCameraDistance()+"米");
-            limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
-        }
-        else {
-            navicameraDistanceTextView.setText("0米");
-        }
-        cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
-        if(gpsUtil.getCameraType()!=-1){
-            naviCameraView.setVisibility(View.VISIBLE);
-        }
-        else {
-            naviCameraView.setVisibility(View.GONE);
-        }
-        speedTextView.setText(gpsUtil.getKmhSpeedStr());
-        int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
-        int color = ContextCompat.getColor(this, colorRes);
-        speedTextView.setTextColor(color);
+        intent.putExtra("SOURCE_APP","GPSWidget");
+        return intent;
     }
+    void checkLocationData() {
+        if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
+            speedView.setText(gpsUtil.getKmhSpeedStr() + "");
+            //speedWheelView.setRotation((float) (gpsUtil.getSpeedometerPercentage() / 100d * 280f));
+            speedWheelView.setRotation(360-gpsUtil.getBearing());
+            setSpeedOveral(gpsUtil.isHasLimited());
+            directionTextView.setText(gpsUtil.getDirection() + "");
+            altitudeTextView.setText("海拔： " + gpsUtil.getAltitude() + "米");
+            if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
+                speedUnitTextView.setText("km/h");
+            } else {
+                speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
+            }
+        } else {
+            speedView.setText("...");
+        }
+    }
+    public void setSpeedOveral(boolean speeding) {
+        int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
+        int color = ContextCompat.getColor(this, colorRes);
+        speedView.setTextColor(color);
+        speedOveralView.setVisibility(speeding ? View.VISIBLE : View.GONE);
+        limitView.setVisibility((gpsUtil.getLimitDistance()>0 || gpsUtil.getLimitSpeed() > 0 )  ? View.VISIBLE : View.GONE);
+        limitTextView.setText(gpsUtil.getLimitSpeed()+"");
+        limitDistanceTextView.setText(gpsUtil.getLimitDistance()+"");
+        limitProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
+        limitTypeTextView.setText(gpsUtil.getCameraTypeName());
+    }
+   /* public void setSpeed(String speed) {
+        if (PrefUtils.getShowSpeedometer(this) && speedView != null) {
+           speedView.setText(speed);
+        }
+    }*/
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
@@ -189,72 +251,6 @@ public class NaviFloatingService extends Service{
         intent.setData(Uri.parse("package:" + packageName));
         startActivity(intent);
     }
-    private int getTurnIcon(int iconValue){
-        int returnValue=-1;
-        switch (iconValue) {
-            case 1:
-                returnValue = R.drawable.sou0_night;
-                break;
-            case 2:
-                returnValue = R.drawable.sou2_night;
-                break;
-            case 3:
-                returnValue = R.drawable.sou3_night;
-                break;
-            case 4:
-                returnValue = R.drawable.sou4_night;
-                break;
-            case 5:
-                returnValue = R.drawable.sou5_night;
-                break;
-            case 6:
-                returnValue = R.drawable.sou6_night;
-                break;
-            case 7:
-                returnValue = R.drawable.sou7_night;
-                break;
-            case 8:
-                returnValue = R.drawable.sou8_night;
-                break;
-            case 9:
-                returnValue = R.drawable.sou9_night;
-                break;
-            case 10:
-                returnValue = R.drawable.sou10_night;
-                break;
-            case 11:
-                returnValue = R.drawable.sou11_night;
-                break;
-            case 12:
-                returnValue = R.drawable.sou12_night;
-                break;
-            case 13:
-                returnValue = R.drawable.sou13_night;
-                break;
-            case 14:
-                returnValue = R.drawable.sou14_night;
-                break;
-            case 15:
-                returnValue = R.drawable.sou15_night;
-                break;
-            case 16:
-                returnValue = R.drawable.sou16_night;
-                break;
-            case 17:
-                returnValue = R.drawable.sou17_night;
-                break;
-            case 18:
-                returnValue = R.drawable.sou18_night;
-                break;
-            case 19:
-                returnValue = R.drawable.sou19_night;
-                break;
-            case 20:
-                returnValue = R.drawable.sou20_night;
-                break;
-        }
-        return returnValue;
-    }
     private void initMonitorPosition() {
         if (mFloatingView == null) {
             return;
@@ -263,17 +259,17 @@ public class NaviFloatingService extends Service{
             @Override
             public void onGlobalLayout() {
                 WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-                String[] split = PrefUtils.getNaviFloatingLocation(getApplicationContext()).split(",");
+                String[] split = PrefUtils.getFloatingLocation(getApplicationContext()).split(",");
                 boolean left = Boolean.parseBoolean(split[0]);
                 float yRatio = Float.parseFloat(split[1]);
-                if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
+                if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
                     Point screenSize = new Point();
                     mWindowManager.getDefaultDisplay().getSize(screenSize);
                     params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
                     params.y = (int) (yRatio * screenSize.y + 0.5f);
                 }
                 else {
-                    String[] xy=PrefUtils.getNaviFloatingSolidLocation(getApplicationContext()).split(",");
+                    String[] xy=PrefUtils.getFloatingSolidLocation(getApplicationContext()).split(",");
                     params.x=(int)Float.parseFloat(xy[0]);
                     params.y=(int)Float.parseFloat(xy[1]);
                 }
@@ -288,7 +284,6 @@ public class NaviFloatingService extends Service{
             }
         });
     }
-
     private void animateViewToSideSlot() {
         Point screenSize = new Point();
         mWindowManager.getDefaultDisplay().getSize(screenSize);
@@ -301,7 +296,7 @@ public class NaviFloatingService extends Service{
             endX = 0;
         }
 
-        PrefUtils.setNaviFloatingLocation(getApplicationContext(), (float) params.y / screenSize.y, endX == 0);
+        PrefUtils.setFloatingLocation(getApplicationContext(), (float) params.y / screenSize.y, endX == 0);
         ValueAnimator valueAnimator = ValueAnimator.ofInt(params.x, endX)
                 .setDuration(300);
         valueAnimator.setInterpolator(new LinearOutSlowInInterpolator());
@@ -350,7 +345,6 @@ public class NaviFloatingService extends Service{
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             final WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mInitialTouchX = event.getRawX();
@@ -364,7 +358,7 @@ public class NaviFloatingService extends Service{
                     mIsClick = true;
                     return true;
                 case MotionEvent.ACTION_MOVE:
-                    if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())){
+                    if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())){
                         return true;
                     }
                     float dX = event.getRawX() - mInitialTouchX;
@@ -384,6 +378,11 @@ public class NaviFloatingService extends Service{
                         }
                     }
                     return true;
+                case MotionEvent.ACTION_POINTER_UP:
+                    Toast.makeText(getApplicationContext(),"双指单击关闭悬浮窗",Toast.LENGTH_SHORT).show();
+                    onStop();
+                    stopSelf();
+                    return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
                         if (fadeAnimator != null && fadeAnimator.isStarted()) {
@@ -401,22 +400,19 @@ public class NaviFloatingService extends Service{
                             fadeAnimator.start();
                         }
                     }
-                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
-
-                    }
                     else {
-                        if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                             animateViewToSideSlot();
+                        if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
+                            animateViewToSideSlot();
                         } else {
-                            PrefUtils.setNaviFloatingSolidLocation(getApplicationContext(),params.x,params.y);
+                            PrefUtils.setFloatingSolidLocation(getApplicationContext(),params.x,params.y);
                         }
                     }
                     if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
-                        if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                            Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
-                            PrefUtils.setEnableNaviFloatingFixed(getApplicationContext(),false);
+                        if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
+                            Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
+                            PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
                         }
-                        Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
+                        Intent configActivity=new Intent(getApplicationContext(), ConfigurationActivity.class);
                         configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
                         startActivity(configActivity);
                     }
