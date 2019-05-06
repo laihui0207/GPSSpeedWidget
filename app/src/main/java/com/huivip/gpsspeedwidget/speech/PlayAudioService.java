@@ -74,12 +74,10 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
         int streamType = -1;
         if (PrefUtils.isEnableAudioMixService(getApplicationContext())) {
             focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK;
-            streamType = AudioManager.STREAM_MUSIC;
         } else {
             focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
-            streamType = AudioManager.STREAM_VOICE_CALL;
-            //streamType = AudioManager.STREAM_MUSIC;
         }
+        streamType = AudioManager.STREAM_MUSIC;
         int result = -1;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mFocusRequest = new AudioFocusRequest.Builder(focusType)
@@ -121,7 +119,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
     @Override
     public void onAudioFocusChange(int focusChange) {
         Log.d("GPS_Audio","focus change:"+focusChange);
-        switch (focusChange){
+       /* switch (focusChange){
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
             case AudioManager.AUDIOFOCUS_GAIN:
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
@@ -151,14 +149,14 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                 }
                 break;
 
-        }
+        }*/
     }
     public void playAudioByAudioTrack(String fileName,MediaPlayer.OnCompletionListener listener){
         int bufferSize = AudioTrack.getMinBufferSize(16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         int type=AudioManager.STREAM_MUSIC;
-        if(!PrefUtils.isEnableAudioMixService(getApplicationContext())) {
+       /* if(!PrefUtils.isEnableAudioMixService(getApplicationContext())) {
             type=AudioManager.STREAM_VOICE_CALL;
-        }
+        }*/
         if(audioTrack==null)
             audioTrack = new AudioTrack(type,
                     16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);

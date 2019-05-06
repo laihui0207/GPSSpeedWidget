@@ -69,6 +69,7 @@ public class NaviFloatingService extends Service{
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
+    final Handler updateHandler = new Handler();
     BroadcastReceiver broadcastReceiver;
     @BindView(R.id.textView_currentroad)
     TextView currentRoadTextView;
@@ -245,31 +246,37 @@ public class NaviFloatingService extends Service{
                 } else {
                     Log.d("huivip", "segment:" + info);
                 }
-                try {
-                    JSONObject tmc = new JSONObject(info);
-                    if (tmc != null) {
-                        JSONArray segmentArray = tmc.getJSONArray("tmc_info");
+                NaviFloatingService.this.updateHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONObject tmc = new JSONObject(info);
+                            if (tmc != null) {
+                                JSONArray segmentArray = tmc.getJSONArray("tmc_info");
 
-                        List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
-                        if (segmentArray != null && segmentArray.length() > 0) {
-                            for (int i = 0; i < segmentArray.length(); i++) {
-                                JSONObject obj = segmentArray.getJSONObject(i);
-                                if (obj != null) {
-                                    models.add(new TmcSegmentView.SegmentModel()
-                                            .setDistance(obj.getInt("tmc_segment_distance"))
-                                            .setStatus(obj.getInt("tmc_status"))
-                                            .setNumber(obj.getInt("tmc_segment_number"))
-                                            .setPercent(obj.getInt("tmc_segment_percent")));
+                                List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
+                                if (segmentArray != null && segmentArray.length() > 0) {
+                                    for (int i = 0; i < segmentArray.length(); i++) {
+                                        JSONObject obj = segmentArray.getJSONObject(i);
+                                        if (obj != null) {
+                                            models.add(new TmcSegmentView.SegmentModel()
+                                                    .setDistance(obj.getInt("tmc_segment_distance"))
+                                                    .setStatus(obj.getInt("tmc_status"))
+                                                    .setNumber(obj.getInt("tmc_segment_number"))
+                                                    .setPercent(obj.getInt("tmc_segment_percent")));
+                                        }
+                                    }
+                                }
+                                if (models != null && models.size() > 0) {
+                                    tmcSegmentView.setSegments(models);
                                 }
                             }
-                        }
-                        if (models != null && models.size() > 0) {
-                            tmcSegmentView.setSegments(models);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                });
+
             }
         };
         IntentFilter intentFilter = new IntentFilter();
@@ -281,19 +288,7 @@ public class NaviFloatingService extends Service{
             getApplicationContext().unregisterReceiver(broadcastReceiver);
         }
     }
-    /*@Subscribe
-    public void onEvent(final TMCSegmentEvent event) {
-        if (event == null || event.getTmcSegment() == null) return;
-        TMCSegment tmcSegment = event.getTmcSegment();
-        List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
-        for (TMCSegment.TmcInfo tmcInfo : tmcSegment.getTmc_info()) {
-            models.add(new TmcSegmentView.SegmentModel()
-                    .setDistance(tmcInfo.getTmc_segment_distance())
-                    .setStatus(tmcInfo.getTmc_status())
-                    .setNumber(tmcInfo.getTmc_segment_number()));
-        }
-        tmcSegmentView.setSegments(models);
-    }*/
+
     private int getWindowType() {
         return WindowManager.LayoutParams.TYPE_SYSTEM_ALERT | WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY ;
     }

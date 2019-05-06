@@ -723,14 +723,12 @@ public class ConfigurationActivity extends Activity {
                                 JSONObject data= (JSONObject) infoObj.get("data");
                                 String updateVersion=data.getString("serverVersion");
                                 Log.d("huivip","Current local Version:"+currentVersion+",Update Version:"+updateVersion);
+                                Message message = Message.obtain();
+                                message.obj =updateInfo;
                                 if(currentVersion.equalsIgnoreCase(updateVersion)){
-                                    Message message = Message.obtain();
-                                    message.obj ="";
                                     message.arg1 = 0;
                                     AlterHandler.handleMessage(message);
                                 } else {
-                                    Message message = Message.obtain();
-                                    message.obj =updateInfo;
                                     message.arg1 = 1;
                                     AlterHandler.handleMessage(message);
                                 }
@@ -756,9 +754,23 @@ public class ConfigurationActivity extends Activity {
                         AlertDialog.Builder  mDialog = new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight));
                         mDialog.setTitle("版本检查");
                         mDialog.setMessage("已是最新版本，无需更新！");
-                        mDialog.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                        mDialog.setPositiveButton("关闭",new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
                                 dialog.dismiss();
+                            }
+                        }).setNegativeButton("重装", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                JSONObject updateInfo= null;
+                                try {
+                                    updateInfo = new JSONObject((String)msg.obj);
+                                    JSONObject data= (JSONObject) updateInfo.get("data");
+                                    String updateUrl=data.getString("updateurl");
+                                    String appName=data.getString("appname");
+                                    HttpUtils.downLoadApk(ConfigurationActivity.this,updateUrl,appName);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         });
                         mDialog.create().show();
@@ -766,7 +778,7 @@ public class ConfigurationActivity extends Activity {
                     else if (msg.arg1==1){
                         AlertDialog.Builder  mDialog = new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight));
                         try {
-                            JSONObject updateInfo=new JSONObject((String)msg.obj);
+                            JSONObject updateInfo = new JSONObject((String)msg.obj);
                             JSONObject data= (JSONObject) updateInfo.get("data");
                             mDialog.setTitle("版本升级");
                             mDialog.setMessage(data.getString("upgradeinfo")).setCancelable(true);

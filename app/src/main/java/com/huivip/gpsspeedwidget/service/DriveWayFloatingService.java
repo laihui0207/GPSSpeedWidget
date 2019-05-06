@@ -86,7 +86,7 @@ public class DriveWayFloatingService extends Service{
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
-           // showPluginContent();
+            showPluginContent();
         }
         return Service.START_REDELIVER_INTENT;
     }
@@ -160,7 +160,7 @@ public class DriveWayFloatingService extends Service{
                     @Override
                     public void run()
                     {
-                        if(gpsUtil.isGpsLocationChanged()) {
+                        if(gpsUtil.getKmhSpeed()>0) {
                             showPluginContent();
                         }
                         //Log.d("huivip","Float Service Check Location");
