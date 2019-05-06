@@ -17,14 +17,28 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import com.amap.api.maps.*;
-import com.amap.api.maps.model.*;
+
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdate;
+import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.CoordinateConverter;
+import com.amap.api.maps.MapView;
+import com.amap.api.maps.UiSettings;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.CameraPosition;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
@@ -36,6 +50,9 @@ import com.huivip.gpsspeedwidget.view.ImageWheelView;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -89,6 +106,7 @@ public class MapFloatingService extends Service {
                 return super.onStartCommand(intent, flags, startId);
             }
             timeThread.running=true;
+            timeThread.setContext(getApplicationContext());
             timeThread.start();
         }
         Calendar cal = Calendar.getInstance();

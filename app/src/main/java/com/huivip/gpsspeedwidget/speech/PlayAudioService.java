@@ -5,13 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
+import android.media.AudioFormat;
 import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
@@ -24,11 +27,15 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
     private final String TAG = "GPS";
     AudioFocusRequest mFocusRequest;
     private MediaPlayer mediaPlayer;
+    private AudioTrack audioTrack;
     PlayBinder playBinder;
 
     public  class PlayBinder extends Binder {
         public void play(String fileName,MediaPlayer.OnCompletionListener listener){
             playAudio(fileName,listener);
+        }
+        public void playByAudioTrack(String fileName,MediaPlayer.OnCompletionListener listener){
+            playAudioByAudioTrack(fileName,listener);
         }
         public PlayAudioService getService(){
             return PlayAudioService.this;
@@ -50,6 +57,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
     public void onCreate() {
         super.onCreate();
         mediaPlayer=new MediaPlayer();
+
         playBinder = new PlayBinder();
     }
 
@@ -144,6 +152,65 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                 break;
 
         }
+    }
+    public void playAudioByAudioTrack(String fileName,MediaPlayer.OnCompletionListener listener){
+        int bufferSize = AudioTrack.getMinBufferSize(16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
+        int type=AudioManager.STREAM_MUSIC;
+        if(!PrefUtils.isEnableAudioMixService(getApplicationContext())) {
+            type=AudioManager.STREAM_VOICE_CALL;
+        }
+        if(audioTrack==null)
+            audioTrack = new AudioTrack(type,
+                    16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);
+        //边读边播
+        byte[] buffer = new byte[bufferSize];
+        int volume=PrefUtils.getAudioVolume(getApplicationContext());
+        audioTrack.setVolume(volume/100f);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if(beforeSpeak()) {
+                        audioTrack.play();
+                        FileInputStream fis = null;
+                        fis = new FileInputStream(fileName);
+                        while (fis.available() > 0) {
+                            int readCount = fis.read(buffer);
+                            if (readCount == -1) {
+                                Log.e(TAG, "没有更多数据可以读取了");
+                                break;
+                            }
+                            int writeResult = audioTrack.write(buffer, 0, readCount);
+                            if (writeResult >= 0) {
+                                //success
+                            } else {
+                                //fail
+                                //丢掉这一块数据
+                                continue;
+                            }
+                        }
+                        audioTrack.stop();
+                        audioTrack.flush();
+                        //if (audioTrack.getPlayState() == AudioTrack.PLAYSTATE_STOPPED) {
+                            listener.onCompletion(null);
+                        //}
+                        audioTrack.release();
+                        audioTrack=null;
+                        fis.close();
+                        afterSpeak();
+                        if (!PrefUtils.isEnableCacheAudioFile(getApplicationContext())) {
+                            File file = new File(fileName);
+                            file.delete();
+                        }
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }).start();
     }
     public void playAudio(String fileName,MediaPlayer.OnCompletionListener listener){
         try {

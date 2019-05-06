@@ -54,6 +54,17 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
             artistName=intent.getStringExtra("play_music_artist");
             album=intent.getStringExtra("play_music_album");
         }
+        if(intent.getAction().equalsIgnoreCase("update.widget.update_proBar")){
+            songName = intent.getStringExtra("curplaysong");
+            position = intent.getIntExtra("proBarvalue", 0);
+        }
+        if("com.ijidou.card.music".equalsIgnoreCase(intent.getAction())){
+            artistName = intent.getStringExtra("music_artist");
+            songName = intent.getStringExtra("music_title");
+        }
+        if("com.ijidou.action.UPDATE_PROGRESS".equalsIgnoreCase(intent.getAction())){
+            position=intent.getIntExtra("elapse", 0);
+        }
         if (artistName != null && artistName.trim().startsWith("<") && artistName.trim().endsWith(">") && artistName.contains("unknown"))
             artistName = "";
 

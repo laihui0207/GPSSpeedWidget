@@ -155,4 +155,5 @@
     </LinearLayout>
     <com.huivip.gpsspeedwidget.view.TmcSegmentView android:id="@+id/segmentView" android:layout_width="match_parent"
         android:layout_height="10dp"/>
+
 </LinearLayout>

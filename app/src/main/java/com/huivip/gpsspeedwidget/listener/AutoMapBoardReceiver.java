@@ -3,8 +3,6 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Environment;
 import android.text.TextUtils;
 
 import com.huivip.gpsspeedwidget.Constant;
@@ -16,26 +14,19 @@ import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class AutoMapBoardReceiver extends BroadcastReceiver {
-
+    private int segment_current_distance=0;
     @Override
     public void onReceive(Context context, Intent intent) {
         GpsUtil gpsUtil=GpsUtil.getInstance(context.getApplicationContext());
         if( intent!=null && !TextUtils.isEmpty(intent.getAction()) && intent.getAction().equalsIgnoreCase(Constant.AMAP_SEND_ACTION)){
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String time=formatter.format(new Date());
-            Bundle bundle=intent.getExtras();
+/*            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");*/
+           /* String time=formatter.format(new Date());
+            Bundle bundle=intent.getExtras();*/
             int key=intent.getIntExtra("KEY_TYPE",-1);
-            for(String keyStr:bundle.keySet()){
+            /*for(String keyStr:bundle.keySet()){
                 FileUtil.saveLogToFile("key_Type:"+key+",Key:"+keyStr+",value:"+bundle.get(keyStr));
-            }
+            }*/
            // FileUtil.saveLogToFile(time+",Get Key:"+key);
             if(key==10019){
                 int status=intent.getIntExtra("EXTRA_STATE",-1);
@@ -89,12 +80,14 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         //Toast.makeText(context,"Backend Auto Map into cruising",Toast.LENGTH_SHORT).show();
                         break;
                     case 8: // start navi
+                        segment_current_distance=0;
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
                         PrefUtils.setEnableTempAudioService(context,false);
                         launchSpeedFloatingWindows(context,true);
                         break;
                     case 10:  // simulate navi
                        // Toast.makeText(context,"Heated Checked",Toast.LENGTH_SHORT).show();
+                        segment_current_distance=0;
                         startFloatingService(context);
                         launchSpeedFloatingWindows(context,true);
                         gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
@@ -143,24 +136,20 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         break;
                 }
             }
-            if(key==13011){
+            if (key == 13011) {
                 String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");
-
-                /*TMCSegmentEvent event=new TMCSegmentEvent();
-                event.setTmcSegment(tMCSegment);*/
-               // gpsUtil.setTmcSegment(tMCSegment);
-                //EventBus.getDefault().post(event);
-                Intent eventIntent=new Intent();
-                eventIntent.putExtra("segment",info);
-                eventIntent.setAction(Constant.UPDATE_SEGMENT_EVENT_ACTION);
-                context.sendBroadcast(eventIntent);
-
+                if (!TextUtils.isEmpty(info)) {
+                    Intent eventIntent = new Intent();
+                    eventIntent.putExtra("segment", info);
+                    eventIntent.setAction(Constant.UPDATE_SEGMENT_EVENT_ACTION);
+                    context.sendBroadcast(eventIntent);
+                }
             }
             if(key==13012){  // drive way information,but Just support pre-install version
                 String wayInfo=intent.getStringExtra("EXTRA_DRIVE_WAY");
                 //Toast.makeText(context,wayInfo,Toast.LENGTH_SHORT).show();
 
-                try {
+               /* try {
                     JSONObject object=new JSONObject(wayInfo);
                     Intent driveWayFloatingService=new Intent(context,DriveWayFloatingService.class);
                     if(object.getBoolean("drive_way_enabled")){
@@ -178,7 +167,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                FileUtil.saveLogToFile("time:"+time+",WayInfo:"+wayInfo);
+                FileUtil.saveLogToFile("time:"+time+",WayInfo:"+wayInfo);*/
             }
             if(key==10056){  // current navi path information
                 String iformationJsonString=intent.getStringExtra("EXTRA_ROAD_INFO");
@@ -341,11 +330,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
         }
     }
     private void startFloatingService(Context context){
-        if(PrefUtils.isEnableNaviFloating(context)) {
+        if(PrefUtils.isEnableNaviFloating(context) && !Utils.isServiceRunning(context,NaviFloatingService.class.getName())) {
             Intent floatService = new Intent(context, NaviFloatingService.class);
             context.startService(floatService);
         }
-        if(PrefUtils.isEnableAutoWidgetFloatingWidow(context)){
+        if(PrefUtils.isEnableAutoWidgetFloatingWidow(context) && !Utils.isServiceRunning(context,DriveWayFloatingService.class.getName())){
             Intent driveWayFloatingService=new Intent(context,DriveWayFloatingService.class);
             context.startService(driveWayFloatingService);
         }

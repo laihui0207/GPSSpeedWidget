@@ -38,7 +38,6 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
-import com.huivip.gpsspeedwidget.beans.TMCSegment;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
@@ -112,12 +111,6 @@ public class NaviFloatingService extends Service{
                 return super.onStartCommand(intent, flags, startId);
             }
         }
-       /* try {
-            EventBus.getDefault().register(this);
-        }catch (Exception e){
-
-        }*/
-
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
@@ -128,7 +121,6 @@ public class NaviFloatingService extends Service{
             locationTimer.cancel();
             locationTimer.purge();
         }
-        //EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -239,66 +231,45 @@ public class NaviFloatingService extends Service{
         int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
         int color = ContextCompat.getColor(this, colorRes);
         speedTextView.setTextColor(color);
-
     }
-    public void registerTMCSegmentBroadcast(){
+    public void registerTMCSegmentBroadcast() {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(!Constant.UPDATE_SEGMENT_EVENT_ACTION.equalsIgnoreCase(intent.getAction())) return;
-                String info=intent.getStringExtra("segment");
-                if(TextUtils.isEmpty(info)){
-                    Log.d("huivip","Get segment info is empty");
-                    return ;
+                if (!Constant.UPDATE_SEGMENT_EVENT_ACTION.equalsIgnoreCase(intent.getAction()))
+                    return;
+                String info = intent.getStringExtra("segment");
+                if (TextUtils.isEmpty(info)) {
+                    Log.d("huivip", "Get segment info is empty");
+                    return;
+                } else {
+                    Log.d("huivip", "segment:" + info);
                 }
-                else {
-                    Log.d("huivip","segment:"+info);
-                }
-                TMCSegment tmcSegment =new TMCSegment();
                 try {
-                    JSONObject tmc=new JSONObject(info);
-                    if(tmc!=null){
-                        JSONArray segmentArray=tmc.getJSONArray("tmc_info");
-                        List<TMCSegment.TmcInfo> list=new ArrayList<>();
-                        if(segmentArray!=null && segmentArray.length()>0){
-                            for(int i=0;i<segmentArray.length();i++) {
-                                TMCSegment.TmcInfo tmcInfo = new TMCSegment.TmcInfo();
-                                JSONObject obj=segmentArray.getJSONObject(i);
-                                if(obj!=null) {
-                                    tmcInfo.setTmc_segment_distance(obj.getInt("tmc_segment_distance"))
-                                            .setTmc_segment_number(obj.getInt("tmc_segment_number"))
-                                            .setTmc_segment_percent(obj.getInt("tmc_segment_percent"))
-                                            .setTmc_status(obj.getInt("tmc_status"));
-                                    if(obj.has("tmc_traveltime")){
-                                        tmcInfo.setTmc_traveltime(obj.getInt("tmc_traveltime"));
-                                    }
+                    JSONObject tmc = new JSONObject(info);
+                    if (tmc != null) {
+                        JSONArray segmentArray = tmc.getJSONArray("tmc_info");
+
+                        List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
+                        if (segmentArray != null && segmentArray.length() > 0) {
+                            for (int i = 0; i < segmentArray.length(); i++) {
+                                JSONObject obj = segmentArray.getJSONObject(i);
+                                if (obj != null) {
+                                    models.add(new TmcSegmentView.SegmentModel()
+                                            .setDistance(obj.getInt("tmc_segment_distance"))
+                                            .setStatus(obj.getInt("tmc_status"))
+                                            .setNumber(obj.getInt("tmc_segment_number"))
+                                            .setPercent(obj.getInt("tmc_segment_percent")));
                                 }
-                                list.add(tmcInfo);
                             }
                         }
-                        tmcSegment.setFinish_distance(tmc.getInt("finish_distance"))
-                        .setResidual_distance(tmc.getInt("residual_distance"))
-                                .setTmc_segment_enabled(tmc.getBoolean("tmc_segment_enabled"))
-                                .setTmc_segment_size(tmc.getInt("tmc_segment_size"))
-                                .setTotal_distance(tmc.getInt("total_distance")).setTmc_info(list);
+                        if (models != null && models.size() > 0) {
+                            tmcSegmentView.setSegments(models);
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                 ;//new Gson().fromJson(info, TMCSegment.class);
-                //TMCSegment tmcSegment = gpsUtil.getTmcSegment();
-                if(tmcSegment==null || tmcSegment.getTmc_info()==null){
-                    Log.d("huivip","Segment parse failed");
-                    return;
-                }
-                List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
-                for (TMCSegment.TmcInfo tmcInfo : tmcSegment.getTmc_info()) {
-                    models.add(new TmcSegmentView.SegmentModel()
-                            .setDistance(tmcInfo.getTmc_segment_distance())
-                            .setStatus(tmcInfo.getTmc_status())
-                            .setNumber(tmcInfo.getTmc_segment_number()));
-                }
-                tmcSegmentView.setSegments(models);
             }
         };
         IntentFilter intentFilter = new IntentFilter();

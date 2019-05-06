@@ -80,12 +80,13 @@ public class DriveWayFloatingService extends Service{
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent!=null){
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableAutoWidgetFloatingWidow(getApplicationContext())) {
+            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableAutoWidgetFloatingWidow(getApplicationContext())
+            /*|| gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started*/) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
-            showPluginContent();
+           // showPluginContent();
         }
         return Service.START_REDELIVER_INTENT;
     }
@@ -106,7 +107,11 @@ public class DriveWayFloatingService extends Service{
             if (amapView instanceof ViewGroup) {
                 View vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
                 if (vv instanceof ImageView) {
-                    imageView = (ImageView) vv;
+                    if(imageView==null){
+                        imageView=(ImageView)vv;
+                    } else {
+                        imageView.setImageBitmap(vv.getDrawingCache());// = (ImageView) vv;
+                    }
                 } else {
                     imageView = null;
                 }
@@ -155,7 +160,9 @@ public class DriveWayFloatingService extends Service{
                     @Override
                     public void run()
                     {
-                        showPluginContent();
+                        if(gpsUtil.isGpsLocationChanged()) {
+                            showPluginContent();
+                        }
                         //Log.d("huivip","Float Service Check Location");
                     }
                 });

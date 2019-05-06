@@ -1,8 +1,13 @@
 package com.huivip.gpsspeedwidget.utils;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.TextView;
+
+import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.GpsUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -20,6 +25,8 @@ public class TimeThread extends Thread {
     public boolean running=true;
     public TextView tvDate;
     private int msgKey1 = 22;
+    private Context context;
+    private int count=0;
     private String dateFormat="HH:mm:ss";
     public TimeThread(TextView tvDate) {
         this.tvDate = tvDate;
@@ -30,6 +37,15 @@ public class TimeThread extends Thread {
             this.dateFormat = dateFormat;
         }
     }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
     @Override
     public void run() {
         do {
@@ -38,6 +54,17 @@ public class TimeThread extends Thread {
                 Message msg = new Message();
                 msg.what = msgKey1;
                 mHandler.sendMessage(msg);
+                if(tvDate==null){
+                    if(count%60==0) {
+                        Intent eventIntent = new Intent();
+                        eventIntent.setAction(Constant.UPDATE_DATE_EVENT_ACTION);
+                        context.sendBroadcast(eventIntent);
+                    }
+                    if(GpsUtil.getInstance(context).registTimeTickSuccess){
+                        break;
+                    }
+                    count++;
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -53,14 +80,16 @@ public class TimeThread extends Thread {
 
                     SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
                     String date = sdf.format(new Date());
-
-                    tvDate.setText(date + " "+ getWeek());
+                    if(tvDate!=null) {
+                        tvDate.setText(date + " " + getWeek());
+                    }
 
                     break;
 
                 default:
                     break;
             }
+
         }
     };
 

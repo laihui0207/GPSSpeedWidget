@@ -89,7 +89,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             mEngine.setStreamType(AudioManager.STREAM_VOICE_CALL);
         }
         mEngine.setUseSSML(false);//设置是否使用ssml合成语法，默认为false
-        mEngine.setSpeechVolume(400);//设置合成音频的音量，范围为1～500
+        mEngine.setSpeechVolume(500);//设置合成音频的音量，范围为1～500
         mEngine.init(new AILocalTTSListenerImpl());//初始化合成引擎
     }
     @Override

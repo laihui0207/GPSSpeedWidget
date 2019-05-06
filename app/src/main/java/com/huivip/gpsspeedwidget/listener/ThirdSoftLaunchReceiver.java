@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.text.TextUtils;
+
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -22,16 +23,18 @@ public class ThirdSoftLaunchReceiver extends BroadcastReceiver {
                 public void run() {
                     int delayTime = PrefUtils.getDelayStartOtherApp(context);
                     for (String packageName : autoApps) {
-                        SystemClock.sleep(delayTime * 1000 + 300L);
                         Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
                         if (launchIntent != null && !Utils.isServiceRunning(context,packageName)) {
                             launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(launchIntent);//null pointer check in case package name was not found
                         }
+                        SystemClock.sleep(delayTime * 1000 + 300L);
                     }
-                    AlarmManager alarm=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-                    PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(context, 0, new Intent(context,GoToHomeReceiver.class), 0);
-                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
+                    if(PrefUtils.isGoToHomeAfterAutoLanuch(context)) {
+                        AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                        PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, GoToHomeReceiver.class), 0);
+                        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
+                    }
                 }
             }).start();
         }

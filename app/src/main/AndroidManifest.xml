@@ -254,6 +254,10 @@
                 <action android:name="com.tbig.playerpro.playstatechanged"/>
                 <action android:name="com.tbig.playerprotrial.metachanged"/>
                 <action android:name="com.tbig.playerprotrial.playstatechanged"/>
+                <action android:name="update.widget.update_proBar"/>
+                <action android:name="update.widget.playbtnstate"/>
+                <action android:name="com.ijidou.card.music"/>
+                <action android:name="com.ijidou.action.UPDATE_PROGRESS"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".listener.DelayTaskReceiver">
@@ -264,7 +268,11 @@
         <receiver android:name=".listener.ThirdSoftLaunchReceiver"/>
         <receiver android:name=".listener.GoToHomeReceiver"/>
         <receiver android:name=".listener.WeatherServiceReceiver"/>
-        <receiver android:name=".listener.DateChangeReceiver"/>
+        <receiver android:name=".listener.DateChangeReceiver">
+            <intent-filter>
+                <action android:name="com.huivip.dateChange.event"/>
+            </intent-filter>
+        </receiver>
         <receiver android:name=".listener.CatchRoadReceiver"/>
 
         <service android:name=".service.GpsSpeedService"/>

@@ -53,6 +53,7 @@ public class GpsUtil implements AMapNaviListener {
     private boolean isTurned = false;
     private String velocitaString = null;
     private Integer velocitaNumber;
+    public boolean registTimeTickSuccess=false;
     Double speed = 0D;
     Integer mphSpeed = Integer.valueOf(0);
     Integer kmhSpeed = Integer.valueOf(0);

@@ -43,7 +43,7 @@ public abstract class TTSService implements TTS {
     public void playAudio(String fileName){
         isPlaying=true;
         if(playBinder!=null) {
-            playBinder.play(fileName, new MediaPlayer.OnCompletionListener() {
+            playBinder.playByAudioTrack(fileName, new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     isPlaying = false;
