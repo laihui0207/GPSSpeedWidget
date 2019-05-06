@@ -152,7 +152,7 @@ public class WeatherService implements AMapLocationListener {
                 if(!TextUtils.isEmpty(aMapLocation.getCity())) {
                     cityName=aMapLocation.getCity();
                     adCode =aMapLocation.getAdCode();
-                    gpsUtil.setCityName(cityName);
+                    gpsUtil.setCityName(aMapLocation.getDistrict());
                     //Toast.makeText(context,cityName+ adCode,Toast.LENGTH_SHORT).show();
                 }
                 if(!TextUtils.isEmpty(aMapLocation.getAdCode())){
