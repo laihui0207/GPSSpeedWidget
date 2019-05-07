@@ -110,6 +110,7 @@ public class GpsUtil implements AMapNaviListener {
     int catchRoadDistance=10;
     String homeSet;
     TMCSegment tmcSegment;
+    String TmcInfo;
     AlarmManager alarm ;
     int locationUpdateCount=0;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
@@ -256,6 +257,14 @@ public class GpsUtil implements AMapNaviListener {
             aMapNavi = null;
             aimlessStatred = false;
         }
+    }
+
+    public String getTmcInfo() {
+        return TmcInfo;
+    }
+
+    public void setTmcInfo(String tmcInfo) {
+        TmcInfo = tmcInfo;
     }
 
     public boolean isAimlessStatred() {

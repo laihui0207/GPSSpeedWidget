@@ -48,6 +48,7 @@ public abstract class PrefUtils {
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enable.AudioService";
     public static final String ENABLE_TIME_FLOATING_WINDOW="com.huivip.enable.Time.FloatingWindow";
     public static final String ENABLE_AUTO_WIDGET_FLOATING_WINDOW="com.huivip.enable.auto.widget.FloatingWindow";
+    public static final String ENABLE_AUTO_WIDGET_FLOATING_WINDOW_ONLY_TURN ="com.huivip.enable.xunhang.widget.FloatingWindow.onlyTurn";
     public static final String ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI="com.huivip.enable.hide.FloatingWindow.OnNaviApp";
     public static final String ENABLE_AUTO_GOHOME_AFTER_NAVI_STARTED="com.huivip.enable.auto.goHome.afterNavi";
     public static final String ENABLE_AUDIO_MIX="com.huivip.enable.AudioMix";
@@ -219,6 +220,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableAutoWidgetFloatingWidow(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_AUTO_WIDGET_FLOATING_WINDOW, false);
+    }
+    public static void setEnableAutoWidgetFloatingWidowOnlyTurn(Context context, boolean value){
+        edit(context).putBoolean(ENABLE_AUTO_WIDGET_FLOATING_WINDOW_ONLY_TURN, value).apply();
+    }
+    public static boolean isEnableAutoWidgetFloatingWidowOnlyTurn(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_AUTO_WIDGET_FLOATING_WINDOW_ONLY_TURN, false);
     }
     public static void setEnableAutoMute(Context context, boolean value){
         edit(context).putBoolean(AUDIO_AUTO_MUTE, value).apply();

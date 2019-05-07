@@ -8,6 +8,8 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -36,12 +38,12 @@ public class TmcSegmentView extends View {
             return;
         }
        this.segments = segments;
-       /* Collections.sort(this.segments, new Comparator<SegmentModel>() {
+        Collections.sort(this.segments, new Comparator<SegmentModel>() {
             @Override
             public int compare(SegmentModel o1, SegmentModel o2) {
                 return o1.number - o2.number;
             }
-        });*/
+        });
         invalidate();
     }
 
@@ -60,7 +62,7 @@ public class TmcSegmentView extends View {
         if (segments == null || segments.size()==0) {
             return;
         }
-        mPaint.setColor(color[1]);
+        mPaint.setColor(color[5]);
         canvas.drawRect(0, 0, getWidth(), getHeight(), mPaint);
         int left = 0;
         for (SegmentModel segment : segments) {

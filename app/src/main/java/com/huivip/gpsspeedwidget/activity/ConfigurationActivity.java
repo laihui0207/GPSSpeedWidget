@@ -466,6 +466,14 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableAutoWidgetFloatingWidow(getApplicationContext(),buttonView.isChecked());
             }
         });
+        CheckBox xunhangWidgetFloatingCheckBox=findViewById(R.id.checkBox_Auto_widget_floating_only);
+        xunhangWidgetFloatingCheckBox.setChecked(PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(getApplicationContext()));
+        xunhangWidgetFloatingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableAutoWidgetFloatingWidowOnlyTurn(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
         enableFloatingButton=findViewById(R.id.EnableFalting);
         enableFloatingButton.setOnClickListener(v -> {

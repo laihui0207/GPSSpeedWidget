@@ -19,14 +19,21 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import com.huivip.gpsspeedwidget.*;
+
+import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
@@ -36,6 +43,9 @@ import com.huivip.gpsspeedwidget.view.SpeedWheel;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -75,10 +85,11 @@ public class AutoNaviFloatingService extends Service {
     @BindView(R.id.image_main_navi)
     ImageView goMainImage;
     @BindView(R.id.image_auto_navi)
-    ImageView goAutoNaviImage;
+    ImageView closeImage;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -174,6 +185,7 @@ public class AutoNaviFloatingService extends Service {
                }
             }
         });
+        speedView.setOnTouchListener(new FloatingOnTouchListener());
         goHomeImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,7 +206,7 @@ public class AutoNaviFloatingService extends Service {
                 startActivity(intent);
             }
         });
-        goAutoNaviImage.setOnClickListener(new View.OnClickListener() {
+        closeImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //sendBroadcast(sendAutoBroadCase(getApplicationContext(),10034,100));
@@ -386,14 +398,14 @@ public class AutoNaviFloatingService extends Service {
                         }
                     }
                     return true;
-                case MotionEvent.ACTION_POINTER_UP:
+               /* case MotionEvent.ACTION_POINTER_UP:
                     Toast.makeText(getApplicationContext(),"双指单击关闭悬浮窗",Toast.LENGTH_SHORT).show();
                     onStop();
                     stopSelf();
-                    return true;
+                    return true;*/
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
-                        if (fadeAnimator != null && fadeAnimator.isStarted()) {
+                      /*  if (fadeAnimator != null && fadeAnimator.isStarted()) {
                             fadeAnimator.cancel();
                             params.alpha = initialAlpha;
                             try {
@@ -406,8 +418,13 @@ public class AutoNaviFloatingService extends Service {
                             fadeAnimator = new AnimatorSet();
                             fadeAnimator.play(fadeOut).before(fadeIn);
                             fadeAnimator.start();
-                            /*Intent timeIntent =new Intent(getApplicationContext(),MapFloatingService.class);
-                            startService(timeIntent);*/
+                            *//*Intent timeIntent =new Intent(getApplicationContext(),MapFloatingService.class);
+                            startService(timeIntent);*//*
+
+                        }*/
+                        if(!Utils.isServiceRunning(getApplicationContext(), MapFloatingService.class.getName())) {
+                            Intent timeIntent = new Intent(getApplicationContext(), MapFloatingService.class);
+                            startService(timeIntent);
                         }
                     }
                     else {
@@ -416,6 +433,7 @@ public class AutoNaviFloatingService extends Service {
                         } else {
                             PrefUtils.setFloatingSolidLocation(getApplicationContext(),params.x,params.y);
                         }
+
                     }
                     if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
                         if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {

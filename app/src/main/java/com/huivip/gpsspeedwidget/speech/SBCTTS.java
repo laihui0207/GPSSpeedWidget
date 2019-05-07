@@ -132,7 +132,11 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         } else {
             if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
                 customPlayer=false;
-                mEngine.speak(text, text.hashCode()+"");
+                if(mEngine!=null) {
+                    mEngine.speak(text, text.hashCode() + "");
+                } else {
+                    initTTS();
+                }
             }
         }
     }
@@ -299,8 +303,11 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
                             if (PrefUtils.isEnableCacheAudioFile(context) && file.exists()) {
                                 playAudio(fileName);
                             } else {
-                                mEngine.synthesizeToFile(playString, fileName, Integer.toString(trackID));//合成并保存到文件
+                                    mEngine.synthesizeToFile(playString, fileName, Integer.toString(trackID));//合成并保存到文件
                             }
+                        }
+                        if(mEngine==null){
+                            initTTS();
                         }
                     //}
                     break;

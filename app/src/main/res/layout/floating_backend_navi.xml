@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="330dp"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:background="@drawable/navi_floating_border"
-              android:orientation="vertical">
+              >
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="330dp"
                   android:layout_height="130dp"
@@ -31,129 +32,177 @@
         </RelativeLayout>
 
         <RelativeLayout
-                android:layout_width="220dp"
-                android:layout_height="120dp">
+            android:layout_width="220dp"
+            android:layout_height="120dp">
+            <TextView
+                android:id="@+id/textView_nextroadname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView_nextdistance"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_toStartOf="@+id/navi_limit_view"
+                android:layout_toLeftOf="@+id/navi_limit_view"
+                android:singleLine="true"
+                android:text="长江路"
+                android:textColor="#fff"
+                android:textSize="20dp" />
 
             <TextView
-                    android:text="长江路" android:textColor="#fff"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/textView_nextroadname"
-                    android:textSize="20dp"
-                    android:layout_below="@+id/textView_nextdistance" android:layout_toLeftOf="@+id/navi_limit_view"
-                    android:layout_toStartOf="@+id/navi_limit_view" android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" android:singleLine="true"/>
+                android:id="@+id/textView_nextdistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="3.2公里"
+                android:textColor="#fff"
+                android:textSize="30dp" />
+
             <TextView
-                    android:text="3.2公里" android:textColor="#fff"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/textView_nextdistance"
-                    android:layout_weight="1"
-                    android:textSize="30dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true" android:layout_alignParentStart="true"
-                    android:singleLine="true"/>
+                android:id="@+id/textView9"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView_autonavi_speedText"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical"
+                android:text="剩余："
+                android:textColor="#fff"
+                android:textSize="13dp" />
+
             <TextView
-                    android:text="剩余：" android:textColor="#fff"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content" android:id="@+id/textView9" android:layout_weight="1"
-                    android:gravity="right|center_vertical"
+                android:id="@+id/textView_totalleft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/textView9"
+                android:layout_toEndOf="@+id/textView9"
+                android:layout_toRightOf="@+id/textView9"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:singleLine="true"
+                android:text="320公里-3小时29分钟"
+                android:textColor="#fff"
+                android:textSize="15dp" />
+
+            <RelativeLayout
+                android:id="@+id/navi_limit_view"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="false">
+
+
+                <ProgressBar
+                    android:id="@+id/navi_progressBarLimit"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/speed_navi_limit_border"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/circle_navi_limit_number" />
+
+                <TextView
+                    android:id="@+id/navi_number_limit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentBottom="true" android:textSize="13dp"
-                    android:layout_below="@+id/textView_autonavi_speedText"/>
-            <TextView
-                    android:text="320公里-3小时29分钟" android:textColor="#fff"
+                    android:layout_centerVertical="true"
+                    android:ellipsize="none"
+                    android:fontFamily="sans-serif-thin"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:includeFontPadding="false"
+                    android:text="0"
+                    android:textColor="#fff"
+                    android:textSize="40dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView_navi_limit_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_below="@+id/navi_number_limit"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="top|center_vertical|center_horizontal"
+                    android:text="限速"
+                    android:textColor="#fff"
+                    android:textSize="13dp" />
+
+                <TextView
+                    android:id="@+id/textView_navi_distance"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/textView_totalleft" android:layout_weight="1"
-                    android:gravity="left|center_vertical"
-                    android:textSize="15dp"
-                    android:layout_alignTop="@+id/textView9" android:layout_toRightOf="@+id/textView9"
-                    android:layout_toEndOf="@+id/textView9" android:singleLine="true"/>
-            <RelativeLayout
-                    android:layout_width="100dp"
-                    android:layout_height="100dp" android:id="@+id/navi_limit_view"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="false">
-                <ProgressBar
-                        android:id="@+id/navi_progressBarLimit"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:indeterminate="false"
-                        android:progressDrawable="@drawable/circle_navi_limit_number"
-                        android:background="@drawable/speed_navi_limit_border"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:max="100"
-                        android:progress="0"/>
-                <TextView
-                        android:layout_width="match_parent"
-                        android:id="@+id/navi_number_limit"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="none"
-                        android:text="0"
-                        android:textColor="#fff"
-                        android:fontFamily="sans-serif-thin"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:includeFontPadding="false"
-                        android:textSize="40dp"
-                        android:textStyle="bold"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true" android:layout_alignParentStart="true"/>
-                <TextView
-                        android:text="限速"
-                        android:layout_width="match_parent"
-                        android:textColor="#fff"
-                        android:gravity="top|center_vertical|center_horizontal"
-                        android:layout_height="20dp" android:id="@+id/textView_navi_limit_label"
-                        android:textSize="13dp"
-                        android:layout_below="@+id/navi_number_limit" android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"/>
-                <TextView
-                        android:text="0米"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#fff"
-                        android:id="@+id/textView_navi_distance"
-                        android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
-                        android:layout_marginTop="11dp" android:textSize="13dp"/>
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="11dp"
+                    android:text="0米"
+                    android:textColor="#fff"
+                    android:textSize="13dp" />
+
             </RelativeLayout>
+
             <TextView
-                    android:text="45"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_autonavi_speedText"
-                    android:textSize="20dp"
-                    android:textColor="#fff"
-                    android:textStyle="bold"
-                    android:layout_alignBottom="@+id/navi_limit_view"
-                    android:layout_alignParentLeft="true" android:layout_alignParentStart="true"
-                    android:layout_toLeftOf="@+id/textView_totalleft"
-                    android:layout_toStartOf="@+id/textView_totalleft"
-                    android:layout_below="@+id/textView_nextroadname"
-                    android:gravity="center_vertical|center_horizontal|center"/>
+                android:id="@+id/textView_autonavi_speedText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView_nextroadname"
+                android:layout_alignBottom="@+id/navi_limit_view"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_toStartOf="@+id/textView_totalleft"
+                android:layout_toLeftOf="@+id/textView_totalleft"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:text="45"
+                android:textColor="#fff"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
             <TextView
-                    android:text="km/h"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView7"
-                    android:textColor="#fff"
-                    android:layout_alignBottom="@+id/textView_autonavi_speedText"
-                    android:layout_below="@+id/textView_nextroadname"
-                    android:layout_toRightOf="@+id/textView_autonavi_speedText"
-                    android:layout_toEndOf="@+id/textView_autonavi_speedText"
-                    android:gravity="bottom"/>
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView_nextroadname"
+                android:layout_alignBottom="@+id/textView_autonavi_speedText"
+                android:layout_marginStart="-5dp"
+                android:layout_marginLeft="-5dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toEndOf="@+id/textView_autonavi_speedText"
+                android:layout_toRightOf="@+id/textView_autonavi_speedText"
+                android:gravity="bottom"
+                android:text="km/h"
+                android:textColor="#fff" />
+
             <TextView
-                    android:text="后"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_alignBottom="@+id/textView_nextdistance"
-                    android:id="@+id/textView10"
-                    android:textColor="#fff" android:textSize="15dp" android:layout_toLeftOf="@+id/navi_limit_view"
-                    android:layout_toStartOf="@+id/navi_limit_view"
-                    android:layout_toRightOf="@+id/textView_nextdistance"
-                    android:layout_toEndOf="@+id/textView_nextdistance"/>
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/textView_nextdistance"
+                android:layout_toStartOf="@+id/navi_limit_view"
+                android:layout_toLeftOf="@+id/navi_limit_view"
+                android:layout_toEndOf="@+id/textView_nextdistance"
+                android:layout_toRightOf="@+id/textView_nextdistance"
+                android:text="后"
+                android:textColor="#fff"
+                android:textSize="15dp" />
         </RelativeLayout>
 
     </LinearLayout>
-    <com.huivip.gpsspeedwidget.view.TmcSegmentView android:id="@+id/segmentView" android:layout_width="match_parent"
-        android:layout_height="10dp"/>
-
-</LinearLayout>
+    <com.huivip.gpsspeedwidget.view.TmcSegmentView android:id="@+id/segmentView" android:layout_width="350dp"
+        android:layout_height="9dp"  android:layout_gravity="bottom"/>
+    <ImageView
+        android:id="@+id/imageView_auto_close"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="top|right"
+        android:src="@drawable/widget_close" />
+</FrameLayout>

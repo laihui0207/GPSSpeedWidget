@@ -105,21 +105,24 @@ public class DriveWayFloatingService extends Service{
             driveWayView.removeAllViews();
             driveWayView.addView(amapView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             if (amapView instanceof ViewGroup) {
-                View vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
-                if (vv instanceof ImageView) {
-                    if(imageView==null){
-                        imageView=(ImageView)vv;
-                    } else {
-                        imageView.setImageBitmap(vv.getDrawingCache());// = (ImageView) vv;
-                    }
+                View vv= Utils.getViewByIds(amapView, new Object[]{"widget_container"});
+                /*if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
+                    Log.d("huivip","DriveWay:DaoHang");
+                    vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
+                } else if(gpsUtil.getAutoNaviStatus()==-1){
+                    Log.d("huivip","DriveWay:slice");
+                    vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
+                    //vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "silce_container"});
                 } else {
-                    imageView = null;
+                    vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "xunhang_container" });
                 }
-            } else {
-                imageView = null;
+                if (vv == null) {
+                    vv = Utils.getViewByIds(amapView, new Object[]{"widget_container"});
+                }*/
+                if (vv !=null) {
+                   imageView.setImageBitmap(vv.getDrawingCache());// = (ImageView) vv;
+                }
             }
-        } else {
-            imageView = null;
         }
     }
 
@@ -160,9 +163,9 @@ public class DriveWayFloatingService extends Service{
                     @Override
                     public void run()
                     {
-                        if(gpsUtil.getKmhSpeed()>0) {
+                        //if(gpsUtil.getKmhSpeed()>0) {
                             showPluginContent();
-                        }
+                        //}
                         //Log.d("huivip","Float Service Check Location");
                     }
                 });

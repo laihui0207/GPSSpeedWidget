@@ -38,6 +38,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
+import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
@@ -67,7 +68,9 @@ public class NaviFloatingService extends Service{
     private View mFloatingView;
     GpsUtil gpsUtil;
     TimerTask locationScanTask;
+    TimerTask updateTmcTask;
     Timer locationTimer = new Timer();
+    Timer updateTmcTimer = new Timer();
     final Handler locationHandler = new Handler();
     final Handler updateHandler = new Handler();
     BroadcastReceiver broadcastReceiver;
@@ -96,7 +99,8 @@ public class NaviFloatingService extends Service{
     TextView speedTextView;
     @BindView(R.id.segmentView)
     TmcSegmentView tmcSegmentView;
-
+    @BindView(R.id.imageView_auto_close)
+    ImageView imageViewClose;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -174,15 +178,60 @@ public class NaviFloatingService extends Service{
                 });
             }
         };
+        this.updateTmcTask=new TimerTask() {
+            @Override
+            public void run() {
+                String info = gpsUtil.getTmcInfo();
+                if (TextUtils.isEmpty(info)) {
+                    Log.d("huivip", "Get segment info is empty");
+                    return;
+                } else {
+                    Log.d("huivip", "segment:" + info);
+                }
+                NaviFloatingService.this.updateHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONObject tmc = new JSONObject(info);
+                            if (tmc != null) {
+                                JSONArray segmentArray = tmc.getJSONArray("tmc_info");
+
+                                List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
+                                if (segmentArray != null && segmentArray.length() > 0) {
+                                    for (int i = 0; i < segmentArray.length(); i++) {
+                                        JSONObject obj = segmentArray.getJSONObject(i);
+                                        if (obj != null) {
+                                            models.add(new TmcSegmentView.SegmentModel()
+                                                    .setDistance(obj.getInt("tmc_segment_distance"))
+                                                    .setStatus(obj.getInt("tmc_status"))
+                                                    .setNumber(obj.getInt("tmc_segment_number"))
+                                                    .setPercent(obj.getInt("tmc_segment_percent")));
+                                        }
+                                    }
+                                }
+                                if (models != null && models.size() > 0) {
+                                    tmcSegmentView.setSegments(models);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+            }
+        };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        //this.updateTmcTimer.schedule(this.updateTmcTask,0L,5000L);
         CrashHandler.getInstance().init(getApplicationContext());
         registerTMCSegmentBroadcast();
-        /*naveIconImageView.setOnClickListener(new View.OnClickListener() {
+        imageViewClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendBroadcast(sendAutoBroadCase(getApplicationContext(),10034,100));
+                onStop();
+                stopSelf();
             }
-        });*/
+        });
         super.onCreate();
     }
     private Intent sendAutoBroadCase(Context context, int key,int type){
@@ -495,7 +544,7 @@ public class NaviFloatingService extends Service{
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
-                        if (fadeAnimator != null && fadeAnimator.isStarted()) {
+                        /*if (fadeAnimator != null && fadeAnimator.isStarted()) {
                             fadeAnimator.cancel();
                             params.alpha = initialAlpha;
                             try {
@@ -508,7 +557,11 @@ public class NaviFloatingService extends Service{
                             fadeAnimator = new AnimatorSet();
                             fadeAnimator.play(fadeOut).before(fadeIn);
                             fadeAnimator.start();
-                        }
+                        }*/
+                        Intent intent = new Intent();
+                        intent.setAction(SwitchReceiver.SWITCH_EVENT);
+                        intent.putExtra("TARGET", SwitchReceiver.SWITCH_TARGET_AUTOAMAP);
+                        getApplicationContext().sendBroadcast(intent);
                     }
                     else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
 
