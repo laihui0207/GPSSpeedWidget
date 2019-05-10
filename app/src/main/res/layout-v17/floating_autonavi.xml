@@ -119,5 +119,5 @@
                android:id="@+id/image_main_navi" android:visibility="gone"/>
     <ImageView android:layout_width="40dp" android:layout_height="40dp"
                android:src="@drawable/close" android:layout_gravity="top|right"
-               android:id="@+id/image_auto_navi"/>
+               android:id="@+id/image_close_navi"/>
 </FrameLayout>

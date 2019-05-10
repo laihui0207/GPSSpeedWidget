@@ -158,30 +158,16 @@ public class MapFloatingService extends Service {
         Bundle savedInstanceState=new Bundle();
         mMapView.onCreate(savedInstanceState);
         aMap = mMapView.getMap();
-        Calendar cal = Calendar.getInstance();
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        if(hour>=17 || hour<7) {
+        /*Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);*/
+        if(gpsUtil.isNight()) {
             aMap.setMapType(AMap.MAP_TYPE_NIGHT);
         } else {
             aMap.setMapType(AMap.MAP_TYPE_NAVI);
         }
-      /*  AMapNaviViewOptions options = mMapView.getViewOptions();
-        options.setLayoutVisible(false);
-        mMapView.setNaviMode(AMapNaviView.CAR_UP_MODE);*/
-
-        /*carMarker = aMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
-                        .decodeResource(getResources(), R.drawable.car))).setFlat(true));*/
         carMarker = aMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(0f))).setFlat(true));
         aMap.setTrafficEnabled(true);
-     /*   MyLocationStyle myLocationStyle = new MyLocationStyle();
-        myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
-                        .decodeResource(getResources(), R.drawable.car)));
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
-        aMap.setMyLocationStyle(myLocationStyle);
-        aMap.getUiSettings().setMyLocationButtonEnabled(false);
-        aMap.setMyLocationEnabled(true);*/
         UiSettings mUiSettings=aMap.getUiSettings();
         mUiSettings.setCompassEnabled(true);
         mUiSettings.setZoomControlsEnabled(false);

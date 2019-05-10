@@ -25,14 +25,12 @@
 #-renamesourcefileattribute SourceFile
 #-------------------------------------------基本不用动区域--------------------------------------------
 #---------------------------------基本指令区----------------------------------
--optimizationpasses 5
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
 -dontskipnonpubliclibraryclassmembers
 -dontpreverify
 -verbose
 -printmapping proguardMapping.txt
--optimizations !code/simplification/cast,!field/*,!class/merging/*
 -keepattributes *Annotation*,InnerClasses
 -keepattributes Signature
 -keepattributes SourceFile,LineNumberTable
@@ -96,9 +94,8 @@
 }
 #----------------------------------------------------------------------------
 -libraryjars libs/AMap3DMap_6.8.0_AMapNavi_6.7.0_AMapSearch_6.5.0_AMapTrack_1.1.0_AMapLocation_4.5.1_20190402.jar
--libraryjars libs/com.baidu.tts_2.3.1.20170808_e39ea89a.jar
--libraryjars libs/Msc.jar
--libraryjars libs/Sunflower.jar
+-libraryjars libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar
+-libraryjars libs/DUI-lite-SDK-for-Android-1.2.1.jar
 #---------------------------------webview------------------------------------
 -keepclassmembers class fqcn.of.javascript.interface.for.Webview {
    public *;
@@ -163,12 +160,20 @@
 -keep public class com.huivip.gpsspeedwidget.GPSUtil.AutoNaviListener.** { *;}
 -keep public class devlight.io.** { *;}
 -keep public class com.github.bumptech.glide.** { *;}
--keep public class com.jakewharton:butterknif.** { *;}
 -keep public class com.jakewharton.** { *;}
 -keep public class io.reactivex.** { *;}
 -keep public class com.github.pluscubed.** { *;}
--keep public class com.jakewharton:butterknife-compiler.** { *;}
 -keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
   **[] $VALUES;
   public *;
+}
+##---------------EventBus-------------------------------
+-keepclassmembers class * {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+
+# Only required if you use AsyncExecutor
+-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
+    <init>(java.lang.Throwable);
 }

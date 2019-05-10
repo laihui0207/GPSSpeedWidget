@@ -397,7 +397,7 @@ public class AudioTestActivity extends Activity {
                 PendingIntent catchRoadIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), CatchRoadReceiver.class), 0);
                 alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);*/
 
-               /* Intent drivewayIntent=new Intent(getApplicationContext(),DriveWayFloatingService.class);
+               /* Intent drivewayIntent=new Intent(getApplicationContext(),AutoWidgetFloatingService.class);
                 startService(drivewayIntent);*/
                 //doStartApplicationWithPackageName("com.autonavi.auto.autostart.AutoBackgroundService","com.autonavi.action.autostart");
                /* Intent timeIntent =new Intent(getApplicationContext(),MapFloatingService.class);

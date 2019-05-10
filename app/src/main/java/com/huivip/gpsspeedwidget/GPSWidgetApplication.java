@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
+import org.greenrobot.eventbus.EventBus;
 import org.xutils.x;
 
 public class GPSWidgetApplication extends Application {
@@ -20,10 +21,10 @@ public class GPSWidgetApplication extends Application {
         super.onCreate();
         mContext = getApplicationContext();
         x.Ext.init(this);
-       /* EventBus.builder()
+        EventBus.builder()
                 .logNoSubscriberMessages(false)
                 .sendNoSubscriberEvent(false)
-                .throwSubscriberException(false).build();*/
+                .build();
     }
     public static Context getContext() {
         return mContext;

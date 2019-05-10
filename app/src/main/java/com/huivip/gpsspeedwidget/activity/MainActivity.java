@@ -56,7 +56,6 @@ public class MainActivity extends Activity implements TraceListener {
     String selectDateStr="";
     List<TraceLocation> traceLocationList=new ArrayList<>();
     AMap aMap=null;
-    private Marker carMarker;
     String myFormat = "MM/dd/yyyy";
     DeviceUuidFactory deviceUuidFactory;
     SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.CHINA);
@@ -68,14 +67,8 @@ public class MainActivity extends Activity implements TraceListener {
     List<TraceLocation> endPoints;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     private AMapTrackClient aMapTrackClient;
-    private long terminalId;
-    private long trackId;
-    private String currentOpeation;
     private long serviceId;
     private String TERMINAL_NAME;
-    private TextureMapView textureMapView;
-    private List<Polyline> polylines = new LinkedList<>();
-    private List<Marker> endMarkers = new LinkedList<>();
     private Timer needFollowTimer;
     // 屏幕静止DELAY_TIME之后，再次跟随
     private long DELAY_TIME = 5000;
@@ -160,7 +153,6 @@ public class MainActivity extends Activity implements TraceListener {
                         if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
                             serviceId = Long.parseLong(PrefUtils.getAmapTrackServiceID(deviceId));
                             TERMINAL_NAME = "Track_" + deviceId;
-                            currentOpeation = "QueryLatestPoint";
                             aMapTrackClient.queryTerminal(new QueryTerminalRequest(serviceId, TERMINAL_NAME), new SimpleOnTrackListener() {
                                 @Override
                                 public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
@@ -481,43 +473,11 @@ public class MainActivity extends Activity implements TraceListener {
         goHomeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*PackageManager packageManager = getApplicationContext().getPackageManager();
-                Intent intentLauncher = new Intent(Intent.ACTION_MAIN);
-                intentLauncher.addCategory(Intent.CATEGORY_HOME);
-                String selectDefaultLauncher=packageManager.resolveActivity(intentLauncher,PackageManager.MATCH_DEFAULT_ONLY).activityInfo.packageName;
-                String defaultLaunch = PrefUtils.getDefaultLanuchApp(getApplicationContext());
-                Log.d("huivip","Default launch:"+defaultLaunch+",Select launcher:"+selectDefaultLauncher);
-                if (!TextUtils.isEmpty(defaultLaunch) && "com.huivip.gpsspeedwidget".equalsIgnoreCase(selectDefaultLauncher)) {
-                    Intent launchIntent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(defaultLaunch);
-                    if (launchIntent != null) {
-                        launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        getApplicationContext().startActivity(launchIntent);//null pointer check in case package name was not found
-                    }
-                } else {
-                   Intent paramIntent = new Intent("android.intent.action.MAIN");
-                    paramIntent.addCategory("android.intent.category.HOME");
-                    paramIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(paramIntent);
-                }*/
                 Utils.goHome(getApplicationContext());
-                //moveTaskToBack(false);
             }
         });
-        /*if(enabledApps==null){*/
          Set<String> desktopPackages=Utils.getDesktopPackageName(getApplicationContext());
          PrefUtils.setApps(getApplicationContext(),desktopPackages);
-        /*}*/
-        //if (enabledApps.size() == 1) {
-       /* Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction("com.huivip.gpsspeedwidget.autostarted");
-        sendBroadcast(broadcastIntent);*/
-       /* for (String packageName : desktopPackages) {
-            if (!Utils.isServiceRunning(getApplicationContext(), packageName)) {*/
-
-         /*   }
-        }*/
-        //}
-
     }
     private Bitmap getBitmap(float bearing) {
         Bitmap bitmap = null;
@@ -757,7 +717,7 @@ public class MainActivity extends Activity implements TraceListener {
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(!Settings.System.canWrite(this)){
                 Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
                         Uri.parse("package:" + getPackageName()));

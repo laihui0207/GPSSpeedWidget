@@ -68,6 +68,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     }
     public static SBCTTS getInstance(Context context){
+        if(!Utils.isPhonePermissionGranted(context)) return null;
         if(tts==null){
             tts = new SBCTTS(context);
         }

@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.view.View;
+
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
@@ -102,7 +103,6 @@ public class LrcView extends View {
         }
 
         getCurrentPosition();
-
 //        drawLrc1(canvas);
         int currentMillis = player!=null ? player.getCurrentPosition() : playercurrentMillis;
         drawLrc2(canvas, currentMillis);

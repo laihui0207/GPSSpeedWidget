@@ -1,13 +1,17 @@
 package com.huivip.gpsspeedwidget.beans;
 
 public class TMCSegmentEvent {
-    TMCSegment tmcSegment;
+   String info;
 
-    public TMCSegment getTmcSegment() {
-        return tmcSegment;
+    public TMCSegmentEvent(String info) {
+        this.info = info;
     }
 
-    public void setTmcSegment(TMCSegment tmcSegment) {
-        this.tmcSegment = tmcSegment;
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 }

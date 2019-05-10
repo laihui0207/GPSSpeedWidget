@@ -17,12 +17,29 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
-import com.amap.api.navi.enums.*;
-import com.amap.api.navi.model.*;
+import com.amap.api.navi.enums.AMapNaviRingType;
+import com.amap.api.navi.enums.AimLessMode;
+import com.amap.api.navi.enums.BroadcastMode;
+import com.amap.api.navi.enums.CarEnterCameraStatus;
+import com.amap.api.navi.enums.NaviType;
+import com.amap.api.navi.enums.SoundQuality;
+import com.amap.api.navi.model.AMapCalcRouteResult;
+import com.amap.api.navi.model.AMapLaneInfo;
+import com.amap.api.navi.model.AMapModelCross;
+import com.amap.api.navi.model.AMapNaviCameraInfo;
+import com.amap.api.navi.model.AMapNaviCross;
+import com.amap.api.navi.model.AMapNaviInfo;
+import com.amap.api.navi.model.AMapNaviLocation;
+import com.amap.api.navi.model.AMapNaviRouteNotifyData;
+import com.amap.api.navi.model.AMapNaviTrafficFacilityInfo;
+import com.amap.api.navi.model.AMapServiceAreaInfo;
+import com.amap.api.navi.model.AimLessModeCongestionInfo;
+import com.amap.api.navi.model.AimLessModeStat;
+import com.amap.api.navi.model.NaviInfo;
 import com.autonavi.tbt.TrafficFacilityInfo;
-import com.huivip.gpsspeedwidget.beans.TMCSegment;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
@@ -32,6 +49,8 @@ import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.CycleQueue;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.xutils.x;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -95,9 +114,9 @@ public class GpsUtil implements AMapNaviListener {
     String currentRoadName = "";
     int currentRoadType=-1;
     String nextRoadName = "";
-    float nextRoadDistance = 0F;
-    float totalLeftDistance = 0F;
-    float totalLeftTime = 0F;
+    String nextRoadDistance ="";
+    String totalLeftDistance = "";
+    String totalLeftTime = "";
     int navi_turn_icon = -1;
     String cityName="";
     int naviFloatingStatus = 0; // 0 disabled 1 visible
@@ -109,9 +128,9 @@ public class GpsUtil implements AMapNaviListener {
     int recordLocationDistance=2;
     int catchRoadDistance=10;
     String homeSet;
-    TMCSegment tmcSegment;
     String TmcInfo;
     AlarmManager alarm ;
+    boolean isNight=false;
     int locationUpdateCount=0;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     LocationListener locationListener = new LocationListener() {
@@ -294,14 +313,6 @@ public class GpsUtil implements AMapNaviListener {
 
     }
 
-    public TMCSegment getTmcSegment() {
-        return tmcSegment;
-    }
-
-    public void setTmcSegment(TMCSegment tmcSegment) {
-        this.tmcSegment = tmcSegment;
-    }
-
     public String getDirection() {
         String direction = "北";
         if (bearing >= 22.5 && bearing < 67.5) {
@@ -341,6 +352,14 @@ public class GpsUtil implements AMapNaviListener {
 
     public void setCatchRoadServiceStarted(boolean catchRoadServiceStarted) {
         this.catchRoadServiceStarted = catchRoadServiceStarted;
+    }
+
+    public boolean isNight() {
+        return isNight;
+    }
+
+    public void setNight(boolean night) {
+        isNight = night;
     }
 
     public float getBearing() {
@@ -417,13 +436,20 @@ public class GpsUtil implements AMapNaviListener {
                 }
             }
             if(PrefUtils.isEnableAutoGoHomeAfterNaviStarted(context) && kmhSpeed>0 && autoNavi_on_Frontend && naviFloatingStatus == Constant.Navi_Status_Started ){
-                new Handler().postDelayed(new Runnable() {
+                /*new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         Log.d("huivip","Auto Navi started will go home");
                         Utils.goHome(context);
                     }
-                }, 20*1000);
+                }, 20*1000);*/
+                x.task().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("huivip","Auto Navi started will go home");
+                        Utils.goHome(context);
+                    }
+                },20*1000);
             }
 
         } else {
@@ -503,13 +529,10 @@ public class GpsUtil implements AMapNaviListener {
     public boolean isHasLimited() {
         return hasLimited;
     }
-
+    public void setLimitDistancePercentage(int limitDistancePercentage){
+        this.limitDistancePercentage=limitDistancePercentage;
+    }
     public int getLimitDistancePercentage() {
-        if (limitDistance > 0) {
-            limitDistancePercentage = Math.round((300F - limitDistance) / 300 * 100);
-        } else {
-            limitDistancePercentage = 0;
-        }
         return limitDistancePercentage;
     }
 
@@ -759,6 +782,11 @@ public class GpsUtil implements AMapNaviListener {
     public void setCameraDistance(int cameraDistance) {
         this.cameraDistance = cameraDistance;
         this.limitDistance = cameraDistance * 1.0F;
+        if (limitDistance > 0) {
+            limitDistancePercentage = Math.round((300F - limitDistance) / 300 * 100);
+        } else {
+            limitDistancePercentage = 0;
+        }
     }
 
     public int getCameraSpeed() {
@@ -792,40 +820,31 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     public String getNextRoadDistance() {
-        localNumberFormat.setMaximumFractionDigits(1);
+        /*localNumberFormat.setMaximumFractionDigits(1);
         if (nextRoadDistance > 1000) {
             return localNumberFormat.format(nextRoadDistance / 1000) + "公里";
         }
-        return localNumberFormat.format(nextRoadDistance) + "米";
+        return localNumberFormat.format(nextRoadDistance) + "米";*/
+        return nextRoadDistance;
     }
 
-    public void setNextRoadDistance(float nextRoadDistance) {
+    public void setNextRoadDistance(String nextRoadDistance) {
         this.nextRoadDistance = nextRoadDistance;
     }
 
     public String getTotalLeftDistance() {
-        localNumberFormat.setMaximumFractionDigits(1);
-        if (totalLeftDistance > 1000) {
-            return localNumberFormat.format(totalLeftDistance / 1000) + "公里";
-        }
-        return localNumberFormat.format(totalLeftDistance) + "米";
+        return totalLeftDistance;
     }
 
-    public void setTotalLeftDistance(float totalLeftDistance) {
+    public void setTotalLeftDistance(String totalLeftDistance) {
         this.totalLeftDistance = totalLeftDistance;
     }
 
     public String getTotalLeftTime() {
-        localNumberFormat.setMaximumFractionDigits(0);
-        if (totalLeftTime > 3600) {
-            int hours = (int) totalLeftTime / 3600;
-            int minutes = (int) ((totalLeftTime - hours * 3600) / 60);
-            return hours + "小时" + minutes + "分钟";
-        }
-        return localNumberFormat.format(totalLeftTime / 60) + "分钟";
+        return totalLeftTime;
     }
 
-    public void setTotalLeftTime(float totalLeftTime) {
+    public void setTotalLeftTime(String totalLeftTime) {
         this.totalLeftTime = totalLeftTime;
     }
 

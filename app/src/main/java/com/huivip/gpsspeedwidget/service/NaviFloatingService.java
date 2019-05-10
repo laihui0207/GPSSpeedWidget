@@ -1,18 +1,14 @@
 package com.huivip.gpsspeedwidget.service;
 
-import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -34,18 +30,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
-import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
+import com.huivip.gpsspeedwidget.beans.BackNaviFloatingControlEvent;
+import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +56,7 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -65,15 +68,11 @@ public class NaviFloatingService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
 
     private WindowManager mWindowManager;
+    WindowManager.LayoutParams params;
     private View mFloatingView;
     GpsUtil gpsUtil;
     TimerTask locationScanTask;
-    TimerTask updateTmcTask;
     Timer locationTimer = new Timer();
-    Timer updateTmcTimer = new Timer();
-    final Handler locationHandler = new Handler();
-    final Handler updateHandler = new Handler();
-    BroadcastReceiver broadcastReceiver;
     @BindView(R.id.textView_currentroad)
     TextView currentRoadTextView;
     @BindView(R.id.textView_nextroadname)
@@ -99,8 +98,6 @@ public class NaviFloatingService extends Service{
     TextView speedTextView;
     @BindView(R.id.segmentView)
     TmcSegmentView tmcSegmentView;
-    @BindView(R.id.imageView_auto_close)
-    ImageView imageViewClose;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -130,7 +127,10 @@ public class NaviFloatingService extends Service{
 
     @Override
     public void onDestroy() {
-        unRegisterTMCSegmentBroadcast();
+        //unRegisterTMCSegmentBroadcast();
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroy();
     }
 
@@ -148,91 +148,92 @@ public class NaviFloatingService extends Service{
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_backend_navi, null);
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+         params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 getWindowType(),
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.START;
-       /* params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
-                | WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;*/
         params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         initMonitorPosition();
+        EventBus.getDefault().register(this);
         this.locationScanTask = new TimerTask()
         {
             @Override
             public void run()
             {
-                NaviFloatingService.this.locationHandler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        NaviFloatingService.this.checkLocationData();
-                        //Log.d("huivip","Float Service Check Location");
-                    }
-                });
-            }
-        };
-        this.updateTmcTask=new TimerTask() {
-            @Override
-            public void run() {
-                String info = gpsUtil.getTmcInfo();
-                if (TextUtils.isEmpty(info)) {
-                    Log.d("huivip", "Get segment info is empty");
-                    return;
-                } else {
-                    Log.d("huivip", "segment:" + info);
-                }
-                NaviFloatingService.this.updateHandler.post(new Runnable() {
+                x.task().autoPost(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            JSONObject tmc = new JSONObject(info);
-                            if (tmc != null) {
-                                JSONArray segmentArray = tmc.getJSONArray("tmc_info");
-
-                                List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
-                                if (segmentArray != null && segmentArray.length() > 0) {
-                                    for (int i = 0; i < segmentArray.length(); i++) {
-                                        JSONObject obj = segmentArray.getJSONObject(i);
-                                        if (obj != null) {
-                                            models.add(new TmcSegmentView.SegmentModel()
-                                                    .setDistance(obj.getInt("tmc_segment_distance"))
-                                                    .setStatus(obj.getInt("tmc_status"))
-                                                    .setNumber(obj.getInt("tmc_segment_number"))
-                                                    .setPercent(obj.getInt("tmc_segment_percent")));
-                                        }
-                                    }
-                                }
-                                if (models != null && models.size() > 0) {
-                                    tmcSegmentView.setSegments(models);
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        speedTextView.setText(gpsUtil.getKmhSpeedStr());
+                        int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
+                        int color = ContextCompat.getColor(NaviFloatingService.this, colorRes);
+                        speedTextView.setTextColor(color);
+                        //NaviFloatingService.this.checkLocationData();
                     }
                 });
-
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        //this.updateTmcTimer.schedule(this.updateTmcTask,0L,5000L);
         CrashHandler.getInstance().init(getApplicationContext());
-        registerTMCSegmentBroadcast();
-        imageViewClose.setOnClickListener(new View.OnClickListener() {
+        super.onCreate();
+    }
+    @OnClick(value = R.id.imageView_auto_close)
+     public void onClickCloseImage(View view){
+            onStop();
+            stopSelf();
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void hideShowNaviFloating(BackNaviFloatingControlEvent event){
+        if(event.isHide()) {
+            mFloatingView.setVisibility(View.INVISIBLE);
+        } else {
+            mFloatingView.setVisibility(View.VISIBLE);
+        }
+    }
+    @Subscribe(threadMode=ThreadMode.MAIN,sticky = true)
+    public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event){
+        String info = event.getInfo();
+        if (TextUtils.isEmpty(info)) {
+            Log.d("huivip", "Get segment info is empty");
+            return;
+        } else {
+            Log.d("huivip", "segment:" + info);
+        }
+        x.task().autoPost(new Runnable() {
             @Override
-            public void onClick(View v) {
-                onStop();
-                stopSelf();
+            public void run() {
+                try {
+                    JSONObject tmc = new JSONObject(info);
+                    if (tmc != null) {
+                        JSONArray segmentArray = tmc.getJSONArray("tmc_info");
+
+                        List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
+                        if (segmentArray != null && segmentArray.length() > 0) {
+                            for (int i = 0; i < segmentArray.length(); i++) {
+                                JSONObject obj = segmentArray.getJSONObject(i);
+                                if (obj != null) {
+                                    models.add(new TmcSegmentView.SegmentModel()
+                                            .setDistance(obj.getInt("tmc_segment_distance"))
+                                            .setStatus(obj.getInt("tmc_status"))
+                                            .setNumber(obj.getInt("tmc_segment_number"))
+                                            .setPercent(obj.getInt("tmc_segment_percent")));
+                                }
+                            }
+                        }
+                        if (models != null && models.size() > 0) {
+                            tmcSegmentView.setSegments(models);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
-        super.onCreate();
     }
     private Intent sendAutoBroadCase(Context context, int key,int type){
         Intent intent = new Intent();
@@ -245,97 +246,44 @@ public class NaviFloatingService extends Service{
         intent.putExtra("SOURCE_APP","GPSWidget");
         return intent;
     }
-    void checkLocationData() {
-        if(!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
-            currentRoadTextView.setText(gpsUtil.getCurrentRoadName()+"");
-        }
-        if(!TextUtils.isEmpty(gpsUtil.getNextRoadName())){
-            nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
-        }
-        nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
-        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+"/"+gpsUtil.getTotalLeftTime());
-        if(gpsUtil.getNavi_turn_icon()>0) {
-            naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
-        }
-        if(gpsUtil.getLimitSpeed()>0){
-            navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed()+"");
-        }
-        else {
-            navicameraSpeedTextView.setText("0");
-        }
-        if(gpsUtil.getLimitDistance()>0){
-            navicameraDistanceTextView.setText(gpsUtil.getLimitDistance()+"米");
-            limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
-        }
-        else {
-            navicameraDistanceTextView.setText("0米");
-        }
-        cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
-        if(gpsUtil.getCameraType()!=-1){
-            naviCameraView.setVisibility(View.VISIBLE);
-        }
-        else {
-            naviCameraView.setVisibility(View.GONE);
-        }
-        speedTextView.setText(gpsUtil.getKmhSpeedStr());
-        int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
-        int color = ContextCompat.getColor(this, colorRes);
-        speedTextView.setTextColor(color);
-    }
-    public void registerTMCSegmentBroadcast() {
-        broadcastReceiver = new BroadcastReceiver() {
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void checkLocationData(NaviInfoUpdateEvent event) {
+        x.task().autoPost(new Runnable() {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                if (!Constant.UPDATE_SEGMENT_EVENT_ACTION.equalsIgnoreCase(intent.getAction()))
-                    return;
-                String info = intent.getStringExtra("segment");
-                if (TextUtils.isEmpty(info)) {
-                    Log.d("huivip", "Get segment info is empty");
-                    return;
-                } else {
-                    Log.d("huivip", "segment:" + info);
+            public void run() {
+                if (gpsUtil.getNavi_turn_icon() > 0) {
+                    naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
                 }
-                NaviFloatingService.this.updateHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            JSONObject tmc = new JSONObject(info);
-                            if (tmc != null) {
-                                JSONArray segmentArray = tmc.getJSONArray("tmc_info");
+                if (gpsUtil.getLimitSpeed() > 0) {
+                    navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed() + "");
+                } else {
+                    navicameraSpeedTextView.setText("0");
+                }
 
-                                List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
-                                if (segmentArray != null && segmentArray.length() > 0) {
-                                    for (int i = 0; i < segmentArray.length(); i++) {
-                                        JSONObject obj = segmentArray.getJSONObject(i);
-                                        if (obj != null) {
-                                            models.add(new TmcSegmentView.SegmentModel()
-                                                    .setDistance(obj.getInt("tmc_segment_distance"))
-                                                    .setStatus(obj.getInt("tmc_status"))
-                                                    .setNumber(obj.getInt("tmc_segment_number"))
-                                                    .setPercent(obj.getInt("tmc_segment_percent")));
-                                        }
-                                    }
-                                }
-                                if (models != null && models.size() > 0) {
-                                    tmcSegmentView.setSegments(models);
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
+                if (gpsUtil.getCameraType() != -1) {
+                    naviCameraView.setVisibility(View.VISIBLE);
+                } else {
+                    naviCameraView.setVisibility(View.GONE);
+                }
+                if (!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
+                    currentRoadTextView.setText(gpsUtil.getCurrentRoadName() + "");
+                }
 
+
+                if (!TextUtils.isEmpty(gpsUtil.getNextRoadName())) {
+                    nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
+                }
+                nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
+                naviLeftTextView.setText(gpsUtil.getTotalLeftDistance() + "/" + gpsUtil.getTotalLeftTime());
+               // if (gpsUtil.getLimitDistance() > 0) {
+                    navicameraDistanceTextView.setText(gpsUtil.getLimitDistance() + "米");
+                    limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
+               /* } else {
+                    navicameraDistanceTextView.setText("0米");
+                }*/
             }
-        };
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constant.UPDATE_SEGMENT_EVENT_ACTION);
-        getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
-    }
-    public void unRegisterTMCSegmentBroadcast(){
-        if(broadcastReceiver!=null){
-            getApplicationContext().unregisterReceiver(broadcastReceiver);
-        }
+        });
     }
 
     private int getWindowType() {
@@ -483,8 +431,6 @@ public class NaviFloatingService extends Service{
         private long mStartClickTime;
         private boolean mIsClick;
 
-        private AnimatorSet fadeAnimator;
-        private float initialAlpha;
         private ValueAnimator fadeOut;
         private ValueAnimator fadeIn;
 
@@ -544,20 +490,6 @@ public class NaviFloatingService extends Service{
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
-                        /*if (fadeAnimator != null && fadeAnimator.isStarted()) {
-                            fadeAnimator.cancel();
-                            params.alpha = initialAlpha;
-                            try {
-                                mWindowManager.updateViewLayout(mFloatingView, params);
-                            } catch (IllegalArgumentException ignore) {
-                            }
-                        } else {
-                            initialAlpha = params.alpha;
-
-                            fadeAnimator = new AnimatorSet();
-                            fadeAnimator.play(fadeOut).before(fadeIn);
-                            fadeAnimator.start();
-                        }*/
                         Intent intent = new Intent();
                         intent.setAction(SwitchReceiver.SWITCH_EVENT);
                         intent.putExtra("TARGET", SwitchReceiver.SWITCH_TARGET_AUTOAMAP);

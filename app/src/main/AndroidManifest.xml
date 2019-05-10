@@ -287,7 +287,7 @@
         <service android:name=".service.AutoNaviFloatingService"/>
         <service android:name=".service.MeterFloatingService"/>
         <service android:name=".service.BootStartService"/>
-        <service android:name=".service.DriveWayFloatingService"/>
+        <service android:name=".service.AutoWidgetFloatingService"/>
         <service android:name=".service.MapFloatingService"/>
         <service android:name=".service.TextFloatingService"/>
         <service android:name=".service.LyricFloatingService"/>

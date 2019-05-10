@@ -32,12 +32,19 @@ public class TmcSegmentView extends View {
     }
 
     private List<SegmentModel> segments;
-
+    private int total=0;
     public void setSegments(List<SegmentModel> segments) {
+        this.segments.clear();
         if (segments == null) {
             return;
         }
-       this.segments = segments;
+        this.total=0;
+        for(SegmentModel model:segments){
+            if(model.status>=0 && model.status<=4){
+                this.segments.add(model);
+                this.total+=model.distance;
+            }
+        }
         Collections.sort(this.segments, new Comparator<SegmentModel>() {
             @Override
             public int compare(SegmentModel o1, SegmentModel o2) {
@@ -70,7 +77,7 @@ public class TmcSegmentView extends View {
                 segment.status = 5;
             }
             mPaint.setColor(color[segment.status]);
-            int w = (int) (getWidth() * (segment.percent* 1f / 100));
+            int w = (int) (getWidth() * (segment.distance* 1f / total));
             int right = left + w;
             canvas.drawRect(left, 0, right, getHeight(), mPaint);
             left = right;

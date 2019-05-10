@@ -26,7 +26,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,12 +38,15 @@ import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
+import org.xutils.x;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import devlight.io.library.ArcProgressStackView;
 import jp.co.recruit_lifestyle.android.floatingview.FloatingViewListener;
 import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
@@ -84,8 +86,8 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
     TextView speedUnitTextView;
     @BindView(R.id.textView_default_altitude)
     TextView textViewAltitude;
-    @BindView(R.id.floating_close)
-    ImageView closeImage;
+   /* @BindView(R.id.floating_close)
+    ImageView closeImage;*/
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
@@ -158,7 +160,7 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
-
+        mSpeedometerText.setOnTouchListener(new FloatingOnTouchListener());
         boolean isShowLimit=PrefUtils.getShowLimits(getApplicationContext());
         if(mLimitArcView!=null) {
             mLimitView.setVisibility(isShowLimit ? View.VISIBLE : View.GONE);
@@ -183,22 +185,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             mSpeedometerView.setLayoutParams(speedLayout);
         }
         initMonitorPosition();
-        closeImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onStop();
-                stopSelf();
-            }
-        });
-        mSpeedometerText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!Utils.isServiceRunning(getApplicationContext(), MapFloatingService.class.getName())) {
-                    Intent floatingMapIntent = new Intent(getApplicationContext(), MapFloatingService.class);
-                    startService(floatingMapIntent);
-                }
-            }
-        });
         final ArrayList<ArcProgressStackView.Model> models = new ArrayList<>();
         models.add(new ArcProgressStackView.Model("", 0,
                 ContextCompat.getColor(this, R.color.colorPrimary800),
@@ -220,7 +206,7 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             @Override
             public void run()
             {
-                DefaultFloatingService.this.locationHandler.post(new Runnable()
+                x.task().autoPost(new Runnable()
                 {
                     @Override
                     public void run()
@@ -234,6 +220,21 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
+    }
+    @OnClick(value = {R.id.floating_close,R.id.speed})
+    public void onViewClick(View view){
+        switch (view.getId()){
+            case R.id.floating_close:
+                onStop();
+                stopSelf();
+                break;
+            case R.id.speed:
+                if(!Utils.isServiceRunning(getApplicationContext(), MapFloatingService.class.getName())) {
+                    Intent floatingMapIntent = new Intent(getApplicationContext(), MapFloatingService.class);
+                    startService(floatingMapIntent);
+                }
+                break;
+        }
     }
     private void openSettings(String settingsAction, String packageName) {
         Intent intent = new Intent(settingsAction);
@@ -452,7 +453,7 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
-                        if (fadeAnimator != null && fadeAnimator.isStarted()) {
+                       /* if (fadeAnimator != null && fadeAnimator.isStarted()) {
                             fadeAnimator.cancel();
                             params.alpha = initialAlpha;
                             try {
@@ -465,6 +466,10 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
                             fadeAnimator = new AnimatorSet();
                             fadeAnimator.play(fadeOut).before(fadeIn);
                             fadeAnimator.start();
+                        }*/
+                        if(!Utils.isServiceRunning(getApplicationContext(), MapFloatingService.class.getName())) {
+                            Intent floatingMapIntent = new Intent(getApplicationContext(), MapFloatingService.class);
+                            startService(floatingMapIntent);
                         }
                     }
                     else {

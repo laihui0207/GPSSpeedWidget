@@ -41,11 +41,14 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.SpeedWheel;
 
+import org.xutils.x;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -78,14 +81,6 @@ public class AutoNaviFloatingService extends Service {
     @BindView(R.id.textView_autonavi_speedUnit)
     TextView speedUnitTextView;
     TimerTask locationScanTask;
-    @BindView(R.id.image_home_navi)
-    ImageView goHomeImage;
-    @BindView(R.id.image_company_navi)
-    ImageView goCompanyImage;
-    @BindView(R.id.image_main_navi)
-    ImageView goMainImage;
-    @BindView(R.id.image_auto_navi)
-    ImageView closeImage;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
@@ -163,11 +158,9 @@ public class AutoNaviFloatingService extends Service {
             @Override
             public void run()
             {
-                AutoNaviFloatingService.this.locationHandler.post(new Runnable()
-                {
+                x.task().autoPost(new Runnable() {
                     @Override
-                    public void run()
-                    {
+                    public void run() {
                         AutoNaviFloatingService.this.checkLocationData();
                         //Log.d("huivip","Float Service Check Location");
                     }
@@ -176,46 +169,30 @@ public class AutoNaviFloatingService extends Service {
         };
         CrashHandler.getInstance().init(getApplicationContext());
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        speedView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               if(!Utils.isServiceRunning(getApplicationContext(), MapFloatingService.class.getName())) {
-                   Intent timeIntent = new Intent(getApplicationContext(), MapFloatingService.class);
-                   startService(timeIntent);
-               }
-            }
-        });
         speedView.setOnTouchListener(new FloatingOnTouchListener());
-        goHomeImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        super.onCreate();
+    }
+    @OnClick(value = {R.id.image_home_navi,R.id.image_company_navi,R.id.image_main_navi,R.id.image_close_navi})
+    public void goHomeClick(View view){
+        switch (view.getId()){
+            case R.id.image_home_navi:
                 sendBroadcast(sendAutoBroadCase(getApplicationContext(),10040,0));
-            }
-        });
-        goCompanyImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.image_company_navi:
                 sendBroadcast(sendAutoBroadCase(getApplicationContext(),10040,1));
-            }
-        });
-        goMainImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.image_main_navi:
                 Intent intent=new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-            }
-        });
-        closeImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //sendBroadcast(sendAutoBroadCase(getApplicationContext(),10034,100));
+                break;
+            case R.id.image_close_navi:
                 onStop();
                 stopSelf();
-            }
-        });
-        super.onCreate();
+                break;
+        }
     }
+
     private Intent sendAutoBroadCase(Context context, int key,int type){
         Intent intent = new Intent();
         intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");

@@ -3,8 +3,7 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:background="@drawable/speed_border"
->
+                android:layout_height="wrap_content" android:background="@drawable/speed_border" >
     <ImageView android:layout_width="70dp" android:layout_height="60dp"
                android:src="@drawable/gohome"  android:layout_gravity="top|center" android:id="@+id/image_home"/>
     <ImageView android:layout_width="70dp" android:layout_height="60dp"
@@ -28,102 +27,123 @@
                   android:gravity="top|center"
                   android:layout_height="wrap_content" android:weightSum="2">
 
-        <RelativeLayout android:id="@+id/limitLayout"
-                        android:orientation="vertical"
-                        android:layout_width="180dp"
-                        android:gravity="center"
-                        android:background="@drawable/speed_limit_border"
-                        android:layout_gravity="center"
-                        android:layout_height="180dp" android:layout_weight="1">
-            <ProgressBar
-                    android:id="@+id/progressBarLimit"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:indeterminate="false"
-                    android:progressDrawable="@drawable/circle_limit_number"
-                    android:background="@drawable/speed_limit_border"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:max="100"
-                    android:progress="0"/>
-            <TextView
-                    android:layout_width="match_parent"
-                    android:id="@+id/number_limit"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="none"
-                    android:text="..."
-                    android:fontFamily="sans-serif-thin"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:includeFontPadding="false"
-                    android:textColor="#fff"
-                    android:layout_marginRight="25dp"
-                    android:layout_marginLeft="25dp"
-                    android:textSize="80dp"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
-            <TextView
-                    android:text="限速" android:textColor="#ffffffff"
-                    android:layout_width="match_parent"
-                    android:gravity="top|center_vertical|center_horizontal"
-                    android:layout_height="40dp" android:id="@+id/textView_limit_label"
-                    android:textSize="20dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/number_limit" android:layout_alignParentStart="true"/>
-            <TextView
-                    android:text="0米"
-                    android:textColor="#fff"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_distance"
-                    android:textSize="20dp"
-                    android:layout_above="@+id/number_limit" android:layout_centerHorizontal="true"/>
-        </RelativeLayout>
+        <FrameLayout
+            android:id="@+id/limitLayout"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/speed_limit_border"
+            android:gravity="center" >
 
-        <RelativeLayout
-                android:layout_width="180dp"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:layout_height="180dp" android:layout_weight="1" android:id="@+id/speedlayout">
             <ProgressBar
-                    android:id="@+id/progressBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:indeterminate="false"
-                    android:progressDrawable="@drawable/circle_speed_number"
-                    android:background="@drawable/speed_number_border"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:max="125"
-                    android:progress="0"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
-            <TextView android:layout_width="match_parent"
-                      android:id="@+id/number_speed"
-                      android:layout_height="wrap_content"
-                      android:ellipsize="none"
-                      android:text="关"
-                      android:fontFamily="sans-serif-thin"
-                      android:gravity="center_vertical|center_horizontal"
-                      android:includeFontPadding="false"
-                      android:textColor="#fff"
-                      android:layout_marginLeft="25dp"
-                      android:layout_marginRight="25dp"
-                      android:textSize="80dp"
-                      android:layout_alignParentLeft="true"
-                      android:layout_centerVertical="true" android:layout_alignParentStart="true"/>
+                android:id="@+id/progressBarLimit"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/speed_limit_border"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="0"
+                android:progressDrawable="@drawable/circle_limit_number" />
             <TextView
-                    android:text="km/h" android:textColor="#ffffffff"
-                    android:layout_width="match_parent"
-                    android:gravity="top|center_vertical|center_horizontal"
-                    android:layout_height="40dp" android:id="@+id/textView_unit"
-                    android:textSize="20dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/number_speed" android:layout_alignParentStart="true"/>
+                android:id="@+id/textView_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="top|center"
+                android:text="0米"
+                android:textColor="#fff"
+                android:textSize="20dp" />
             <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#fff"
-                    android:id="@+id/textView_direction" android:text="北" android:textSize="20dp"
-                    android:layout_above="@+id/number_speed" android:layout_centerHorizontal="true"/>
-        </RelativeLayout>
+                android:id="@+id/number_limit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:ellipsize="none"
+                android:fontFamily="sans-serif-thin"
+                android:gravity="center_vertical|center_horizontal"
+                android:includeFontPadding="false"
+                android:text="..."
+                android:textColor="#fff"
+                android:textSize="80dp" />
+            <TextView
+                android:id="@+id/textView_limit_label"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@+id/number_limit"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_gravity="bottom|center"
+                android:gravity="top|center_vertical|center_horizontal"
+                android:text="限速"
+                android:textColor="#ffffffff"
+                android:textSize="20dp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/speedlayout"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/speed_number_border"
+                android:indeterminate="false"
+                android:max="125"
+                android:progress="0"
+                android:progressDrawable="@drawable/circle_speed_number" />
+
+            <TextView
+                android:id="@+id/textView_direction"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/number_speed"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="top|center"
+                android:text="北"
+                android:textColor="#fff"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/number_speed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:ellipsize="none"
+                android:fontFamily="sans-serif-thin"
+                android:gravity="center_vertical|center_horizontal"
+                android:includeFontPadding="false"
+                android:text="关"
+                android:textColor="#fff"
+                android:textSize="80dp" />
+
+            <TextView
+                android:id="@+id/textView_unit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom|center"
+                android:gravity="top|center_vertical|center_horizontal"
+                android:text="km/h"
+                android:textColor="#ffffffff"
+                android:textSize="20dp" />
+
+        </FrameLayout>
     </LinearLayout>
 </FrameLayout>
