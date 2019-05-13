@@ -940,6 +940,14 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),buttonView.isChecked());
             }
         });
+        CheckBox lyricFloatingFixedCheckBox=findViewById(R.id.lyric_fixed);
+        lyricFloatingFixedCheckBox.setChecked(PrefUtils.isEnableLyricFloatingFixed(getApplicationContext()));
+        lyricFloatingFixedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableLyricFloatingFixed(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         CheckBox showAddressCheckBox=findViewById(R.id.checkBox_showAddress);
         showAddressCheckBox.setChecked(PrefUtils.isShowAddressWhenStop(getApplicationContext()));
         showAddressCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
