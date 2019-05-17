@@ -1096,61 +1096,6 @@ public class ConfigurationActivity extends Activity {
         }
     }
 
-   /* private void startFloatingWindows(boolean enabled){
-        Intent defaultFloatingService=new Intent(this,DefaultFloatingService.class);
-        Intent autoNavifloatService=new Intent(this,AutoNaviFloatingService.class);
-        Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
-        if(enabled){
-            String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
-            if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
-                if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
-                    meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-                    startService(meterFloatingService);
-                }
-                if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
-                    autoNavifloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-                    startService(autoNavifloatService);
-                }
-                startService(defaultFloatingService);
-
-            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                if(Utils.isServiceRunning(getApplicationContext(),DefaultFloatingService.class.getName())){
-                    defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-                    startService(defaultFloatingService);
-                }
-                if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
-                    meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-                    startService(meterFloatingService);
-                }
-                startService(autoNavifloatService);
-            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-                if(Utils.isServiceRunning(getApplicationContext(),DefaultFloatingService.class.getName())){
-                    defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-                    startService(defaultFloatingService);
-                }
-                if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
-                    autoNavifloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-                    startService(autoNavifloatService);
-                }
-                startService(meterFloatingService);
-            }
-
-        }
-        else {
-            if(Utils.isServiceRunning(getApplicationContext(),DefaultFloatingService.class.getName())){
-                defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-                startService(defaultFloatingService);
-            }
-            if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
-                autoNavifloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-                startService(autoNavifloatService);
-            }
-            if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
-                meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE,true);
-                startService(meterFloatingService);
-            }
-        }
-    }*/
     private void checkIfCanIncreaseMusic(){
         AudioManager audioManager= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         int systemVolume=audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);

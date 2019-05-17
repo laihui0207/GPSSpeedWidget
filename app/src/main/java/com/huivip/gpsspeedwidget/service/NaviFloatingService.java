@@ -49,6 +49,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.x;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -103,7 +104,7 @@ public class NaviFloatingService extends Service{
     public IBinder onBind(Intent intent) {
         return null;
     }
-
+    NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent!=null){
@@ -173,12 +174,12 @@ public class NaviFloatingService extends Service{
                         int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
                         int color = ContextCompat.getColor(NaviFloatingService.this, colorRes);
                         speedTextView.setTextColor(color);
-                        //NaviFloatingService.this.checkLocationData();
+                        NaviFloatingService.this.checkLocationData(null);
                     }
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
@@ -195,7 +196,7 @@ public class NaviFloatingService extends Service{
             mFloatingView.setVisibility(View.VISIBLE);
         }
     }
-    @Subscribe(threadMode=ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode=ThreadMode.MAIN)
     public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event){
         String info = event.getInfo();
         if (TextUtils.isEmpty(info)) {
@@ -246,44 +247,69 @@ public class NaviFloatingService extends Service{
         intent.putExtra("SOURCE_APP","GPSWidget");
         return intent;
     }
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    //@Subscribe(threadMode = ThreadMode.MAIN)
     public void checkLocationData(NaviInfoUpdateEvent event) {
-        x.task().autoPost(new Runnable() {
-            @Override
-            public void run() {
-                if (gpsUtil.getNavi_turn_icon() > 0) {
-                    naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
-                }
-                if (gpsUtil.getLimitSpeed() > 0) {
-                    navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed() + "");
-                } else {
-                    navicameraSpeedTextView.setText("0");
-                }
+        if (gpsUtil.getNavi_turn_icon() > 0) {
+            naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
+        }
+        if (gpsUtil.getLimitSpeed() > 0) {
+            navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed() + "");
+        } else {
+            navicameraSpeedTextView.setText("0");
+        }
 
-                cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
-                if (gpsUtil.getCameraType() != -1) {
-                    naviCameraView.setVisibility(View.VISIBLE);
-                } else {
-                    naviCameraView.setVisibility(View.GONE);
-                }
-                if (!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
-                    currentRoadTextView.setText(gpsUtil.getCurrentRoadName() + "");
-                }
+        cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
+        if (gpsUtil.getCameraType() != -1) {
+            naviCameraView.setVisibility(View.VISIBLE);
+        } else {
+            naviCameraView.setVisibility(View.GONE);
+        }
+        if (!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
+            currentRoadTextView.setText(gpsUtil.getCurrentRoadName() + "");
+        }
 
 
-                if (!TextUtils.isEmpty(gpsUtil.getNextRoadName())) {
-                    nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
-                }
-                nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
-                naviLeftTextView.setText(gpsUtil.getTotalLeftDistance() + "/" + gpsUtil.getTotalLeftTime());
-               // if (gpsUtil.getLimitDistance() > 0) {
-                    navicameraDistanceTextView.setText(gpsUtil.getLimitDistance() + "米");
-                    limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
+        if (!TextUtils.isEmpty(gpsUtil.getNextRoadName())) {
+            nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
+        }
+        localNumberFormat.setMaximumFractionDigits(1);
+        int nextRoadDistance = gpsUtil.getNextRoadDistance();
+        if (nextRoadDistance > 1000) {
+            nextRoadDistanceTextView.setText(localNumberFormat.format(nextRoadDistance / 1000) + "公里");
+        } else {
+            nextRoadDistanceTextView.setText(nextRoadDistance + "米");
+        }
+        //nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
+        String leftTimeString = "";
+        int leftTime = gpsUtil.getTotalLeftTime();
+        if (leftTime > 3600) {
+            int hours = (int) leftTime / 3600;
+            int minutes = (int) ((leftTime - hours * 3600) / 60);
+            leftTimeString = hours + "小时" + minutes + "分钟";
+        } else {
+            leftTimeString = leftTime / 60 + "分钟";
+        }
+
+        String leftDistanceString = "";
+        int leftDistance = gpsUtil.getTotalLeftDistance();
+        if (leftDistance > 1000) {
+            localNumberFormat.setMaximumFractionDigits(1);
+            leftDistanceString = localNumberFormat.format(leftDistance  / 1000) + "公里";
+        } else {
+            leftDistanceString = leftDistance + "米";
+        }
+        naviLeftTextView.setText(leftDistanceString + "/" + leftTimeString);
+        // if (gpsUtil.getLimitDistance() > 0) {
+        navicameraDistanceTextView.setText(gpsUtil.getLimitDistance() + "米");
+        /*int limitDistancePercentage=0;
+        if (gpsUtil.getLimitDistance() > 0) {
+            limitDistancePercentage = Math.round((300F - gpsUtil.getLimitDistance()) / 300 * 100);
+        }*/
+        limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
                /* } else {
                     navicameraDistanceTextView.setText("0米");
                 }*/
-            }
-        });
+        //EventBus.getDefault().cancelEventDelivery(event);
     }
 
     private int getWindowType() {

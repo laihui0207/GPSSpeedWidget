@@ -7,9 +7,11 @@ import android.support.multidex.MultiDex;
 import org.greenrobot.eventbus.EventBus;
 import org.xutils.x;
 
+import cn.kuwo.autosdk.api.KWAPI;
+
 public class GPSWidgetApplication extends Application {
     private static Context mContext;
-
+    public KWAPI mKwapi;
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -25,6 +27,7 @@ public class GPSWidgetApplication extends Application {
                 .logNoSubscriberMessages(false)
                 .sendNoSubscriberEvent(false)
                 .build();
+        mKwapi = KWAPI.createKWAPI(this, "auto");
     }
     public static Context getContext() {
         return mContext;

@@ -8,21 +8,18 @@ import android.util.Log;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
-import com.huivip.gpsspeedwidget.beans.BackNaviFloatingControlEvent;
 import com.huivip.gpsspeedwidget.beans.AutoWidgetFloatingControlEvent;
-import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.BackNaviFloatingControlEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.NaviFloatingService;
-import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xutils.x;
 
 import java.text.NumberFormat;
 
@@ -154,39 +151,36 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     break;
                 case 10001:
                     Log.d("huivip", "Update Navi Info");
-                    x.task().run(new Runnable() {
-                        @Override
-                        public void run() {
-                            String currentRoadName = intent.getStringExtra("CUR_ROAD_NAME");
-                            if (!TextUtils.isEmpty(currentRoadName)) {
-                                gpsUtil.setCurrentRoadName(currentRoadName);
-                            } else {
-                                gpsUtil.setCurrentRoadName("");
-                            }
-                            int limitSpeed = intent.getIntExtra("LIMITED_SPEED", 0);
-                            if (limitSpeed > 0) {
-                                gpsUtil.setLimitSpeed(limitSpeed);
-                            }
-                            int roadType = intent.getIntExtra("ROAD_TYPE", -1);
-                            if (roadType != -1) {
-                                gpsUtil.setRoadType(roadType);
-                            }
+                    String currentRoadName = intent.getStringExtra("CUR_ROAD_NAME");
+                    if (!TextUtils.isEmpty(currentRoadName)) {
+                        gpsUtil.setCurrentRoadName(currentRoadName);
+                    } else {
+                        gpsUtil.setCurrentRoadName("");
+                    }
+                    int limitSpeed = intent.getIntExtra("LIMITED_SPEED", 0);
+                    if (limitSpeed > 0) {
+                        gpsUtil.setLimitSpeed(limitSpeed);
+                    }
+                    int roadType = intent.getIntExtra("ROAD_TYPE", -1);
+                    if (roadType != -1) {
+                        gpsUtil.setRoadType(roadType);
+                    }
 
-                            String nextRoadName = intent.getStringExtra("NEXT_ROAD_NAME");
-                            if (!TextUtils.isEmpty(nextRoadName)) {
-                                gpsUtil.setNextRoadName(nextRoadName);
-                            } else {
-                                gpsUtil.setNextRoadName("");
-                            }
-                            int nextRoadDistance = intent.getIntExtra("SEG_REMAIN_DIS", -1);
-                            if (nextRoadDistance > 0) {
-                                localNumberFormat.setMaximumFractionDigits(1);
-                                if (nextRoadDistance > 1000) {
-                                    gpsUtil.setNextRoadDistance(localNumberFormat.format(nextRoadDistance * 1.0F / 1000) + "公里");
-                                } else {
+                    String nextRoadName = intent.getStringExtra("NEXT_ROAD_NAME");
+                    if (!TextUtils.isEmpty(nextRoadName)) {
+                        gpsUtil.setNextRoadName(nextRoadName);
+                    } else {
+                        gpsUtil.setNextRoadName("");
+                    }
+                    int nextRoadDistance = intent.getIntExtra("SEG_REMAIN_DIS", -1);
+                    if (nextRoadDistance > 0) {
+                       /* localNumberFormat.setMaximumFractionDigits(1);
+                        if (nextRoadDistance > 1000) {
+                            gpsUtil.setNextRoadDistance(localNumberFormat.format(nextRoadDistance * 1.0F / 1000) + "公里");
+                        } else {
 
-                                    gpsUtil.setNextRoadDistance(localNumberFormat.format(nextRoadDistance) + "米");
-                                }
+                            gpsUtil.setNextRoadDistance(localNumberFormat.format(nextRoadDistance) + "米");
+                        }*/
                                 /*if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context) && PrefUtils.isEnableAutoWidgetFloatingWidow(context) && !gpsUtil.isAutoNavi_on_Frontend()) {
                                     if (nextRoadDistance < 500) {  // 小于500米时显示高德插件悬浮窗
                                         startDriveWayFloatingService(context);
@@ -194,79 +188,79 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                         stopDriveWayFloatingService(context);
                                     }
                                 }*/
-                            } else {
-                                gpsUtil.setNextRoadDistance("0米");
-                            }
-                            int naviIcon = intent.getIntExtra("ICON", -1);
-                            if (naviIcon >= 0) {
-                                gpsUtil.setNavi_turn_icon(naviIcon);
-                            } else {
-                                gpsUtil.setNavi_turn_icon(0);
-                            }
-                            int leftDistance = intent.getIntExtra("ROUTE_REMAIN_DIS", 0);
-                            if (leftDistance > 0) {
-                                localNumberFormat.setMaximumFractionDigits(1);
-                                if (leftDistance > 1000) {
-                                    gpsUtil.setTotalLeftDistance(localNumberFormat.format(leftDistance * 1.0F / 1000) + "公里");
-                                } else {
-                                    gpsUtil.setTotalLeftDistance(localNumberFormat.format(leftDistance) + "米");
-                                }
-                                //gpsUtil.setTotalLeftDistance(leftDistance);
-                                if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Ended && gpsUtil.getNaviFloatingStatus() == Constant.Navi_Floating_Disabled) {
-                                    gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
-                                    startFloatingService(context);
-                                    gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
-                                }
-                            } else {
-                                gpsUtil.setTotalLeftDistance("0米");
-                            }
-                            int leftTime = intent.getIntExtra("ROUTE_REMAIN_TIME", -1);
-                            if (leftTime > 0) {
-                                localNumberFormat.setMaximumFractionDigits(0);
-                                if (leftTime > 3600) {
-                                    int hours = (int) leftTime / 3600;
-                                    int minutes = (int) ((leftTime - hours * 3600) / 60);
-                                    gpsUtil.setTotalLeftTime(hours + "小时" + minutes + "分钟");
-                                } else {
-                                    gpsUtil.setTotalLeftTime(localNumberFormat.format(leftTime / 60) + "分钟");
-                                }
-                                //gpsUtil.setTotalLeftTime(leftTime);
-                            } else {
-                                gpsUtil.setTotalLeftTime("0分钟");
-                            }
-                            int roadLimitSpeed = intent.getIntExtra("LIMITED_SPEED", -1);
-                            if (roadLimitSpeed > 0) {
-                                gpsUtil.setLimitSpeed(roadLimitSpeed);
-                                gpsUtil.setCameraType(9999);
-                            }
-                            //if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
-                            int cameraType = intent.getIntExtra("CAMERA_TYPE", -1);
-                            if (cameraType > -1) {
-                                gpsUtil.setCameraType(cameraType);
-                            } else {
-                                gpsUtil.setCameraType(-1);
-                            }
-                            int cameraDistance = intent.getIntExtra("CAMERA_DIST", 0);
-                            if (cameraDistance > 0) {
-                                gpsUtil.setCameraDistance(cameraDistance);
-                            } else {
-                                gpsUtil.setCameraDistance(0);
-                            }
-                            int cameraSpeed = intent.getIntExtra("CAMERA_SPEED", 0);
-                            if (cameraSpeed > 0) {
-                                gpsUtil.setCameraSpeed(cameraSpeed);
-                            }
-                            // }
-                            EventBus.getDefault().postSticky(new NaviInfoUpdateEvent());
+                                gpsUtil.setNextRoadDistance(nextRoadDistance);
+                    } else {
+                        gpsUtil.setNextRoadDistance(0);
+                    }
+                    int naviIcon = intent.getIntExtra("ICON", -1);
+                    if (naviIcon >= 0) {
+                        gpsUtil.setNavi_turn_icon(naviIcon);
+                    } else {
+                        gpsUtil.setNavi_turn_icon(0);
+                    }
+                    int leftDistance = intent.getIntExtra("ROUTE_REMAIN_DIS", 0);
+                    if (leftDistance > 0) {
+                        /*localNumberFormat.setMaximumFractionDigits(1);
+                        if (leftDistance > 1000) {
+                            gpsUtil.setTotalLeftDistance(localNumberFormat.format(leftDistance * 1.0F / 1000) + "公里");
+                        } else {
+                            gpsUtil.setTotalLeftDistance(localNumberFormat.format(leftDistance) + "米");
+                        }*/
+                        gpsUtil.setTotalLeftDistance(leftDistance);
+                        if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Ended && gpsUtil.getNaviFloatingStatus() == Constant.Navi_Floating_Disabled) {
+                            gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
+                            startFloatingService(context);
+                            gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
                         }
-                    });
+                    } else {
+                        gpsUtil.setTotalLeftDistance(0);
+                    }
+                    int leftTime = intent.getIntExtra("ROUTE_REMAIN_TIME", -1);
+                    if (leftTime > 0) {
+                        /*localNumberFormat.setMaximumFractionDigits(0);
+                        if (leftTime > 3600) {
+                            int hours = (int) leftTime / 3600;
+                            int minutes = (int) ((leftTime - hours * 3600) / 60);
+                            gpsUtil.setTotalLeftTime(hours + "小时" + minutes + "分钟");
+                        } else {
+                            gpsUtil.setTotalLeftTime(localNumberFormat.format(leftTime / 60) + "分钟");
+                        }*/
+                        gpsUtil.setTotalLeftTime(leftTime);
+                    } else {
+                        gpsUtil.setTotalLeftTime(0);
+                    }
+                    int roadLimitSpeed = intent.getIntExtra("LIMITED_SPEED", -1);
+                    if (roadLimitSpeed > 0) {
+                        gpsUtil.setLimitSpeed(roadLimitSpeed);
+                        gpsUtil.setCameraType(9999);
+                    }
+                    //if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
+                    int cameraType = intent.getIntExtra("CAMERA_TYPE", -1);
+                    if (cameraType > -1) {
+                        gpsUtil.setCameraType(cameraType);
+                    } else {
+                        gpsUtil.setCameraType(-1);
+                    }
+                    int cameraDistance = intent.getIntExtra("CAMERA_DIST", 0);
+                    if (cameraDistance > 0) {
+                        gpsUtil.setCameraDistance(cameraDistance);
+                    } else {
+                        gpsUtil.setCameraDistance(0);
+                    }
+                    int cameraSpeed = intent.getIntExtra("CAMERA_SPEED", 0);
+                    if (cameraSpeed > 0) {
+                        gpsUtil.setCameraSpeed(cameraSpeed);
+                    }
+                    // }
+                    //EventBus.getDefault().post(new NaviInfoUpdateEvent());
+
 
                     break;
                 case 13011:
                     String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");
                     if (!TextUtils.isEmpty(info)) {
                         gpsUtil.setTmcInfo(info);
-                        EventBus.getDefault().postSticky(new TMCSegmentEvent(info));
+                        EventBus.getDefault().post(new TMCSegmentEvent(info));
                     }
                     break;
                 case 13012:
@@ -301,7 +295,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
 
                 case 10056:
                     String iformationJsonString = intent.getStringExtra("EXTRA_ROAD_INFO");
-                    FileUtil.saveLogToFile(iformationJsonString);
+                    //FileUtil.saveLogToFile(iformationJsonString);
                     break;
             }
             if (!Utils.isServiceRunning(context, BootStartService.class.getName())) {

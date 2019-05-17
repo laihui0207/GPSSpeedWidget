@@ -63,11 +63,11 @@ public class BootStartService extends Service {
                                         if (launchIntent != null && !Utils.isServiceRunning(getApplicationContext(), packageName)) {
                                             launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                             getApplicationContext().startActivity(launchIntent);//null pointer check in case package name was not found
-                                        }
-                                        try {
-                                            Thread.sleep(delayTime * 1000 + 500L);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
+                                            try {
+                                                Thread.sleep(delayTime * 1000 + 500L);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
                                     }
                                     if (PrefUtils.isGoToHomeAfterAutoLanuch(getApplicationContext())) {
@@ -84,37 +84,37 @@ public class BootStartService extends Service {
                     timeThread.start();
                     if(PrefUtils.isAutoLauchHotSpot(getApplicationContext())) {
                         PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                        alarm.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+5000L, autoLaunchIntent);
+                        alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+5000L, autoLaunchIntent);
                     }
                     if (PrefUtils.isFTPAutoBackup(getApplicationContext()) || PrefUtils.isEnableAutoCleanGPSHistory(getApplicationContext())) {
                         PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                        alarm.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+120000L, autoFtpBackupIntent);
+                        alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+120000L, autoFtpBackupIntent);
                     }
                     if(PrefUtils.isPlayTime(getApplicationContext()) || PrefUtils.isPlayWeather(getApplicationContext()) || PrefUtils.isShowAddressWhenStop(getApplicationContext())) {
                         PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                        alarm.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+60000L, weatherServiceIntent);
+                        alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+60000L, weatherServiceIntent);
                     }
-                }
-                if(PrefUtils.isPlayWarn(getApplicationContext())){
-                    mPlayer = MediaPlayer.create(this, R.raw.warn);
-                    if(mPlayer!=null) {
-                        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                            @Override
-                            public void onCompletion(MediaPlayer mp) {
-                                if (mPlayer != null) {
-                                    mPlayer.reset();
-                                    mPlayer.release();
+                    if(PrefUtils.isPlayWarn(getApplicationContext())){
+                        mPlayer = MediaPlayer.create(this, R.raw.warn);
+                        if(mPlayer!=null) {
+                            mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                @Override
+                                public void onCompletion(MediaPlayer mp) {
+                                    if (mPlayer != null) {
+                                        mPlayer.reset();
+                                        mPlayer.release();
+                                    }
+                                    mPlayer = null;
                                 }
-                                mPlayer = null;
-                            }
-                        });
-                        mPlayer.start();
+                            });
+                            mPlayer.start();
+                        }
                     }
                 }
             }
         }
-        if(intent!=null && !started){
-            Log.d(START_BOOT,"Boot Start Service Launched");
+        if(intent!=null){
+            Log.d("huivip","Boot Start Service Launched");
             if(start) {
                 started=true;
                 if(PrefUtils.isWidgetActived(getApplicationContext())) {

@@ -41,12 +41,11 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         PendingIntent goHomeIntent= sendAutoBroadCast(context,10040,0);
         PendingIntent goCompanyIntent= sendAutoBroadCast(context,10040,1);
         PendingIntent goAutoIntent = sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_AUTOAMAP,400);
-        PendingIntent goGasStationIntent= sendAutoBroadCast(context,10036,201);
+        PendingIntent goGasStationIntent= sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_LYRIC,500); //sendAutoBroadCast(context,10036,201);
         views.setOnClickPendingIntent(R.id.image_home,goHomeIntent);
         views.setOnClickPendingIntent(R.id.image_company,goCompanyIntent);
         views.setOnClickPendingIntent(R.id.image_auto,goAutoIntent);
         views.setOnClickPendingIntent(R.id.image_gas_station,goGasStationIntent);
-
         PendingIntent switchXunHang=sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_XUNHANG,300);
         views.setOnClickPendingIntent(R.id.image_xunhang_switch,switchXunHang);
 

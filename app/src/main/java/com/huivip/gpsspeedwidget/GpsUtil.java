@@ -77,7 +77,7 @@ public class GpsUtil implements AMapNaviListener {
     Integer mphSpeed = Integer.valueOf(0);
     Integer kmhSpeed = Integer.valueOf(0);
     Integer limitSpeed = Integer.valueOf(0);
-    Float limitDistance = 0F;
+    Integer limitDistance = 0;
     String mphSpeedStr = "0";
     String kmhSpeedStr = "0";
     String velocita_prec = "ciao";
@@ -114,9 +114,9 @@ public class GpsUtil implements AMapNaviListener {
     String currentRoadName = "";
     int currentRoadType=-1;
     String nextRoadName = "";
-    String nextRoadDistance ="";
-    String totalLeftDistance = "";
-    String totalLeftTime = "";
+    int nextRoadDistance = 0;
+    int totalLeftDistance = 0;
+    int totalLeftTime = 0 ;
     int navi_turn_icon = -1;
     String cityName="";
     int naviFloatingStatus = 0; // 0 disabled 1 visible
@@ -533,6 +533,11 @@ public class GpsUtil implements AMapNaviListener {
         this.limitDistancePercentage=limitDistancePercentage;
     }
     public int getLimitDistancePercentage() {
+         if (limitDistance > 0) {
+            limitDistancePercentage = Math.round((300F - limitDistance) / 300 * 100);
+        } else {
+            limitDistancePercentage = 0;
+        }
         return limitDistancePercentage;
     }
 
@@ -579,7 +584,7 @@ public class GpsUtil implements AMapNaviListener {
     public TTS getTts(){
         return tts;
     }
-    public Float getLimitDistance() {
+    public Integer getLimitDistance() {
         return limitDistance;
     }
 
@@ -781,12 +786,12 @@ public class GpsUtil implements AMapNaviListener {
 
     public void setCameraDistance(int cameraDistance) {
         this.cameraDistance = cameraDistance;
-        this.limitDistance = cameraDistance * 1.0F;
-        if (limitDistance > 0) {
+        this.limitDistance = cameraDistance;
+       /* if (limitDistance > 0) {
             limitDistancePercentage = Math.round((300F - limitDistance) / 300 * 100);
         } else {
             limitDistancePercentage = 0;
-        }
+        }*/
     }
 
     public int getCameraSpeed() {
@@ -819,7 +824,7 @@ public class GpsUtil implements AMapNaviListener {
         this.nextRoadName = nextRoadName;
     }
 
-    public String getNextRoadDistance() {
+    public int getNextRoadDistance() {
         /*localNumberFormat.setMaximumFractionDigits(1);
         if (nextRoadDistance > 1000) {
             return localNumberFormat.format(nextRoadDistance / 1000) + "公里";
@@ -828,23 +833,23 @@ public class GpsUtil implements AMapNaviListener {
         return nextRoadDistance;
     }
 
-    public void setNextRoadDistance(String nextRoadDistance) {
+    public void setNextRoadDistance(int nextRoadDistance) {
         this.nextRoadDistance = nextRoadDistance;
     }
 
-    public String getTotalLeftDistance() {
+    public int getTotalLeftDistance() {
         return totalLeftDistance;
     }
 
-    public void setTotalLeftDistance(String totalLeftDistance) {
+    public void setTotalLeftDistance(int totalLeftDistance) {
         this.totalLeftDistance = totalLeftDistance;
     }
 
-    public String getTotalLeftTime() {
+    public int getTotalLeftTime() {
         return totalLeftTime;
     }
 
-    public void setTotalLeftTime(String totalLeftTime) {
+    public void setTotalLeftTime(int totalLeftTime) {
         this.totalLeftTime = totalLeftTime;
     }
 
@@ -1124,7 +1129,7 @@ public class GpsUtil implements AMapNaviListener {
     public void onPlayRing(int status) {
         if (getAutoNaviStatus()!=Constant.Navi_Status_Started && (status == AMapNaviRingType.RING_EDOG || status == AMapNaviRingType.RING_CAMERA)) {
             setCameraSpeed(0);
-            limitDistance = 0F;
+            limitDistance = 0;
             cameraType=-1;
             new Handler().postDelayed(new Runnable() {
                 @Override

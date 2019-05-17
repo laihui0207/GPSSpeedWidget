@@ -162,6 +162,11 @@ public class GpsSpeedService extends Service {
         } else {
             this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.xunhang_closed);
         }
+        if(PrefUtils.isLyricEnabled(getApplicationContext())){
+            this.numberRemoteViews.setImageViewResource(R.id.image_gas_station,R.drawable.lyric);
+        } else {
+            this.numberRemoteViews.setImageViewResource(R.id.image_gas_station,R.drawable.lyric_disabled);
+        }
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
     }
 

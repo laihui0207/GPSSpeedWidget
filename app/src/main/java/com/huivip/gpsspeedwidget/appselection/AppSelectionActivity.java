@@ -16,20 +16,23 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.pluscubed.recyclerfastscroll.RecyclerFastScroller;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import rx.SingleSubscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AppSelectionActivity extends AppCompatActivity /*Activity implements AppCompatCallback */ {
 
@@ -86,7 +89,7 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
         } else {
             mAdapter.setAppInfos(mAppList);
         }
-
+        CrashHandler.getInstance().init(getApplicationContext());
         setTitle("选择自启动程序");
     }
 

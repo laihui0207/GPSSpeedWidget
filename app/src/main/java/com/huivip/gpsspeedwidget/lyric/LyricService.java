@@ -8,7 +8,11 @@ import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.RemoteControlClient;
 import android.media.RemoteController;
-import android.os.*;
+import android.os.Binder;
+import android.os.Build;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
@@ -16,16 +20,23 @@ import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import com.huivip.gpsspeedwidget.service.LyricFloatingService;
-import com.huivip.gpsspeedwidget.widget.LyricWidgetService;
+
+import com.huivip.gpsspeedwidget.beans.KuWoMusiceEvent;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
+import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+import com.huivip.gpsspeedwidget.widget.LyricWidgetService;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+
+import cn.kuwo.autosdk.api.KWAPI;
+import cn.kuwo.autosdk.api.OnConnectedListener;
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class LyricService extends NotificationListenerService implements RemoteController.OnClientUpdateListener  {
@@ -41,6 +52,7 @@ public class LyricService extends NotificationListenerService implements RemoteC
     long currentPosition=0L;
     Long duration;
     String lyricContent;
+    KWAPI mKwapi;
     private RCBinder mBinder = new RCBinder();
     private static WeakReference<RemoteController> mRemoteController = new WeakReference<>(null);
 
@@ -69,6 +81,23 @@ public class LyricService extends NotificationListenerService implements RemoteC
             }
         }
         super.onCreate();
+        //得到实例,必须在Application里初始化
+        mKwapi = KWAPI.getKWAPI();
+
+        //绑定酷我音乐盒、绑定后可以使用获取当前播放状态、获取当前歌曲信息等功能
+        mKwapi.bindAutoSdkService(this);
+        mKwapi.registerConnectedListener(new OnConnectedListener() {
+            @Override
+            public void onConnectChangeListener(boolean isConnected) {
+                if (isConnected) {
+                    EventBus.getDefault().post(new KuWoMusiceEvent(1));
+                    //Toast.makeText(getApplicationContext(), "音乐盒后台服务已连接", Toast.LENGTH_SHORT).show();
+                } else {
+                    EventBus.getDefault().post(new KuWoMusiceEvent(0));
+                    //Toast.makeText(getApplicationContext(), "音乐盒后台服务已断开", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override

@@ -37,7 +37,6 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.AutoWidgetFloatingControlEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -65,8 +64,6 @@ public class AutoWidgetFloatingService extends Service{
     GpsUtil gpsUtil;
     @BindView(R.id.autoDriveWayView)
     LinearLayout driveWayView;
-    @BindView(R.id.imageView_NaviMap)
-    ImageView imageView;
     @BindView(R.id.imageView_autoNvi_close)
     ImageView closeImage;
     @BindView(R.id.imageView_autoNvi_move)
@@ -111,12 +108,12 @@ public class AutoWidgetFloatingService extends Service{
             final View amapView =  appWidgetHost.createView(this, id, popupWidgetInfo);
             driveWayView.removeAllViews();
             driveWayView.addView(amapView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            if (amapView instanceof ViewGroup) {
+           /* if (amapView instanceof ViewGroup) {
                 View vv= Utils.getViewByIds(amapView, new Object[]{"widget_container"});
                 if (vv !=null) {
                    imageView.setImageBitmap(vv.getDrawingCache());// = (ImageView) vv;
                 }
-            }
+            }*/
         }
     }
 
@@ -142,9 +139,11 @@ public class AutoWidgetFloatingService extends Service{
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.START;
-        params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
+        params.alpha = 0.9f;//PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
+        driveWayView.setOnTouchListener(new FloatingOnTouchListener());
+       // mFloatingView.setOnTouchListener(new FloatingOnTouchListener());
         initMonitorPosition();
         this.locationScanTask = new TimerTask()
         {
@@ -166,7 +165,7 @@ public class AutoWidgetFloatingService extends Service{
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         CrashHandler.getInstance().init(getApplicationContext());
-        moveImage.setOnTouchListener(new FloatingOnTouchListener());
+        //moveImage.setOnTouchListener(new FloatingOnTouchListener());
         EventBus.getDefault().register(this);
         super.onCreate();
     }
@@ -336,7 +335,7 @@ public class AutoWidgetFloatingService extends Service{
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
-                        if (fadeAnimator != null && fadeAnimator.isStarted()) {
+                       /* if (fadeAnimator != null && fadeAnimator.isStarted()) {
                             fadeAnimator.cancel();
                             params.alpha = initialAlpha;
                             try {
@@ -350,17 +349,17 @@ public class AutoWidgetFloatingService extends Service{
                             fadeAnimator.play(fadeOut).before(fadeIn);
                             fadeAnimator.start();
                         }
-
+*/
                     }
                     else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
 
                     }
                     else {
-                        if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
+                        /*if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
                              animateViewToSideSlot();
-                        } else {
+                        } else {*/
                             PrefUtils.setDriveWayFloatingSolidLocation(getApplicationContext(),params.x,params.y);
-                        }
+                        /*}*/
                     }
                    /* if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
                         if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {

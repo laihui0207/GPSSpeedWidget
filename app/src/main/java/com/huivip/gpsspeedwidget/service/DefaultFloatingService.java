@@ -86,6 +86,8 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
     TextView speedUnitTextView;
     @BindView(R.id.textView_default_altitude)
     TextView textViewAltitude;
+    @BindView(R.id.textView_currentRoadName)
+    TextView textViewCurrentRoadName;
    /* @BindView(R.id.floating_close)
     ImageView closeImage;*/
     TimerTask locationScanTask;
@@ -242,31 +244,30 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
         intent.setData(Uri.parse("package:" + packageName));
         startActivity(intent);
     }
+
     void checkLocationData() {
-        if (gpsUtil!=null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted() ) {
+        if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             //if(gpsUtil.isGpsLocationChanged()){
-                setSpeed(gpsUtil.getKmhSpeedStr(),gpsUtil.getSpeedometerPercentage());
-                mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
-                setSpeeding(gpsUtil.isHasLimited());
-                setLimit(gpsUtil.getLimitDistancePercentage());
-                if(gpsUtil.getCameraType()>-1){
-                    limitShowLabel.setText(gpsUtil.getCameraTypeName());
-                }
-                else {
-                    limitShowLabel.setText("限速");
-                }
-                mSpeedDirectionText.setText(gpsUtil.getDirection());
-                if(TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
-                    speedUnitTextView.setText("km/h");
-                }
-                else {
-                    speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
-                }
-                textViewAltitude.setText("海拔： " + gpsUtil.getAltitude() + "米");
-           // }
-        }
-        else {
-           mSpeedometerText.setText("--");
+            setSpeed(gpsUtil.getKmhSpeedStr(), gpsUtil.getSpeedometerPercentage());
+            mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
+            setSpeeding(gpsUtil.isHasLimited());
+            setLimit(gpsUtil.getLimitDistancePercentage());
+            if (gpsUtil.getCameraType() > -1) {
+                limitShowLabel.setText(gpsUtil.getCameraTypeName());
+            } else {
+                limitShowLabel.setText("限速");
+            }
+            mSpeedDirectionText.setText(gpsUtil.getDirection());
+            if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
+                speedUnitTextView.setText("km/h");
+            } else {
+                speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
+            }
+            textViewCurrentRoadName.setText(gpsUtil.getCurrentRoadName());
+            textViewAltitude.setText("海拔" + gpsUtil.getAltitude() + "米");
+            // }
+        } else {
+            mSpeedometerText.setText("--");
         }
     }
     private int getWindowType() {
@@ -279,7 +280,7 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             mLimitArcView.getModels().get(0).setProgress(percentOfLimit);
             mLimitArcView.animateProgress();
             if(gpsUtil.getLimitDistance()>0){
-                mFloatingimitDistance.setText(Float.toString(gpsUtil.getLimitDistance())+"米");
+                mFloatingimitDistance.setText(gpsUtil.getLimitDistance()+"米");
             }
             else {
                 mFloatingimitDistance.setText(gpsUtil.getDistance());

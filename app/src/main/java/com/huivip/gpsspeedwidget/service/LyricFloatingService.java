@@ -18,17 +18,24 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.KuWoMusiceEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.LrcView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.x;
 
 import java.util.Timer;
@@ -37,6 +44,7 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.kuwo.autosdk.api.KWAPI;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -70,12 +78,16 @@ public class LyricFloatingService extends Service{
     TimerTask lyricTask;
     long duration=0;
     Timer lyricTimer;
+    boolean isKuwoPlayer;
     final Handler lyricHandler = new Handler();
     boolean isShowing=false;
     @BindView(R.id.lrc_floatting_view)
     LrcView lrcView;
+    KWAPI mKwapi;
     @BindView(R.id.lyric_control)
     View controlView;
+    @BindView(R.id.layout_lyric)
+    ViewGroup lyricView;
     WindowManager.LayoutParams params;
     @Nullable
     @Override
@@ -126,6 +138,10 @@ public class LyricFloatingService extends Service{
 
     private void calTime() {
         long position = System.currentTimeMillis() - startTime;
+       /* if(isKuwoPlayer){
+            position = mKwapi.getCurrentPos();
+            Log.d("huivip","Get current position:"+position);
+        }*/
         lrcView.setPlayercurrentMillis((int) position);
         if (duration > 0 && (position + 1000) >= duration) {
             onStop();
@@ -168,6 +184,18 @@ public class LyricFloatingService extends Service{
     public static void sendIntent(Context context, Intent intent) {
         context.sendBroadcast(intent);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void switchKuWoPlayer(KuWoMusiceEvent event){
+        isKuwoPlayer = event.getStatus() == 1;
+    }
     @Override
     public void onCreate() {
         if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
@@ -201,9 +229,39 @@ public class LyricFloatingService extends Service{
         initMonitorPosition();
         CrashHandler.getInstance().init(getApplicationContext());
         lyricTimer = new Timer();
+        EventBus.getDefault().register(this);
+        mKwapi = KWAPI.getKWAPI();
+       // changeViewSize(lyricView,1024,600);
         super.onCreate();
     }
+    //遍历设置字体
+    public static void changeViewSize(ViewGroup viewGroup, int screenWidth, int screenHeight) {//传入Activity顶层Layout,屏幕宽,屏幕高
+        int adjustFontSize = adjustFontSize(screenWidth, screenHeight);
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View v = viewGroup.getChildAt(i);
+            if (v instanceof ViewGroup) {
+                changeViewSize((ViewGroup) v, screenWidth, screenHeight);
+            } else if (v instanceof Button) {//按钮加大这个一定要放在TextView上面，因为Button也继承了TextView
+                ((Button) v).setTextSize(adjustFontSize + 2);
+            } else if (v instanceof TextView) {
+                ((TextView) v).setTextSize(adjustFontSize);
+            }
+        }
+    }
 
+
+    //获取字体大小
+    public static int adjustFontSize(int screenWidth, int screenHeight) {
+        screenWidth=screenWidth>screenHeight?screenWidth:screenHeight;
+        /**
+         * 1. 在视图的 onsizechanged里获取视图宽度，一般情况下默认宽度是320，所以计算一个缩放比率
+         rate = (float) w/320   w是实际宽度
+         2.然后在设置字体尺寸时 paint.setTextSize((int)(8*rate));   8是在分辨率宽为320 下需要设置的字体大小
+         实际字体大小 = 默认字体大小 x  rate
+         */
+        int rate = (int)(5*(float) screenWidth/320); //我自己测试这个倍数比较适合，当然你可以测试后再修改
+        return rate<15?15:rate; //字体太小也不好看的
+    }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :

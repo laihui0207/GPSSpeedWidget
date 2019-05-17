@@ -4,14 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 import com.huivip.gpsspeedwidget.Constant;
-import com.huivip.gpsspeedwidget.utils.DBUtil;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.beans.LocationVO;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
-import com.huivip.gpsspeedwidget.utils.FileUtil;
+import com.huivip.gpsspeedwidget.utils.DBUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,7 +85,7 @@ public class UploadRoadDataReceiver extends BroadcastReceiver {
                         }
                     } catch (Exception e) {
                         Log.d("huivip", "upload data Error:" + e.getLocalizedMessage());
-                        FileUtil.saveLogToFile("Upload result Error:"+e.getLocalizedMessage());
+                        //FileUtil.saveLogToFile("Upload result Error:"+e.getLocalizedMessage());
                     }
                     Log.d("huivip", "Upload Data Finish");
                 }

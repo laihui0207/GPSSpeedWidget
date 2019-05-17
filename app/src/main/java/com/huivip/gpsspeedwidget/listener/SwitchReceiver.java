@@ -4,9 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.service.MapFloatingService;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 public class SwitchReceiver extends BroadcastReceiver {
@@ -14,6 +17,7 @@ public class SwitchReceiver extends BroadcastReceiver {
     public static String SWITCH_TARGET_XUNHANG="com.huivip.switch.XunHang";
     public static String SWITCH_TARGET_MAPFLOATING="com.huivip.switch.mapFloating";
     public static String SWITCH_TARGET_AUTOAMAP="com.huivip.switch.AutoAmap";
+    public static String SWITCH_TARGET_LYRIC="com.huivip.switch.Lyric";
     public static String SWITCH_EVENT="com.huivip.switch.event";
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -40,6 +44,14 @@ public class SwitchReceiver extends BroadcastReceiver {
             Intent appIntent = context.getPackageManager().getLaunchIntentForPackage(Constant.AMAPAUTOPACKAGENAME);
             appIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(appIntent);
+        }
+        if(target!=null && SWITCH_TARGET_LYRIC.equalsIgnoreCase(target)){
+            PrefUtils.setLyricEnabled(context,!PrefUtils.isLyricEnabled(context));
+            if(PrefUtils.isLyricEnabled(context)){
+                Toast.makeText(context, "歌词功能开启", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "歌词功能关闭", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

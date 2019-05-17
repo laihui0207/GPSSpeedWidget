@@ -1,76 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/speedometer"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@id/limit"
-                android:background="@drawable/circle"
-                android:elevation="2dp">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/speedometer"
+    android:layout_width="120dp"
+    android:layout_height="145dp"
+    android:layout_below="@id/limit">
 
-    <devlight.io.library.ArcProgressStackView
+    <RelativeLayout
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/circle"
+        android:elevation="2dp">
+
+        <devlight.io.library.ArcProgressStackView
             android:id="@+id/arcview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:apsv_animated="true"
             app:apsv_animation_duration="100"
             app:apsv_draw_width="4dp"
-            app:apsv_typeface="fonts/agency.ttf"
             app:apsv_model_bg_enabled="true"
             app:apsv_shadowed="false"
             app:apsv_start_angle="135"
             app:apsv_sweep_angle="270"
-            tools:visibility="gone"/>
-    <FrameLayout
+            app:apsv_typeface="fonts/agency.ttf"
+            tools:visibility="gone" />
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:orientation="vertical" android:paddingTop="2dp">
-        <android.support.v7.widget.AppCompatTextView
+            android:paddingTop="2dp">
+
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/speed"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
+                android:gravity="center_vertical|center"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:textSize="70dp"
                 android:text="80"
                 android:textColor="#000"
-                app:autoSizeTextType="uniform"
-                android:layout_marginBottom="5px"
-                android:layout_marginLeft="10px"
-                android:layout_marginRight="10px"
-                android:gravity="center_vertical|center"/>
+                android:textSize="80dp"
+                app:autoSizeTextType="uniform" />
 
-        <TextView
+            <TextView
                 android:id="@+id/speedUnits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center_horizontal"
-                android:includeFontPadding="false"
+                android:layout_marginBottom="2dp"
                 android:gravity="center_vertical|center_horizontal"
+                android:includeFontPadding="false"
+                android:text="km/h"
                 android:textColor="#000"
-                android:textSize="15dp" android:visibility="gone"
-                tools:text="km/h" android:text="km/h"
-                android:layout_marginBottom="2dp"/>
-        <TextView
-                android:text="北" android:textColor="#000"
+                android:textSize="15dp"
+                android:visibility="gone"
+                tools:text="km/h" />
+
+            <TextView
+                android:id="@+id/textView_number_direction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|center_horizontal"
-                android:id="@+id/textView_number_direction"
+                android:text="北"
+                android:layout_marginTop="4dp"
+                android:textColor="#000"
                 android:textSize="15dp" />
-        <TextView
-                android:text="海拔：0米"
+
+            <TextView
+                android:id="@+id/textView_default_altitude"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10px"
                 android:layout_gravity="bottom|center_horizontal"
-                 android:id="@+id/textView_default_altitude"
-                android:textSize="15dp" android:textColor="#000"/>
+                android:layout_marginBottom="10px"
+                android:text="海拔：0米"
+                android:textColor="#000"
+                android:textSize="15dp" />
 
-    </FrameLayout>
+        </FrameLayout>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="120dp"
+        android:gravity="center"
+        android:background="@color/blue"
+        android:layout_gravity="center|bottom"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView
+            android:id="@+id/textView_currentRoadName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="无名道路"
+            android:textColor="#fff" />
+    </LinearLayout>
 
-</RelativeLayout>
+
+</FrameLayout>

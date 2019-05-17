@@ -1,7 +1,6 @@
 package com.huivip.gpsspeedwidget.service;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,6 +11,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
@@ -23,6 +23,7 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +46,6 @@ public class WeatherService implements AMapLocationListener {
     private NotificationManager notificationManager = null;
     boolean isCreateChannel = false;
     AMapLocation lastedLocation;
-    AlarmManager alarm ;
     boolean running=false;
     private WeatherService(Context context){
         this.context=context;
@@ -56,7 +56,6 @@ public class WeatherService implements AMapLocationListener {
         startLocation();
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(context);
         deviceId=deviceUuidFactory.getDeviceUuid().toString();
-        alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
     public static WeatherService getInstance(Context context){
         if(instance==null){

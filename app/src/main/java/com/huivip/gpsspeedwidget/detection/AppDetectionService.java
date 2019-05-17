@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
-import com.huivip.gpsspeedwidget.service.BootStartService;
-import com.huivip.gpsspeedwidget.Constant;
+
 import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -51,9 +51,6 @@ public class AppDetectionService extends AccessibilityService {
             bootService.putExtra(BootStartService.START_BOOT,true);
             startService(bootService);
         }
-       /* if(event.getPackageName()!=null){
-            FileUtil.saveLogToFile("Detection service Check package Name:"+event.getPackageName());
-        }*/
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
             return ;
         }
@@ -73,66 +70,14 @@ public class AppDetectionService extends AccessibilityService {
         if (!isActivity) {
             return;
         }
-       // boolean onAutoNavi=false;
-        gpsUtil=GpsUtil.getInstance(getApplicationContext());
-       // when in auto navi or auto navi lite app, temp disable audio service
-        if (componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
+       /* if (componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
                 || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)) {
-            if (PrefUtils.isEnableAutoMute(getApplicationContext())) {
-                PrefUtils.setEnableTempAudioService(getApplicationContext(), false);
-            }
+            gpsUtil=GpsUtil.getInstance(getApplicationContext());
             gpsUtil.setAutoNavi_on_Frontend(true);
-            //onAutoNavi=true;
-        }
-      /* else {
-           gpsUtil=GpsUtil.getInstance(getApplicationContext());
-           if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) {
-               PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
-           }
-       }*/
+        }*/
 
         boolean onDesktop = enabledApps.contains(componentName.getPackageName());
         PrefUtils.setOnDesktop(getApplicationContext(),onDesktop);
-        /*Intent floatService = new Intent(this, DefaultFloatingService.class);
-        Intent autoNaviFloatingService=new Intent(this,AutoNaviFloatingService.class);
-        Intent meterFloatingService=new Intent(this,MeterFloatingService.class);
-        if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
-            floatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-            autoNaviFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-            meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-        }
-
-        if(PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP) && onDesktop){
-            floatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-            autoNaviFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-            meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-        }
-
-        if(!onDesktop && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
-            floatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-            autoNaviFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-            meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-        }
-        if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
-                (gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started || !onAutoNavi)){
-            floatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-            autoNaviFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-            meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
-        }
-
-
-        try {
-            String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());
-            if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
-                startService(floatService);
-            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                startService(autoNaviFloatingService);
-            } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-                startService(meterFloatingService);
-            }
-        } catch (Exception e) {
-            Log.d("huivip","Start Floating server Failed"+e.getMessage());
-        }*/
         Utils.startFloatingWindows(getApplicationContext(),true);
     }
 

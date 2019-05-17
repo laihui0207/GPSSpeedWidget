@@ -205,42 +205,11 @@ public abstract class Utils {
         return null;
     }
 
-    public static void goHome(Context context){
-     /*   PackageManager packageManager = context.getPackageManager();
-        Intent intentLauncher = new Intent(Intent.ACTION_MAIN);
-        intentLauncher.addCategory(Intent.CATEGORY_HOME);
-        String selectDefaultLauncher=packageManager.resolveActivity(intentLauncher,PackageManager.MATCH_DEFAULT_ONLY).activityInfo.packageName;
-        String defaultLaunch = PrefUtils.getDefaultLanuchApp(context);
-        Log.d("huivip","Default launch:"+defaultLaunch+",Select launcher:"+selectDefaultLauncher);
-        if (!TextUtils.isEmpty(defaultLaunch) && "com.huivip.gpsspeedwidget".equalsIgnoreCase(selectDefaultLauncher)) {
-            Intent launchIntent =context.getPackageManager().getLaunchIntentForPackage(defaultLaunch);
-            if (launchIntent != null) {
-                Log.d("huivip","Launch default Launcher:"+defaultLaunch);
-                launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(launchIntent);
-            }
-            else {
-                Log.d("huivip","Launch intent is NULL");
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Log.d("huivip","Return back!");
-                            Instrumentation inst= new Instrumentation();
-                            inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
-                        } catch(Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-
-            }
-        } else {*/
-            Intent paramIntent = new Intent("android.intent.action.MAIN");
-            paramIntent.addCategory("android.intent.category.HOME");
-            paramIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(paramIntent);
-        /*}*/
+    public static void goHome(Context context) {
+        Intent paramIntent = new Intent("android.intent.action.MAIN");
+        paramIntent.addCategory("android.intent.category.HOME");
+        paramIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(paramIntent);
     }
     public static boolean isServiceReady(Context context) {
         boolean permissionGranted =
@@ -335,9 +304,6 @@ public abstract class Utils {
         boolean needClose=false;
         if(enabled){
             GpsUtil gpsUtil=GpsUtil.getInstance(context.getApplicationContext());
-           /* if(gpsUtil.isAutoNavi_on_Frontend() && PrefUtils.isHideFloatingWidowOnNaviApp(context)){
-                return;
-            }*/
             boolean onDesktop =PrefUtils.isOnDesktop(context);
             if(!PrefUtils.isEnableFlatingWindow(context)){
                 defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
