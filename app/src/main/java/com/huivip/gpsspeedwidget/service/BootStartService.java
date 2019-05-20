@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.listener.AutoFTPBackupReceiver;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
 import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
@@ -86,10 +85,10 @@ public class BootStartService extends Service {
                         PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
                         alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+5000L, autoLaunchIntent);
                     }
-                    if (PrefUtils.isFTPAutoBackup(getApplicationContext()) || PrefUtils.isEnableAutoCleanGPSHistory(getApplicationContext())) {
+                  /*  if (PrefUtils.isFTPAutoBackup(getApplicationContext()) || PrefUtils.isEnableAutoCleanGPSHistory(getApplicationContext())) {
                         PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
                         alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+120000L, autoFtpBackupIntent);
-                    }
+                    }*/
                     if(PrefUtils.isPlayTime(getApplicationContext()) || PrefUtils.isPlayWeather(getApplicationContext()) || PrefUtils.isShowAddressWhenStop(getApplicationContext())) {
                         PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
                         alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+60000L, weatherServiceIntent);

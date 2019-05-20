@@ -38,7 +38,7 @@
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                       android:orientation="horizontal">
             <TextView
-                    android:text="延时"
+                    android:text="延时" android:textColor="#000"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_delaytext"
@@ -53,7 +53,7 @@
                     android:text="秒依次启动第三方应用"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textView8"
+                    android:id="@+id/textView8" android:textColor="#000"
                     android:gravity="center_vertical"/>
             <CheckBox
                     android:text="启动后返回桌面"
@@ -98,7 +98,7 @@
             <CheckBox
                     android:text="记录GPS轨迹(本机)"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="wrap_content" android:visibility="gone"
                     android:id="@+id/recordGPS"/>
 
             <CheckBox
@@ -108,6 +108,7 @@
             <TextView
                     android:text="    GPS速度调整:"
                     android:layout_width="wrap_content"
+                android:textColor="#000"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView"/>
             <EditText
@@ -115,11 +116,9 @@
                     android:layout_height="wrap_content"
                     android:inputType="numberSigned"
                     android:ems="5"
+                    android:textColor="#000"
                     android:hint="0(-100,100)"
-                    android:id="@+id/editText_speedadjust"
-                    android:layout_above="@+id/linearLayout"
-                    android:layout_toRightOf="@+id/textView"
-                    android:layout_toEndOf="@+id/textView"/>
+                    android:id="@+id/editText_speedadjust"/>
             <CheckBox android:layout_width="wrap_content"
                       android:id="@+id/checkbox_speedType_mph" android:text="使用英里单位MPH" android:layout_height="wrap_content"/>
         </LinearLayout>

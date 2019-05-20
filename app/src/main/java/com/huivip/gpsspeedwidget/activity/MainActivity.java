@@ -20,9 +20,25 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.*;
-import com.amap.api.maps.*;
-import com.amap.api.maps.model.*;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdate;
+import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.CoordinateConverter;
+import com.amap.api.maps.MapView;
+import com.amap.api.maps.UiSettings;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.CameraPosition;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.trace.LBSTraceClient;
 import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
@@ -30,12 +46,22 @@ import com.amap.api.trace.TraceOverlay;
 import com.amap.api.track.AMapTrackClient;
 import com.amap.api.track.query.entity.Point;
 import com.amap.api.track.query.entity.Track;
-import com.amap.api.track.query.model.*;
-import com.huivip.gpsspeedwidget.*;
-import com.huivip.gpsspeedwidget.beans.LocationVO;
+import com.amap.api.track.query.model.LatestPointRequest;
+import com.amap.api.track.query.model.LatestPointResponse;
+import com.amap.api.track.query.model.QueryTerminalRequest;
+import com.amap.api.track.query.model.QueryTerminalResponse;
+import com.amap.api.track.query.model.QueryTrackRequest;
+import com.amap.api.track.query.model.QueryTrackResponse;
+import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.DeviceUuidFactory;
+import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.service.BootStartService;
-import com.huivip.gpsspeedwidget.utils.*;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.SimpleOnTrackListener;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.ImageWheelView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +70,16 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author sunlaihui
@@ -150,7 +185,7 @@ public class MainActivity extends Activity implements TraceListener {
                             deviceId=inputUid;
                         }
                         saveDeviceIdString(deviceId);
-                        if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
+/*                        if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {*/
                             serviceId = Long.parseLong(PrefUtils.getAmapTrackServiceID(deviceId));
                             TERMINAL_NAME = "Track_" + deviceId;
                             aMapTrackClient.queryTerminal(new QueryTerminalRequest(serviceId, TERMINAL_NAME), new SimpleOnTrackListener() {
@@ -186,7 +221,7 @@ public class MainActivity extends Activity implements TraceListener {
                                 }
                             });
 
-                        } else if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext())
+                       /* } else if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext())
                                 && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())
                                 && !PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
                             String getLastedURL = "";
@@ -219,7 +254,7 @@ public class MainActivity extends Activity implements TraceListener {
                             }
                         } else {
                             //Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
-                        }
+                        }*/
 
                    /* }
                        */
@@ -315,7 +350,7 @@ public class MainActivity extends Activity implements TraceListener {
                 TERMINAL_NAME = "Track_" + deviceId;
                 Date finalStartDate = startDate;
                 Date finalEndDate = endDate;
-                if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
+/*                if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {*/
                     aMapTrackClient.queryTerminal(new QueryTerminalRequest(serviceId, TERMINAL_NAME), new SimpleOnTrackListener() {
                         @Override
                         public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
@@ -383,7 +418,7 @@ public class MainActivity extends Activity implements TraceListener {
                             }
                         }
                     });
-                } else {
+                /*} else {
                     String finalDeviceId = deviceId;
                     String finalStartTime = startTime;
                     String finalEndTime = endTime;
@@ -435,7 +470,7 @@ public class MainActivity extends Activity implements TraceListener {
                             }
                         }
                     }).start();
-                }
+                }*/
             }
         };
         trackBtn.setOnClickListener(trackBtnListener);

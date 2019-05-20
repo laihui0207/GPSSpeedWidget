@@ -89,8 +89,8 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             // Toast.makeText(context,"Heated Checked",Toast.LENGTH_SHORT).show();
                             gpsUtil.setNaviFloatingStatus(-1);
                             startBackendNaviFloatingService(context);
-                            gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
-                            //startDriveWayFloatingService(context);
+                            //gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
+                            startDriveWayFloatingService(context);
                             launchSpeedFloatingWindows(context, true);
                             break;
                         case 2: // auto map in end

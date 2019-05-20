@@ -228,8 +228,9 @@ public class GpsUtil implements AMapNaviListener {
             intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             context.getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
         }
-        Intent recordService = new Intent(context, RecordGpsHistoryService.class);
-        context.startService(recordService);
+        // disable record gps history service
+       /* Intent recordService = new Intent(context, RecordGpsHistoryService.class);
+        context.startService(recordService);*/
         serviceStarted = true;
         weatherService=WeatherService.getInstance(context);
         // Sync home info

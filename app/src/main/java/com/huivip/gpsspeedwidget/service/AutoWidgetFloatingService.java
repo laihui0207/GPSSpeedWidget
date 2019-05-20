@@ -37,6 +37,7 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.AutoWidgetFloatingControlEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -68,6 +69,8 @@ public class AutoWidgetFloatingService extends Service{
     ImageView closeImage;
     @BindView(R.id.imageView_autoNvi_move)
     ImageView moveImage;
+    @BindView(R.id.imageView_auto_widget_image)
+    ImageView imageView;
     AppWidgetHost appWidgetHost;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
@@ -106,8 +109,18 @@ public class AutoWidgetFloatingService extends Service{
         if (id != -1) {
             AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
             final View amapView =  appWidgetHost.createView(this, id, popupWidgetInfo);
-            driveWayView.removeAllViews();
-            driveWayView.addView(amapView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            //driveWayView.removeAllViews();
+            //driveWayView.addView(amapView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            View vv=null;
+            if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
+                vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
+                if (vv!=null && vv instanceof ImageView) {
+                    imageView.setImageDrawable(((ImageView) vv).getDrawable());
+                }
+            } else {
+                driveWayView.removeAllViews();
+                driveWayView.addView(amapView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            }
            /* if (amapView instanceof ViewGroup) {
                 View vv= Utils.getViewByIds(amapView, new Object[]{"widget_container"});
                 if (vv !=null) {
