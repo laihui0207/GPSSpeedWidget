@@ -529,12 +529,13 @@ public class ConfigurationActivity extends Activity {
             } else if (floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)) {
                 onAutoNaviButton.setChecked(true);
             }
-        } /*else {
-            allShowButton.setChecked(true);
-        }*/
+        } else if (floatShowOn.equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)) {
+                onAutoNaviButton.setChecked(true);
+            //allShowButton.setChecked(true);
+        }
         onlyDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
-        onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
+        //onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         Glide.get(this)
                 .register(AppInfo.class, InputStream.class, new AppInfoIconLoader.Factory());
         PrefUtils.setApps(getApplicationContext(), Utils.getDesktopPackageName(getApplicationContext()));
@@ -1128,7 +1129,7 @@ public class ConfigurationActivity extends Activity {
         floatingSelectGroup.setEnabled(enableFloatingWidnowCheckBox.isChecked());
         onlyDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
-        onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
+        //onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         boolean serviceReady=Utils.isServiceReady(this);
         CheckBox autoLaunchHotSpotCheckBox=findViewById(R.id.checkBox_autoWifi);
         autoLaunchHotSpotCheckBox.setEnabled(WifiUtils.checkMobileAvalible(getApplicationContext()));

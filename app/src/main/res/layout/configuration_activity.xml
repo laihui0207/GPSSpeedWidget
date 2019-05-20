@@ -332,11 +332,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/radioButton_onlyHome"
                         android:layout_weight="1"/>
+
                 <RadioButton
-                        android:text="只在导航时显示"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/radioButton_autonavi"
-                        android:layout_weight="1"/>
+                    android:id="@+id/radioButton_autonavi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="只在导航界面显示" />
                 <RadioButton
                         android:text="一直显示"
                         android:layout_width="wrap_content"

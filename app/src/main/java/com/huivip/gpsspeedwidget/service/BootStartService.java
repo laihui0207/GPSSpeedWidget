@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.listener.AutoFTPBackupReceiver;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
@@ -59,15 +58,16 @@ public class BootStartService extends Service {
                                 public void run() {
                                     int delayTime = PrefUtils.getDelayStartOtherApp(getApplicationContext());
                                     for (String packageName : autoApps) {
+                                        try {
+                                            Thread.sleep(delayTime * 1000 + 500L);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
                                         Intent launchIntent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(packageName);
                                         if (launchIntent != null && !Utils.isServiceRunning(getApplicationContext(), packageName)) {
                                             launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                             getApplicationContext().startActivity(launchIntent);//null pointer check in case package name was not found
-                                            try {
-                                                Thread.sleep(delayTime * 1000 + 500L);
-                                            } catch (InterruptedException e) {
-                                                e.printStackTrace();
-                                            }
+
                                         }
                                     }
                                     if (PrefUtils.isGoToHomeAfterAutoLanuch(getApplicationContext())) {
@@ -126,22 +126,23 @@ public class BootStartService extends Service {
                 }
 
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
-                if(!PrefUtils.isEnableAccessibilityService(getApplicationContext())){
+               /* if(!PrefUtils.isEnableAccessibilityService(getApplicationContext())){
                     PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_ALL);
-                }
+                }*/
                 if(PrefUtils.isEnableTimeFloatingWidow(getApplicationContext())){
                     if(!Utils.isServiceRunning(getApplicationContext(), RealTimeFloatingService.class.getName())){
                         Intent timeFloating=new Intent(getApplicationContext(),RealTimeFloatingService.class);
                         startService(timeFloating);
                     }
                 }
-                if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
-                    Utils.startFloatingWindows(getApplicationContext(),true);
-                }
-                if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
+               // if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+               //     Utils.startFloatingWindows(getApplicationContext(),true);
+               // }
+                /*if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
                     GpsUtil.getInstance(getApplicationContext()).startLocationService();
-                }
+                }*/
             }
+            Utils.startFloatingWindows(getApplicationContext(),true);
         }
         return super.onStartCommand(intent, flags, startId);
     }

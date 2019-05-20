@@ -179,7 +179,7 @@ public class NaviFloatingService extends Service{
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }

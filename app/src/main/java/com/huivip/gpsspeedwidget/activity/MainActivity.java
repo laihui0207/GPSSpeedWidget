@@ -496,6 +496,13 @@ public class MainActivity extends Activity implements TraceListener {
         }
         return bitmap;
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Utils.startFloatingWindows(getApplicationContext(),true);
+    }
+
     private void startBootService(boolean enabled){
            Intent bootStartService=new Intent(getApplicationContext(), BootStartService.class);
            startService(bootStartService);
