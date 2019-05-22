@@ -10,6 +10,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AutoWidgetFloatingControlEvent;
 import com.huivip.gpsspeedwidget.beans.BackNaviFloatingControlEvent;
+import com.huivip.gpsspeedwidget.beans.DriveWayEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
@@ -271,10 +272,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context) && PrefUtils.isEnableAutoWidgetFloatingWidow(context) && !gpsUtil.isAutoNavi_on_Frontend()) {
                                 startDriveWayFloatingService(context);
                             }
+                            EventBus.getDefault().post(new DriveWayEvent(true));
                         } else {
                             if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context) && PrefUtils.isEnableAutoWidgetFloatingWidow(context)) {
                                 stopDriveWayFloatingService(context, false);
                             }
+                            EventBus.getDefault().post(new DriveWayEvent(false));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

@@ -3,6 +3,9 @@ package com.huivip.gpsspeedwidget.service;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Service;
+import android.appwidget.AppWidgetHost;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
@@ -39,6 +43,7 @@ import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -71,6 +76,8 @@ public class NaviFloatingService extends Service{
     private WindowManager mWindowManager;
     WindowManager.LayoutParams params;
     private View mFloatingView;
+    AppWidgetHost appWidgetHost;
+    AppWidgetManager appWidgetManager;
     GpsUtil gpsUtil;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
@@ -95,6 +102,9 @@ public class NaviFloatingService extends Service{
     TextView cameraTypeNameTextView;
     @BindView(R.id.navi_limit_view)
     View naviCameraView;
+    @BindView(R.id.imageView_backNavi_roadLine)
+    ImageView roadLineView;
+    View daohangRoadLine;
     @BindView(R.id.textView_autonavi_speedText)
     TextView speedTextView;
     @BindView(R.id.segmentView)
@@ -114,6 +124,7 @@ public class NaviFloatingService extends Service{
                 return super.onStartCommand(intent, flags, startId);
             }
         }
+        appWidgetManager = AppWidgetManager.getInstance(this);
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
@@ -147,6 +158,7 @@ public class NaviFloatingService extends Service{
         }
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_backend_navi, null);
          params = new WindowManager.LayoutParams(
@@ -175,6 +187,7 @@ public class NaviFloatingService extends Service{
                         int color = ContextCompat.getColor(NaviFloatingService.this, colorRes);
                         speedTextView.setTextColor(color);
                         NaviFloatingService.this.checkLocationData(null);
+                        showRoadLine();
                     }
                 });
             }
@@ -187,6 +200,21 @@ public class NaviFloatingService extends Service{
      public void onClickCloseImage(View view){
             onStop();
             stopSelf();
+    }
+    private void showRoadLine(){
+        int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+        if (id != -1) {
+            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
+            daohangRoadLine = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
+            if (daohangRoadLine != null && daohangRoadLine instanceof ImageView) {
+                roadLineView.setImageDrawable(((ImageView) daohangRoadLine).getDrawable());
+                roadLineView.setVisibility(View.VISIBLE);
+            } else {
+                Log.d("huivip", "Can't get road line image");
+                roadLineView.setVisibility(View.INVISIBLE);
+            }
+        }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void hideShowNaviFloating(BackNaviFloatingControlEvent event){

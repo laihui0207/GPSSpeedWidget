@@ -3,6 +3,9 @@ package com.huivip.gpsspeedwidget.service;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
+import android.appwidget.AppWidgetHost;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +28,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,11 +44,13 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TimeThread;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.ImageWheelView;
 
 import java.util.Calendar;
@@ -64,9 +70,12 @@ public class MapFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     private WindowManager mWindowManager;
     private View mFloatingView;
+    int windowHeight=0;
     @BindView(R.id.map_floating)
     MapView mMapView ;
     AMap aMap=null;
+    AppWidgetHost appWidgetHost;
+    AppWidgetManager appWidgetManager;
     @BindView(R.id.textview_floating_map_title)
     TextView timeTextView;
     TimeThread timeThread;
@@ -80,7 +89,14 @@ public class MapFloatingService extends Service {
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
-    float mapZoom=16f;
+    float mapZoom=17f;
+    int mapMove=-220;
+    @BindView(R.id.imageView_xunhang_roadLine)
+    ImageView xunHang_roadLine;
+    @BindView(R.id.imageView_daohang_roadLine)
+    ImageView daoHang_roadLine;
+    View xunhangRoadLine;
+    View daohangRoadLine;
     CoordinateConverter converter;
     // 是否需要跟随定位s
     private boolean isNeedFollow = true;
@@ -136,6 +152,7 @@ public class MapFloatingService extends Service {
             return;
         }
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
+        appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_map_window, null);
@@ -168,8 +185,9 @@ public class MapFloatingService extends Service {
         carMarker = aMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(0f))).setFlat(true));
         aMap.setTrafficEnabled(true);
+        aMap.showBuildings(true);
         UiSettings mUiSettings=aMap.getUiSettings();
-        mUiSettings.setCompassEnabled(true);
+        mUiSettings.setCompassEnabled(false);
         mUiSettings.setZoomControlsEnabled(false);
         mUiSettings.setZoomGesturesEnabled(true);
         mUiSettings.setScaleControlsEnabled(true);
@@ -181,6 +199,7 @@ public class MapFloatingService extends Service {
             }
         });
         setMapInteractiveListener();
+        appWidgetManager = AppWidgetManager.getInstance(this);
         converter = new CoordinateConverter(getApplicationContext());
         converter.from(CoordinateConverter.CoordType.GPS);
         this.locationScanTask = new TimerTask()
@@ -200,11 +219,20 @@ public class MapFloatingService extends Service {
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
+        //EventBus.getDefault().register(this);
         super.onCreate();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        /*if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }*/
+    }
+
     void checkLocationData() {
-        if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
+        //if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             LatLng latLng = new LatLng(Double.parseDouble(gpsUtil.getLatitude()), Double.parseDouble(gpsUtil.getLongitude()));
             // 显示定位小图标，初始化时已经创建过了，这里修改位置即可
             converter.coord(latLng);
@@ -216,15 +244,63 @@ public class MapFloatingService extends Service {
             //carMarker.setIcon();
             if (!isLocated || (isNeedFollow && gpsUtil.getSpeed() > 0)) {
                 // 跟随
-                //aMap.animateCamera(CameraUpdateFactory.changeLatLng(lastedLatLng));
-                //aMap.animateCamera(CameraUpdateFactory.scrollBy(0,-180));
-                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 60,bearing));
+                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 0,bearing));
                 aMap.moveCamera(mCameraUpdate);
-                aMap.moveCamera(CameraUpdateFactory.scrollBy(0,-100));
+                aMap.moveCamera(CameraUpdateFactory.scrollBy(0,mapMove));
                 isLocated=true;
+            }
+       // }
+        showRoadLine();
+    }
+    private void showRoadLine(){
+        int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+        if (id != -1) {
+            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
+            View vv = null;
+            //if (daohangRoadLine == null) {
+                daohangRoadLine = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
+           /* }
+            if (xunhangRoadLine == null) {*/
+                xunhangRoadLine = Utils.findlayoutViewById(amapView, "road_line");
+           // }
+            if (xunhangRoadLine != null && xunhangRoadLine instanceof ImageView) {
+                xunHang_roadLine.setImageDrawable(((ImageView) xunhangRoadLine).getDrawable());
+                xunHang_roadLine.setVisibility(View.VISIBLE);
+            } else {
+                Log.d("huivip", "Can't get road line image");
+                xunHang_roadLine.setVisibility(View.INVISIBLE);
+            }
+
+            if (daohangRoadLine != null && daohangRoadLine instanceof ImageView) {
+                daoHang_roadLine.setImageDrawable(((ImageView) daohangRoadLine).getDrawable());
+                daoHang_roadLine.setVisibility(View.VISIBLE);
+            } else {
+                Log.d("huivip", "Can't get road line image");
+                daoHang_roadLine.setVisibility(View.INVISIBLE);
             }
         }
     }
+   /* @Subscribe
+    public void showPluginContent(DriveWayEvent event) {
+        if (event.isShow()) {
+            int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+            if (id != -1) {
+                AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+                final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
+                View vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "xunhang_container", 0, "road_line_container", "road_line"});
+                if (vv != null && vv instanceof ImageView) {
+                    xunHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());
+                    xunHang_roadLine.setVisibility(View.VISIBLE);
+                }
+                else {
+                    xunHang_roadLine.setVisibility(View.INVISIBLE);
+                }
+            }
+        } else {
+            xunHang_roadLine.setVisibility(View.INVISIBLE);
+        }
+    }*/
     private Bitmap getBitmap(float bearing) {
         Bitmap bitmap = null;
         View view = View.inflate(this,R.layout.floating_map_navi_icon, null);
@@ -326,7 +402,7 @@ public class MapFloatingService extends Service {
                 }
 
                 mFloatingView.setVisibility(View.VISIBLE);
-
+                windowHeight = params.height;
                 mFloatingView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });

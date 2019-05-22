@@ -17,7 +17,7 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -37,7 +37,6 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.AutoWidgetFloatingControlEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -109,24 +108,8 @@ public class AutoWidgetFloatingService extends Service{
         if (id != -1) {
             AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
             final View amapView =  appWidgetHost.createView(this, id, popupWidgetInfo);
-            //driveWayView.removeAllViews();
-            //driveWayView.addView(amapView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            View vv=null;
-            if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
-                vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
-                if (vv!=null && vv instanceof ImageView) {
-                    imageView.setImageDrawable(((ImageView) vv).getDrawable());
-                }
-            } else {
-                driveWayView.removeAllViews();
-                driveWayView.addView(amapView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            }
-           /* if (amapView instanceof ViewGroup) {
-                View vv= Utils.getViewByIds(amapView, new Object[]{"widget_container"});
-                if (vv !=null) {
-                   imageView.setImageBitmap(vv.getDrawingCache());// = (ImageView) vv;
-                }
-            }*/
+            driveWayView.removeAllViews();
+            driveWayView.addView(amapView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         }
     }
 
@@ -152,7 +135,7 @@ public class AutoWidgetFloatingService extends Service{
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.START;
-        params.alpha = 0.9f;//PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
+       // params.alpha = 0.9f;//PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         driveWayView.setOnTouchListener(new FloatingOnTouchListener());
@@ -240,6 +223,7 @@ public class AutoWidgetFloatingService extends Service{
                     params.y=(int)Float.parseFloat(xy[1]);
                 }
                 try {
+                    Log.d("huivip","Windows height:"+params.height);
                     mWindowManager.updateViewLayout(mFloatingView, params);
                 } catch (IllegalArgumentException ignore) {
                 }
@@ -251,7 +235,7 @@ public class AutoWidgetFloatingService extends Service{
         });
     }
 
-    private void animateViewToSideSlot() {
+   /* private void animateViewToSideSlot() {
         Point screenSize = new Point();
         mWindowManager.getDefaultDisplay().getSize(screenSize);
 
@@ -277,7 +261,7 @@ public class AutoWidgetFloatingService extends Service{
         });
 
         valueAnimator.start();
-    }
+    }*/
     private class FloatingOnTouchListener implements View.OnTouchListener {
 
         private float mInitialTouchX;
@@ -326,9 +310,6 @@ public class AutoWidgetFloatingService extends Service{
                     mIsClick = true;
                     return true;
                 case MotionEvent.ACTION_MOVE:
-                    /*if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())){
-                        return true;
-                    }*/
                     float dX = event.getRawX() - mInitialTouchX;
                     float dY = event.getRawY() - mInitialTouchY;
                     if ((mIsClick && (Math.abs(dX) > 10 || Math.abs(dY) > 10))
@@ -348,41 +329,10 @@ public class AutoWidgetFloatingService extends Service{
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
-                       /* if (fadeAnimator != null && fadeAnimator.isStarted()) {
-                            fadeAnimator.cancel();
-                            params.alpha = initialAlpha;
-                            try {
-                                mWindowManager.updateViewLayout(mFloatingView, params);
-                            } catch (IllegalArgumentException ignore) {
-                            }
-                        } else {
-                            initialAlpha = params.alpha;
-
-                            fadeAnimator = new AnimatorSet();
-                            fadeAnimator.play(fadeOut).before(fadeIn);
-                            fadeAnimator.start();
-                        }
-*/
-                    }
-                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
-
                     }
                     else {
-                        /*if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                             animateViewToSideSlot();
-                        } else {*/
                             PrefUtils.setDriveWayFloatingSolidLocation(getApplicationContext(),params.x,params.y);
-                        /*}*/
                     }
-                   /* if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
-                        if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                            Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
-                            PrefUtils.setEnableNaviFloatingFixed(getApplicationContext(),false);
-                        }
-                        Intent configActivity=new Intent(getApplicationContext(), ConfigurationActivity.class);
-                        configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(configActivity);
-                    }*/
                     return true;
             }
             return false;

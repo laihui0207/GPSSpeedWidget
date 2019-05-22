@@ -6,6 +6,8 @@
                 android:layout_height="wrap_content" android:background="@drawable/speed_border" >
     <ImageView android:layout_width="70dp" android:layout_height="60dp"
                android:src="@drawable/gohome"  android:layout_gravity="top|center" android:id="@+id/image_home"/>
+    <ImageView android:layout_width="wrap_content" android:layout_height="60dp"
+         android:layout_gravity="top|center" android:id="@+id/image_roadLine"/>
     <ImageView android:layout_width="70dp" android:layout_height="60dp"
                android:src="@drawable/gocompany"  android:layout_gravity="bottom|center"
                android:id="@+id/image_company"/>

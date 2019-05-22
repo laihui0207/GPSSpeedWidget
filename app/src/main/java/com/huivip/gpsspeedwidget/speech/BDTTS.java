@@ -78,6 +78,9 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         } else {
             if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null && (force || PrefUtils.isEnableTempAudioService(context))) {
                 customPlayer = false;
+                int volume=PrefUtils.getAudioVolume(context);
+                float realVolume=volume/100f * 9;
+                mSpeechSynthesizer.setStereoVolume(realVolume,realVolume);
                 mSpeechSynthesizer.speak(text);
             }
         }

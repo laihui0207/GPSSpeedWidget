@@ -3,6 +3,9 @@ package com.huivip.gpsspeedwidget.service;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
+import android.appwidget.AppWidgetHost;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -26,11 +29,13 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
@@ -62,6 +67,8 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
 
     private WindowManager mWindowManager;
     private View mFloatingView;
+    AppWidgetHost appWidgetHost;
+    AppWidgetManager appWidgetManager;
     private FloatingViewManager mFloatingViewManager;
     @BindView(R.id.limit)
     View mLimitView;
@@ -88,6 +95,12 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
     TextView textViewAltitude;
     @BindView(R.id.textView_currentRoadName)
     TextView textViewCurrentRoadName;
+    @BindView(R.id.imageView_default_xunhang_roadLIne)
+    ImageView xunHang_roadLine;
+    @BindView(R.id.imageView_default_daohang_roadLIne)
+    ImageView daoHang_roadLine;
+    View xunhangRoadLine;
+    View daohangRoadLine;
    /* @BindView(R.id.floating_close)
     ImageView closeImage;*/
     TimerTask locationScanTask;
@@ -144,6 +157,7 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
         }
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         LayoutInflater inflater = LayoutInflater.from(this);
         if(PrefUtils.isShowSmallFloatingStyle(getApplicationContext())){
             mFloatingView = inflater.inflate(R.layout.floating_default_limit_small, null);
@@ -186,6 +200,7 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             }
             mSpeedometerView.setLayoutParams(speedLayout);
         }
+        appWidgetManager = AppWidgetManager.getInstance(this);
         initMonitorPosition();
         final ArrayList<ArcProgressStackView.Model> models = new ArrayList<>();
         models.add(new ArcProgressStackView.Model("", 0,
@@ -214,6 +229,7 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
                     public void run()
                     {
                         DefaultFloatingService.this.checkLocationData();
+                        showRoadLine();
                         //Log.d("huivip","Float Service Check Location");
                     }
                 });
@@ -268,6 +284,35 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             // }
         } else {
             mSpeedometerText.setText("--");
+        }
+    }
+    private void showRoadLine(){
+        int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+        if (id != -1) {
+            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
+            View vv = null;
+            //if (daohangRoadLine == null) {
+            daohangRoadLine = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
+           /* }
+            if (xunhangRoadLine == null) {*/
+            xunhangRoadLine = Utils.findlayoutViewById(amapView, "road_line");
+            // }
+            if (xunhangRoadLine != null && xunhangRoadLine instanceof ImageView) {
+                xunHang_roadLine.setImageDrawable(((ImageView) xunhangRoadLine).getDrawable());
+                xunHang_roadLine.setVisibility(View.VISIBLE);
+            } else {
+                Log.d("huivip", "Can't get road line image");
+                xunHang_roadLine.setVisibility(View.INVISIBLE);
+            }
+
+            if (daohangRoadLine != null && daohangRoadLine instanceof ImageView) {
+                daoHang_roadLine.setImageDrawable(((ImageView) daohangRoadLine).getDrawable());
+                daoHang_roadLine.setVisibility(View.VISIBLE);
+            } else {
+                Log.d("huivip", "Can't get road line image");
+                daoHang_roadLine.setVisibility(View.INVISIBLE);
+            }
         }
     }
     private int getWindowType() {
