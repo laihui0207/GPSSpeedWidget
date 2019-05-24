@@ -1,123 +1,204 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"
-             xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="180dip"
-                    android:layout_height="180dip">
-        <ImageView android:id="@+id/imageview_speed" android:background="@drawable/index_bg_day"
-                   android:layout_width="match_parent" android:layout_height="match_parent"
-                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
-        />
-        <ImageView android:id="@+id/imageview_red_night" android:background="@drawable/index_red_bg_night"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
-                   android:visibility="gone"/>
-        <!--     <ImageView android:id="@+id/imageview_red_day" android:background="@drawable-v17/index_red_bg_day"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
-                   android:visibility="gone"/>-->
-        <ImageView android:id="@+id/imageview_nomove_night" android:background="@drawable/index_bg_nomove_night"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:layout_centerHorizontal="true" android:layout_centerVertical="true"
-        />
-        <com.huivip.gpsspeedwidget.view.SpeedWheel android:id="@+id/imageView_pointer" android:layout_width="match_parent"
-                                                   android:layout_height="match_parent"
-                                                   android:layout_centerHorizontal="true"
-                                                   android:layout_centerVertical="true"/>
-        <TextView android:textSize="80dp"
-                  android:id="@+id/SpeedText" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:text="80"
-                  android:textStyle="bold" android:textColor="#000"
-                  android:layout_alignParentTop="false" android:layout_centerHorizontal="true"
-                  android:layout_centerVertical="true" android:layout_centerInParent="true"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-        <TextView
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/SpeedRelativeLayout"
+            android:layout_width="180dip"
+            android:layout_height="180dip">
+
+            <ImageView
+                android:id="@+id/imageview_speed"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/index_bg_day" />
+
+            <ImageView
+                android:id="@+id/imageview_red_night"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/index_red_bg_night"
+                android:visibility="gone" />
+            <!--     <ImageView android:id="@+id/imageview_red_day" android:background="@drawable-v17/index_red_bg_day"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_centerHorizontal="true" android:layout_centerVertical="true"
+                       android:visibility="gone"/>-->
+            <ImageView
+                android:id="@+id/imageview_nomove_night"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/index_bg_nomove_night" />
+
+            <com.huivip.gpsspeedwidget.view.SpeedWheel
+                android:id="@+id/imageView_pointer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
+
+            <TextView
+                android:id="@+id/SpeedText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="false"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="80"
+                android:textColor="#000"
+                android:textSize="80dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView_autonavi_direction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textView_autonavi_altitude"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="-45dp"
                 android:text="北"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:id="@+id/textView_autonavi_direction" android:textColor="#000" android:textSize="20dp"
-                android:layout_above="@+id/textView_autonavi_altitude" android:layout_marginBottom="-45dp"
-                android:visibility="gone"/>
-        <TextView
-                android:text="km/h"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:textSize="20dp"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/textView_autonavi_speedUnit"
-                android:textColor="#000" android:textSize="20dp"
-                android:layout_centerHorizontal="true" android:layout_alignParentBottom="true"
-                android:layout_marginBottom="25dp"/>
-        <TextView
-                android:text="海拔: 0米"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView_autonavi_altitude"
-                android:textSize="15dp" android:textColor="#000"
+                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_alignTop="@+id/SpeedText"/>
-        <RelativeLayout android:id="@+id/autoNavi_limitLayout"
-                        android:layout_width="80dp"
-                        android:gravity="center"
-                        android:background="@drawable/circle_autonavi_limit"
-                        android:layout_gravity="center"
-                        android:layout_height="80dp"
-                        android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:visibility="gone">
-            <ProgressBar
+                android:layout_marginBottom="25dp"
+                android:text="km/h"
+                android:textColor="#000"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/textView_autonavi_altitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/SpeedText"
+                android:layout_centerHorizontal="true"
+                android:text="海拔: 0米"
+                android:textColor="#000"
+                android:textSize="15dp" />
+
+            <RelativeLayout
+                android:id="@+id/autoNavi_limitLayout"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center"
+                android:background="@drawable/circle_autonavi_limit"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <ProgressBar
                     android:id="@+id/autoNavi_progressBarLimit"
+                    style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:indeterminate="false"
-                    android:progressDrawable="@drawable/circle_autonavi_limit_number"
 
-                    style="?android:attr/progressBarStyleHorizontal"
                     android:max="100"
-                    android:progress="60"/>
-            <TextView
-                    android:layout_width="match_parent"
+                    android:progress="60"
+                    android:progressDrawable="@drawable/circle_autonavi_limit_number" />
+
+                <TextView
                     android:id="@+id/autoNavi_number_limit"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentBottom="true"
                     android:ellipsize="none"
-                    android:text="0"
-                    android:textColor="#000"
                     android:fontFamily="sans-serif-thin"
                     android:gravity="center_vertical|center_horizontal"
                     android:includeFontPadding="false"
-                    android:textSize="40dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" android:layout_alignParentBottom="true"
-                    android:textStyle="bold" android:layout_alignParentTop="true"/>
-            <TextView
-                    android:text="限速"
-                    android:layout_width="match_parent"
+                    android:text="0"
                     android:textColor="#000"
-                    android:gravity="top|center_vertical|center_horizontal"
-                    android:layout_height="20dp" android:id="@+id/textView_autoNavi_limit_label"
+                    android:textSize="40dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView_autoNavi_limit_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentBottom="true" android:layout_alignParentStart="true"
-                    android:textSize="12dp"/>
-            <TextView
-                    android:text="0米"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="top|center_vertical|center_horizontal"
+                    android:text="限速"
+                    android:textColor="#000"
+                    android:textSize="12dp" />
+
+                <TextView
+                    android:id="@+id/textView_autoNavi_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="4dp"
+                    android:text="0米"
                     android:textColor="#000"
-                    android:id="@+id/textView_autoNavi_distance"
-                    android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
-                    android:layout_marginTop="4dp" android:textSize="13dp"/>
+                    android:textSize="13dp" />
+            </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
-    <ImageView android:layout_width="50dp" android:layout_height="50dp"
-               android:src="@drawable/gohome"  android:layout_gravity="top|left" android:id="@+id/image_home_navi"/>
-    <ImageView android:layout_width="50dp" android:layout_height="50dp"
-               android:src="@drawable/gocompany"  android:layout_gravity="bottom|left"
-               android:id="@+id/image_company_navi"/>
-    <ImageView android:layout_width="40dp" android:layout_height="40dp"
-               android:src="@mipmap/ic_launcher"  android:layout_gravity="bottom|right"
-               android:id="@+id/image_main_navi" android:visibility="gone"/>
-    <ImageView android:layout_width="40dp" android:layout_height="40dp"
-               android:src="@drawable/close" android:layout_gravity="top|right"
-               android:id="@+id/image_close_navi"/>
-</FrameLayout>
+
+        <ImageView
+            android:id="@+id/image_home_navi"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="top|left"
+            android:src="@drawable/gohome" />
+
+        <ImageView
+            android:id="@+id/image_company_navi"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|left"
+            android:src="@drawable/gocompany" />
+
+        <ImageView
+            android:id="@+id/image_main_navi"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|right"
+            android:src="@mipmap/ic_launcher"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/image_close_navi"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="top|right"
+            android:src="@drawable/close" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/navi_roadLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

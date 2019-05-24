@@ -20,6 +20,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -110,10 +111,10 @@ public class WeatherService implements AMapLocationListener {
                                     + cityWeather.getString("winddirection") + "风" +cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
                             if(PrefUtils.isPlayWeather(context)) {
-                                /*SpeechFactory.getInstance(context)
+                                SpeechFactory.getInstance(context)
                                         .getTTSEngine(PrefUtils.getTtsEngine(context))
-                                        .speak(resultText, true);*/
-                                gpsUtil.getTts().speak(resultText,true);
+                                        .speak(resultText, true);
+                                //gpsUtil.getTts().speak(resultText,true);
                                 handler.post(runnableUi);
                             }
                         }

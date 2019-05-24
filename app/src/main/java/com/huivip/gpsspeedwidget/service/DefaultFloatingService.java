@@ -43,8 +43,6 @@ import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
-import org.xutils.x;
-
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -223,7 +221,7 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             @Override
             public void run()
             {
-                x.task().autoPost(new Runnable()
+                locationHandler.post(new Runnable()
                 {
                     @Override
                     public void run()
@@ -235,7 +233,8 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
+
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
@@ -286,31 +285,22 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             mSpeedometerText.setText("--");
         }
     }
-    private void showRoadLine(){
+
+    private void showRoadLine() {
         int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
         if (id != -1) {
             AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
             final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
             View vv = null;
-            //if (daohangRoadLine == null) {
-            daohangRoadLine = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
-           /* }
-            if (xunhangRoadLine == null) {*/
-            xunhangRoadLine = Utils.findlayoutViewById(amapView, "road_line");
-            // }
-            if (xunhangRoadLine != null && xunhangRoadLine instanceof ImageView) {
-                xunHang_roadLine.setImageDrawable(((ImageView) xunhangRoadLine).getDrawable());
-                xunHang_roadLine.setVisibility(View.VISIBLE);
+            if (gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
+                vv = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
             } else {
-                Log.d("huivip", "Can't get road line image");
-                xunHang_roadLine.setVisibility(View.INVISIBLE);
+                vv = Utils.findlayoutViewById(amapView, "road_line");
             }
-
-            if (daohangRoadLine != null && daohangRoadLine instanceof ImageView) {
-                daoHang_roadLine.setImageDrawable(((ImageView) daohangRoadLine).getDrawable());
+            if(vv!=null && vv instanceof ImageView){
+                daoHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());
                 daoHang_roadLine.setVisibility(View.VISIBLE);
             } else {
-                Log.d("huivip", "Can't get road line image");
                 daoHang_roadLine.setVisibility(View.INVISIBLE);
             }
         }

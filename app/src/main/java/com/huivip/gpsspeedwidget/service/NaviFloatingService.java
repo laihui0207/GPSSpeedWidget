@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -38,7 +39,6 @@ import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.beans.BackNaviFloatingControlEvent;
-import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
@@ -70,7 +70,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  * Created by laisun on 28/02/2018.
  */
 @SuppressLint("RtlHardcoded")
-public class NaviFloatingService extends Service{
+public class NaviFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
 
     private WindowManager mWindowManager;
@@ -81,13 +81,15 @@ public class NaviFloatingService extends Service{
     GpsUtil gpsUtil;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
+    final Handler updateHandler = new Handler();
     @BindView(R.id.textView_currentroad)
     TextView currentRoadTextView;
     @BindView(R.id.textView_nextroadname)
     TextView nextRoadNameTextView;
     @BindView(R.id.textView_nextdistance)
     TextView nextRoadDistanceTextView;
-
+    @BindView(R.id.textView_backend_unit)
+    TextView getNextRoadDistanceUnitTextView;
     @BindView(R.id.textView_totalleft)
     TextView naviLeftTextView;
     @BindView(R.id.imageView_turnicon)
@@ -109,29 +111,36 @@ public class NaviFloatingService extends Service{
     TextView speedTextView;
     @BindView(R.id.segmentView)
     TmcSegmentView tmcSegmentView;
+    int count = 0;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
+
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(intent!=null){
+        if (intent != null) {
             if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableNaviFloating(getApplicationContext())) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
         }
+        count = 0;
         appWidgetManager = AppWidgetManager.getInstance(this);
+        localNumberFormat.setMaximumFractionDigits(1);
         return Service.START_REDELIVER_INTENT;
     }
-    private void onStop(){
-        if(mFloatingView!=null && mWindowManager!=null){
+
+    private void onStop() {
+        if (mFloatingView != null && mWindowManager != null) {
             mWindowManager.removeView(mFloatingView);
         }
-        if(locationTimer!=null){
+        if (locationTimer != null) {
             locationTimer.cancel();
             locationTimer.purge();
         }
@@ -140,7 +149,7 @@ public class NaviFloatingService extends Service{
     @Override
     public void onDestroy() {
         //unRegisterTMCSegmentBroadcast();
-        if(EventBus.getDefault().isRegistered(this)){
+        if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
         super.onDestroy();
@@ -148,20 +157,20 @@ public class NaviFloatingService extends Service{
 
     @Override
     public void onCreate() {
-        if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
-            Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_LONG).show();
+        if (!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())) {
+            Toast.makeText(getApplicationContext(), "需要打开GPS插件的悬浮窗口权限", Toast.LENGTH_LONG).show();
             try {
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
             } catch (ActivityNotFoundException ignored) {
             }
             return;
         }
-        gpsUtil=GpsUtil.getInstance(getApplicationContext());
-        mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        gpsUtil = GpsUtil.getInstance(getApplicationContext());
+        mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_backend_navi, null);
-         params = new WindowManager.LayoutParams(
+        params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 getWindowType(),
@@ -171,37 +180,37 @@ public class NaviFloatingService extends Service{
         params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
-        mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
+        mFloatingView.setOnTouchListener(new FloatingOnTouchListener());
         initMonitorPosition();
         EventBus.getDefault().register(this);
-        this.locationScanTask = new TimerTask()
-        {
+        this.locationScanTask = new TimerTask() {
             @Override
-            public void run()
-            {
-                x.task().autoPost(new Runnable() {
+            public void run() {
+                updateHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         speedTextView.setText(gpsUtil.getKmhSpeedStr());
                         int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
                         int color = ContextCompat.getColor(NaviFloatingService.this, colorRes);
                         speedTextView.setTextColor(color);
-                        NaviFloatingService.this.checkLocationData(null);
+                        NaviFloatingService.this.checkLocationData();
                         showRoadLine();
                     }
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
+
     @OnClick(value = R.id.imageView_auto_close)
-     public void onClickCloseImage(View view){
-            onStop();
-            stopSelf();
+    public void onClickCloseImage(View view) {
+        onStop();
+        stopSelf();
     }
-    private void showRoadLine(){
+
+    private void showRoadLine() {
         int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
         if (id != -1) {
             AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
@@ -216,16 +225,18 @@ public class NaviFloatingService extends Service{
             }
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void hideShowNaviFloating(BackNaviFloatingControlEvent event){
-        if(event.isHide()) {
+    public void hideShowNaviFloating(BackNaviFloatingControlEvent event) {
+        if (event.isHide()) {
             mFloatingView.setVisibility(View.INVISIBLE);
         } else {
             mFloatingView.setVisibility(View.VISIBLE);
         }
     }
-    @Subscribe(threadMode=ThreadMode.MAIN)
-    public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event){
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event) {
         String info = event.getInfo();
         if (TextUtils.isEmpty(info)) {
             Log.d("huivip", "Get segment info is empty");
@@ -264,93 +275,69 @@ public class NaviFloatingService extends Service{
             }
         });
     }
-    private Intent sendAutoBroadCase(Context context, int key,int type){
-        Intent intent = new Intent();
-        intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
-        intent.putExtra("KEY_TYPE", key);
-        if(key==10040) {
-            intent.putExtra("DEST", type);
-            intent.putExtra("IS_START_NAVI", 0);
-        }
-        intent.putExtra("SOURCE_APP","GPSWidget");
-        return intent;
-    }
-    //@Subscribe(threadMode = ThreadMode.MAIN)
-    public void checkLocationData(NaviInfoUpdateEvent event) {
+
+    public void checkLocationData() {
         if (gpsUtil.getNavi_turn_icon() > 0) {
             naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
         }
-        if (gpsUtil.getLimitSpeed() > 0) {
-            navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed() + "");
-        } else {
-            navicameraSpeedTextView.setText("0");
-        }
+        navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed() + "");
 
+        navicameraDistanceTextView.setText(gpsUtil.getLimitDistance() + "米");
+        limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
         cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
         if (gpsUtil.getCameraType() != -1) {
             naviCameraView.setVisibility(View.VISIBLE);
         } else {
             naviCameraView.setVisibility(View.GONE);
         }
-        if (!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
-            currentRoadTextView.setText(gpsUtil.getCurrentRoadName() + "");
-        }
-
-
-        if (!TextUtils.isEmpty(gpsUtil.getNextRoadName())) {
-            nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
-        }
-        localNumberFormat.setMaximumFractionDigits(1);
+        currentRoadTextView.setText(gpsUtil.getCurrentRoadName() + "");
+        nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
         int nextRoadDistance = gpsUtil.getNextRoadDistance();
         if (nextRoadDistance > 1000) {
-            nextRoadDistanceTextView.setText(localNumberFormat.format(nextRoadDistance / 1000) + "公里");
+            nextRoadDistanceTextView.setText(localNumberFormat.format(nextRoadDistance*1.0f / 1000) + "公里后");
+            //getNextRoadDistanceUnitTextView.setText("公里后");
         } else {
-            nextRoadDistanceTextView.setText(nextRoadDistance + "米");
+            nextRoadDistanceTextView.setText(nextRoadDistance + "米后");
+            //getNextRoadDistanceUnitTextView.setText("米后");
         }
-        //nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
-        String leftTimeString = "";
-        int leftTime = gpsUtil.getTotalLeftTime();
-        if (leftTime > 3600) {
-            int hours = (int) leftTime / 3600;
-            int minutes = (int) ((leftTime - hours * 3600) / 60);
-            leftTimeString = hours + "小时" + minutes + "分钟";
-        } else {
-            leftTimeString = leftTime / 60 + "分钟";
-        }
+        if (count % 60 == 0) {
+            String leftTimeString = "";
+            int leftTime = gpsUtil.getTotalLeftTime();
+            if (leftTime > 3600) {
+                int hours = leftTime / 3600;
+                int minutes = (leftTime % 3600) / 60;
+                leftTimeString = hours + "小时" + minutes + "分钟";
+            } else {
+                leftTimeString = leftTime / 60 + "分钟";
+            }
 
-        String leftDistanceString = "";
-        int leftDistance = gpsUtil.getTotalLeftDistance();
-        if (leftDistance > 1000) {
-            localNumberFormat.setMaximumFractionDigits(1);
-            leftDistanceString = localNumberFormat.format(leftDistance  / 1000) + "公里";
-        } else {
-            leftDistanceString = leftDistance + "米";
+            String leftDistanceString = "";
+            int leftDistance = gpsUtil.getTotalLeftDistance();
+            if (leftDistance > 1000) {
+                leftDistanceString = localNumberFormat.format(leftDistance*1.0f / 1000) + "公里";
+            } else {
+                leftDistanceString = leftDistance + "米";
+            }
+            naviLeftTextView.setText(leftDistanceString + "/" + leftTimeString);
+            count=0;
         }
-        naviLeftTextView.setText(leftDistanceString + "/" + leftTimeString);
-        // if (gpsUtil.getLimitDistance() > 0) {
-        navicameraDistanceTextView.setText(gpsUtil.getLimitDistance() + "米");
-        /*int limitDistancePercentage=0;
-        if (gpsUtil.getLimitDistance() > 0) {
-            limitDistancePercentage = Math.round((300F - gpsUtil.getLimitDistance()) / 300 * 100);
-        }*/
-        limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
-               /* } else {
-                    navicameraDistanceTextView.setText("0米");
-                }*/
+        count++;
         //EventBus.getDefault().cancelEventDelivery(event);
     }
 
     private int getWindowType() {
-        return WindowManager.LayoutParams.TYPE_SYSTEM_ALERT | WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY ;
+        return WindowManager.LayoutParams.TYPE_SYSTEM_ALERT | WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
     }
+
     private void openSettings(String settingsAction, String packageName) {
         Intent intent = new Intent(settingsAction);
         intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
         intent.setData(Uri.parse("package:" + packageName));
         startActivity(intent);
     }
-    private int getTurnIcon(int iconValue){
-        int returnValue=-1;
+
+    private int getTurnIcon(int iconValue) {
+        int returnValue = -1;
         switch (iconValue) {
             case 1:
                 returnValue = R.drawable.sou0_night;
@@ -415,6 +402,7 @@ public class NaviFloatingService extends Service{
         }
         return returnValue;
     }
+
     private void initMonitorPosition() {
         if (mFloatingView == null) {
             return;
@@ -426,16 +414,15 @@ public class NaviFloatingService extends Service{
                 String[] split = PrefUtils.getNaviFloatingLocation(getApplicationContext()).split(",");
                 boolean left = Boolean.parseBoolean(split[0]);
                 float yRatio = Float.parseFloat(split[1]);
-                if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
+                if (PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
                     Point screenSize = new Point();
                     mWindowManager.getDefaultDisplay().getSize(screenSize);
                     params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
                     params.y = (int) (yRatio * screenSize.y + 0.5f);
-                }
-                else {
-                    String[] xy=PrefUtils.getNaviFloatingSolidLocation(getApplicationContext()).split(",");
-                    params.x=(int)Float.parseFloat(xy[0]);
-                    params.y=(int)Float.parseFloat(xy[1]);
+                } else {
+                    String[] xy = PrefUtils.getNaviFloatingSolidLocation(getApplicationContext()).split(",");
+                    params.x = (int) Float.parseFloat(xy[0]);
+                    params.y = (int) Float.parseFloat(xy[1]);
                 }
                 try {
                     mWindowManager.updateViewLayout(mFloatingView, params);
@@ -476,6 +463,7 @@ public class NaviFloatingService extends Service{
 
         valueAnimator.start();
     }
+
     private class FloatingOnTouchListener implements View.OnTouchListener {
 
         private float mInitialTouchX;
@@ -522,7 +510,7 @@ public class NaviFloatingService extends Service{
                     mIsClick = true;
                     return true;
                 case MotionEvent.ACTION_MOVE:
-                    if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())){
+                    if (PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
                         return true;
                     }
                     float dX = event.getRawX() - mInitialTouchX;
@@ -548,23 +536,21 @@ public class NaviFloatingService extends Service{
                         intent.setAction(SwitchReceiver.SWITCH_EVENT);
                         intent.putExtra("TARGET", SwitchReceiver.SWITCH_TARGET_AUTOAMAP);
                         getApplicationContext().sendBroadcast(intent);
-                    }
-                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
+                    } else if (mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
 
-                    }
-                    else {
-                        if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                             animateViewToSideSlot();
+                    } else {
+                        if (PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
+                            animateViewToSideSlot();
                         } else {
-                            PrefUtils.setNaviFloatingSolidLocation(getApplicationContext(),params.x,params.y);
+                            PrefUtils.setNaviFloatingSolidLocation(getApplicationContext(), params.x, params.y);
                         }
                     }
-                    if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
-                        if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                            Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
-                            PrefUtils.setEnableNaviFloatingFixed(getApplicationContext(),false);
+                    if (mIsClick && (event.getEventTime() - event.getDownTime()) > ViewConfiguration.getLongPressTimeout()) {
+                        if (PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
+                            Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
+                            PrefUtils.setEnableNaviFloatingFixed(getApplicationContext(), false);
                         }
-                        Intent configActivity=new Intent(getApplicationContext(), ConfigurationActivity.class);
+                        Intent configActivity = new Intent(getApplicationContext(), ConfigurationActivity.class);
                         configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
                         startActivity(configActivity);
                     }

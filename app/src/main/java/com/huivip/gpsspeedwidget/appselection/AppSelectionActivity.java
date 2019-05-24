@@ -24,7 +24,6 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.pluscubed.recyclerfastscroll.RecyclerFastScroller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
     public static final String STATE_APPS = "state_apps";
 
     private AppAdapter mAdapter;
-    private RecyclerFastScroller mScroller;
+/*    private RecyclerFastScroller mScroller;*/
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private List<String> mSelectedApps;
@@ -64,8 +63,8 @@ public class AppSelectionActivity extends AppCompatActivity /*Activity implement
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mScroller = (RecyclerFastScroller) findViewById(R.id.fastscroller);
-        mScroller.attachRecyclerView(recyclerView);
+        /*mScroller = (RecyclerFastScroller) findViewById(R.id.fastscroller);
+        mScroller.attachRecyclerView(recyclerView);*/
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

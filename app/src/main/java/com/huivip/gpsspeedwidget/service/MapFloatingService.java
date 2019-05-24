@@ -89,14 +89,12 @@ public class MapFloatingService extends Service {
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
-    float mapZoom=17f;
-    int mapMove=-220;
+    float mapZoom=16f;
+    int mapMove=-260;
     @BindView(R.id.imageView_xunhang_roadLine)
     ImageView xunHang_roadLine;
     @BindView(R.id.imageView_daohang_roadLine)
     ImageView daoHang_roadLine;
-    View xunhangRoadLine;
-    View daohangRoadLine;
     CoordinateConverter converter;
     // 是否需要跟随定位s
     private boolean isNeedFollow = true;
@@ -232,7 +230,7 @@ public class MapFloatingService extends Service {
     }
 
     void checkLocationData() {
-        //if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
+        //if ((gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) || !isLocated) {
             LatLng latLng = new LatLng(Double.parseDouble(gpsUtil.getLatitude()), Double.parseDouble(gpsUtil.getLongitude()));
             // 显示定位小图标，初始化时已经创建过了，这里修改位置即可
             converter.coord(latLng);
@@ -242,7 +240,7 @@ public class MapFloatingService extends Service {
             carMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBitmap(bearing)));
             carMarker.setRotateAngle(360-bearing);
             //carMarker.setIcon();
-            if (!isLocated || (isNeedFollow && gpsUtil.getSpeed() > 0)) {
+            if (isNeedFollow) {
                 // 跟随
                 CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 0,bearing));
                 aMap.moveCamera(mCameraUpdate);
@@ -258,25 +256,15 @@ public class MapFloatingService extends Service {
             AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
             final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
             View vv = null;
-            //if (daohangRoadLine == null) {
-                daohangRoadLine = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
-           /* }
-            if (xunhangRoadLine == null) {*/
-                xunhangRoadLine = Utils.findlayoutViewById(amapView, "road_line");
-           // }
-            if (xunhangRoadLine != null && xunhangRoadLine instanceof ImageView) {
-                xunHang_roadLine.setImageDrawable(((ImageView) xunhangRoadLine).getDrawable());
-                xunHang_roadLine.setVisibility(View.VISIBLE);
+            if (gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
+                vv = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
             } else {
-                Log.d("huivip", "Can't get road line image");
-                xunHang_roadLine.setVisibility(View.INVISIBLE);
+               vv = Utils.findlayoutViewById(amapView, "road_line");
             }
-
-            if (daohangRoadLine != null && daohangRoadLine instanceof ImageView) {
-                daoHang_roadLine.setImageDrawable(((ImageView) daohangRoadLine).getDrawable());
+            if(vv!=null && vv instanceof  ImageView){
+                daoHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());
                 daoHang_roadLine.setVisibility(View.VISIBLE);
             } else {
-                Log.d("huivip", "Can't get road line image");
                 daoHang_roadLine.setVisibility(View.INVISIBLE);
             }
         }

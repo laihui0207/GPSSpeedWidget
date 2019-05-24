@@ -50,8 +50,6 @@ import com.huivip.gpsspeedwidget.utils.CycleQueue;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
-import org.xutils.x;
-
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Random;
@@ -436,14 +434,7 @@ public class GpsUtil implements AMapNaviListener {
                     catchRoadDistance = 100;
                 }
             }
-            if(PrefUtils.isEnableAutoGoHomeAfterNaviStarted(context) && kmhSpeed>0 && autoNavi_on_Frontend && naviFloatingStatus == Constant.Navi_Status_Started ){
-                /*new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d("huivip","Auto Navi started will go home");
-                        Utils.goHome(context);
-                    }
-                }, 20*1000);*/
+            /*if(PrefUtils.isEnableAutoGoHomeAfterNaviStarted(context) && kmhSpeed>0 && autoNavi_on_Frontend && naviFloatingStatus == Constant.Navi_Status_Started ){
                 x.task().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -451,7 +442,7 @@ public class GpsUtil implements AMapNaviListener {
                         Utils.goHome(context);
                     }
                 },20*1000);
-            }
+            }*/
 
         } else {
 

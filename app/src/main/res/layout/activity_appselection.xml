@@ -37,11 +37,11 @@
         </android.support.v4.widget.SwipeRefreshLayout>
 
 
-        <com.pluscubed.recyclerfastscroll.RecyclerFastScroller
+       <!-- <com.pluscubed.recyclerfastscroll.RecyclerFastScroller
             android:id="@+id/fastscroller"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="end" />
+            android:layout_gravity="end" />-->
 
 
         <View

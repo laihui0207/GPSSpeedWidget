@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.MapFloatingService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -50,6 +51,11 @@ public class SwitchReceiver extends BroadcastReceiver {
             if(PrefUtils.isLyricEnabled(context)){
                 Toast.makeText(context, "歌词功能开启", Toast.LENGTH_SHORT).show();
             } else {
+                if(Utils.isServiceRunning(context, LyricFloatingService.class.getName())){
+                    Intent lycFloatingService = new Intent(context, LyricFloatingService.class);
+                    lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
+                    context.startService(lycFloatingService);
+                }
                 Toast.makeText(context, "歌词功能关闭", Toast.LENGTH_SHORT).show();
             }
         }

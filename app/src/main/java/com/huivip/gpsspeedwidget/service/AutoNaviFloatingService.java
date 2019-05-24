@@ -3,6 +3,9 @@ package com.huivip.gpsspeedwidget.service;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
+import android.appwidget.AppWidgetHost;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
@@ -56,6 +60,8 @@ public class AutoNaviFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     private WindowManager mWindowManager;
     private View mFloatingView;
+    AppWidgetHost appWidgetHost;
+    AppWidgetManager appWidgetManager;
     @BindView(R.id.imageView_pointer)
     SpeedWheel speedWheelView;
     @BindView(R.id.SpeedText)
@@ -80,6 +86,8 @@ public class AutoNaviFloatingService extends Service {
     TextView altitudeTextView;
     @BindView(R.id.textView_autonavi_speedUnit)
     TextView speedUnitTextView;
+    @BindView(R.id.navi_roadLine)
+    ImageView roadLineView;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
@@ -167,8 +175,10 @@ public class AutoNaviFloatingService extends Service {
                 });
             }
         };
+        appWidgetManager = AppWidgetManager.getInstance(this);
+        appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         CrashHandler.getInstance().init(getApplicationContext());
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
         speedView.setOnTouchListener(new FloatingOnTouchListener());
         super.onCreate();
     }
@@ -192,7 +202,25 @@ public class AutoNaviFloatingService extends Service {
                 break;
         }
     }
-
+    private void showRoadLine() {
+        int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+        if (id != -1) {
+            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
+            View vv = null;
+            if (gpsUtil.getAutoNaviStatus()== Constant.Navi_Status_Started) {
+                vv = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
+            } else {
+                vv = Utils.findlayoutViewById(amapView, "road_line");
+            }
+            if(vv!=null && vv instanceof ImageView){
+                roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
+                roadLineView.setVisibility(View.VISIBLE);
+            } else {
+                roadLineView.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
     private Intent sendAutoBroadCase(Context context, int key,int type){
         Intent intent = new Intent();
         intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
@@ -220,6 +248,7 @@ public class AutoNaviFloatingService extends Service {
         } else {
             speedView.setText("...");
         }
+        showRoadLine();
     }
     public void setSpeedOveral(boolean speeding) {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;
