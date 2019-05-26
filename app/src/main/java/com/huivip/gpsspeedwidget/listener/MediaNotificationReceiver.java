@@ -53,6 +53,7 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
             songName=intent.getStringExtra("play_music_name");
             artistName=intent.getStringExtra("play_music_artist");
             album=intent.getStringExtra("play_music_album");
+
         }
         if(intent.getAction().equalsIgnoreCase("update.widget.update_proBar")){
             songName = intent.getStringExtra("curplaysong");

@@ -20,6 +20,7 @@ import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.beans.KuWoMusiceEvent;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
@@ -91,10 +92,11 @@ public class LyricService extends NotificationListenerService implements RemoteC
             public void onConnectChangeListener(boolean isConnected) {
                 if (isConnected) {
                     EventBus.getDefault().post(new KuWoMusiceEvent(1));
-                    //Toast.makeText(getApplicationContext(), "音乐盒后台服务已连接", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "插件_音乐盒后台服务已连接", Toast.LENGTH_SHORT).show();
+
                 } else {
                     EventBus.getDefault().post(new KuWoMusiceEvent(0));
-                    //Toast.makeText(getApplicationContext(), "音乐盒后台服务已断开", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "插件_音乐盒后台服务已断开", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -255,6 +257,9 @@ public class LyricService extends NotificationListenerService implements RemoteC
         Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
         lycFloatingService.putExtra(LyricFloatingService.SONGNAME, songName);
         lycFloatingService.putExtra(LyricFloatingService.ARTIST, artistName);
+        if(mKwapi.isKuwoRunning()){
+            currentPosition=mKwapi.getCurrentPos();
+        }
         if (currentPosition>0) {
             lycFloatingService.putExtra(LyricFloatingService.POSITION, currentPosition);
         }

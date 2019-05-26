@@ -3,8 +3,11 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
+
 import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.WifiUtils;
 
@@ -18,6 +21,13 @@ public class AutoLaunchSystemConfigReceiver extends BroadcastReceiver {
             } else {
                 Toast.makeText(context, "移动热点启动失败！", Toast.LENGTH_SHORT).show();
             }
+        }
+        if(!GpsUtil.getInstance(context).isAutoMapBackendProcessStarted()) {
+            Intent launchBroadcast = new Intent();
+            intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+            intent.putExtra("KEY_TYPE", 10031);
+            Log.d("huivip","Auto navi not Started, GPS will baeckend Launch it");
+            context.sendBroadcast(launchBroadcast);
         }
     }
 }

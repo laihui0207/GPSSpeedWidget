@@ -8,8 +8,6 @@ import android.util.Log;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
-import com.huivip.gpsspeedwidget.beans.AutoWidgetFloatingControlEvent;
-import com.huivip.gpsspeedwidget.beans.BackNaviFloatingControlEvent;
 import com.huivip.gpsspeedwidget.beans.DriveWayEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
@@ -312,49 +310,49 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
     }
 
     private void startBackendNaviFloatingService(Context context) {
-        if (PrefUtils.isEnableNaviFloating(context) && !Utils.isServiceRunning(context, NaviFloatingService.class.getName())) {
+       // if (PrefUtils.isEnableNaviFloating(context) && !Utils.isServiceRunning(context, NaviFloatingService.class.getName())) {
             Intent floatService = new Intent(context, NaviFloatingService.class);
             context.startService(floatService);
-        } else if ((PrefUtils.isEnableAutoWidgetFloatingWidow(context) || PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)) &&
+      /*  } else if ((PrefUtils.isEnableAutoWidgetFloatingWidow(context) || PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)) &&
                 Utils.isServiceRunning(context, NaviFloatingService.class.getName())) {
-            EventBus.getDefault().post(new BackNaviFloatingControlEvent(false));
+           // EventBus.getDefault().post(new BackNaviFloatingControlEvent(false));
         }
-
+*/
     }
 
     private void stopBackendNaviFloatingService(Context context, boolean closeIt) {
-        if (Utils.isServiceRunning(context, NaviFloatingService.class.getName())) {
-            if (closeIt) {
+        /*if (Utils.isServiceRunning(context, NaviFloatingService.class.getName())) {
+            if (closeIt) {*/
                 Intent floatService = new Intent(context, NaviFloatingService.class);
                 floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
                 context.startService(floatService);
-            } else {
-                EventBus.getDefault().post(new BackNaviFloatingControlEvent(true));
+          /*  } else {
+               // EventBus.getDefault().post(new BackNaviFloatingControlEvent(true));
             }
-        }
+        }*/
     }
 
     private void startDriveWayFloatingService(Context context) {
-        if ((PrefUtils.isEnableAutoWidgetFloatingWidow(context) || PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context))
-                && !Utils.isServiceRunning(context, AutoWidgetFloatingService.class.getName())) {
+       /* if ((PrefUtils.isEnableAutoWidgetFloatingWidow(context) || PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context))
+                && !Utils.isServiceRunning(context, AutoWidgetFloatingService.class.getName())) {*/
             Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
             context.startService(autoWidgetFloatingService);
-        } else if ((PrefUtils.isEnableAutoWidgetFloatingWidow(context) || PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context))
+       /* } else if ((PrefUtils.isEnableAutoWidgetFloatingWidow(context) || PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context))
                 && Utils.isServiceRunning(context, AutoWidgetFloatingService.class.getName())) {
             EventBus.getDefault().post(new AutoWidgetFloatingControlEvent(false));
-        }
+        }*/
     }
 
     private void stopDriveWayFloatingService(Context context, boolean closeIt) {
-        if (Utils.isServiceRunning(context, AutoWidgetFloatingService.class.getName())) {
-            if (closeIt) {
+        /*if (Utils.isServiceRunning(context, AutoWidgetFloatingService.class.getName())) {
+            if (closeIt) {*/
                 Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
                 autoWidgetFloatingService.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
                 context.startService(autoWidgetFloatingService);
-            } else {
+          /*  } else {
                 EventBus.getDefault().post(new AutoWidgetFloatingControlEvent(true));
             }
-        }
+        }*/
     }
 
     private void launchSpeedFloatingWindows(Context context, boolean enabled) {

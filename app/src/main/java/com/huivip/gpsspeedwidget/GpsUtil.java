@@ -891,13 +891,20 @@ public class GpsUtil implements AMapNaviListener {
         this.autoNaviStatus = autoNaviStatus;
     }
     public void setAutoXunHangStatus(int autoXunHangStatus){
+        Intent autoMuteIntent=new Intent();
+        autoMuteIntent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+        autoMuteIntent.putExtra("KEY_TYPE",10047);
         if(autoXunHangStatus == Constant.XunHang_Status_Started && this.autoXunHangStatus == Constant.XunHang_Status_Ended){
             Toast.makeText(context,"高德巡航开始，插件巡航暂时关闭",Toast.LENGTH_SHORT).show();
             stopAimlessNavi();
+            autoMuteIntent.putExtra("EXTRA_CASUAL_MUTE",0);
+            context.sendBroadcast(autoMuteIntent);
         } else if(this.autoXunHangStatus == Constant.XunHang_Status_Started
                 && autoXunHangStatus == Constant.XunHang_Status_Ended && this.autoNaviStatus!=Constant.Navi_Status_Started){
             Toast.makeText(context,"高德巡航结束，插件巡航开启",Toast.LENGTH_SHORT).show();
             startAimlessNavi();
+            autoMuteIntent.putExtra("EXTRA_CASUAL_MUTE",1);
+            context.sendBroadcast(autoMuteIntent);
         }
         this.autoXunHangStatus=autoXunHangStatus;
     }

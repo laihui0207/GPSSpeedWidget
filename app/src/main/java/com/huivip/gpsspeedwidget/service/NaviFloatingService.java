@@ -134,7 +134,6 @@ public class NaviFloatingService extends Service {
             }
         }
         count = 0;
-        appWidgetManager = AppWidgetManager.getInstance(this);
         localNumberFormat.setMaximumFractionDigits(1);
         return Service.START_REDELIVER_INTENT;
     }
@@ -170,6 +169,7 @@ public class NaviFloatingService extends Service {
         }
         gpsUtil = GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        appWidgetManager = AppWidgetManager.getInstance(this);
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_backend_navi, null);

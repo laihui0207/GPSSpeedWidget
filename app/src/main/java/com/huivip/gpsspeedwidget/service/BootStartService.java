@@ -74,6 +74,7 @@ public class BootStartService extends Service {
                                         PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
                                         alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
                                     }
+
                                 }
                             }).start();
                         }
@@ -81,10 +82,8 @@ public class BootStartService extends Service {
                     TimeThread timeThread=new TimeThread(null);
                     timeThread.setContext(getApplicationContext());
                     timeThread.start();
-                    if(PrefUtils.isAutoLauchHotSpot(getApplicationContext())) {
-                        PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                        alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+5000L, autoLaunchIntent);
-                    }
+                    PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                    alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+5000L, autoLaunchIntent);
                   /*  if (PrefUtils.isFTPAutoBackup(getApplicationContext()) || PrefUtils.isEnableAutoCleanGPSHistory(getApplicationContext())) {
                         PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
                         alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+120000L, autoFtpBackupIntent);
