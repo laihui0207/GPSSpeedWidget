@@ -90,8 +90,14 @@
                 android:layout_height="wrap_content" android:id="@+id/checkBox_lyric" android:layout_weight="1"/>
             <CheckBox
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:text="位置固定" android:id="@+id/lyric_fixed" />
-
+                android:layout_height="wrap_content" android:text="歌词位置固定" android:id="@+id/lyric_fixed" />
+            <CheckBox
+                android:text="车道信息显示"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/checkBox_roadLine" android:layout_weight="1"/>
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="车道位置固定" android:id="@+id/roadline_fixed" />
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                       android:orientation="horizontal">

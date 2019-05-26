@@ -82,6 +82,9 @@ public class NaviFloatingService extends Service {
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler updateHandler = new Handler();
+    TimerTask updateLongTask;
+    Timer updateLongTimer = new Timer();
+    final Handler updateLongHandler = new Handler();
     @BindView(R.id.textView_currentroad)
     TextView currentRoadTextView;
     @BindView(R.id.textView_nextroadname)
@@ -193,13 +196,35 @@ public class NaviFloatingService extends Service {
                         int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
                         int color = ContextCompat.getColor(NaviFloatingService.this, colorRes);
                         speedTextView.setTextColor(color);
+                        if (gpsUtil.getNavi_turn_icon() > 0) {
+                            naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
+                        }
+                        int nextRoadDistance = gpsUtil.getNextRoadDistance();
+                        if (nextRoadDistance > 1000) {
+                            nextRoadDistanceTextView.setText(localNumberFormat.format(nextRoadDistance*1.0f / 1000) + "公里后");
+                            //getNextRoadDistanceUnitTextView.setText("公里后");
+                        } else {
+                            nextRoadDistanceTextView.setText(nextRoadDistance + "米后");
+                            //getNextRoadDistanceUnitTextView.setText("米后");
+                        }
+                    }
+                });
+            }
+        };
+        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        updateLongTask=new TimerTask() {
+            @Override
+            public void run() {
+                updateLongHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
                         NaviFloatingService.this.checkLocationData();
                         showRoadLine();
                     }
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
+        updateLongTimer.schedule(this.updateLongTask,0,1000L);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
@@ -277,9 +302,7 @@ public class NaviFloatingService extends Service {
     }
 
     public void checkLocationData() {
-        if (gpsUtil.getNavi_turn_icon() > 0) {
-            naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
-        }
+
         navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed() + "");
 
         navicameraDistanceTextView.setText(gpsUtil.getLimitDistance() + "米");
@@ -292,36 +315,26 @@ public class NaviFloatingService extends Service {
         }
         currentRoadTextView.setText(gpsUtil.getCurrentRoadName() + "");
         nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
-        int nextRoadDistance = gpsUtil.getNextRoadDistance();
-        if (nextRoadDistance > 1000) {
-            nextRoadDistanceTextView.setText(localNumberFormat.format(nextRoadDistance*1.0f / 1000) + "公里后");
-            //getNextRoadDistanceUnitTextView.setText("公里后");
-        } else {
-            nextRoadDistanceTextView.setText(nextRoadDistance + "米后");
-            //getNextRoadDistanceUnitTextView.setText("米后");
-        }
-        if (count % 60 == 0) {
-            String leftTimeString = "";
-            int leftTime = gpsUtil.getTotalLeftTime();
-            if (leftTime > 3600) {
-                int hours = leftTime / 3600;
-                int minutes = (leftTime % 3600) / 60;
-                leftTimeString = hours + "小时" + minutes + "分钟";
-            } else {
-                leftTimeString = leftTime / 60 + "分钟";
-            }
 
-            String leftDistanceString = "";
-            int leftDistance = gpsUtil.getTotalLeftDistance();
-            if (leftDistance > 1000) {
-                leftDistanceString = localNumberFormat.format(leftDistance*1.0f / 1000) + "公里";
-            } else {
-                leftDistanceString = leftDistance + "米";
-            }
-            naviLeftTextView.setText(leftDistanceString + "/" + leftTimeString);
-            count=0;
+        String leftTimeString = "";
+        int leftTime = gpsUtil.getTotalLeftTime();
+        if (leftTime > 3600) {
+            int hours = leftTime / 3600;
+            int minutes = (leftTime % 3600) / 60;
+            leftTimeString = hours + "小时" + minutes + "分钟";
+        } else {
+            leftTimeString = leftTime / 60 + "分钟";
         }
-        count++;
+
+        String leftDistanceString = "";
+        int leftDistance = gpsUtil.getTotalLeftDistance();
+        if (leftDistance > 1000) {
+            leftDistanceString = localNumberFormat.format(leftDistance * 1.0f / 1000) + "公里";
+        } else {
+            leftDistanceString = leftDistance + "米";
+        }
+        naviLeftTextView.setText(leftDistanceString + "/" + leftTimeString);
+        count = 0;
         //EventBus.getDefault().cancelEventDelivery(event);
     }
 

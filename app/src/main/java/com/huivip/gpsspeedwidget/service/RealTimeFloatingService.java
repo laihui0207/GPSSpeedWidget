@@ -104,6 +104,7 @@ public class RealTimeFloatingService extends Service{
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         initMonitorPosition();
+
         timeThread=new TimeThread(timeTextView);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();

@@ -45,8 +45,6 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.SpeedWheel;
 
-import org.xutils.x;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -91,6 +89,9 @@ public class AutoNaviFloatingService extends Service {
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
+    TimerTask roadLineTask;
+    Timer roadLineTimer = new Timer();
+    final Handler roadLineHandler = new Handler();
     GpsUtil gpsUtil;
 
     @Nullable
@@ -166,7 +167,7 @@ public class AutoNaviFloatingService extends Service {
             @Override
             public void run()
             {
-                x.task().autoPost(new Runnable() {
+                locationHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         AutoNaviFloatingService.this.checkLocationData();
@@ -175,10 +176,22 @@ public class AutoNaviFloatingService extends Service {
                 });
             }
         };
+        this.roadLineTask=new TimerTask() {
+            @Override
+            public void run() {
+                roadLineHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showRoadLine();
+                    }
+                });
+            }
+        };
         appWidgetManager = AppWidgetManager.getInstance(this);
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         CrashHandler.getInstance().init(getApplicationContext());
-        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.roadLineTimer.schedule(this.roadLineTask,0,1000L);
         speedView.setOnTouchListener(new FloatingOnTouchListener());
         super.onCreate();
     }
@@ -248,7 +261,6 @@ public class AutoNaviFloatingService extends Service {
         } else {
             speedView.setText("...");
         }
-        showRoadLine();
     }
     public void setSpeedOveral(boolean speeding) {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_light;

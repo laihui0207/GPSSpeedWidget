@@ -41,6 +41,7 @@ import com.amap.api.navi.model.AimLessModeStat;
 import com.amap.api.navi.model.NaviInfo;
 import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
+import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
 import com.huivip.gpsspeedwidget.service.WeatherService;
@@ -188,6 +189,8 @@ public class GpsUtil implements AMapNaviListener {
         this.locationTimer = new Timer();
         speedAdjust = PrefUtils.getSpeedAdjust(context);
         Intent trackService=new Intent(context, NaviTrackService.class);
+        Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
+        context.startService(roadLineService);
         this.locationScanTask = new TimerTask() {
             @Override
             public void run() {

@@ -209,7 +209,7 @@ public abstract class Utils {
           for (int i = 0, j = ((ViewGroup)view).getChildCount(); i < j; i++) {
               View child = ((ViewGroup) view).getChildAt(i);
               if(child instanceof ViewGroup){
-                  Log.d("huivip",child.toString());
+                 // Log.d("huivip",child.toString());
                   View subView=findlayoutViewById(child,id);
                   if(subView!=null){
                       return subView;
@@ -220,7 +220,7 @@ public abstract class Utils {
                           return child;
                       }
                   } else if (id instanceof String) {*/
-                      Log.d("huivip",child.toString());
+                     // Log.d("huivip",child.toString());
                       if (child.toString().endsWith("id/" + id + "}")) {
                           return child;
                       }

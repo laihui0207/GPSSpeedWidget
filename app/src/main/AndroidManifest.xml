@@ -290,11 +290,11 @@
         <service android:name=".service.MapFloatingService"/>
         <service android:name=".service.TextFloatingService"/>
         <service android:name=".service.LyricFloatingService"/>
-        <service android:name=".service.GPSNaviService"/>
         <service android:name=".service.NaviTrackService"/>
         <service android:name=".speech.PlayAudioService"/>
         <service android:name=".service.RealTimeFloatingService"/>
         <service android:name=".lyric.LyricServiceLowVersion"/>
+        <service android:name=".service.RoadLineFloatingService"/>
         <service
                 android:name=".detection.AppDetectionService"
                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">

@@ -69,6 +69,7 @@ public abstract class PrefUtils {
     public static final String MAP_FLOATTING_WINDOW_XY="com.huivip.widget.Map.xy";
     public static final String TEXT_FLOATTING_WINDOW_XY="com.huivip.widget.Text.xy";
     public static final String LYRC_FLOATTING_WINDOW_XY="com.huivip.widget.lyrc.xy";
+    public static final String ROADLINE_FLOATTING_WINDOW_XY="com.huivip.widget.roadLine.xy";
     public static final String SEPARATED_VOLUME ="com.huivip.widget.separated.volume";
     public static final String AUDIO_VOLUME="com.huivipo.widget.audio.volume";
     public static final String CACHE_AUDIO_FILE="com.huivipo.widget.audio.cache.file";
@@ -108,6 +109,8 @@ public abstract class PrefUtils {
     static final String NAVI_FLOATTING_FIXED_POSITION="com.huivip.navi.fixed.position";
     static final String SPEED_FLOATTING_FIXED_POSITION="com.huivip.speed.fixed.position";
     static final String LYRIC_FLOATTING_FIXED_POSITION="com.huivip.lyric.fixed.position";
+    static final String ROADLINE_FLOATTING_FIXED_POSITION="com.huivip.roaldLine.fixed.position";
+    static final String ROADLINE_FLOATTING="com.huivip.roaldLine.enabled";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -521,7 +524,14 @@ public abstract class PrefUtils {
     public static void setLyrcFloatingSolidLocation(Context context, float x, float y) {
         edit(context).putString(LYRC_FLOATTING_WINDOW_XY, x + "," + y).apply();
     }
-    public static void setNaviFloatingLocation(Context context, float screenYRatio, boolean left) {
+    public static String getRoadLineFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(ROADLINE_FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static void setRoadLineFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(ROADLINE_FLOATTING_WINDOW_XY, x + "," + y).apply();
+
+    }
+        public static void setNaviFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_NAVI_FLOATING_LOCATION, left + "," + screenYRatio).apply();
     }
     public static void setDriveWayFloatingLocation(Context context, float screenYRatio, boolean left) {
@@ -621,6 +631,20 @@ public abstract class PrefUtils {
 
     public static void setEnableLyricFloatingFixed(Context context, boolean show) {
         edit(context).putBoolean(LYRIC_FLOATTING_FIXED_POSITION, show).apply();
+    }
+    public static boolean isEnableRoadLineFloatingFixed(Context context) {
+        return getSharedPreferences(context).getBoolean(ROADLINE_FLOATTING_FIXED_POSITION, false);
+    }
+
+    public static void setEnableRoadLineFloatingFixed(Context context, boolean show) {
+        edit(context).putBoolean(ROADLINE_FLOATTING_FIXED_POSITION, show).apply();
+    }
+    public static boolean isEnableRoadLineFloating(Context context) {
+        return getSharedPreferences(context).getBoolean(ROADLINE_FLOATTING, true);
+    }
+
+    public static void setEnableRoadLineFloating(Context context, boolean show) {
+        edit(context).putBoolean(ROADLINE_FLOATTING, show).apply();
     }
     public static Set<String> getApps(Context context) {
         return new HashSet<>(getSharedPreferences(context).getStringSet(PREF_APPS, new HashSet<String>()));

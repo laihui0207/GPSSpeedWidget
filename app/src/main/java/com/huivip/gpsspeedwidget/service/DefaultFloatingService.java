@@ -97,13 +97,14 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
     ImageView xunHang_roadLine;
     @BindView(R.id.imageView_default_daohang_roadLIne)
     ImageView daoHang_roadLine;
-    View xunhangRoadLine;
-    View daohangRoadLine;
    /* @BindView(R.id.floating_close)
     ImageView closeImage;*/
     TimerTask locationScanTask;
+    TimerTask roadLineTask;
     Timer locationTimer = new Timer();
+    Timer roadLineTimer = new Timer();
     final Handler locationHandler = new Handler();
+    final Handler roadLineHandler = new Handler();
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -227,14 +228,23 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
                     public void run()
                     {
                         DefaultFloatingService.this.checkLocationData();
-                        showRoadLine();
-                        //Log.d("huivip","Float Service Check Location");
                     }
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
-
+        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.roadLineTask = new TimerTask() {
+            @Override
+            public void run() {
+                roadLineHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showRoadLine();
+                    }
+                });
+            }
+        };
+        this.roadLineTimer.schedule(this.roadLineTask,0L,1000L);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }

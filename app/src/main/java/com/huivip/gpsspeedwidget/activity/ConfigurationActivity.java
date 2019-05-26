@@ -57,6 +57,7 @@ import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RealTimeFloatingService;
+import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
@@ -947,6 +948,27 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setEnableLyricFloatingFixed(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox roadLineCheckBox=findViewById(R.id.checkBox_roadLine);
+        roadLineCheckBox.setChecked(PrefUtils.isEnableRoadLineFloating(getApplicationContext()));
+        roadLineCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableRoadLineFloating(getApplicationContext(),buttonView.isChecked());
+                if(!buttonView.isChecked()){
+                    Intent roadLine=new Intent(getApplicationContext(), RoadLineFloatingService.class);
+                    roadLine.putExtra(RoadLineFloatingService.EXTRA_CLOSE,true);
+                    getApplicationContext().startService(roadLine);
+                }
+            }
+        });
+        CheckBox roadLineFloatingFixedCheckBox=findViewById(R.id.roadline_fixed);
+        roadLineFloatingFixedCheckBox.setChecked(PrefUtils.isEnableRoadLineFloatingFixed(getApplicationContext()));
+        roadLineFloatingFixedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableRoadLineFloatingFixed(getApplicationContext(),buttonView.isChecked());
             }
         });
         CheckBox showAddressCheckBox=findViewById(R.id.checkBox_showAddress);
