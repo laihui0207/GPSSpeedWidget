@@ -3,12 +3,11 @@ package com.huivip.gpsspeedwidget.service;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
-import android.appwidget.AppWidgetHost;
-import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
@@ -35,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
-import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
@@ -65,8 +63,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
 
     private WindowManager mWindowManager;
     private View mFloatingView;
-    AppWidgetHost appWidgetHost;
-    AppWidgetManager appWidgetManager;
     private FloatingViewManager mFloatingViewManager;
     @BindView(R.id.limit)
     View mLimitView;
@@ -97,6 +93,8 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
     ImageView xunHang_roadLine;
     @BindView(R.id.imageView_default_daohang_roadLIne)
     ImageView daoHang_roadLine;
+    private ServiceConnection mServiceConnection;
+    RoadLineService.RoadLineBinder roadLineBinder;
    /* @BindView(R.id.floating_close)
     ImageView closeImage;*/
     TimerTask locationScanTask;
@@ -156,7 +154,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
         }
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
-        appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         LayoutInflater inflater = LayoutInflater.from(this);
         if(PrefUtils.isShowSmallFloatingStyle(getApplicationContext())){
             mFloatingView = inflater.inflate(R.layout.floating_default_limit_small, null);
@@ -199,7 +196,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             }
             mSpeedometerView.setLayoutParams(speedLayout);
         }
-        appWidgetManager = AppWidgetManager.getInstance(this);
         initMonitorPosition();
         final ArrayList<ArcProgressStackView.Model> models = new ArrayList<>();
         models.add(new ArcProgressStackView.Model("", 0,
@@ -245,6 +241,18 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             }
         };
         this.roadLineTimer.schedule(this.roadLineTask,0L,1000L);
+        mServiceConnection=new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                roadLineBinder= (RoadLineService.RoadLineBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
@@ -297,7 +305,7 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
     }
 
     private void showRoadLine() {
-        int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+      /*  int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
         if (id != -1) {
             AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
             final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
@@ -313,7 +321,16 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             } else {
                 daoHang_roadLine.setVisibility(View.INVISIBLE);
             }
-        }
+        }*/
+      if(roadLineBinder!=null){
+          View vv=roadLineBinder.getRoadLineView();
+          if(vv!=null){
+              daoHang_roadLine.setImageDrawable(((ImageView)vv).getDrawable());
+              daoHang_roadLine.setVisibility(View.VISIBLE);
+          } else {
+              daoHang_roadLine.setVisibility(View.INVISIBLE);
+          }
+      }
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?

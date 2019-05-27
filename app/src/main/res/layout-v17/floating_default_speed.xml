@@ -25,7 +25,6 @@
             app:apsv_shadowed="false"
             app:apsv_start_angle="135"
             app:apsv_sweep_angle="270"
-            app:apsv_typeface="fonts/agency.ttf"
             tools:visibility="gone" />
 
         <FrameLayout

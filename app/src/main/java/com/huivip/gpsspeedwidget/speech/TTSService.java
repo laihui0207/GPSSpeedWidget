@@ -24,7 +24,6 @@ public abstract class TTSService implements TTS {
             public void onServiceConnected(ComponentName name, IBinder service) {
                 Log.d(TAG,"Bind Service");
                 playBinder = (PlayAudioService.PlayBinder) service;
-               // playAudioService = playBinder.getService();
             }
 
             @Override

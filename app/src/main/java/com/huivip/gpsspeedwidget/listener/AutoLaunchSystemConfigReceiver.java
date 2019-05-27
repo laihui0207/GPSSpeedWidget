@@ -29,5 +29,11 @@ public class AutoLaunchSystemConfigReceiver extends BroadcastReceiver {
             Log.d("huivip","Auto navi not Started, GPS will baeckend Launch it");
             context.sendBroadcast(launchBroadcast);
         }
+        // Sync home info
+        Intent syncHomeIntent = new Intent();
+        syncHomeIntent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+        syncHomeIntent.putExtra("KEY_TYPE", 10045);
+        syncHomeIntent.putExtra("EXTRA_TYPE",1);
+        context.sendBroadcast(syncHomeIntent);
     }
 }

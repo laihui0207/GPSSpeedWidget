@@ -1,12 +1,11 @@
 package com.huivip.gpsspeedwidget.service;
 
 import android.app.Service;
-import android.appwidget.AppWidgetHost;
-import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -26,12 +25,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
-import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.xutils.x;
@@ -51,10 +48,9 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class RoadLineFloatingService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
+    public static final String EXTRA_Fixed = "com.huivip.gpsspeedwidget.EXTRA_FIXED";
     private WindowManager mWindowManager;
     private View mFloatingView;
-    AppWidgetHost appWidgetHost;
-    AppWidgetManager appWidgetManager;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler roadLineHandler = new Handler();
@@ -65,6 +61,8 @@ public class RoadLineFloatingService extends Service{
     GpsUtil gpsUtil;
     @BindView(R.id.imageView_floating_roadLine)
     ImageView roadLineView;
+    private ServiceConnection mServiceConnection;
+    RoadLineService.RoadLineBinder roadLineBinder;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -82,8 +80,6 @@ public class RoadLineFloatingService extends Service{
         }
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
-        appWidgetManager = AppWidgetManager.getInstance(this);
-        appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_roadline_window, null);
         int flag= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
@@ -119,6 +115,18 @@ public class RoadLineFloatingService extends Service{
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         CrashHandler.getInstance().init(getApplicationContext());
+        mServiceConnection=new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                roadLineBinder= (RoadLineService.RoadLineBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         super.onCreate();
     }
     @Override
@@ -129,6 +137,16 @@ public class RoadLineFloatingService extends Service{
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
+            }
+            if(intent.getBooleanExtra(EXTRA_Fixed,false)){
+                WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
+                int flag=WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE ;
+                if(PrefUtils.isEnableRoadLineFloatingFixed(getApplicationContext())){
+                    flag = flag | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+                }
+                params.flags=flag;
+                mFloatingView.setLayoutParams(params);
+                mWindowManager.updateViewLayout(mFloatingView, params);
             }
             isShowing = true;
             if(!PrefUtils.isEnableRoadLineFloatingFixed(getApplicationContext())) {
@@ -151,7 +169,7 @@ public class RoadLineFloatingService extends Service{
         isShowing=false;
     }
     private void showRoadLine(){
-        int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+       /* int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
         if (id != -1) {
             AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
             final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
@@ -163,11 +181,22 @@ public class RoadLineFloatingService extends Service{
             }
             if(vv!=null && vv instanceof ImageView){
                 roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
+                //roadLineView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
                 roadLineView.setVisibility(View.VISIBLE);
             } else {
                 roadLineView.setVisibility(View.INVISIBLE);
             }
-        }
+        }*/
+       if(roadLineBinder!=null){
+           View vv=roadLineBinder.getRoadLineView();
+           if(vv!=null){
+               roadLineView.setImageDrawable(((ImageView)vv).getDrawable());
+               roadLineView.setVisibility(View.VISIBLE);
+           } else {
+               roadLineView.setVisibility(View.INVISIBLE);
+           }
+       }
     }
     @OnClick(value = {R.id.imageView_roadLine_floating_fixed})
     public void clickHandler(View view){

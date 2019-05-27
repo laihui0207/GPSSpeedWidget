@@ -3,12 +3,11 @@ package com.huivip.gpsspeedwidget.service;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
-import android.appwidget.AppWidgetHost;
-import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
@@ -35,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
-import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
@@ -58,8 +56,6 @@ public class AutoNaviFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     private WindowManager mWindowManager;
     private View mFloatingView;
-    AppWidgetHost appWidgetHost;
-    AppWidgetManager appWidgetManager;
     @BindView(R.id.imageView_pointer)
     SpeedWheel speedWheelView;
     @BindView(R.id.SpeedText)
@@ -93,7 +89,8 @@ public class AutoNaviFloatingService extends Service {
     Timer roadLineTimer = new Timer();
     final Handler roadLineHandler = new Handler();
     GpsUtil gpsUtil;
-
+    private ServiceConnection mServiceConnection;
+    RoadLineService.RoadLineBinder roadLineBinder;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -187,12 +184,23 @@ public class AutoNaviFloatingService extends Service {
                 });
             }
         };
-        appWidgetManager = AppWidgetManager.getInstance(this);
-        appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         CrashHandler.getInstance().init(getApplicationContext());
+        mServiceConnection=new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                roadLineBinder= (RoadLineService.RoadLineBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         this.roadLineTimer.schedule(this.roadLineTask,0,1000L);
         speedView.setOnTouchListener(new FloatingOnTouchListener());
+
         super.onCreate();
     }
     @OnClick(value = {R.id.image_home_navi,R.id.image_company_navi,R.id.image_main_navi,R.id.image_close_navi})
@@ -216,7 +224,7 @@ public class AutoNaviFloatingService extends Service {
         }
     }
     private void showRoadLine() {
-        int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+       /* int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
         if (id != -1) {
             AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
             final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
@@ -232,7 +240,16 @@ public class AutoNaviFloatingService extends Service {
             } else {
                 roadLineView.setVisibility(View.INVISIBLE);
             }
-        }
+        }*/
+       if(roadLineBinder!=null){
+           View vv=roadLineBinder.getRoadLineView();
+           if(vv!=null){
+               roadLineView.setImageDrawable(((ImageView)vv).getDrawable());
+               roadLineView.setVisibility(View.VISIBLE);
+           } else {
+               roadLineView.setVisibility(View.INVISIBLE);
+           }
+       }
     }
     private Intent sendAutoBroadCase(Context context, int key,int type){
         Intent intent = new Intent();

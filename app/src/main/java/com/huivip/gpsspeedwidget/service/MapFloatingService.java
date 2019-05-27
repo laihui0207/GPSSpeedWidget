@@ -3,12 +3,11 @@ package com.huivip.gpsspeedwidget.service;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
-import android.appwidget.AppWidgetHost;
-import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.net.Uri;
@@ -44,13 +43,11 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.huivip.gpsspeedwidget.BuildConfig;
-import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TimeThread;
-import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.ImageWheelView;
 
 import java.util.Calendar;
@@ -74,8 +71,6 @@ public class MapFloatingService extends Service {
     @BindView(R.id.map_floating)
     MapView mMapView ;
     AMap aMap=null;
-    AppWidgetHost appWidgetHost;
-    AppWidgetManager appWidgetManager;
     @BindView(R.id.textview_floating_map_title)
     TextView timeTextView;
     TimeThread timeThread;
@@ -90,7 +85,7 @@ public class MapFloatingService extends Service {
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
     float mapZoom=16f;
-    int mapMove=-260;
+    int mapMove=-100;
     @BindView(R.id.imageView_xunhang_roadLine)
     ImageView xunHang_roadLine;
     @BindView(R.id.imageView_daohang_roadLine)
@@ -105,6 +100,8 @@ public class MapFloatingService extends Service {
     // 屏幕静止DELAY_TIME之后，再次跟随
     private long DELAY_TIME = 5000;
     boolean focused=false;
+    private ServiceConnection mServiceConnection;
+    RoadLineService.RoadLineBinder roadLineBinder;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -150,7 +147,6 @@ public class MapFloatingService extends Service {
             return;
         }
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
-        appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_map_window, null);
@@ -197,7 +193,6 @@ public class MapFloatingService extends Service {
             }
         });
         setMapInteractiveListener();
-        appWidgetManager = AppWidgetManager.getInstance(this);
         converter = new CoordinateConverter(getApplicationContext());
         converter.from(CoordinateConverter.CoordType.GPS);
         this.locationScanTask = new TimerTask()
@@ -218,6 +213,18 @@ public class MapFloatingService extends Service {
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         //EventBus.getDefault().register(this);
+        mServiceConnection=new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                roadLineBinder= (RoadLineService.RoadLineBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         super.onCreate();
     }
 
@@ -240,9 +247,12 @@ public class MapFloatingService extends Service {
             carMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBitmap(bearing)));
             carMarker.setRotateAngle(360-bearing);
             //carMarker.setIcon();
+            if(gpsUtil.getKmhSpeed()>60){
+                mapZoom=14;
+            }
             if (isNeedFollow) {
                 // 跟随
-                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 0,bearing));
+                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 60,bearing));
                 aMap.moveCamera(mCameraUpdate);
                 aMap.moveCamera(CameraUpdateFactory.scrollBy(0,mapMove));
                 isLocated=true;
@@ -251,7 +261,7 @@ public class MapFloatingService extends Service {
         showRoadLine();
     }
     private void showRoadLine(){
-        int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+       /* int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
         if (id != -1) {
             AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
             final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
@@ -267,7 +277,16 @@ public class MapFloatingService extends Service {
             } else {
                 daoHang_roadLine.setVisibility(View.INVISIBLE);
             }
-        }
+        }*/
+       if(roadLineBinder!=null){
+           View vv=roadLineBinder.getRoadLineView();
+           if(vv!=null){
+               daoHang_roadLine.setImageDrawable(((ImageView)vv).getDrawable());
+               daoHang_roadLine.setVisibility(View.VISIBLE);
+           } else {
+               daoHang_roadLine.setVisibility(View.INVISIBLE);
+           }
+       }
     }
    /* @Subscribe
     public void showPluginContent(DriveWayEvent event) {

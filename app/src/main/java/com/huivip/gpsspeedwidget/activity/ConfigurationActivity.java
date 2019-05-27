@@ -341,7 +341,7 @@ public class ConfigurationActivity extends Activity {
                 int volume=seekBarVolume.getProgress();
                 PrefUtils.setAudioVolume(getApplicationContext(),volume);
                 TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
-                tts.speak("你好，语音测试");
+                tts.speak("北京第三区交通委提醒您：道路千万条，安全第一条。行车不规范，亲人两行泪。");
             }
         });
         enableAutoNaviCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
@@ -956,9 +956,11 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setEnableRoadLineFloating(getApplicationContext(),buttonView.isChecked());
+                Intent roadLine=new Intent(getApplicationContext(), RoadLineFloatingService.class);
                 if(!buttonView.isChecked()){
-                    Intent roadLine=new Intent(getApplicationContext(), RoadLineFloatingService.class);
                     roadLine.putExtra(RoadLineFloatingService.EXTRA_CLOSE,true);
+                    getApplicationContext().startService(roadLine);
+                } else {
                     getApplicationContext().startService(roadLine);
                 }
             }
@@ -969,6 +971,9 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setEnableRoadLineFloatingFixed(getApplicationContext(),buttonView.isChecked());
+                Intent roadLineFloattingService = new Intent(getApplicationContext(),RoadLineFloatingService.class);
+                roadLineFloattingService.putExtra(RoadLineFloatingService.EXTRA_Fixed,true);
+                getApplicationContext().startService(roadLineFloattingService);
             }
         });
         CheckBox showAddressCheckBox=findViewById(R.id.checkBox_showAddress);

@@ -27,6 +27,6 @@ public class DigtalView extends AppCompatTextView {
 
         AssetManager assets = context.getAssets();
         Typeface font = Typeface.createFromAsset(assets, file);
-        setTypeface(font);
+        setTypeface(font,Typeface.BOLD);
     }
 }

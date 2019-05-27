@@ -158,7 +158,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             type=AudioManager.STREAM_VOICE_CALL;
         }*/
         if(audioTrack==null)
-            audioTrack = new AudioTrack(type,
+            audioTrack = new AudioTrack(12,
                     16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);
         //边读边播
         byte[] buffer = new byte[bufferSize];

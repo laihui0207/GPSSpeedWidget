@@ -90,7 +90,7 @@ public class FileUtil {
         }
         String fileName=songName.replace("/","_");
         if(!TextUtils.isEmpty(artist)){
-            fileName+="_"+artist.replace("/","_");;
+            fileName+="_"+artist.replace("/","_");
         }
         fileName+=".lrc";
         String lrcFileName=path+fileName;
