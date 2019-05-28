@@ -293,8 +293,6 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 PrefUtils.setEnableAudioMixService(getApplicationContext(),compoundButton.isChecked());
-               /* BDTTS bdtts =BDTTS.getInstance(getApplicationContext());
-                bdtts.release();*/
             }
         });
 
@@ -306,10 +304,6 @@ public class ConfigurationActivity extends Activity {
                     PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.SIBICHITTS);
                     speakText="使用思必驰语音";
                     natviAudioCheckBox.setChecked(false);
-                }
-                else {
-                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.BAIDUTTS);
-                    speakText="使用百度语音";
                 }
                 SeekBar seekBarVolume=findViewById(R.id.seekBar_audioVolume);
                 int volume=seekBarVolume.getProgress();
@@ -326,9 +320,6 @@ public class ConfigurationActivity extends Activity {
                 if(buttonView.isChecked()){
                     PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.SDKTTS);
                     XFEngineCheckBox.setChecked(false);
-                }
-                else {
-                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.BAIDUTTS);
                 }
             }
         });

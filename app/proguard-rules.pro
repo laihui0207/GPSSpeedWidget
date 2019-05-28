@@ -94,7 +94,6 @@
 }
 #----------------------------------------------------------------------------
 -libraryjars libs/AMap3DMap_6.7.0_AMapNavi_6.6.0_AMapSearch_6.5.0_AMapTrack_1.0.0_AMapLocation_4.4.0_20190214.jar
--libraryjars libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar
 -libraryjars libs/DUI-lite-SDK-for-Android-1.2.1.jar
 -libraryjars libs/kwmusic-autosdk-v2.0.2.jar
 #---------------------------------webview------------------------------------
@@ -119,12 +118,6 @@
 -keep class com.autonavi.aps.amapapi.model.**{*;}
 -keep class com.amap.api.navi.**{*;}
 -keep class com.autonavi.**{*;}
-# baidu tts
--keep class com.baidu.speech.**{*;}
--keep class com.baidu.tts.**{*;}
--keep class com.baidu.speechsynthesizer.**{*;}
-# ify
--keep class com.iflytek.**{*;}
 #keep Util
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 -keep public class com.aispeech.common.Util{public *;}
