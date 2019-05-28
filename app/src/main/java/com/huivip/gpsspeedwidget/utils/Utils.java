@@ -275,8 +275,18 @@ public abstract class Utils {
             Log.e("huivip", "获取应用程序版本失败，原因：" + e.getMessage());
             return "";
         }
-
         return info.versionName;
+    }
+    public static int getLocalVersionCode(Context context) {
+        PackageManager manager = context.getPackageManager();
+        PackageInfo info = null;
+        try {
+            info = manager.getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("huivip", "获取应用程序版本失败，原因：" + e.getMessage());
+            return 0;
+        }
+        return info.versionCode;
     }
     public static int levenshteinDistance(CharSequence lhs, CharSequence rhs) {
         int len0 = lhs.length() + 1;
