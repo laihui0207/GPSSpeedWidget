@@ -58,7 +58,6 @@ import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RealTimeFloatingService;
 import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
-import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
@@ -989,10 +988,10 @@ public class ConfigurationActivity extends Activity {
         showNotificationCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                WeatherService service= WeatherService.getInstance(getApplicationContext());
-                service.stopLocation();
+                //WeatherService service= WeatherService.getInstance(getApplicationContext());
+                //service.stopLocation();
                 PrefUtils.setShowNotification(getApplicationContext(),buttonView.isChecked());
-                service.startLocation();
+                //service.startLocation();
 
             }
         });

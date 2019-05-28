@@ -153,20 +153,21 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
     }
     public void playAudioByAudioTrack(String fileName,MediaPlayer.OnCompletionListener listener){
         int bufferSize = AudioTrack.getMinBufferSize(16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        int type=AudioManager.STREAM_MUSIC;
+        int type=AudioManager.USE_DEFAULT_STREAM_TYPE;
        /* if(!PrefUtils.isEnableAudioMixService(getApplicationContext())) {
             type=AudioManager.STREAM_VOICE_CALL;
         }*/
         if(audioTrack==null)
-            audioTrack = new AudioTrack(12,
+            audioTrack = new AudioTrack(type,
                     16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);
         //边读边播
+        Log.d("huivip","audio track stream type:"+type);
         byte[] buffer = new byte[bufferSize];
         int volume=PrefUtils.getAudioVolume(getApplicationContext());
         audioTrack.setVolume(volume/100f);
-        new Thread(new Runnable() {
+        /*new Thread(new Runnable() {
             @Override
-            public void run() {
+            public void run() {*/
                 try {
                     if(beforeSpeak()) {
                         audioTrack.play();
@@ -205,10 +206,12 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
-            }
+                } catch (IllegalArgumentException e){
 
-        }).start();
+                }
+          /*  }
+
+        }).start();*/
     }
     public void playAudio(String fileName,MediaPlayer.OnCompletionListener listener){
         try {

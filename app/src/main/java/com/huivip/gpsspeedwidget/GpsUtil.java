@@ -233,8 +233,6 @@ public class GpsUtil implements AMapNaviListener {
        /* Intent recordService = new Intent(context, RecordGpsHistoryService.class);
         context.startService(recordService);*/
         serviceStarted = true;
-        weatherService=WeatherService.getInstance(context);
-
     }
 
     public void startAimlessNavi() {
@@ -269,7 +267,7 @@ public class GpsUtil implements AMapNaviListener {
         if (aMapNavi != null && aimlessStatred) {
             aMapNavi.stopAimlessMode();
             aMapNavi.removeAMapNaviListener(this);
-            aMapNavi.destroy();
+            //aMapNavi.destroy();
             aMapNavi = null;
             aimlessStatred = false;
         }

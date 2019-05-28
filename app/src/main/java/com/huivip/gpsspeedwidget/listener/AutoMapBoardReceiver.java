@@ -8,7 +8,6 @@ import android.util.Log;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
-import com.huivip.gpsspeedwidget.beans.DriveWayEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
@@ -267,15 +266,18 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     try {
                         JSONObject object = new JSONObject(wayInfo);
                         if (object.getBoolean("drive_way_enabled")) {
-                            if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context) && PrefUtils.isEnableAutoWidgetFloatingWidow(context) && !gpsUtil.isAutoNavi_on_Frontend()) {
+                            if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)
+                                    && PrefUtils.isEnableAutoWidgetFloatingWidow(context)
+                                    && !gpsUtil.isAutoNavi_on_Frontend()) {
                                 startDriveWayFloatingService(context);
                             }
-                            EventBus.getDefault().post(new DriveWayEvent(true));
+                            //EventBus.getDefault().post(new DriveWayEvent(true));
                         } else {
-                            if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context) && PrefUtils.isEnableAutoWidgetFloatingWidow(context)) {
+                            if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)
+                                    && PrefUtils.isEnableAutoWidgetFloatingWidow(context)) {
                                 stopDriveWayFloatingService(context, false);
                             }
-                            EventBus.getDefault().post(new DriveWayEvent(false));
+                            //EventBus.getDefault().post(new DriveWayEvent(false));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

@@ -224,12 +224,13 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
                     public void run()
                     {
                         DefaultFloatingService.this.checkLocationData();
+                        showRoadLine();
                     }
                 });
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        this.roadLineTask = new TimerTask() {
+       /* this.roadLineTask = new TimerTask() {
             @Override
             public void run() {
                 roadLineHandler.post(new Runnable() {
@@ -240,7 +241,7 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
                 });
             }
         };
-        this.roadLineTimer.schedule(this.roadLineTask,0L,1000L);
+        this.roadLineTimer.schedule(this.roadLineTask,0L,1000L);*/
         mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {

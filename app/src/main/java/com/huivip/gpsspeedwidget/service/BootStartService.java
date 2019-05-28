@@ -82,6 +82,8 @@ public class BootStartService extends Service {
                         PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
                         alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+120000L, autoFtpBackupIntent);
                     }*/
+            Intent weatcherService = new Intent(getApplicationContext(), WeatherService.class);
+            getApplicationContext().startService(weatcherService);
             if (PrefUtils.isPlayTime(getApplicationContext()) || PrefUtils.isPlayWeather(getApplicationContext()) || PrefUtils.isShowAddressWhenStop(getApplicationContext())) {
                 PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
                 alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 60000L, weatherServiceIntent);

@@ -199,12 +199,14 @@ public class NaviFloatingService extends Service {
                             nextRoadDistanceTextView.setText(nextRoadDistance + "米后");
                             //getNextRoadDistanceUnitTextView.setText("米后");
                         }
+                        NaviFloatingService.this.checkLocationData();
+                        showRoadLine();
                     }
                 });
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        updateLongTask=new TimerTask() {
+       /* updateLongTask=new TimerTask() {
             @Override
             public void run() {
                 updateLongHandler.post(new Runnable() {
@@ -216,7 +218,7 @@ public class NaviFloatingService extends Service {
                 });
             }
         };
-        updateLongTimer.schedule(this.updateLongTask,0,1000L);
+        updateLongTimer.schedule(this.updateLongTask,0,1000L);*/
         mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {

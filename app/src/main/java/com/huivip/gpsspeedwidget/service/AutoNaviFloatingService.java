@@ -168,12 +168,13 @@ public class AutoNaviFloatingService extends Service {
                     @Override
                     public void run() {
                         AutoNaviFloatingService.this.checkLocationData();
+                        showRoadLine();
                         //Log.d("huivip","Float Service Check Location");
                     }
                 });
             }
         };
-        this.roadLineTask=new TimerTask() {
+        /*this.roadLineTask=new TimerTask() {
             @Override
             public void run() {
                 roadLineHandler.post(new Runnable() {
@@ -183,7 +184,7 @@ public class AutoNaviFloatingService extends Service {
                     }
                 });
             }
-        };
+        };*/
         CrashHandler.getInstance().init(getApplicationContext());
         mServiceConnection=new ServiceConnection() {
             @Override
@@ -198,7 +199,7 @@ public class AutoNaviFloatingService extends Service {
         };
         getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        this.roadLineTimer.schedule(this.roadLineTask,0,1000L);
+       // this.roadLineTimer.schedule(this.roadLineTask,0,1000L);
         speedView.setOnTouchListener(new FloatingOnTouchListener());
 
         super.onCreate();
@@ -224,23 +225,7 @@ public class AutoNaviFloatingService extends Service {
         }
     }
     private void showRoadLine() {
-       /* int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
-        if (id != -1) {
-            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
-            View vv = null;
-            if (gpsUtil.getAutoNaviStatus()== Constant.Navi_Status_Started) {
-                vv = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
-            } else {
-                vv = Utils.findlayoutViewById(amapView, "road_line");
-            }
-            if(vv!=null && vv instanceof ImageView){
-                roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
-                roadLineView.setVisibility(View.VISIBLE);
-            } else {
-                roadLineView.setVisibility(View.INVISIBLE);
-            }
-        }*/
+
        if(roadLineBinder!=null){
            View vv=roadLineBinder.getRoadLineView();
            if(vv!=null){
