@@ -1,16 +1,19 @@
 package com.huivip.gpsspeedwidget.listener;
 
-import android.content.*;
-import android.content.pm.PackageManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.BadParcelableException;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import com.huivip.gpsspeedwidget.service.TextFloatingService;
+
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.lyric.LyricServiceLowVersion;
+import com.huivip.gpsspeedwidget.service.TextFloatingService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 public class MediaNotificationReceiver extends BroadcastReceiver {
@@ -138,11 +141,5 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
                 context.startService(lycServiceLowVersion);
             }
         }
-    }
-
-    public static void disableBroadcastReceiver(Context context) {
-        int flag=(PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
-        ComponentName component=new ComponentName(context.getApplicationContext(), MediaNotificationReceiver.class);
-        context.getPackageManager().setComponentEnabledSetting(component, flag, PackageManager.DONT_KILL_APP);
     }
 }

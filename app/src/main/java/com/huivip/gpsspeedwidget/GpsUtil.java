@@ -68,7 +68,6 @@ public class GpsUtil implements AMapNaviListener {
     private String longitude;
     private float bearing;
     private double altitude=0.0D;
-    private boolean isTurned = false;
     private String velocitaString = null;
     private Integer velocitaNumber;
     public boolean registTimeTickSuccess=false;
@@ -81,7 +80,6 @@ public class GpsUtil implements AMapNaviListener {
     String kmhSpeedStr = "0";
     String velocita_prec = "ciao";
     Integer speedometerPercentage = Integer.valueOf(0);
-    Integer c = Integer.valueOf(0);
     Integer speedAdjust = Integer.valueOf(0);
     String providerId = LocationManager.GPS_PROVIDER;
     boolean gpsEnabled = false;
@@ -127,7 +125,6 @@ public class GpsUtil implements AMapNaviListener {
     int recordLocationDistance=2;
     int catchRoadDistance=10;
     String homeSet;
-    String TmcInfo;
     AlarmManager alarm ;
     boolean isNight=false;
     int locationUpdateCount=0;
@@ -161,7 +158,6 @@ public class GpsUtil implements AMapNaviListener {
     private GpsUtil(Context context) {
         this.context = context;
         Random random = new Random();
-        c = random.nextInt();
         localNumberFormat.setMaximumFractionDigits(1);
         alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         tts = SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
@@ -194,11 +190,10 @@ public class GpsUtil implements AMapNaviListener {
         this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
-                GpsUtil.this.locationHandler.post(new Runnable() {
+                locationHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         checkLocationData();
-                        //Log.d("huivip","GPS UTIL Check Location");
                     }
                 });
             }
@@ -267,26 +262,13 @@ public class GpsUtil implements AMapNaviListener {
         if (aMapNavi != null && aimlessStatred) {
             aMapNavi.stopAimlessMode();
             aMapNavi.removeAMapNaviListener(this);
-            //aMapNavi.destroy();
             aMapNavi = null;
             aimlessStatred = false;
         }
     }
 
-    public String getTmcInfo() {
-        return TmcInfo;
-    }
-
-    public void setTmcInfo(String tmcInfo) {
-        TmcInfo = tmcInfo;
-    }
-
     public boolean isAimlessStatred() {
         return aimlessStatred;
-    }
-
-    public void setAimlessStatred(boolean aimlessStatred) {
-        this.aimlessStatred = aimlessStatred;
     }
 
     public void stopLocationService(boolean stop) {
@@ -519,9 +501,6 @@ public class GpsUtil implements AMapNaviListener {
 
     public boolean isHasLimited() {
         return hasLimited;
-    }
-    public void setLimitDistancePercentage(int limitDistancePercentage){
-        this.limitDistancePercentage=limitDistancePercentage;
     }
     public int getLimitDistancePercentage() {
          if (limitDistance > 0) {
@@ -778,11 +757,6 @@ public class GpsUtil implements AMapNaviListener {
     public void setCameraDistance(int cameraDistance) {
         this.cameraDistance = cameraDistance;
         this.limitDistance = cameraDistance;
-       /* if (limitDistance > 0) {
-            limitDistancePercentage = Math.round((300F - limitDistance) / 300 * 100);
-        } else {
-            limitDistancePercentage = 0;
-        }*/
     }
 
     public int getCameraSpeed() {
@@ -815,29 +789,37 @@ public class GpsUtil implements AMapNaviListener {
         this.nextRoadName = nextRoadName;
     }
 
-    public int getNextRoadDistance() {
-        /*localNumberFormat.setMaximumFractionDigits(1);
+    public String getNextRoadDistance() {
         if (nextRoadDistance > 1000) {
-            return localNumberFormat.format(nextRoadDistance / 1000) + "公里";
+            return nextRoadDistance / 1000 + "公里 后";
         }
-        return localNumberFormat.format(nextRoadDistance) + "米";*/
-        return nextRoadDistance;
+        return nextRoadDistance + "米 后";
     }
 
     public void setNextRoadDistance(int nextRoadDistance) {
         this.nextRoadDistance = nextRoadDistance;
     }
 
-    public int getTotalLeftDistance() {
-        return totalLeftDistance;
+    public String getTotalLeftDistance() {
+        if (totalLeftDistance > 1000) {
+            return totalLeftDistance / 1000 + "公里";
+        } else {
+            return totalLeftDistance + "米";
+        }
     }
 
     public void setTotalLeftDistance(int totalLeftDistance) {
         this.totalLeftDistance = totalLeftDistance;
     }
 
-    public int getTotalLeftTime() {
-        return totalLeftTime;
+    public String getTotalLeftTime() {
+        if (totalLeftTime > 3600) {
+            int hours = totalLeftTime / 3600;
+            int minutes = (totalLeftTime % 3600) / 60;
+            return  hours + "小时" + minutes + "分钟";
+        } else {
+            return totalLeftTime / 60 + "分钟";
+        }
     }
 
     public void setTotalLeftTime(int totalLeftTime) {
@@ -904,15 +886,6 @@ public class GpsUtil implements AMapNaviListener {
         }
         this.autoXunHangStatus=autoXunHangStatus;
     }
-    String speakText = "";
-
-    public boolean isOnDesktop() {
-        return isOnDesktop;
-    }
-
-    public void setOnDesktop(boolean onDesktop) {
-        isOnDesktop = onDesktop;
-    }
 
     @Override
     public void onInitNaviFailure() {
@@ -921,7 +894,6 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void onInitNaviSuccess() {
-        // BDTTS.speak("智能巡航服务开启");
         aimlessStatred = true;
         Toast.makeText(context, "智能巡航服务开启", Toast.LENGTH_SHORT).show();
     }

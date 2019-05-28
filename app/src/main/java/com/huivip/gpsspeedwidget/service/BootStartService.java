@@ -65,7 +65,8 @@ public class BootStartService extends Service {
                             }
                             if (PrefUtils.isGoToHomeAfterAutoLanuch(getApplicationContext())) {
                                 AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
-                                PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
+                                PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                                        new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
                                 alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
                             }
 
@@ -73,19 +74,21 @@ public class BootStartService extends Service {
                     }).start();
                 }
             }
+
             TimeThread timeThread = new TimeThread(null);
             timeThread.setContext(getApplicationContext());
             timeThread.start();
-            PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+            PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                    new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
-                  /*  if (PrefUtils.isFTPAutoBackup(getApplicationContext()) || PrefUtils.isEnableAutoCleanGPSHistory(getApplicationContext())) {
-                        PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                        alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+120000L, autoFtpBackupIntent);
-                    }*/
-            Intent weatcherService = new Intent(getApplicationContext(), WeatherService.class);
-            getApplicationContext().startService(weatcherService);
+
             if (PrefUtils.isPlayTime(getApplicationContext()) || PrefUtils.isPlayWeather(getApplicationContext()) || PrefUtils.isShowAddressWhenStop(getApplicationContext())) {
-                PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                Intent weatcherService = new Intent(getApplicationContext(), WeatherService.class);
+                getApplicationContext().startService(weatcherService);
+
+                PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                        new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
                 alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 60000L, weatherServiceIntent);
             }
             if (PrefUtils.isPlayWarn(getApplicationContext())) {

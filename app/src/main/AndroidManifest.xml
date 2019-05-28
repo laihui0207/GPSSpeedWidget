@@ -273,7 +273,7 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".listener.CatchRoadReceiver"/>
-        <receiver android:name=".listener.WakeUpReceiver"/>
+
         <service android:name=".service.GpsSpeedService"/>
         <service android:name=".widget.LyricWidgetService">
             <intent-filter>

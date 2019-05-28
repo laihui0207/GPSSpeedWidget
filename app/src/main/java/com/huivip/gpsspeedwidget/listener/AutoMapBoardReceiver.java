@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
@@ -148,7 +147,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }
                     break;
                 case 10001:
-                    Log.d("huivip", "Update Navi Info");
                     String currentRoadName = intent.getStringExtra("CUR_ROAD_NAME");
                     if (!TextUtils.isEmpty(currentRoadName)) {
                         gpsUtil.setCurrentRoadName(currentRoadName);
@@ -172,21 +170,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }
                     int nextRoadDistance = intent.getIntExtra("SEG_REMAIN_DIS", -1);
                     if (nextRoadDistance > 0) {
-                       /* localNumberFormat.setMaximumFractionDigits(1);
-                        if (nextRoadDistance > 1000) {
-                            gpsUtil.setNextRoadDistance(localNumberFormat.format(nextRoadDistance * 1.0F / 1000) + "公里");
-                        } else {
-
-                            gpsUtil.setNextRoadDistance(localNumberFormat.format(nextRoadDistance) + "米");
-                        }*/
-                                /*if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context) && PrefUtils.isEnableAutoWidgetFloatingWidow(context) && !gpsUtil.isAutoNavi_on_Frontend()) {
-                                    if (nextRoadDistance < 500) {  // 小于500米时显示高德插件悬浮窗
-                                        startDriveWayFloatingService(context);
-                                    } else {
-                                        stopDriveWayFloatingService(context);
-                                    }
-                                }*/
-                                gpsUtil.setNextRoadDistance(nextRoadDistance);
+                        gpsUtil.setNextRoadDistance(nextRoadDistance);
                     } else {
                         gpsUtil.setNextRoadDistance(0);
                     }
@@ -198,12 +182,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }
                     int leftDistance = intent.getIntExtra("ROUTE_REMAIN_DIS", 0);
                     if (leftDistance > 0) {
-                        /*localNumberFormat.setMaximumFractionDigits(1);
-                        if (leftDistance > 1000) {
-                            gpsUtil.setTotalLeftDistance(localNumberFormat.format(leftDistance * 1.0F / 1000) + "公里");
-                        } else {
-                            gpsUtil.setTotalLeftDistance(localNumberFormat.format(leftDistance) + "米");
-                        }*/
                         gpsUtil.setTotalLeftDistance(leftDistance);
                         if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Ended && gpsUtil.getNaviFloatingStatus() == Constant.Navi_Floating_Disabled) {
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
@@ -215,14 +193,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }
                     int leftTime = intent.getIntExtra("ROUTE_REMAIN_TIME", -1);
                     if (leftTime > 0) {
-                        /*localNumberFormat.setMaximumFractionDigits(0);
-                        if (leftTime > 3600) {
-                            int hours = (int) leftTime / 3600;
-                            int minutes = (int) ((leftTime - hours * 3600) / 60);
-                            gpsUtil.setTotalLeftTime(hours + "小时" + minutes + "分钟");
-                        } else {
-                            gpsUtil.setTotalLeftTime(localNumberFormat.format(leftTime / 60) + "分钟");
-                        }*/
                         gpsUtil.setTotalLeftTime(leftTime);
                     } else {
                         gpsUtil.setTotalLeftTime(0);
@@ -257,7 +227,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 case 13011:
                     String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");
                     if (!TextUtils.isEmpty(info)) {
-                        gpsUtil.setTmcInfo(info);
                         EventBus.getDefault().post(new TMCSegmentEvent(info));
                     }
                     break;
@@ -312,49 +281,25 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
     }
 
     private void startBackendNaviFloatingService(Context context) {
-       // if (PrefUtils.isEnableNaviFloating(context) && !Utils.isServiceRunning(context, NaviFloatingService.class.getName())) {
-            Intent floatService = new Intent(context, NaviFloatingService.class);
-            context.startService(floatService);
-      /*  } else if ((PrefUtils.isEnableAutoWidgetFloatingWidow(context) || PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)) &&
-                Utils.isServiceRunning(context, NaviFloatingService.class.getName())) {
-           // EventBus.getDefault().post(new BackNaviFloatingControlEvent(false));
-        }
-*/
+        Intent floatService = new Intent(context, NaviFloatingService.class);
+        context.startService(floatService);
     }
 
     private void stopBackendNaviFloatingService(Context context, boolean closeIt) {
-        /*if (Utils.isServiceRunning(context, NaviFloatingService.class.getName())) {
-            if (closeIt) {*/
-                Intent floatService = new Intent(context, NaviFloatingService.class);
-                floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
-                context.startService(floatService);
-          /*  } else {
-               // EventBus.getDefault().post(new BackNaviFloatingControlEvent(true));
-            }
-        }*/
+        Intent floatService = new Intent(context, NaviFloatingService.class);
+        floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
+        context.startService(floatService);
     }
 
     private void startDriveWayFloatingService(Context context) {
-       /* if ((PrefUtils.isEnableAutoWidgetFloatingWidow(context) || PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context))
-                && !Utils.isServiceRunning(context, AutoWidgetFloatingService.class.getName())) {*/
-            Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
-            context.startService(autoWidgetFloatingService);
-       /* } else if ((PrefUtils.isEnableAutoWidgetFloatingWidow(context) || PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context))
-                && Utils.isServiceRunning(context, AutoWidgetFloatingService.class.getName())) {
-            EventBus.getDefault().post(new AutoWidgetFloatingControlEvent(false));
-        }*/
+        Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
+        context.startService(autoWidgetFloatingService);
     }
 
     private void stopDriveWayFloatingService(Context context, boolean closeIt) {
-        /*if (Utils.isServiceRunning(context, AutoWidgetFloatingService.class.getName())) {
-            if (closeIt) {*/
-                Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
-                autoWidgetFloatingService.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
-                context.startService(autoWidgetFloatingService);
-          /*  } else {
-                EventBus.getDefault().post(new AutoWidgetFloatingControlEvent(true));
-            }
-        }*/
+        Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
+        autoWidgetFloatingService.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
+        context.startService(autoWidgetFloatingService);
     }
 
     private void launchSpeedFloatingWindows(Context context, boolean enabled) {

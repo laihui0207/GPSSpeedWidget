@@ -19,7 +19,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -48,6 +47,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xutils.x;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -188,18 +188,11 @@ public class NaviFloatingService extends Service {
                         int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
                         int color = ContextCompat.getColor(NaviFloatingService.this, colorRes);
                         speedTextView.setTextColor(color);
-                        if (gpsUtil.getNavi_turn_icon() > 0) {
-                            naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
-                        }
-                        int nextRoadDistance = gpsUtil.getNextRoadDistance();
-                        if (nextRoadDistance > 1000) {
-                            nextRoadDistanceTextView.setText(localNumberFormat.format(nextRoadDistance*1.0f / 1000) + "公里后");
-                            //getNextRoadDistanceUnitTextView.setText("公里后");
-                        } else {
-                            nextRoadDistanceTextView.setText(nextRoadDistance + "米后");
-                            //getNextRoadDistanceUnitTextView.setText("米后");
-                        }
-                        NaviFloatingService.this.checkLocationData();
+
+                        //if(count%10==0) {
+                            NaviFloatingService.this.checkLocationData();
+                       // }
+                       // count++;
                         showRoadLine();
                     }
                 });
@@ -242,19 +235,6 @@ public class NaviFloatingService extends Service {
     }
 
     private void showRoadLine() {
-       /* int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
-        if (id != -1) {
-            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
-            daohangRoadLine = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
-            if (daohangRoadLine != null && daohangRoadLine instanceof ImageView) {
-                roadLineView.setImageDrawable(((ImageView) daohangRoadLine).getDrawable());
-                roadLineView.setVisibility(View.VISIBLE);
-            } else {
-                Log.d("huivip", "Can't get road line image");
-                roadLineView.setVisibility(View.INVISIBLE);
-            }
-        }*/
        if(roadLineBinder!=null){
            View vv=roadLineBinder.getRoadLineView();
            if(vv!=null){
@@ -266,27 +246,15 @@ public class NaviFloatingService extends Service {
        }
     }
 
-   /* @Subscribe(threadMode = ThreadMode.MAIN)
-    public void hideShowNaviFloating(BackNaviFloatingControlEvent event) {
-        if (event.isHide()) {
-            mFloatingView.setVisibility(View.INVISIBLE);
-        } else {
-            mFloatingView.setVisibility(View.VISIBLE);
-        }
-    }*/
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event) {
         String info = event.getInfo();
         if (TextUtils.isEmpty(info)) {
-            Log.d("huivip", "Get segment info is empty");
             return;
-        } else {
-            Log.d("huivip", "segment:" + info);
         }
-      /*  x.task().autoPost(new Runnable() {
+        x.task().autoPost(new Runnable() {
             @Override
-            public void run() {*/
+            public void run() {
                 try {
                     JSONObject tmc = new JSONObject(info);
                     if (tmc != null) {
@@ -312,44 +280,27 @@ public class NaviFloatingService extends Service {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-           /* }
-        });*/
+            }
+        });
     }
 
     public void checkLocationData() {
-
-        navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed() + "");
-
-        navicameraDistanceTextView.setText(gpsUtil.getLimitDistance() + "米");
-        limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
+        if (gpsUtil.getNavi_turn_icon() > 0) {
+            naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
+        }
+        nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
         cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
         if (gpsUtil.getCameraType() != -1) {
+            navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed() + "");
+            navicameraDistanceTextView.setText(gpsUtil.getLimitDistance() + "米");
+            limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
             naviCameraView.setVisibility(View.VISIBLE);
         } else {
             naviCameraView.setVisibility(View.GONE);
         }
         currentRoadTextView.setText(gpsUtil.getCurrentRoadName() + "");
         nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
-
-        String leftTimeString = "";
-        int leftTime = gpsUtil.getTotalLeftTime();
-        if (leftTime > 3600) {
-            int hours = leftTime / 3600;
-            int minutes = (leftTime % 3600) / 60;
-            leftTimeString = hours + "小时" + minutes + "分钟";
-        } else {
-            leftTimeString = leftTime / 60 + "分钟";
-        }
-
-        String leftDistanceString = "";
-        int leftDistance = gpsUtil.getTotalLeftDistance();
-        if (leftDistance > 1000) {
-            leftDistanceString = localNumberFormat.format(leftDistance * 1.0f / 1000) + "公里";
-        } else {
-            leftDistanceString = leftDistance + "米";
-        }
-        naviLeftTextView.setText(leftDistanceString + "/" + leftTimeString);
-        count = 0;
+        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+ "/" + gpsUtil.getTotalLeftTime());
         //EventBus.getDefault().cancelEventDelivery(event);
     }
 
