@@ -717,22 +717,34 @@ public class ConfigurationActivity extends Activity {
                     @Override
                     public void run() {
                         Looper.prepare();
-                        String updateInfo=HttpUtils.getData(Constant.LBSURL+"/updateInfo?type=full");
+                        String updateInfo=HttpUtils.getData(Constant.LBSURL+"/updateInfo?type=full-baidu");
                         try {
                             if(!TextUtils.isEmpty(updateInfo) && !updateInfo.equalsIgnoreCase("-1")) {
                                 String currentVersion=Utils.getLocalVersion(ConfigurationActivity.this);
+                                int currentVersionCode=Utils.getLocalVersionCode(getApplicationContext());
                                 JSONObject infoObj = new JSONObject(updateInfo);
                                 JSONObject data= (JSONObject) infoObj.get("data");
                                 String updateVersion=data.getString("serverVersion");
+                                int updateVersionCode=data.getInt("serverVersionCode");
                                 Log.d("huivip","Current local Version:"+currentVersion+",Update Version:"+updateVersion);
                                 Message message = Message.obtain();
                                 message.obj =updateInfo;
-                                if(currentVersion.equalsIgnoreCase(updateVersion)){
-                                    message.arg1 = 0;
-                                    AlterHandler.handleMessage(message);
+                                if(currentVersionCode!=0 && updateVersionCode!=0){
+                                    if(updateVersionCode>currentVersionCode){
+                                        message.arg1 = 1;
+                                        AlterHandler.handleMessage(message);
+                                    } else {
+                                        message.arg1 = 0;
+                                        AlterHandler.handleMessage(message);
+                                    }
                                 } else {
-                                    message.arg1 = 1;
-                                    AlterHandler.handleMessage(message);
+                                    if (currentVersion.equalsIgnoreCase(updateVersion)) {
+                                        message.arg1 = 0;
+                                        AlterHandler.handleMessage(message);
+                                    } else {
+                                        message.arg1 = 1;
+                                        AlterHandler.handleMessage(message);
+                                    }
                                 }
 
                             }
