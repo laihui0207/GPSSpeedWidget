@@ -7,7 +7,7 @@ android {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 1
+        versionCode 212
         versionName "2.1.2"
         ndk {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
@@ -52,7 +52,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "GPS速度插件_${buildType.name}_v${variant.versionName}_sibichi.apk"
+            outputFileName = "GPS速度插件_${buildType.name}_v${variant.versionName}_${variant.versionCode}_sibichi.apk"
         }
     }
 }
