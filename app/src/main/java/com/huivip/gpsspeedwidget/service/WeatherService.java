@@ -34,7 +34,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xutils.x;
 
 public class WeatherService extends Service implements AMapLocationListener {
     String cityName;
@@ -116,7 +115,7 @@ public class WeatherService extends Service implements AMapLocationListener {
         if(TextUtils.isEmpty(adCode)){
             return;
         }
-        x.task().post(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 String result = HttpUtils.getData(String.format(Constant.LBSSEARCHWEATHER, PrefUtils.getAmapWebKey(getApplicationContext()), adCode));
@@ -145,7 +144,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                     }
                 }
             }
-        });
+        }).start();
     }
     Runnable   runnableUi=new  Runnable(){
         @Override
