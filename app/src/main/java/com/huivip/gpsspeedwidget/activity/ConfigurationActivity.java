@@ -161,7 +161,7 @@ public class ConfigurationActivity extends Activity {
         audidMixCheckBox.setChecked(PrefUtils.isEnableAudioMixService(getApplicationContext()));
         audidMixCheckBox.setEnabled(enableAudioCheckBox.isChecked());
         CheckBox XFEngineCheckBox=findViewById(R.id.checkBox_xftts);
-        XFEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.SIBICHITTS));
+        //XFEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.SIBICHITTS));
         XFEngineCheckBox.setEnabled(enableAudioCheckBox.isChecked());
         CheckBox natviAudioCheckBox=findViewById(R.id.checkBox_natviAudio);
         natviAudioCheckBox.setChecked(SpeechFactory.SDKTTS.equalsIgnoreCase(PrefUtils.getTtsEngine(getApplicationContext())));
@@ -301,21 +301,14 @@ public class ConfigurationActivity extends Activity {
         XFEngineCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String speakText="";
-                if(buttonView.isChecked()){
-                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.SIBICHITTS);
-                    speakText="使用思必驰语音";
-                    natviAudioCheckBox.setChecked(false);
-                }
-                else {
-                    PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.BAIDUTTS);
-                    speakText="使用百度语音";
-                }
-                SeekBar seekBarVolume=findViewById(R.id.seekBar_audioVolume);
-                int volume=seekBarVolume.getProgress();
-                PrefUtils.setAudioVolume(getApplicationContext(),volume);
-                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
-/*                tts.speak(speakText);*/
+                String speakText = "";
+                PrefUtils.setTTSEngineType(getApplicationContext(), SpeechFactory.BAIDUTTS);
+                speakText = "使用百度语音";
+                SeekBar seekBarVolume = findViewById(R.id.seekBar_audioVolume);
+                int volume = seekBarVolume.getProgress();
+                PrefUtils.setAudioVolume(getApplicationContext(), volume);
+                TTS tts = SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+                /*                tts.speak(speakText);*/
                 GpsUtil.getInstance(getApplicationContext()).setTts(tts);
             }
         });

@@ -163,7 +163,7 @@ public abstract class PrefUtils {
         edit(context).putString(TTS_ENGINE, style).apply();
     }
     public static String getTtsEngine(Context context){
-        return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.SIBICHITTS);
+        return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.BAIDUTTS);
     }
     public static String getAmapWebKey(Context context){
         String deviceId=getShortDeviceId(context);

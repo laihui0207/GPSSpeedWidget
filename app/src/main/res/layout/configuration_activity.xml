@@ -182,13 +182,13 @@
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                       android:orientation="horizontal">
             <CheckBox
-                    android:text="开启语音功能(默认百度语音)"
+                    android:text="开启语音播报功能"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/enableAudio"
                     android:checked="false"/>
             <CheckBox
-                    android:text="思必驰语音"
+                    android:text="思必驰语音" android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/checkBox_xftts"/>

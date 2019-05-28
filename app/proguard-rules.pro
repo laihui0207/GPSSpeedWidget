@@ -95,7 +95,6 @@
 #----------------------------------------------------------------------------
 -libraryjars libs/AMap3DMap_6.7.0_AMapNavi_6.6.0_AMapSearch_6.5.0_AMapTrack_1.0.0_AMapLocation_4.4.0_20190214.jar
 -libraryjars libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar
--libraryjars libs/DUI-lite-SDK-for-Android-1.2.1.jar
 -libraryjars libs/kwmusic-autosdk-v2.0.2.jar
 #---------------------------------webview------------------------------------
 -keepclassmembers class fqcn.of.javascript.interface.for.Webview {
@@ -123,37 +122,8 @@
 -keep class com.baidu.speech.**{*;}
 -keep class com.baidu.tts.**{*;}
 -keep class com.baidu.speechsynthesizer.**{*;}
-# ify
--keep class com.iflytek.**{*;}
 #keep Util
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
--keep public class com.aispeech.common.Util{public *;}
--keep public class com.aispeech.common.WavFileWriter{public *;}
--keep public class com.aispeech.common.AITimer{public *;}
--keep public class com.aispeech.common.JSONResultParser{public *;}
--keep public class com.aispeech.common.AIConstant{public *;}
--keep public class com.aispeech.common.FileUtil{public *;}
--keep public class com.aispeech.DUILiteSDK{public *;}
--keep public class com.aispeech.fdm.**{public *;}
--keep public class com.aispeech.echo.**{public *;}
-
--keep class com.aispeech.upload.**{*;}
-
--keepclassmembers class com.aispeech.kernel.**{
-	public static native <methods>;
-}
-
--keep interface com.aispeech.kernel.**$*{
-	public *;
-}
-
--keep class com.aispeech.kernel.**$*{
-	public *;
-}
-
--keep interface com.aispeech.DUILiteSDK$*{
-    public *;
-}
 #---------------------------------------------------------------------------------------------------
 #glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
