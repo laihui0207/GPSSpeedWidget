@@ -35,6 +35,7 @@ import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
+import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
@@ -43,7 +44,6 @@ import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,9 +75,6 @@ public class NaviFloatingService extends Service {
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler updateHandler = new Handler();
-    TimerTask updateLongTask;
-    Timer updateLongTimer = new Timer();
-    final Handler updateLongHandler = new Handler();
     @BindView(R.id.textView_currentroad)
     TextView currentRoadTextView;
     @BindView(R.id.textView_nextroadname)
@@ -102,9 +99,10 @@ public class NaviFloatingService extends Service {
     View naviCameraView;
     @BindView(R.id.imageView_backNavi_roadLine)
     ImageView roadLineView;
-    View daohangRoadLine;
     @BindView(R.id.textView_autonavi_speedText)
     TextView speedTextView;
+    @BindView(R.id.imageView_auto_close)
+    ImageView closeButton;
     @BindView(R.id.segmentView)
     TmcSegmentView tmcSegmentView;
     int count = 0;
@@ -129,6 +127,12 @@ public class NaviFloatingService extends Service {
         }
         count = 0;
         localNumberFormat.setMaximumFractionDigits(1);
+        x.task().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                closeButton.setVisibility(View.INVISIBLE);
+            }
+        },10000L);
         return Service.START_REDELIVER_INTENT;
     }
 
@@ -144,7 +148,6 @@ public class NaviFloatingService extends Service {
 
     @Override
     public void onDestroy() {
-        //unRegisterTMCSegmentBroadcast();
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
@@ -190,7 +193,7 @@ public class NaviFloatingService extends Service {
                         speedTextView.setTextColor(color);
 
                         //if(count%10==0) {
-                            NaviFloatingService.this.checkLocationData();
+                         //   NaviFloatingService.this.checkLocationData();
                        // }
                        // count++;
                         showRoadLine();
@@ -199,19 +202,6 @@ public class NaviFloatingService extends Service {
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-       /* updateLongTask=new TimerTask() {
-            @Override
-            public void run() {
-                updateLongHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        NaviFloatingService.this.checkLocationData();
-                        showRoadLine();
-                    }
-                });
-            }
-        };
-        updateLongTimer.schedule(this.updateLongTask,0,1000L);*/
         mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -246,12 +236,13 @@ public class NaviFloatingService extends Service {
        }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe
     public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event) {
         String info = event.getInfo();
         if (TextUtils.isEmpty(info)) {
             return;
         }
+        List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
         x.task().autoPost(new Runnable() {
             @Override
             public void run() {
@@ -260,7 +251,7 @@ public class NaviFloatingService extends Service {
                     if (tmc != null) {
                         JSONArray segmentArray = tmc.getJSONArray("tmc_info");
 
-                        List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
+
                         if (segmentArray != null && segmentArray.length() > 0) {
                             for (int i = 0; i < segmentArray.length(); i++) {
                                 JSONObject obj = segmentArray.getJSONObject(i);
@@ -273,18 +264,20 @@ public class NaviFloatingService extends Service {
                                 }
                             }
                         }
-                        if (models != null && models.size() > 0) {
-                            tmcSegmentView.setSegments(models);
-                        }
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
+        if (models != null && models.size() > 0) {
+            tmcSegmentView.setSegments(models);
+        }
     }
 
-    public void checkLocationData() {
+    @Subscribe
+    public void checkLocationData(NaviInfoUpdateEvent event) {
         if (gpsUtil.getNavi_turn_icon() > 0) {
             naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
         }
@@ -300,7 +293,10 @@ public class NaviFloatingService extends Service {
         }
         currentRoadTextView.setText(gpsUtil.getCurrentRoadName() + "");
         nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
-        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+ "/" + gpsUtil.getTotalLeftTime());
+        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance() + "/" + gpsUtil.getTotalLeftTime());
+       /* if(gpsUtil.getKmhSpeed()==0){
+            closeButton.setVisibility(View.VISIBLE);
+        }*/
         //EventBus.getDefault().cancelEventDelivery(event);
     }
 
