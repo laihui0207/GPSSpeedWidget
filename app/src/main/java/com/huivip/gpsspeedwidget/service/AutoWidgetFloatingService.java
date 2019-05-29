@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -62,8 +61,6 @@ public class AutoWidgetFloatingService extends Service {
     ImageView closeImage;
     @BindView(R.id.imageView_autoNvi_move)
     ImageView moveImage;
-    @BindView(R.id.imageView_auto_widget_image)
-    ImageView imageView;
     AppWidgetHost appWidgetHost;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
@@ -85,7 +82,6 @@ public class AutoWidgetFloatingService extends Service {
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
-            //showPluginContent();
         }
         return Service.START_REDELIVER_INTENT;
     }
@@ -102,18 +98,10 @@ public class AutoWidgetFloatingService extends Service {
     }
 
     private void showPluginContent() {
-       /* AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
-        if (id != -1) {
-            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
-            driveWayView.removeAllViews();
-            driveWayView.addView(amapView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        }*/
        if(roadLineBinder!=null){
            View view=roadLineBinder.getWidgetView();
+           driveWayView.removeAllViews();
            if(view!=null){
-               driveWayView.removeAllViews();
                driveWayView.addView(view);
            }
        }
@@ -145,7 +133,6 @@ public class AutoWidgetFloatingService extends Service {
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         driveWayView.setOnTouchListener(new FloatingOnTouchListener());
-        // mFloatingView.setOnTouchListener(new FloatingOnTouchListener());
         initMonitorPosition();
         mServiceConnection=new ServiceConnection() {
             @Override
@@ -192,16 +179,6 @@ public class AutoWidgetFloatingService extends Service {
         stopSelf();
     }
 
-  /*  @Subscribe(threadMode = ThreadMode.MAIN)
-    public void hideShowDriveWayFloating(AutoWidgetFloatingControlEvent event) {
-        if (event.isHide()) {
-            mFloatingView.setVisibility(View.INVISIBLE);
-        } else {
-            mFloatingView.setVisibility(View.VISIBLE);
-        }
-
-    }*/
-
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
@@ -226,16 +203,16 @@ public class AutoWidgetFloatingService extends Service {
                 String[] split = PrefUtils.getDriveWayFloatingLocation(getApplicationContext()).split(",");
                 boolean left = Boolean.parseBoolean(split[0]);
                 float yRatio = Float.parseFloat(split[1]);
-                if (PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
+                /*if (PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
                     Point screenSize = new Point();
                     mWindowManager.getDefaultDisplay().getSize(screenSize);
                     params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
                     params.y = (int) (yRatio * screenSize.y + 0.5f);
-                } else {
+                } else {*/
                     String[] xy = PrefUtils.getDriveWayFloatingSolidLocation(getApplicationContext()).split(",");
                     params.x = (int) Float.parseFloat(xy[0]);
                     params.y = (int) Float.parseFloat(xy[1]);
-                }
+               /* }*/
                 try {
                     Log.d("huivip", "Windows height:" + params.height);
                     mWindowManager.updateViewLayout(mFloatingView, params);
