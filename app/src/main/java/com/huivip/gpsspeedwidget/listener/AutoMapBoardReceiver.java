@@ -4,9 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
@@ -220,7 +222,8 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setCameraSpeed(cameraSpeed);
                     }
                     // }
-                    //EventBus.getDefault().post(new NaviInfoUpdateEvent());
+                    Log.d("huivip","udpate navi Info");
+                    EventBus.getDefault().post(new NaviInfoUpdateEvent());
 
 
                     break;
@@ -269,11 +272,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     String iformationJsonString = intent.getStringExtra("EXTRA_ROAD_INFO");
                     //FileUtil.saveLogToFile(iformationJsonString);
                     break;
-            }
-            if (!Utils.isServiceRunning(context, BootStartService.class.getName())) {
-                Intent service = new Intent(context, BootStartService.class);
-                service.putExtra(BootStartService.START_BOOT, true);
-                context.startService(service);
             }
 
         }
