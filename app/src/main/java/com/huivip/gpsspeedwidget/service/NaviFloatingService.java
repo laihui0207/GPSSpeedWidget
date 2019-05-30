@@ -108,6 +108,9 @@ public class NaviFloatingService extends Service {
     int count = 0;
     RoadLineService.RoadLineBinder roadLineBinder;
     private ServiceConnection mServiceConnection;
+    String nextRoadDistance,nextRoadName,currentRoadName;
+    String limitSpeed,limitDistance,limitTypeName,leftTravel;
+    int turnIcon,limitType,limitDistancePercent;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -192,10 +195,31 @@ public class NaviFloatingService extends Service {
                         int color = ContextCompat.getColor(NaviFloatingService.this, colorRes);
                         speedTextView.setTextColor(color);
 
+                        //nextRoadDistance=gpsUtil.getNextRoadDistance();
+                       // currentRoadName=gpsUtil.getCurrentRoadName();
+                       // nextRoadName=gpsUtil.getNextRoadName();
+                       // limitSpeed=gpsUtil.getLimitSpeed().toString();
+                        //limitDistance=gpsUtil.getLimitDistance().toString();
+                        //turnIcon =gpsUtil.getNavi_turn_icon();
+                        //limitType=gpsUtil.getCameraType();
+                        //limitTypeName=gpsUtil.getCameraTypeName();
+                        //limitDistancePercent=gpsUtil.getLimitDistancePercentage();
+                        //leftTravel=gpsUtil.getTotalLeftDistance() + "/" + gpsUtil.getTotalLeftTime();
                         //if(count%10==0) {
                          //   NaviFloatingService.this.checkLocationData();
                        // }
                        // count++;
+                        currentRoadTextView.setText(gpsUtil.getCurrentRoadName());
+                        nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
+                        if(gpsUtil.getCameraType() != -1){
+                            navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed()+"");
+                            navicameraDistanceTextView.setText(gpsUtil.getLimitDistance()+"米");
+                            limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
+                            cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
+                            naviCameraView.setVisibility(View.VISIBLE);
+                        } else {
+                            naviCameraView.setVisibility(View.INVISIBLE);
+                        }
                         showRoadLine();
                     }
                 });
@@ -216,6 +240,35 @@ public class NaviFloatingService extends Service {
         getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
+    }
+    @Subscribe
+    public void checkLocationData(NaviInfoUpdateEvent event) {
+        if(turnIcon >0){
+            naveIconImageView.setImageResource(getTurnIcon(turnIcon));
+        }
+        nextRoadDistanceTextView.setText(nextRoadDistance);
+
+        //naviLeftTextView.setText(leftTravel);
+        if (gpsUtil.getNavi_turn_icon() > 0) {
+            naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
+        }
+        nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
+        //cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
+       /* if (gpsUtil.getCameraType() != -1) {
+            navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed() + "");
+            navicameraDistanceTextView.setText(gpsUtil.getLimitDistance() + "米");
+            limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
+            naviCameraView.setVisibility(View.VISIBLE);
+        } else {
+            naviCameraView.setVisibility(View.GONE);
+        }
+        currentRoadTextView.setText(gpsUtil.getCurrentRoadName() + "");
+        nextRoadNameTextView.setText(gpsUtil.getNextRoadName());*/
+        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance() + "/" + gpsUtil.getTotalLeftTime());
+       /* if(gpsUtil.getKmhSpeed()==0){
+            closeButton.setVisibility(View.VISIBLE);
+        }*/
+        //EventBus.getDefault().cancelEventDelivery(event);
     }
 
     @OnClick(value = R.id.imageView_auto_close)
@@ -276,29 +329,6 @@ public class NaviFloatingService extends Service {
         }
     }
 
-    @Subscribe
-    public void checkLocationData(NaviInfoUpdateEvent event) {
-        if (gpsUtil.getNavi_turn_icon() > 0) {
-            naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
-        }
-        nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
-        cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
-        if (gpsUtil.getCameraType() != -1) {
-            navicameraSpeedTextView.setText(gpsUtil.getLimitSpeed() + "");
-            navicameraDistanceTextView.setText(gpsUtil.getLimitDistance() + "米");
-            limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
-            naviCameraView.setVisibility(View.VISIBLE);
-        } else {
-            naviCameraView.setVisibility(View.GONE);
-        }
-        currentRoadTextView.setText(gpsUtil.getCurrentRoadName() + "");
-        nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
-        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance() + "/" + gpsUtil.getTotalLeftTime());
-       /* if(gpsUtil.getKmhSpeed()==0){
-            closeButton.setVisibility(View.VISIBLE);
-        }*/
-        //EventBus.getDefault().cancelEventDelivery(event);
-    }
 
     private int getWindowType() {
         return WindowManager.LayoutParams.TYPE_SYSTEM_ALERT | WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
