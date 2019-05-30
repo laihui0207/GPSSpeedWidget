@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget.activity;
 import android.app.Activity;
 import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -16,18 +17,26 @@ import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.RemoteController;
-import android.os.*;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.ToastUtil;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.LrcView;
 
 import java.util.List;
@@ -280,10 +289,21 @@ public class AudioTestActivity extends Activity {
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int widgetId = appWidgetHost.allocateAppWidgetId();
+                /*int widgetId = appWidgetHost.allocateAppWidgetId();
                 Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
                 pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-                startActivityForResult(pickIntent, REQUEST_SELECT_AMAP_PLUGIN);
+                startActivityForResult(pickIntent, REQUEST_SELECT_AMAP_PLUGIN);*/
+                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+                for(int id=0;id<500;id++) {
+                    AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+                    final View amapView = appWidgetHost.createView(getApplicationContext(), id, popupWidgetInfo);
+                    View vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
+                    if(vv!=null && vv instanceof ImageView){
+                        Toast.makeText(getApplicationContext(), "find widget:"+id, Toast.LENGTH_LONG).show();
+                        PrefUtils.setSelectAmapPluginId(getApplicationContext(),id);
+                        break;
+                    }
+                }
          /*       DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String time = formatter.format(new Date());
                 Intent sinpIntent = new Intent();

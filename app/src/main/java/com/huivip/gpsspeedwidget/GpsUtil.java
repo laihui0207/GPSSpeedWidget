@@ -41,9 +41,9 @@ import com.amap.api.navi.model.AimLessModeStat;
 import com.amap.api.navi.model.NaviInfo;
 import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
-import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
+import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
@@ -51,6 +51,8 @@ import com.huivip.gpsspeedwidget.utils.CycleQueue;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Random;
@@ -129,6 +131,7 @@ public class GpsUtil implements AMapNaviListener {
     boolean isNight=false;
     int locationUpdateCount=0;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
+    DecimalFormat decimalFormat=new DecimalFormat("0.0");
     LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location paramAnonymousLocation) {
@@ -503,7 +506,7 @@ public class GpsUtil implements AMapNaviListener {
         return hasLimited;
     }
     public int getLimitDistancePercentage() {
-         if (limitDistance > 0) {
+         if (limitDistance <300 && limitDistance>0) {
             limitDistancePercentage = Math.round((300F - limitDistance) / 300 * 100);
         } else {
             limitDistancePercentage = 0;
@@ -789,9 +792,12 @@ public class GpsUtil implements AMapNaviListener {
         this.nextRoadName = nextRoadName;
     }
 
+    BigDecimal km=new BigDecimal(1000);
     public String getNextRoadDistance() {
         if (nextRoadDistance > 1000) {
-            return nextRoadDistance / 1000 + "公里 后";
+            //BigDecimal bd=new BigDecimal(nextRoadDistance);
+            //return bd.divide(km,1, RoundingMode.HALF_UP) + "公里 后";
+            return decimalFormat.format((float)nextRoadDistance/1000)+ "公里 后";
         }
         return nextRoadDistance + "米 后";
     }
@@ -802,7 +808,7 @@ public class GpsUtil implements AMapNaviListener {
 
     public String getTotalLeftDistance() {
         if (totalLeftDistance > 1000) {
-            return totalLeftDistance / 1000 + "公里";
+            return decimalFormat.format(totalLeftDistance >> 10) + "公里";
         } else {
             return totalLeftDistance + "米";
         }
@@ -813,12 +819,13 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     public String getTotalLeftTime() {
+        StringBuffer sb=new StringBuffer();
         if (totalLeftTime > 3600) {
-            int hours = totalLeftTime / 3600;
-            int minutes = (totalLeftTime % 3600) / 60;
-            return  hours + "小时" + minutes + "分钟";
+            sb.append(totalLeftTime / 3600).append("小时");
+             sb.append((totalLeftTime % 3600) / 60).append("分钟");
+            return  sb.toString();
         } else {
-            return totalLeftTime / 60 + "分钟";
+            return sb.append(totalLeftTime / 60).append("分钟").toString();
         }
     }
 
