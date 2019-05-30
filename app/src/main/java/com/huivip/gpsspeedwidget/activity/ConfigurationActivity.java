@@ -223,10 +223,31 @@ public class ConfigurationActivity extends Activity {
         selectAMAP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int widgetId = appWidgetHost.allocateAppWidgetId();
-                Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
-                pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-                startActivityForResult(pickIntent, Constant.SELECT_AMAP_PLUGIN_REQUEST_CODE);
+                try {
+                    int widgetId = appWidgetHost.allocateAppWidgetId();
+                    Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
+                    pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+                    startActivityForResult(pickIntent, Constant.SELECT_AMAP_PLUGIN_REQUEST_CODE);
+                } catch (ActivityNotFoundException e){
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+                    for(int id=0;id<500;id++) {
+                        AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+                        final View amapView = appWidgetHost.createView(getApplicationContext(), id, popupWidgetInfo);
+                        View vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
+                        if(vv!=null && vv instanceof ImageView){
+                            Toast.makeText(getApplicationContext(), "已选择高德插件:"+id, Toast.LENGTH_LONG).show();
+                            PrefUtils.setSelectAmapPluginId(getApplicationContext(),id);
+                            break;
+                        }
+                    }
+                    TextView selectedAMAPPlugin=findViewById(R.id.textView_AMAPPluginId);
+                    int selectedPluginId=  PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+                    if(selectedPluginId!=-1){
+                        selectedAMAPPlugin.setText("已选择高德插件id:"+selectedPluginId);
+                    } else {
+                        selectedAMAPPlugin.setText("未选择高德插件");
+                    }
+                }
             }
         });
         CheckBox naviTrackServiceCheckbox=findViewById(R.id.checkBox_naviTrack);
@@ -459,6 +480,7 @@ public class ConfigurationActivity extends Activity {
             }
         });
         CheckBox autoWidgetFloatingCheckBox=findViewById(R.id.checkBox_Auto_widget_floating);
+        autoWidgetFloatingCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
         autoWidgetFloatingCheckBox.setChecked(PrefUtils.isEnableAutoWidgetFloatingWidow(getApplicationContext()));
         autoWidgetFloatingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -466,9 +488,10 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableAutoWidgetFloatingWidow(getApplicationContext(),buttonView.isChecked());
             }
         });
-        CheckBox xunhangWidgetFloatingCheckBox=findViewById(R.id.checkBox_Auto_widget_floating_only);
-        xunhangWidgetFloatingCheckBox.setChecked(PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(getApplicationContext()));
-        xunhangWidgetFloatingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        CheckBox onlyShowAutoWidgetOnTurnCheckBox=findViewById(R.id.checkBox_Auto_widget_floating_only);
+        onlyShowAutoWidgetOnTurnCheckBox.setChecked(PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(getApplicationContext()));
+        onlyShowAutoWidgetOnTurnCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        onlyShowAutoWidgetOnTurnCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setEnableAutoWidgetFloatingWidowOnlyTurn(getApplicationContext(),buttonView.isChecked());
@@ -962,6 +985,7 @@ public class ConfigurationActivity extends Activity {
             }
         });
         CheckBox roadLineCheckBox=findViewById(R.id.checkBox_roadLine);
+        roadLineCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
         roadLineCheckBox.setChecked(PrefUtils.isEnableRoadLineFloating(getApplicationContext()));
         roadLineCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -977,6 +1001,7 @@ public class ConfigurationActivity extends Activity {
             }
         });
         CheckBox roadLineFloatingFixedCheckBox=findViewById(R.id.roadline_fixed);
+        roadLineFloatingFixedCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
         roadLineFloatingFixedCheckBox.setChecked(PrefUtils.isEnableRoadLineFloatingFixed(getApplicationContext()));
         roadLineFloatingFixedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -1120,6 +1145,13 @@ public class ConfigurationActivity extends Activity {
                 default:
                     break;
             }
+            TextView selectedAMAPPlugin=findViewById(R.id.textView_AMAPPluginId);
+            int selectedPluginId=  PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+            if(selectedPluginId!=-1){
+                selectedAMAPPlugin.setText("已选择高德插件id:"+selectedPluginId);
+            } else {
+                selectedAMAPPlugin.setText("未选择高德插件");
+            }
         }
     }
     @Override
@@ -1128,7 +1160,9 @@ public class ConfigurationActivity extends Activity {
         TextView selectedAMAPPlugin=findViewById(R.id.textView_AMAPPluginId);
         int selectedPluginId=  PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
         if(selectedPluginId!=-1){
-            selectedAMAPPlugin.setText("id:"+selectedPluginId);
+            selectedAMAPPlugin.setText("已选择高德插件id:"+selectedPluginId);
+        } else {
+            selectedAMAPPlugin.setText("未选择高德插件");
         }
         if (hasFocus) {
             invalidateStates();
@@ -1172,7 +1206,14 @@ public class ConfigurationActivity extends Activity {
         CheckBox autoLaunchHotSpotCheckBox=findViewById(R.id.checkBox_autoWifi);
         autoLaunchHotSpotCheckBox.setEnabled(WifiUtils.checkMobileAvalible(getApplicationContext()));
         autoLaunchHotSpotCheckBox.setChecked(PrefUtils.isAutoLauchHotSpot(getApplicationContext()));
-
+        CheckBox roadLineCheckBox=findViewById(R.id.checkBox_roadLine);
+        roadLineCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        CheckBox roadLineFloatingFixedCheckBox=findViewById(R.id.roadline_fixed);
+        roadLineFloatingFixedCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        CheckBox autoWidgetFloatingCheckBox=findViewById(R.id.checkBox_Auto_widget_floating);
+        autoWidgetFloatingCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        CheckBox onlyShowAutoWidgetOnTurnCheckBox=findViewById(R.id.checkBox_Auto_widget_floating_only);
+        onlyShowAutoWidgetOnTurnCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
         //mAppList
         String selectApps = PrefUtils.getAutoLaunchAppsName(getApplicationContext());
         /*if (mAppList != null && mAppList.size() > 0) {
