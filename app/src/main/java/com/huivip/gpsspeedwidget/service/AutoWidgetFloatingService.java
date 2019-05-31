@@ -100,7 +100,9 @@ public class AutoWidgetFloatingService extends Service {
     private void showPluginContent() {
        if(roadLineBinder!=null){
            View view=roadLineBinder.getWidgetView();
-           driveWayView.removeAllViews();
+           if(driveWayView.getChildCount()>0) {
+               driveWayView.removeAllViews();
+           }
            if(view!=null){
                driveWayView.addView(view);
            }
