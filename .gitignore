@@ -9,3 +9,4 @@
 .externalNativeBuild
 app/proguardMapping.txt
 .idea
+/app/proguardMapping.txt
