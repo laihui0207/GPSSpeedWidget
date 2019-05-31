@@ -4,6 +4,9 @@
               android:layout_height="wrap_content" >
         <LinearLayout android:layout_width="400dp" android:id="@+id/autoDriveWayView"
                                              android:layout_height="match_parent" android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/imageView_auto_widget_image"/>
         </LinearLayout>
         <ImageView android:layout_width="30dp" android:layout_height="30dp"
         android:id="@+id/imageView_autoNvi_close" android:src="@drawable/widget_close" android:layout_gravity="top|right"/>

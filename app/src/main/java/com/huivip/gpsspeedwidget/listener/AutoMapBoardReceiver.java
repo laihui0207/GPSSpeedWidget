@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
@@ -72,8 +73,8 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             }
                             //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                             break;
-                        case 24:  // xun hang started
-                            break;
+                        /*case 24:  // xun hang started
+                            break;*/
                         case 8: // start navi
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
                             PrefUtils.setEnableTempAudioService(context, false);
@@ -123,18 +124,18 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Disabled);
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                             break;
-                        case 13:  // TTS speaking start
-                       /* if (PrefUtils.isEnableAutoMute(context)) {
+                     /*   case 13:  // TTS speaking start
+                       *//* if (PrefUtils.isEnableAutoMute(context)) {
                             PrefUtils.setEnableTempAudioService(context,false);
-                        }*/
+                        }*//*
                             //Toast.makeText(context,"speaking",Toast.LENGTH_SHORT).show();
                             break;
                         case 14:  // TTS Speak End
-                        /*if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) {
+                        *//*if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) {
                             PrefUtils.setEnableTempAudioService(context, true);
-                        }*/
+                        }*//*
                             //Toast.makeText(context,"speaking End",Toast.LENGTH_SHORT).show();
-                            break;
+                            break;*/
                         case 37:
                             gpsUtil.setNight(false);
                             break;
@@ -217,7 +218,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             gpsUtil.setCameraSpeed(cameraSpeed);
                         }
                     //}
-                    //EventBus.getDefault().post(new NaviInfoUpdateEvent());
+                    EventBus.getDefault().post(new NaviInfoUpdateEvent());
                     break;
                 case 13011:
                     String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");
@@ -260,12 +261,17 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }
                     break;
 
-                case 10056:
+              /*  case 10056:
                     // 增加目地播报
                     String iformationJsonString = intent.getStringExtra("EXTRA_ROAD_INFO");
                     //FileUtil.saveLogToFile(iformationJsonString);
-                    break;
+                    break;*/
             }
+         /*   if (!Utils.isServiceRunning(context, BootStartService.class.getName())) {
+                Intent service = new Intent(context, BootStartService.class);
+                service.putExtra(BootStartService.START_BOOT, true);
+                context.startService(service);
+            }*/
 
         }
 
