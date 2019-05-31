@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -104,6 +105,9 @@ public class AutoWidgetFloatingService extends Service {
                driveWayView.removeAllViews();
            }
            if(view!=null){
+               if(view.getParent()!=null) {
+                   ((ViewGroup) view.getParent()).removeView(view);
+               }
                driveWayView.addView(view);
            }
        }

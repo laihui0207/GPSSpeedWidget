@@ -34,13 +34,23 @@ import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
+import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.x;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -92,8 +102,8 @@ public class NaviFloatingService extends Service {
     TextView speedTextView;
     @BindView(R.id.imageView_auto_close)
     ImageView closeButton;
-   /* @BindView(R.id.segmentView)
-    TmcSegmentView tmcSegmentView;*/
+    @BindView(R.id.segmentView)
+    TmcSegmentView tmcSegmentView;
     int count = 0;
     RoadLineService.RoadLineBinder roadLineBinder;
     private ServiceConnection mServiceConnection;
@@ -140,9 +150,9 @@ public class NaviFloatingService extends Service {
 
     @Override
     public void onDestroy() {
-        /*if (EventBus.getDefault().isRegistered(this)) {
+        if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
-        }*/
+        }
         super.onDestroy();
     }
 
@@ -172,7 +182,7 @@ public class NaviFloatingService extends Service {
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener(new FloatingOnTouchListener());
         initMonitorPosition();
-       // EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
         this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
@@ -180,13 +190,13 @@ public class NaviFloatingService extends Service {
                     @Override
                     public void run()
                     {
-                        NaviFloatingService.this.checkLocationData();
+                       // NaviFloatingService.this.checkLocationData();
                         //Log.d("huivip","Float Service Check Location");
                     }
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        //this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         /*mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -202,8 +212,8 @@ public class NaviFloatingService extends Service {
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
-
-    void checkLocationData() {
+    @Subscribe
+    public void checkLocationData(NaviInfoUpdateEvent event) {
         if(!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
             currentRoadTextView.setText(gpsUtil.getCurrentRoadName()+"");
         }
@@ -259,7 +269,7 @@ public class NaviFloatingService extends Service {
        }
     }*/
 
-    /*@Subscribe
+    @Subscribe
     public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event) {
         String info = event.getInfo();
         if (TextUtils.isEmpty(info)) {
@@ -297,7 +307,7 @@ public class NaviFloatingService extends Service {
         if (models != null && models.size() > 0) {
             tmcSegmentView.setSegments(models);
         }
-    }*/
+    }
 
 
     private int getWindowType() {
