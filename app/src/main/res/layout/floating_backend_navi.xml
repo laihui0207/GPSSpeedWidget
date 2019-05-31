@@ -11,10 +11,9 @@
         android:background="@drawable/navi_floating_border"
         android:orientation="horizontal">
 
-        <FrameLayout
+        <LinearLayout android:orientation="vertical"
             android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left">
+            android:layout_height="match_parent" >
 
             <ImageView
                 android:id="@+id/imageView_turnicon"
@@ -32,7 +31,7 @@
                 android:text="翡翠路"
                 android:textColor="#fff"
                 android:textSize="25dp" />
-        </FrameLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,7 +43,7 @@
                 android:layout_height="wrap_content" >
 
                 <LinearLayout
-                    android:layout_width="125dp"
+                    android:layout_width="match_parent"
                     android:layout_height="120dp" android:layout_gravity="left"
                     android:orientation="vertical">
 
@@ -116,7 +115,7 @@
 
                 <FrameLayout
                     android:id="@+id/navi_limit_view"
-                    android:layout_width="120dp" android:layout_marginRight="10dp"
+                    android:layout_width="120dp"
                     android:layout_height="120dp" android:layout_gravity="right"
                     android:orientation="vertical">
 
@@ -180,22 +179,22 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <TextView
+               <!-- <TextView
                     android:id="@+id/textView9"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left|center_vertical"
-                    android:text="剩余："
+                    android:text="剩余：" android:visibility="gone"
                     android:textColor="#fff"
-                    android:textSize="13dp" />
+                    android:textSize="13dp" />-->
 
                 <TextView
                     android:id="@+id/textView_totalleft"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="left|center_vertical"
+                    android:gravity="center"
                     android:singleLine="true"
                     android:text="320公里-3小时29分钟"
                     android:textColor="#fff"
