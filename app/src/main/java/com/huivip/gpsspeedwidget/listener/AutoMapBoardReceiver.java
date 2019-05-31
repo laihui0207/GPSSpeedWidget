@@ -4,11 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
-import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
@@ -20,10 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.NumberFormat;
-
 public class AutoMapBoardReceiver extends BroadcastReceiver {
-    NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -205,27 +200,24 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setCameraType(9999);
                     }
                     //if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
-                    int cameraType = intent.getIntExtra("CAMERA_TYPE", -1);
-                    if (cameraType > -1) {
-                        gpsUtil.setCameraType(cameraType);
-                    } else {
-                        gpsUtil.setCameraType(-1);
-                    }
-                    int cameraDistance = intent.getIntExtra("CAMERA_DIST", 0);
-                    if (cameraDistance > 0) {
-                        gpsUtil.setCameraDistance(cameraDistance);
-                    } else {
-                        gpsUtil.setCameraDistance(0);
-                    }
-                    int cameraSpeed = intent.getIntExtra("CAMERA_SPEED", 0);
-                    if (cameraSpeed > 0) {
-                        gpsUtil.setCameraSpeed(cameraSpeed);
-                    }
-                    // }
-                    Log.d("huivip","udpate navi Info");
-                    EventBus.getDefault().post(new NaviInfoUpdateEvent());
-
-
+                        int cameraType = intent.getIntExtra("CAMERA_TYPE", -1);
+                        if (cameraType > -1) {
+                            gpsUtil.setCameraType(cameraType);
+                        } else {
+                            gpsUtil.setCameraType(-1);
+                        }
+                        int cameraDistance = intent.getIntExtra("CAMERA_DIST", 0);
+                        if (cameraDistance > 0) {
+                            gpsUtil.setCameraDistance(cameraDistance);
+                        } else {
+                            gpsUtil.setCameraDistance(0);
+                        }
+                        int cameraSpeed = intent.getIntExtra("CAMERA_SPEED", 0);
+                        if (cameraSpeed > 0) {
+                            gpsUtil.setCameraSpeed(cameraSpeed);
+                        }
+                    //}
+                    //EventBus.getDefault().post(new NaviInfoUpdateEvent());
                     break;
                 case 13011:
                     String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");
@@ -269,6 +261,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     break;
 
                 case 10056:
+                    // 增加目地播报
                     String iformationJsonString = intent.getStringExtra("EXTRA_ROAD_INFO");
                     //FileUtil.saveLogToFile(iformationJsonString);
                     break;

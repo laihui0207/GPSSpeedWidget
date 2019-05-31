@@ -797,9 +797,10 @@ public class GpsUtil implements AMapNaviListener {
         if (nextRoadDistance > 1000) {
             //BigDecimal bd=new BigDecimal(nextRoadDistance);
             //return bd.divide(km,1, RoundingMode.HALF_UP) + "公里 后";
-            return decimalFormat.format((float)nextRoadDistance/1000)+ "公里 后";
+            return decimalFormat.format((float)nextRoadDistance/1000)+ "km后";
+           // return new BigDecimal((double)nextRoadDistance / 1000).setScale(1, BigDecimal.ROUND_HALF_DOWN).doubleValue() + "km后";
         }
-        return nextRoadDistance + "米 后";
+        return nextRoadDistance + "m后";
     }
 
     public void setNextRoadDistance(int nextRoadDistance) {
@@ -808,7 +809,7 @@ public class GpsUtil implements AMapNaviListener {
 
     public String getTotalLeftDistance() {
         if (totalLeftDistance > 1000) {
-            return decimalFormat.format(totalLeftDistance >> 10) + "公里";
+            return decimalFormat.format(totalLeftDistance >> 10) + "KM";
         } else {
             return totalLeftDistance + "米";
         }
