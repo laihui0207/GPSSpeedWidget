@@ -11,6 +11,9 @@ import com.huivip.gpsspeedwidget.service.NaviFloatingService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class AutoMapBoardReceiver extends BroadcastReceiver {
 
     @Override
@@ -116,8 +119,26 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 }
             }
             if(key==13012){  // drive way information,but Just support pre-install version
-                String wayInfo=intent.getStringExtra("EXTRA_DRIVE_WAY");
-                //Toast.makeText(context,wayInfo,Toast.LENGTH_SHORT).show();
+                String wayInfo = intent.getStringExtra("EXTRA_DRIVE_WAY");
+                try {
+                    JSONObject object = new JSONObject(wayInfo);
+                    if (object.getBoolean("drive_way_enabled")) {
+                        if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)
+                                && PrefUtils.isEnableAutoWidgetFloatingWidow(context)
+                                && !gpsUtil.isAutoNavi_on_Frontend()) {
+                            startDriveWayFloatingService(context);
+                        }
+                        //EventBus.getDefault().post(new DriveWayEvent(true));
+                    } else {
+                        if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)
+                                && PrefUtils.isEnableAutoWidgetFloatingWidow(context)) {
+                            stopDriveWayFloatingService(context);
+                        }
+                        //EventBus.getDefault().post(new DriveWayEvent(false));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
             if(key==10056){  // current navi path information
                 String iformationJsonString=intent.getStringExtra("EXTRA_ROAD_INFO");

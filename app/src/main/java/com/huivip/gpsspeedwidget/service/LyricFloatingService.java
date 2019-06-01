@@ -1,7 +1,9 @@
 package com.huivip.gpsspeedwidget.service;
 
 import android.app.Service;
-import android.content.*;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -11,19 +13,32 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.LrcView;
 
+import org.xutils.x;
+
 import java.util.Timer;
 import java.util.TimerTask;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import cn.kuwo.autosdk.api.KWAPI;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -34,6 +49,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 public class LyricFloatingService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     public static final String EXTRA_HIDE="com.huivip.gpsspeed.EXTRA_HIDE";
+    public static final String EXTRA_FIXED="com.huivip.gpsspeed.EXTRA_FIXED";
     public static final String EXTRA_SHOW="com.huivip.gpsspeed.EXTRA_SHOW";
     public static final String UPDATE_LYRICS_ACTION="GPSWIDGET_UPDATE_LYRICS";
     public static final String CLICKED_FLOATING_ACTION = "clicked_action";
@@ -51,13 +67,22 @@ public class LyricFloatingService extends Service{
     long startTime;
     AudioManager audioManager;
     String lyrcContent;
+    String songName;
+    String artistName;
     TimerTask lyricTask;
     long duration=0;
     Timer lyricTimer;
+    boolean isKuwoPlayer;
     final Handler lyricHandler = new Handler();
     boolean isShowing=false;
     @BindView(R.id.lrc_floatting_view)
     LrcView lrcView;
+    KWAPI mKwapi;
+    @BindView(R.id.lyric_control)
+    View controlView;
+    @BindView(R.id.layout_lyric)
+    ViewGroup lyricView;
+    WindowManager.LayoutParams params;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -77,10 +102,17 @@ public class LyricFloatingService extends Service{
             long position=intent.getLongExtra(POSITION,0L);
             Log.d("huivip","Floating Position:"+position);
             duration=intent.getLongExtra(DURATION,-1L);
+            songName=intent.getStringExtra(SONGNAME);
+            artistName=intent.getStringExtra(ARTIST);
             startTime=System.currentTimeMillis()-position-1000;
             lrcView.setLrc(lyrcContent);
             lrcView.init();
             isShowing = true;
+            if(!PrefUtils.isEnableLyricFloatingFixed(getApplicationContext())) {
+                hideControlView();
+            } else {
+                controlView.setVisibility(View.INVISIBLE);
+            }
 
         }
         this.lyricTask = new TimerTask() {
@@ -100,6 +132,10 @@ public class LyricFloatingService extends Service{
 
     private void calTime() {
         long position = System.currentTimeMillis() - startTime;
+       /* if(isKuwoPlayer){
+            position = mKwapi.getCurrentPos();
+            Log.d("huivip","Get current position:"+position);
+        }*/
         lrcView.setPlayercurrentMillis((int) position);
         if (duration > 0 && (position + 1000) >= duration) {
             onStop();
@@ -120,9 +156,40 @@ public class LyricFloatingService extends Service{
         }
         isShowing=false;
     }
+    @OnClick(value = {R.id.imageView_lyrc_floating_close,R.id.imageView_lyrc_floating_fixed,R.id.imageView_lyrc_floating_delete})
+    public void closeFloating(View view){
+        switch (view.getId()){
+            case R.id.imageView_lyrc_floating_close:
+                onStop();
+                stopSelf();
+                break;
+            case R.id.imageView_lyrc_floating_fixed:
+                params.flags=WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+                mFloatingView.setLayoutParams(params);
+                controlView.setVisibility(View.INVISIBLE);
+                mWindowManager.updateViewLayout(mFloatingView, params);
+                PrefUtils.setEnableLyricFloatingFixed(getApplicationContext(),true);
+                break;
+            case R.id.imageView_lyrc_floating_delete:
+                FileUtil.deleteLric(getApplicationContext(),songName,artistName);
+                break;
+        }
+    }
     public static void sendIntent(Context context, Intent intent) {
         context.sendBroadcast(intent);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        /*if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }*/
+    }
+   /* @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void switchKuWoPlayer(KuWoMusiceEvent event){
+        isKuwoPlayer = event.getStatus() == 1;
+    }*/
     @Override
     public void onCreate() {
         if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
@@ -138,11 +205,15 @@ public class LyricFloatingService extends Service{
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_lyrc_window, null);
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+        int flag= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        if(PrefUtils.isEnableLyricFloatingFixed(getApplicationContext())){
+            flag=flag | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+        }
+        params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 getWindowType(),
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                flag,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.START;
         params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
@@ -152,6 +223,9 @@ public class LyricFloatingService extends Service{
         initMonitorPosition();
         CrashHandler.getInstance().init(getApplicationContext());
         lyricTimer = new Timer();
+       // EventBus.getDefault().register(this);
+        mKwapi = KWAPI.getKWAPI();
+       // changeViewSize(lyricView,1024,600);
         super.onCreate();
     }
 
@@ -235,10 +309,20 @@ public class LyricFloatingService extends Service{
                     }
                     return true;
                 case MotionEvent.ACTION_UP:
+                    controlView.setVisibility(View.VISIBLE);
+                    hideControlView();
                     PrefUtils.setLyrcFloatingSolidLocation(getApplicationContext(), params.x, params.y);
                     return true;
             }
             return false;
         }
+    }
+    private void hideControlView(){
+        x.task().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                controlView.setVisibility(View.INVISIBLE);
+            }
+        }, 5000);
     }
 }

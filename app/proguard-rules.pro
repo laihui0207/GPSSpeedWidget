@@ -25,14 +25,12 @@
 #-renamesourcefileattribute SourceFile
 #-------------------------------------------基本不用动区域--------------------------------------------
 #---------------------------------基本指令区----------------------------------
--optimizationpasses 5
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
 -dontskipnonpubliclibraryclassmembers
 -dontpreverify
 -verbose
 -printmapping proguardMapping.txt
--optimizations !code/simplification/cast,!field/*,!class/merging/*
 -keepattributes *Annotation*,InnerClasses
 -keepattributes Signature
 -keepattributes SourceFile,LineNumberTable
@@ -51,6 +49,8 @@
 -keep class android.support.** {*;}
 -keep class com.autonavi.** {*;}
 -keep class com.baidu.** {*;}
+-dontwarn okhttp3.**
+-dontwarn okio.**
 -keepclasseswithmembernames class * {
     native <methods>;
 }
@@ -93,10 +93,8 @@
     void *(**On*Event);
 }
 #----------------------------------------------------------------------------
--libraryjars libs/AMap3DMap_6.2.0_AMapNavi_6.1.0_AMapSearch_6.1.0_AMapLocation_4.0.1_20180427.jar
--libraryjars libs/com.baidu.tts_2.3.1.20170808_e39ea89.jar
--libraryjars libs/Msc.jar
--libraryjars libs/Sunflower.jar
+-libraryjars libs/AMapTrack_1.0.0_AMapLocation_4.2.0_20180809.jar
+-libraryjars libs/kwmusic-autosdk-v2.0.2.jar
 #---------------------------------webview------------------------------------
 -keepclassmembers class fqcn.of.javascript.interface.for.Webview {
    public *;
@@ -132,12 +130,20 @@
 -keep public class com.huivip.gpsspeedwidget.GPSUtil.AutoNaviListener.** { *;}
 -keep public class devlight.io.** { *;}
 -keep public class com.github.bumptech.glide.** { *;}
--keep public class com.jakewharton:butterknif.** { *;}
 -keep public class com.jakewharton.** { *;}
 -keep public class io.reactivex.** { *;}
 -keep public class com.github.pluscubed.** { *;}
--keep public class com.jakewharton:butterknife-compiler.** { *;}
 -keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
   **[] $VALUES;
   public *;
+}
+##---------------EventBus-------------------------------
+-keepclassmembers class * {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+
+# Only required if you use AsyncExecutor
+-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
+    <init>(java.lang.Throwable);
 }
