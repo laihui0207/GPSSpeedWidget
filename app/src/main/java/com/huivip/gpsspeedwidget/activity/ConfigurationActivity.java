@@ -2,14 +2,25 @@ package com.huivip.gpsspeedwidget.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
-import android.content.*;
+import android.appwidget.AppWidgetProviderInfo;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.*;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -21,28 +32,54 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.*;
-import butterknife.BindView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
-import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
-import com.huivip.gpsspeedwidget.utils.DeviceUuidFactory;
-import com.huivip.gpsspeedwidget.service.FloatingService;
-import com.huivip.gpsspeedwidget.service.LyricFloatingService;
-import com.huivip.gpsspeedwidget.service.MeterFloatingService;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
-import com.huivip.gpsspeedwidget.utils.*;
+import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
+import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
+import com.huivip.gpsspeedwidget.service.LyricFloatingService;
+import com.huivip.gpsspeedwidget.service.MeterFloatingService;
+import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
+import com.huivip.gpsspeedwidget.utils.DeviceUuidFactory;
+import com.huivip.gpsspeedwidget.utils.FTPUtils;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
+import com.huivip.gpsspeedwidget.utils.HttpUtils;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
+import com.huivip.gpsspeedwidget.utils.WifiUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
-import java.lang.Process;
-import java.util.*;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import butterknife.BindView;
 
 /**
  * @author sunlaihui
@@ -70,6 +107,8 @@ public class ConfigurationActivity extends Activity {
     private static final int REQUEST_LOCATION = 105;
     private static  final int REQUEST_STORAGE=106;
     private static final int REQUEST_PHONE=107;
+    AppWidgetHost appWidgetHost;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +123,7 @@ public class ConfigurationActivity extends Activity {
 
         }
         initPermission();
+        appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         handler=new Handler();
         CheckBox autoStartCheckBox=(CheckBox)findViewById(R.id.autoStart);
         autoStartCheckBox.setChecked(PrefUtils.isEnableAutoStart(getApplicationContext()));
@@ -166,6 +206,42 @@ public class ConfigurationActivity extends Activity {
                 }
 
                 PrefUtils.setUploadGPSHistory(getApplicationContext(),checkBoxButton.isChecked());
+            }
+        });
+        TextView selectedAMAPPlugin=findViewById(R.id.textView_AMAPPluginId);
+              int selectedPluginId=  PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+        if(selectedPluginId!=-1){
+            selectedAMAPPlugin.setText("id:"+selectedPluginId);
+        }
+        Button selectAMAP=findViewById(R.id.button_selectAmapPlugin);
+        selectAMAP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    int widgetId = appWidgetHost.allocateAppWidgetId();
+                    Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
+                    pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+                    startActivityForResult(pickIntent, Constant.SELECT_AMAP_PLUGIN_REQUEST_CODE);
+                } catch (ActivityNotFoundException e){
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+                    for(int id=0;id<500;id++) {
+                        AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+                        final View amapView = appWidgetHost.createView(getApplicationContext(), id, popupWidgetInfo);
+                        View vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
+                        if(vv!=null && vv instanceof ImageView){
+                            Toast.makeText(getApplicationContext(), "已选择高德插件:"+id, Toast.LENGTH_LONG).show();
+                            PrefUtils.setSelectAmapPluginId(getApplicationContext(),id);
+                            break;
+                        }
+                    }
+                    TextView selectedAMAPPlugin=findViewById(R.id.textView_AMAPPluginId);
+                    int selectedPluginId=  PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+                    if(selectedPluginId!=-1){
+                        selectedAMAPPlugin.setText("已选择高德插件id:"+selectedPluginId);
+                    } else {
+                        selectedAMAPPlugin.setText("未选择高德插件");
+                    }
+                }
             }
         });
         enableFloatingWidnowCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
@@ -309,6 +385,24 @@ public class ConfigurationActivity extends Activity {
                 }
             }
         });
+        CheckBox autoWidgetFloatingCheckBox=findViewById(R.id.checkBox_Auto_widget_floating);
+        autoWidgetFloatingCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        autoWidgetFloatingCheckBox.setChecked(PrefUtils.isEnableAutoWidgetFloatingWidow(getApplicationContext()));
+        autoWidgetFloatingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableAutoWidgetFloatingWidow(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox onlyShowAutoWidgetOnTurnCheckBox=findViewById(R.id.checkBox_Auto_widget_floating_only);
+        onlyShowAutoWidgetOnTurnCheckBox.setChecked(PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(getApplicationContext()));
+        onlyShowAutoWidgetOnTurnCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        onlyShowAutoWidgetOnTurnCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableAutoWidgetFloatingWidowOnlyTurn(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
         enableFloatingButton=findViewById(R.id.EnableFalting);
         enableFloatingButton.setOnClickListener(v -> {
@@ -432,23 +526,34 @@ public class ConfigurationActivity extends Activity {
         autoLaunchHotSpotCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(buttonView.isChecked()){
-                    boolean enabled=WifiUtils.switchWifiHotspot(getApplicationContext(),"gpswifi","012345678",true);
-                    if(enabled){
-                        PrefUtils.setAutoLaunchHotSpot(getApplicationContext(),buttonView.isChecked());
-                        Toast.makeText(getApplicationContext(),"移动热点已启动:gpswifi,密码: 012345678",Toast.LENGTH_LONG).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (!Settings.System.canWrite(ConfigurationActivity.this)) {
+                        Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                                Uri.parse("package:" + getPackageName()));
+                        //intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivityForResult(intentWriteSetting, 1240);
+                    } else {
+                        autoLaunchChanged(buttonView);
                     }
-                    else {
-                        Toast.makeText(getApplicationContext(),"移动热点启动失败！",Toast.LENGTH_SHORT).show();
+                } else
+                    autoLaunchChanged(buttonView);
+            }
+
+            private void autoLaunchChanged(CompoundButton buttonView) {
+                if (buttonView.isChecked()) {
+                    boolean enabled = WifiUtils.switchWifiHotspot(getApplicationContext(), Constant.WIFI_USERNAME, Constant.WIFI_PASSWORD, true);
+                    if (enabled) {
+                        PrefUtils.setAutoLaunchHotSpot(getApplicationContext(), buttonView.isChecked());
+                        Toast.makeText(getApplicationContext(), "移动热点已启动:" + Constant.WIFI_USERNAME + ",密码:" + Constant.WIFI_PASSWORD, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "移动热点启动失败！", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else {
-                    boolean enabled=WifiUtils.switchWifiHotspot(getApplicationContext(),"gpswifi","012345678",false);
-                    if(enabled){
-                        Toast.makeText(getApplicationContext(),"移动热点已关闭！",Toast.LENGTH_LONG).show();
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(),"移动热点关闭失败！",Toast.LENGTH_SHORT).show();
+                } else {
+                    boolean enabled = WifiUtils.switchWifiHotspot(getApplicationContext(), Constant.WIFI_USERNAME, Constant.WIFI_PASSWORD, false);
+                    if (enabled) {
+                        Toast.makeText(getApplicationContext(), "移动热点已关闭！", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "移动热点关闭失败！", Toast.LENGTH_SHORT).show();
                     }
                     PrefUtils.setAutoLaunchHotSpot(getApplicationContext(),buttonView.isChecked());
                 }
@@ -462,14 +567,14 @@ public class ConfigurationActivity extends Activity {
 
         CheckBox flattingDirectionCheckbox=findViewById(R.id.checkBox_h_direction);
         flattingDirectionCheckbox.setChecked(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext()));
-        Intent floatService=new Intent(this, FloatingService.class);
+        Intent floatService=new Intent(this, DefaultFloatingService.class);
         flattingDirectionCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 PrefUtils.setFloattingDirectionHorizontal(getApplicationContext(),compoundButton.isChecked());
-                floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                floatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 startService(floatService);
-                floatService.removeExtra(FloatingService.EXTRA_CLOSE);
+                floatService.removeExtra(DefaultFloatingService.EXTRA_CLOSE);
                 startService(floatService);
             }
         });
@@ -528,20 +633,30 @@ public class ConfigurationActivity extends Activity {
                         try {
                             if(!TextUtils.isEmpty(updateInfo) && !updateInfo.equalsIgnoreCase("-1")) {
                                 String currentVersion=Utils.getLocalVersion(ConfigurationActivity.this);
+                                int currentVersionCode=Utils.getLocalVersionCode(getApplicationContext());
                                 JSONObject infoObj = new JSONObject(updateInfo);
                                 JSONObject data= (JSONObject) infoObj.get("data");
                                 String updateVersion=data.getString("serverVersion");
+                                int updateVersionCode=data.getInt("serverVersionCode");
                                 Log.d("huivip","Current local Version:"+currentVersion+",Update Version:"+updateVersion);
-                                if(currentVersion.equalsIgnoreCase(updateVersion)){
-                                    Message message = Message.obtain();
-                                    message.obj ="";
-                                    message.arg1 = 0;
-                                    AlterHandler.handleMessage(message);
+                                Message message = Message.obtain();
+                                message.obj =updateInfo;
+                                if(currentVersionCode!=0 && updateVersionCode!=0){
+                                    if(updateVersionCode>currentVersionCode){
+                                        message.arg1 = 1;
+                                        AlterHandler.handleMessage(message);
+                                    } else {
+                                        message.arg1 = 0;
+                                        AlterHandler.handleMessage(message);
+                                    }
                                 } else {
-                                    Message message = Message.obtain();
-                                    message.obj =updateInfo;
-                                    message.arg1 = 1;
-                                    AlterHandler.handleMessage(message);
+                                    if (currentVersion.equalsIgnoreCase(updateVersion)) {
+                                        message.arg1 = 0;
+                                        AlterHandler.handleMessage(message);
+                                    } else {
+                                        message.arg1 = 1;
+                                        AlterHandler.handleMessage(message);
+                                    }
                                 }
 
                             }
@@ -565,9 +680,23 @@ public class ConfigurationActivity extends Activity {
                         AlertDialog.Builder  mDialog = new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight));
                         mDialog.setTitle("版本检查");
                         mDialog.setMessage("已是最新版本，无需更新！");
-                        mDialog.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                        mDialog.setPositiveButton("关闭",new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
                                 dialog.dismiss();
+                            }
+                        }).setNegativeButton("重装", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                JSONObject updateInfo= null;
+                                try {
+                                    updateInfo = new JSONObject((String)msg.obj);
+                                    JSONObject data= (JSONObject) updateInfo.get("data");
+                                    String updateUrl=data.getString("updateurl");
+                                    String appName=data.getString("appname");
+                                    HttpUtils.downLoadApk(ConfigurationActivity.this,updateUrl,appName);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         });
                         mDialog.create().show();
@@ -721,6 +850,42 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),buttonView.isChecked());
             }
         });
+        CheckBox lyricFloatingFixedCheckBox=findViewById(R.id.lyric_fixed);
+        lyricFloatingFixedCheckBox.setChecked(PrefUtils.isEnableLyricFloatingFixed(getApplicationContext()));
+        lyricFloatingFixedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableLyricFloatingFixed(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox roadLineCheckBox=findViewById(R.id.checkBox_roadLine);
+        roadLineCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        roadLineCheckBox.setChecked(PrefUtils.isEnableRoadLineFloating(getApplicationContext()));
+        roadLineCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableRoadLineFloating(getApplicationContext(),buttonView.isChecked());
+                Intent roadLine=new Intent(getApplicationContext(), RoadLineFloatingService.class);
+                if(!buttonView.isChecked()){
+                    roadLine.putExtra(RoadLineFloatingService.EXTRA_CLOSE,true);
+                    getApplicationContext().startService(roadLine);
+                } else {
+                    getApplicationContext().startService(roadLine);
+                }
+            }
+        });
+        CheckBox roadLineFloatingFixedCheckBox=findViewById(R.id.roadline_fixed);
+        roadLineFloatingFixedCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        roadLineFloatingFixedCheckBox.setChecked(PrefUtils.isEnableRoadLineFloatingFixed(getApplicationContext()));
+        roadLineFloatingFixedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableRoadLineFloatingFixed(getApplicationContext(),buttonView.isChecked());
+                Intent roadLineFloattingService = new Intent(getApplicationContext(),RoadLineFloatingService.class);
+                roadLineFloattingService.putExtra(RoadLineFloatingService.EXTRA_Fixed,true);
+                getApplicationContext().startService(roadLineFloattingService);
+            }
+        });
         /*CheckBox showAddressCheckBox=findViewById(R.id.checkBox_showAddress);
         showAddressCheckBox.setChecked(PrefUtils.isShowAddressWhenStop(getApplicationContext()));
         showAddressCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -816,16 +981,59 @@ public class ConfigurationActivity extends Activity {
         });
 
     }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+       AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        if (resultCode == RESULT_OK) {
+            Log.d("huivip","request code:"+requestCode);
+            switch (requestCode) {
+                case Constant.SELECT_AMAP_PLUGIN_REQUEST_CODE: {
+                    int id = data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+                    String widgetName=data.getStringExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER);
+                    Log.d("huivip","widgetName:"+widgetName);
+                    boolean check = false;
+                    if (id > 0) {
+                        AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+                        final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
+                        View vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
+                        if (vv instanceof ImageView) {
+                            check = true;
+                        }
+                    }
+                    if (check) {
+                        PrefUtils.setSelectAmapPluginId(getApplicationContext(),id);
+                    } else {
+                        PrefUtils.setSelectAmapPluginId(getApplicationContext(),-1);
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+            TextView selectedAMAPPlugin=findViewById(R.id.textView_AMAPPluginId);
+            int selectedPluginId=  PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+            if(selectedPluginId!=-1){
+                selectedAMAPPlugin.setText("已选择高德插件id:"+selectedPluginId);
+            } else {
+                selectedAMAPPlugin.setText("未选择高德插件");
+            }
+        }
+    }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-
+        TextView selectedAMAPPlugin=findViewById(R.id.textView_AMAPPluginId);
+        int selectedPluginId=  PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+        if(selectedPluginId!=-1){
+            selectedAMAPPlugin.setText("已选择高德插件id:"+selectedPluginId);
+        } else {
+            selectedAMAPPlugin.setText("未选择高德插件");
+        }
         if (hasFocus) {
             invalidateStates();
         }
     }
     private void startFloationgWindows(boolean enabled){
-        Intent defaultFloatingService=new Intent(this,FloatingService.class);
+        Intent defaultFloatingService=new Intent(this, DefaultFloatingService.class);
         Intent autoNavifloatService=new Intent(this, AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(this, MeterFloatingService.class);
         if(enabled){
@@ -836,14 +1044,14 @@ public class ConfigurationActivity extends Activity {
                     startService(meterFloatingService);
                 }
                 if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
-                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    autoNavifloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     startService(autoNavifloatService);
                 }
                 startService(defaultFloatingService);
 
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
-                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                if(Utils.isServiceRunning(getApplicationContext(), DefaultFloatingService.class.getName())){
+                    defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     startService(defaultFloatingService);
                 }
                 if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
@@ -852,12 +1060,12 @@ public class ConfigurationActivity extends Activity {
                 }
                 startService(autoNavifloatService);
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-                if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
-                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                if(Utils.isServiceRunning(getApplicationContext(), DefaultFloatingService.class.getName())){
+                    defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     startService(defaultFloatingService);
                 }
                 if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
-                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    autoNavifloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     startService(autoNavifloatService);
                 }
                 startService(meterFloatingService);
@@ -865,12 +1073,12 @@ public class ConfigurationActivity extends Activity {
 
         }
         else {
-            if(Utils.isServiceRunning(getApplicationContext(),FloatingService.class.getName())){
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            if(Utils.isServiceRunning(getApplicationContext(), DefaultFloatingService.class.getName())){
+                defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 startService(defaultFloatingService);
             }
             if(Utils.isServiceRunning(getApplicationContext(),AutoNaviFloatingService.class.getName())){
-                autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                autoNavifloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 startService(autoNavifloatService);
             }
             if(Utils.isServiceRunning(getApplicationContext(),MeterFloatingService.class.getName())){
@@ -907,11 +1115,19 @@ public class ConfigurationActivity extends Activity {
         floatingSelectGroup.setEnabled(enableFloatingWidnowCheckBox.isChecked());
         onlyDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
-        onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
+        //onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         boolean serviceReady=Utils.isServiceReady(this);
         CheckBox autoLaunchHotSpotCheckBox=findViewById(R.id.checkBox_autoWifi);
         autoLaunchHotSpotCheckBox.setEnabled(WifiUtils.checkMobileAvalible(getApplicationContext()));
         autoLaunchHotSpotCheckBox.setChecked(PrefUtils.isAutoLauchHotSpot(getApplicationContext()));
+        CheckBox roadLineCheckBox=findViewById(R.id.checkBox_roadLine);
+        roadLineCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        CheckBox roadLineFloatingFixedCheckBox=findViewById(R.id.roadline_fixed);
+        roadLineFloatingFixedCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        CheckBox autoWidgetFloatingCheckBox=findViewById(R.id.checkBox_Auto_widget_floating);
+        autoWidgetFloatingCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        CheckBox onlyShowAutoWidgetOnTurnCheckBox=findViewById(R.id.checkBox_Auto_widget_floating_only);
+        onlyShowAutoWidgetOnTurnCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
         //mAppList
         String selectApps = PrefUtils.getAutoLaunchAppsName(getApplicationContext());
         /*if (mAppList != null && mAppList.size() > 0) {

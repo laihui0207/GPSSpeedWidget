@@ -4,8 +4,10 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
@@ -19,12 +21,17 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
@@ -32,11 +39,15 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import devlight.io.library.ArcProgressStackView;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import devlight.io.library.ArcProgressStackView;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -44,7 +55,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  * Created by laisun on 28/02/2018.
  */
 
-public class FloatingService extends Service{
+public class DefaultFloatingService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
 
     private WindowManager mWindowManager;
@@ -70,9 +81,24 @@ public class FloatingService extends Service{
     TextView limitShowLabel;
     @BindView(R.id.speedUnits)
     TextView speedUnitTextView;
+    @BindView(R.id.textView_default_altitude)
+    TextView textViewAltitude;
+    @BindView(R.id.textView_currentRoadName)
+    TextView textViewCurrentRoadName;
+    @BindView(R.id.imageView_default_xunhang_roadLIne)
+    ImageView xunHang_roadLine;
+    @BindView(R.id.imageView_default_daohang_roadLIne)
+    ImageView daoHang_roadLine;
+    private ServiceConnection mServiceConnection;
+    RoadLineService.RoadLineBinder roadLineBinder;
+   /* @BindView(R.id.floating_close)
+    ImageView closeImage;*/
     TimerTask locationScanTask;
+    TimerTask roadLineTask;
     Timer locationTimer = new Timer();
+    Timer roadLineTimer = new Timer();
     final Handler locationHandler = new Handler();
+    final Handler roadLineHandler = new Handler();
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -141,20 +167,7 @@ public class FloatingService extends Service{
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
-       /* mFloatingView.setOnLongClickListener(new View.OnLongClickListener(){
-
-            @Override
-            public boolean onLongClick(View v) {
-                if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
-                    Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
-                    PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
-                }
-                Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
-                configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                startActivity(configActivity);
-                return true;
-            }
-        });*/
+        mSpeedometerText.setOnTouchListener(new FloatingOnTouchListener());
         boolean isShowLimit=PrefUtils.getShowLimits(getApplicationContext());
         mLimitView.setVisibility(isShowLimit ? View.VISIBLE : View.GONE);
         boolean isShowSpeed=PrefUtils.getShowSpeedometer(getApplicationContext());
@@ -197,20 +210,54 @@ public class FloatingService extends Service{
             @Override
             public void run()
             {
-                FloatingService.this.locationHandler.post(new Runnable()
+                DefaultFloatingService.this.locationHandler.post(new Runnable()
                 {
                     @Override
                     public void run()
                     {
-                        FloatingService.this.checkLocationData();
-                        //Log.d("huivip","Float Service Check Location");
+                        DefaultFloatingService.this.checkLocationData();
+                        showRoadLine();
                     }
                 });
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+       /* this.roadLineTask = new TimerTask() {
+            @Override
+            public void run() {
+                roadLineHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showRoadLine();
+                    }
+                });
+            }
+        };
+        this.roadLineTimer.schedule(this.roadLineTask,0L,1000L);*/
+        mServiceConnection=new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                roadLineBinder= (RoadLineService.RoadLineBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
+    }
+    @OnClick(value = {R.id.floating_close})
+    public void onViewClick(View view){
+        switch (view.getId()){
+            case R.id.floating_close:
+                onStop();
+                stopSelf();
+                break;
+
+        }
     }
     private void openSettings(String settingsAction, String packageName) {
         Intent intent = new Intent(settingsAction);
@@ -243,6 +290,35 @@ public class FloatingService extends Service{
         else {
            mSpeedometerText.setText("--");
         }
+    }
+
+    private void showRoadLine() {
+      /*  int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+        if (id != -1) {
+            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
+            View vv = null;
+            if (gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
+                vv = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
+            } else {
+                vv = Utils.findlayoutViewById(amapView, "road_line");
+            }
+            if(vv!=null && vv instanceof ImageView){
+                daoHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());
+                daoHang_roadLine.setVisibility(View.VISIBLE);
+            } else {
+                daoHang_roadLine.setVisibility(View.INVISIBLE);
+            }
+        }*/
+      if(roadLineBinder!=null){
+          View vv=roadLineBinder.getRoadLineView();
+          if(vv!=null){
+              daoHang_roadLine.setImageDrawable(((ImageView)vv).getDrawable());
+              daoHang_roadLine.setVisibility(View.VISIBLE);
+          } else {
+              daoHang_roadLine.setVisibility(View.INVISIBLE);
+          }
+      }
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?

@@ -18,6 +18,7 @@ public abstract class PrefUtils {
     private static final String PREF_METRIC = "pref_metric";
     private static final String PREF_FLOATING_LOCATION = "pref_floating_location";
     private static final String PREF_NAVI_FLOATING_LOCATION= "pref_navi_floating_location";
+    private static final String PREF_DRIVE_FLOATING_LOCATION= "pref_driveWay_floating_location";
     private static final String PREF_TIME_FLOATING_LOCATION= "pref_time_floating_location";
     private static final String PREF_TEXT_FLOATING_LOCATION= "pref_text_floating_location";
     private static final String PREF_OPACITY = "pref_opacity";
@@ -44,6 +45,8 @@ public abstract class PrefUtils {
     public static final String ENABLED_LYRIC_PREFS_NAME="com.huivip.Enable.fating.Lyric";
     public static final String ENABLE_AUDIO_SERVICE="com.huivip.enable.AudioService";
     public static final String ENABLE_TIME_FLOATING_WINDOW="com.huivip.enable.Time.FloatingWindow";
+    public static final String ENABLE_AUTO_WIDGET_FLOATING_WINDOW="com.huivip.enable.auto.widget.FloatingWindow";
+    public static final String ENABLE_AUTO_WIDGET_FLOATING_WINDOW_ONLY_TURN ="com.huivip.enable.xunhang.widget.FloatingWindow.onlyTurn";
     public static final String ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI="com.huivip.enable.hide.FloatingWindow.OnNaviApp";
     public static final String ENABLE_AUTO_GOHOME_AFTER_NAVI_STARTED="com.huivip.enable.auto.goHome.afterNavi";
     public static final String ENABLE_AUDIO_MIX="com.huivip.enable.AudioMix";
@@ -57,11 +60,13 @@ public abstract class PrefUtils {
     public static final String FLOATING_WINDWS_DIRECTION_horizontal="com.huivip.widget.Direction";
     public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
+    public static final String DRIVE_WAY_FLOATTING_WINDOW_XY="com.huivip.widget.xy";
     public static final String NAVI_FLOATTING_WINDOW_XY="com.huivip.widget.navi.xy";
     public static final String TIME_FLOATTING_WINDOW_XY="com.huivip.widget.Time.xy";
     public static final String MAP_FLOATTING_WINDOW_XY="com.huivip.widget.Map.xy";
     public static final String TEXT_FLOATTING_WINDOW_XY="com.huivip.widget.Text.xy";
     public static final String LYRC_FLOATTING_WINDOW_XY="com.huivip.widget.lyrc.xy";
+    public static final String ROADLINE_FLOATTING_WINDOW_XY="com.huivip.widget.roadLine.xy";
     public static final String SEPARATED_VOLUME ="com.huivip.widget.separated.volume";
     public static final String AUDIO_VOLUME="com.huivipo.widget.audio.volume";
     public static final String USER_CLOSED_SERVER="com.huivip.widget.Close.serviced";
@@ -82,7 +87,7 @@ public abstract class PrefUtils {
     private static final String APP_PLAY_TIME="com.huivip.play.time";
     private static final String APP_PLAY_WEATHER="com.huivip.play.weather";
     private static final String NOTIFY_ROAD_LIMIT="com.huivip.Limit.Notify";
-
+    private static final String SELECT_AMAP_PLUGIN_ID="com.huivip.select.amap.plugin";
 
     public static final String FLOATING_DEFAULT="0";
     public static final String FLOATING_METER="2";
@@ -97,6 +102,9 @@ public abstract class PrefUtils {
     static final String NAVI_MODE_NEW_DRIVER="com.huivip.navi.mode.newDriver";
     static final String NAVI_FLOATTING_FIXED_POSITION="com.huivip.navi.fixed.position";
     static final String SPEED_FLOATTING_FIXED_POSITION="com.huivip.speed.fixed.position";
+    static final String LYRIC_FLOATTING_FIXED_POSITION="com.huivip.lyric.fixed.position";
+    static final String ROADLINE_FLOATTING_FIXED_POSITION="com.huivip.roaldLine.fixed.position";
+    static final String ROADLINE_FLOATTING="com.huivip.roaldLine.enabled";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -121,6 +129,17 @@ public abstract class PrefUtils {
     }
     public static String getDeviceIdStorage(Context context){
         return getSharedPreferences(context).getString(DEVICEID_STORAGE,"");
+    }
+    public static int getSelectAMAPPLUGIN(Context context){
+        return getSharedPreferences(context).getInt(SELECT_AMAP_PLUGIN_ID,-1);
+    }
+    public static void setSelectAmapPluginId(Context context,int selectAMAPPlugin){
+        edit(context).putInt(SELECT_AMAP_PLUGIN_ID,selectAMAPPlugin).apply();
+    }
+    public static String getShortDeviceId(Context context){
+        String deviceId =(new DeviceUuidFactory(context)).getDeviceId();
+        setDeviceIDString(context,deviceId);
+        return deviceId.substring(0,deviceId.indexOf("-"));
     }
     public static void setDeviceIDString(Context context,String value){
         edit(context).putString(CURRENT_DEVICEID,value).apply();
@@ -180,6 +199,18 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableTimeFloationgWidow(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_TIME_FLOATING_WINDOW, false);
+    }
+    public static void setEnableAutoWidgetFloatingWidow(Context context, boolean value){
+        edit(context).putBoolean(ENABLE_AUTO_WIDGET_FLOATING_WINDOW, value).apply();
+    }
+    public static boolean isEnableAutoWidgetFloatingWidow(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_AUTO_WIDGET_FLOATING_WINDOW, false);
+    }
+    public static void setEnableAutoWidgetFloatingWidowOnlyTurn(Context context, boolean value){
+        edit(context).putBoolean(ENABLE_AUTO_WIDGET_FLOATING_WINDOW_ONLY_TURN, value).apply();
+    }
+    public static boolean isEnableAutoWidgetFloatingWidowOnlyTurn(Context context){
+        return getSharedPreferences(context).getBoolean(ENABLE_AUTO_WIDGET_FLOATING_WINDOW_ONLY_TURN, false);
     }
     public static void setHideFloatingWidowOnNaviApp(Context context, boolean value){
         edit(context).putBoolean(ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI, value).apply();
@@ -401,6 +432,9 @@ public abstract class PrefUtils {
     public static void setFloatingSolidLocation(Context context, float x, float y) {
         edit(context).putString(FLOATTING_WINDOW_XY, x + "," + y).apply();
     }
+    public static void setDriveWayFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(DRIVE_WAY_FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
     public static void setNaviFloatingSolidLocation(Context context, float x, float y) {
         edit(context).putString(NAVI_FLOATTING_WINDOW_XY, x + "," + y).apply();
     }
@@ -409,6 +443,9 @@ public abstract class PrefUtils {
     }
     public static String getFloatingSolidLocation(Context context) {
         return getSharedPreferences(context).getString(FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static String getDriveWayFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(DRIVE_WAY_FLOATTING_WINDOW_XY, "0,0");
     }
     public static void setFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_FLOATING_LOCATION, left + "," + screenYRatio).apply();
@@ -438,14 +475,27 @@ public abstract class PrefUtils {
     public static void setLyrcFloatingSolidLocation(Context context, float x, float y) {
         edit(context).putString(LYRC_FLOATTING_WINDOW_XY, x + "," + y).apply();
     }
+    public static String getRoadLineFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(ROADLINE_FLOATTING_WINDOW_XY, "0,0");
+    }
+    public static void setRoadLineFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(ROADLINE_FLOATTING_WINDOW_XY, x + "," + y).apply();
+
+    }
     public static void setNaviFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_NAVI_FLOATING_LOCATION, left + "," + screenYRatio).apply();
+    }
+    public static void setDriveWayFloatingLocation(Context context, float screenYRatio, boolean left) {
+        edit(context).putString(PREF_DRIVE_FLOATING_LOCATION, left + "," + screenYRatio).apply();
     }
     public static String getFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_FLOATING_LOCATION, "true,0");
     }
     public static String getNaviFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_NAVI_FLOATING_LOCATION, "true,0");
+    }
+    public static String getDriveWayFloatingLocation(Context context) {
+        return getSharedPreferences(context).getString(PREF_DRIVE_FLOATING_LOCATION, "true,0");
     }
     public static String getTimeFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_TIME_FLOATING_LOCATION, "true,0");
@@ -525,6 +575,27 @@ public abstract class PrefUtils {
 
     public static void setEnableSpeedFloatingFixed(Context context, boolean show) {
         edit(context).putBoolean(SPEED_FLOATTING_FIXED_POSITION, show).apply();
+    }
+    public static boolean isEnableLyricFloatingFixed(Context context) {
+        return getSharedPreferences(context).getBoolean(LYRIC_FLOATTING_FIXED_POSITION, false);
+    }
+
+    public static void setEnableLyricFloatingFixed(Context context, boolean show) {
+        edit(context).putBoolean(LYRIC_FLOATTING_FIXED_POSITION, show).apply();
+    }
+    public static boolean isEnableRoadLineFloatingFixed(Context context) {
+        return getSharedPreferences(context).getBoolean(ROADLINE_FLOATTING_FIXED_POSITION, false);
+    }
+
+    public static void setEnableRoadLineFloatingFixed(Context context, boolean show) {
+        edit(context).putBoolean(ROADLINE_FLOATTING_FIXED_POSITION, show).apply();
+    }
+    public static boolean isEnableRoadLineFloating(Context context) {
+        return getSharedPreferences(context).getBoolean(ROADLINE_FLOATTING, true);
+    }
+
+    public static void setEnableRoadLineFloating(Context context, boolean show) {
+        edit(context).putBoolean(ROADLINE_FLOATTING, show).apply();
     }
     public static Set<String> getApps(Context context) {
         return new HashSet<>(getSharedPreferences(context).getStringSet(PREF_APPS, new HashSet<String>()));

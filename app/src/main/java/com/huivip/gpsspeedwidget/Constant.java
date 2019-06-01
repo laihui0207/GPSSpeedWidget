@@ -18,7 +18,8 @@ public class Constant {
 
     public static final String AMAP_SEND_ACTION="AUTONAVI_STANDARD_BROADCAST_SEND";
     public static final String AMAP_RECEIVE_ACTION="AUTONAVI_STANDARD_BROADCAST_RECV";
-
+    public static final String UPDATE_SEGMENT_EVENT_ACTION="com.huivip.update.segment.event";
+    public static final String UPDATE_DATE_EVENT_ACTION="com.huivip.dateChange.event";
     public static int Navi_Floating_Enabled=1;
     public static int Navi_Floating_Disabled=0;
     public static int Navi_Status_Started=1;
@@ -26,10 +27,15 @@ public class Constant {
     public static int LINE=1;
     public static int POINT=0;
 
+    public static final int APP_WIDGET_HOST_ID = 0x200;
+    public static final int SELECT_AMAP_PLUGIN_REQUEST_CODE=2001;
+
     public static String AUTONAVI_CATCH_ROAD_WEBSERVICE="http://restapi.amap.com/v3/autograsp?carid=%s&locations=%s&time=%s&direction=%s&speed=%s&output=json&key=%s";
     public static String LBSSEARCHWEATHER="http://restapi.amap.com/v3/weather/weatherInfo?key=%s&city=%s";
     public static String AUTONAVI_WEB_KEY="5303c7587d2ae8725d2abde74abee79d";
     public static String AUTONAVI_WEB_KEY2="fa74250f4a56fe716a6de1a5d6ec68c3";
+    public static String WIFI_USERNAME="车载Wi-Fi";
+    public static String WIFI_PASSWORD="88888888";
     public static String AUTONAVI_WEB_KEY_TRACK_SERVICE_ID="15017";
     public static String AUTONAVI_WEB_KEY_TRACK_SERVICE_NAME="GPSWidgetService";
     public static String AUTONAVI_WEB_KEY2_TRACK_SERVICE_ID="15618";

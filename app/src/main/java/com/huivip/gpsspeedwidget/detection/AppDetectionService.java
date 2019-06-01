@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
-import com.huivip.gpsspeedwidget.service.FloatingService;
+import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.MeterFloatingService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import java.util.Set;
@@ -83,31 +83,31 @@ public class AppDetectionService extends AccessibilityService {
 
         boolean onDesktop = enabledApps.contains(componentName.getPackageName());
         PrefUtils.setOnDesktop(getApplicationContext(),onDesktop);
-        Intent floatService = new Intent(this, FloatingService.class);
+        Intent floatService = new Intent(this, DefaultFloatingService.class);
         Intent autoNaviFloatingService=new Intent(this, AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(this, MeterFloatingService.class);
         if(!PrefUtils.isEnableFlatingWindow(getApplicationContext())){
-            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            autoNaviFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            floatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+            autoNaviFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
         }
 
         if(PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP) && onDesktop){
-            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            autoNaviFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            floatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+            autoNaviFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
         }
 
         if(!onDesktop && PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
-            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            autoNaviFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            floatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+            autoNaviFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
         }
         if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
                 (gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started || !onAutoNavi)){
-            floatService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            autoNaviFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
-            meterFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            floatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+            autoNaviFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
         }
 
 

@@ -3,7 +3,11 @@ package com.huivip.gpsspeedwidget.utils;
 import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
-import android.app.*;
+import android.app.ActivityManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -25,12 +29,15 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
 
-import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
-import com.huivip.gpsspeedwidget.service.FloatingService;
+import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.MeterFloatingService;
 
@@ -168,42 +175,69 @@ public abstract class Utils {
         }
         return new HashSet<>(names);
     }
-    public static void goHome(Context context){
-     /*   PackageManager packageManager = context.getPackageManager();
-        Intent intentLauncher = new Intent(Intent.ACTION_MAIN);
-        intentLauncher.addCategory(Intent.CATEGORY_HOME);
-        String selectDefaultLauncher=packageManager.resolveActivity(intentLauncher,PackageManager.MATCH_DEFAULT_ONLY).activityInfo.packageName;
-        String defaultLaunch = PrefUtils.getDefaultLanuchApp(context);
-        Log.d("huivip","Default launch:"+defaultLaunch+",Select launcher:"+selectDefaultLauncher);
-        if (!TextUtils.isEmpty(defaultLaunch) && "com.huivip.gpsspeedwidget".equalsIgnoreCase(selectDefaultLauncher)) {
-            Intent launchIntent =context.getPackageManager().getLaunchIntentForPackage(defaultLaunch);
-            if (launchIntent != null) {
-                Log.d("huivip","Launch default Launcher:"+defaultLaunch);
-                launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(launchIntent);
+    public static View getViewByIds(View view, Object[] ids) {
+        View r = view;
+        for (int i = 0; i < ids.length; i++) {
+            r = getViewById(r, ids[i]);
+            if (r == null) {
+                return null;
             }
-            else {
-                Log.d("huivip","Launch intent is NULL");
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Log.d("huivip","Return back!");
-                            Instrumentation inst= new Instrumentation();
-                            inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
-                        } catch(Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+        }
+        return r;
+    }
 
+    public static View getViewById(View view, Object id) {
+        if (view instanceof ViewGroup) {
+            ViewGroup vg = (ViewGroup) view;
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                View cc1 = vg.getChildAt(i);
+                if (id instanceof Integer) {
+                    if (id.equals(i)) {
+                        return cc1;
+                    }
+                } else if (id instanceof String) {
+                    if (cc1.toString().endsWith("id/" + id + "}")) {
+                        return cc1;
+                    }
+                }
             }
-        } else {*/
-            Intent paramIntent = new Intent("android.intent.action.MAIN");
-            paramIntent.addCategory("android.intent.category.HOME");
-            paramIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(paramIntent);
-        /*}*/
+        }
+        return null;
+    }
+    public static View findlayoutViewById(View view, Object id){
+      if(view instanceof ViewGroup){
+          for (int i = 0, j = ((ViewGroup)view).getChildCount(); i < j; i++) {
+              View child = ((ViewGroup) view).getChildAt(i);
+              if(child instanceof ViewGroup){
+                 // Log.d("huivip",child.toString());
+                  View subView=findlayoutViewById(child,id);
+                  if(subView!=null){
+                      return subView;
+                  }
+              } else {
+                 /* if(id instanceof Integer){
+                      if(id.equals(i)){
+                          return child;
+                      }
+                  } else if (id instanceof String) {*/
+                     // Log.d("huivip",child.toString());
+                      if (child.toString().endsWith("id/" + id + "}")) {
+                          return child;
+                      }
+                  /*}*/
+              }
+          }
+      } else if(view.toString().endsWith("id/"+id+"}")){
+          return view;
+      }
+      return null;
+    }
+
+    public static void goHome(Context context) {
+        Intent paramIntent = new Intent("android.intent.action.MAIN");
+        paramIntent.addCategory("android.intent.category.HOME");
+        paramIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(paramIntent);
     }
     public static boolean isServiceReady(Context context) {
         boolean permissionGranted =
@@ -243,6 +277,17 @@ public abstract class Utils {
         }
 
         return info.versionName;
+    }
+    public static int getLocalVersionCode(Context context) {
+        PackageManager manager = context.getPackageManager();
+        PackageInfo info = null;
+        try {
+            info = manager.getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("huivip", "获取应用程序版本失败，原因：" + e.getMessage());
+            return 0;
+        }
+        return info.versionCode;
     }
     public static int levenshteinDistance(CharSequence lhs, CharSequence rhs) {
         int len0 = lhs.length() + 1;
@@ -292,7 +337,7 @@ public abstract class Utils {
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
     public static void startFloatingWindows(Context context, boolean enabled){
-        Intent defaultFloatingService=new Intent(context,FloatingService.class);
+        Intent defaultFloatingService=new Intent(context, DefaultFloatingService.class);
         Intent autoNavifloatService=new Intent(context,AutoNaviFloatingService.class);
         Intent meterFloatingService=new Intent(context, MeterFloatingService.class);
         if(enabled){
@@ -303,16 +348,16 @@ public abstract class Utils {
                     context.startService(meterFloatingService);
                 }
                 if(Utils.isServiceRunning(context, AutoNaviFloatingService.class.getName())){
-                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    autoNavifloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     context.startService(autoNavifloatService);
                 }
-                if(!Utils.isServiceRunning(context,FloatingService.class.getName())) {
+                if(!Utils.isServiceRunning(context, DefaultFloatingService.class.getName())) {
                     context.startService(defaultFloatingService);
                 }
 
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_AUTONAVI)) {
-                if(Utils.isServiceRunning(context,FloatingService.class.getName())){
-                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                if(Utils.isServiceRunning(context, DefaultFloatingService.class.getName())){
+                    defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     context.startService(defaultFloatingService);
                 }
                 if(Utils.isServiceRunning(context,MeterFloatingService.class.getName())){
@@ -323,12 +368,12 @@ public abstract class Utils {
                     context.startService(autoNavifloatService);
                 }
             } else if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_METER)){
-                if(Utils.isServiceRunning(context,FloatingService.class.getName())){
-                    defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                if(Utils.isServiceRunning(context, DefaultFloatingService.class.getName())){
+                    defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     context.startService(defaultFloatingService);
                 }
                 if(Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName())){
-                    autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                    autoNavifloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                     context.startService(autoNavifloatService);
                 }
                 if(!Utils.isServiceRunning(context,MeterFloatingService.class.getName())) {
@@ -338,12 +383,12 @@ public abstract class Utils {
 
         }
         else {
-            if(Utils.isServiceRunning(context,FloatingService.class.getName())){
-                defaultFloatingService.putExtra(FloatingService.EXTRA_CLOSE, true);
+            if(Utils.isServiceRunning(context, DefaultFloatingService.class.getName())){
+                defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 context.startService(defaultFloatingService);
             }
             if(Utils.isServiceRunning(context,AutoNaviFloatingService.class.getName())){
-                autoNavifloatService.putExtra(FloatingService.EXTRA_CLOSE, true);
+                autoNavifloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 context.startService(autoNavifloatService);
             }
             if(Utils.isServiceRunning(context,MeterFloatingService.class.getName())){

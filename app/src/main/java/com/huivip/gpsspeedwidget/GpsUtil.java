@@ -3,13 +3,17 @@ package com.huivip.gpsspeedwidget;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.location.*;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
+import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -129,6 +133,8 @@ public class GpsUtil {
         if (serviceStarted) return;
         this.locationTimer = new Timer();
         speedAdjust = PrefUtils.getSpeedAdjust(context);
+        Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
+        context.startService(roadLineService);
         this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
@@ -163,6 +169,9 @@ public class GpsUtil {
             }*/
             serviceStarted = false;
             weatherService.stopLocation();
+            Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
+            roadLineService.putExtra(RoadLineFloatingService.EXTRA_CLOSE,true);
+            context.startService(roadLineService);
         }
 
     }

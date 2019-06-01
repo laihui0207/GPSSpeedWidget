@@ -11,7 +11,7 @@
                android:layout_alignParentBottom="true" android:scaleType="fitCenter"
                android:layout_alignParentLeft="true"
                android:layout_alignParentStart="true" android:paddingTop="10dp"/>
-    <ImageView android:id="@id/ifreccia" android:layout_width="match_parent" android:layout_height="match_parent"
+    <ImageView android:id="@+id/ifreccia" android:layout_width="match_parent" android:layout_height="match_parent"
                android:src="@drawable/alt_0" android:scaleType="fitCenter"
                android:layout_centerHorizontal="true" android:layout_alignParentBottom="true" android:padding="10dp"/>
     <TextView android:textSize="20dp" android:textColor="#ffffffff" android:id="@+id/textView_watch_limit"

@@ -2,15 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="100dip"
-                android:layout_height="100dip"
+                android:layout_width="120dip"
+                android:layout_height="120dip"
                 android:theme="@style/Theme.Velociraptor"
                 android:visibility="invisible"
                 tools:visibility="visible">
     <devlight.io.library.ArcProgressStackView
             android:id="@+id/arcviewLimit"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             app:apsv_animated="true"
             app:apsv_animation_duration="100"
             app:apsv_draw_width="2dp"
@@ -23,8 +23,8 @@
 
     <RelativeLayout
             android:id="@+id/limit"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:background="@drawable/circle_limit"
             android:elevation="2dp" android:layout_marginBottom="5dp">
 
@@ -61,6 +61,10 @@
                 android:layout_height="wrap_content" android:layout_alignTop="@+id/limit_text"
                 android:layout_centerHorizontal="true" android:id="@+id/textView_floating_distance"
                 android:layout_marginTop="10dp" android:textSize="13dp"/>
+
     </RelativeLayout>
     <include layout="@layout/floating_default_speed"/>
+    <ImageView android:layout_width="20dp" android:layout_height="20dp"
+               android:src="@drawable/close" android:layout_gravity="top|left"
+               android:id="@+id/floating_close"/>
 </RelativeLayout>

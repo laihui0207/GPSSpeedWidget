@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import com.huivip.gpsspeedwidget.*;
+import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.NaviFloatingService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -33,8 +34,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         break;
                     case 3: // auto map in frontend
                         if(gpsUtil.getNaviFloatingStatus()==Constant.Navi_Floating_Enabled) {
-                            stopFloatingService(context);
-                            lanuchSpeedFloationWindows(context,true);
+                            stopBackendNaviFloatingService(context);
+                            launchSpeedFloatingWindows(context,true);
+                            stopDriveWayFloatingService(context);
                             gpsUtil.setAutoMapBackendProcessStarted(true);
                         }
                         gpsUtil.setAutoNavi_on_Frontend(true);
@@ -45,8 +47,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         break;
                     case 4: // auto map in backend
                         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
-                            startFloatingService(context);
-                            lanuchSpeedFloationWindows(context,false);
+                            startBackendNaviFloatingService(context);
+                            launchSpeedFloatingWindows(context,false);
+                            if (!PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)) {
+                                startDriveWayFloatingService(context);
+                            }
                             gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
                         }
                         gpsUtil.setAutoNavi_on_Frontend(false);
@@ -62,12 +67,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         break;
                     case 8: // start navi
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
-                        lanuchSpeedFloationWindows(context,true);
+                        launchSpeedFloatingWindows(context,true);
                         break;
                     case 10:  // simulate navi
                        // Toast.makeText(context,"Heated Checked",Toast.LENGTH_SHORT).show();
-                        startFloatingService(context);
-                        lanuchSpeedFloationWindows(context,true);
+                        startBackendNaviFloatingService(context);
+                        launchSpeedFloatingWindows(context,true);
                         gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
                         break;
                     case 2: // auto map in end
@@ -82,8 +87,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     case 9:  // navi end
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                     case 12:
-                        stopFloatingService(context);
-                        lanuchSpeedFloationWindows(context,false);
+                        stopBackendNaviFloatingService(context);
+                        launchSpeedFloatingWindows(context,false);
+                        stopDriveWayFloatingService(context);
                         gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Disabled);
                         //Toast.makeText(context,"Ended",Toast.LENGTH_SHORT).show();
                         break;
@@ -91,8 +97,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         //Toast.makeText(context,"Heated Checked",Toast.LENGTH_SHORT).show();
                         break;
                     case 39:
-                        stopFloatingService(context);
-                        lanuchSpeedFloationWindows(context,false);
+                        stopBackendNaviFloatingService(context);
+                        stopDriveWayFloatingService(context);
+                        launchSpeedFloatingWindows(context,false);
                         gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Disabled);
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         break;
@@ -185,7 +192,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     gpsUtil.setTotalLeftDistance(leftDistance);
                     if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Ended && gpsUtil.getNaviFloatingStatus()==Constant.Navi_Floating_Disabled){
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
-                        startFloatingService(context);
+                        startBackendNaviFloatingService(context);
                         gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
                     }
                 }
@@ -204,7 +211,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     gpsUtil.setLimitSpeed(roadLimitSpeed);
                     gpsUtil.setCameraType(9999);
                 }*/
-                if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
+                //if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
                     int cameraType = intent.getIntExtra("CAMERA_TYPE", -1);
                     if (cameraType > -1) {
                         gpsUtil.setCameraType(cameraType);
@@ -223,7 +230,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }/* else {
                         gpsUtil.setCameraSpeed(0);
                     }*/
-                }
+               // }
             }
             /*if(key==10072){  // return mute status
                 Toast.makeText(context,"静音状态:"+intent.getIntExtra("EXTRA_MUTE",-1)+",临时静音:"+
@@ -233,24 +240,33 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
             }*/
         }
     }
-    private void startFloatingService(Context context){
-        if(PrefUtils.isEnableNaviFloating(context)) {
-            Intent floatService = new Intent(context, NaviFloatingService.class);
-            context.startService(floatService);
-            PrefUtils.setEnableTempAudioService(context, false);
-        }
+
+    private void startBackendNaviFloatingService(Context context) {
+        Intent floatService = new Intent(context, NaviFloatingService.class);
+        context.startService(floatService);
     }
-    private void stopFloatingService(Context context){
-        if(PrefUtils.isEnableNaviFloating(context)) {
-            Intent floatService = new Intent(context, NaviFloatingService.class);
-            floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
-            context.startService(floatService);
-        }
+
+    private void stopBackendNaviFloatingService(Context context) {
+        Intent floatService = new Intent(context, NaviFloatingService.class);
+        floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
+        context.startService(floatService);
     }
-    private void lanuchSpeedFloationWindows(Context context,boolean enabled){
-        if(!PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)){
+
+    private void startDriveWayFloatingService(Context context) {
+        Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
+        context.startService(autoWidgetFloatingService);
+    }
+
+    private void stopDriveWayFloatingService(Context context) {
+        Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
+        autoWidgetFloatingService.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
+        context.startService(autoWidgetFloatingService);
+    }
+
+    private void launchSpeedFloatingWindows(Context context, boolean enabled) {
+        if (!PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)) {
             return;
         }
-       Utils.startFloatingWindows(context,enabled);
+        Utils.startFloatingWindows(context.getApplicationContext(), enabled);
     }
 }
