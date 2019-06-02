@@ -267,11 +267,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     //FileUtil.saveLogToFile(iformationJsonString);
                     break;*/
             }
-         /*   if (!Utils.isServiceRunning(context, BootStartService.class.getName())) {
+            if (!Utils.isServiceRunning(context, BootStartService.class.getName())) {
                 Intent service = new Intent(context, BootStartService.class);
                 service.putExtra(BootStartService.START_BOOT, true);
                 context.startService(service);
-            }*/
+            }
 
         }
 
