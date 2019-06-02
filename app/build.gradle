@@ -7,8 +7,8 @@ android {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 170
-        versionName "1.7.0"
+        versionCode 171
+        versionName "1.7.1"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
             annotationProcessorOptions {
@@ -47,7 +47,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "GPS速度插件_${buildType.name}_v${variant.versionName}_${variant.versionCode}-mini.apk"
+            outputFileName = "GPS速度插件_${buildType.name}_v${variant.versionName}_${variant.versionCode}-min.apk"
         }
     }
 }

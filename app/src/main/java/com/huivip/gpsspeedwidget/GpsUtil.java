@@ -152,7 +152,8 @@ public class GpsUtil {
         Intent recordService = new Intent(context, RecordGpsHistoryService.class);
         context.startService(recordService);
         serviceStarted = true;
-        weatherService=WeatherService.getInstance(context);
+
+
     }
     public void stopLocationService(boolean stop) {
         if (serviceStarted && ((!stop && !PrefUtils.isWidgetActived(context)) || (PrefUtils.isWidgetActived(context) && stop))) {

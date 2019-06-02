@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.huivip.gpsspeedwidget.GpsUtil;
-import com.huivip.gpsspeedwidget.listener.AutoFTPBackupReceiver;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
 import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
@@ -76,9 +75,14 @@ public class BootStartService extends Service {
                     PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, autoLaunchIntent);
 
-                    PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), 0);
-                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 120000L, autoFtpBackupIntent);
-
+                   /* PendingIntent autoFtpBackupIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), AutoFTPBackupReceiver.class), 0);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 120000L, autoFtpBackupIntent);*/
+                    Intent searchWeatherService=new Intent(getApplicationContext(),WeatherService.class);
+                    getApplicationContext().startService(searchWeatherService);
+                    if(PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())){
+                        Intent naviTrackService=new Intent(getApplicationContext(), NaviTrackService.class);
+                        getApplicationContext().startService(naviTrackService);
+                    }
                     PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), WeatherServiceReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 60000L, weatherServiceIntent);
                 }

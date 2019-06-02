@@ -55,6 +55,7 @@ import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
 import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.MeterFloatingService;
+import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.utils.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
@@ -240,6 +241,24 @@ public class ConfigurationActivity extends Activity {
                         selectedAMAPPlugin.setText("已选择高德插件id:"+selectedPluginId);
                     } else {
                         selectedAMAPPlugin.setText("未选择高德插件");
+                    }
+                }
+            }
+        });
+        CheckBox naviTrackServiceCheckbox=findViewById(R.id.checkBox_naviTrack);
+        naviTrackServiceCheckbox.setChecked(PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext()));
+        naviTrackServiceCheckbox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setUploadNAVIGPSHistory(getApplicationContext(),buttonView.isChecked());
+                Intent trackService=new Intent(getApplicationContext(), NaviTrackService.class);
+                if(buttonView.isChecked()){
+                    if(!Utils.isServiceRunning(getApplicationContext(),NaviTrackService.class.getName())){
+                        startService(trackService);
+                    }
+                } else {
+                    if(Utils.isServiceRunning(getApplicationContext(),NaviTrackService.class.getName())){
+                        stopService(trackService);
                     }
                 }
             }
