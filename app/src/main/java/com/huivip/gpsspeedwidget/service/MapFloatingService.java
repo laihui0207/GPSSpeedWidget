@@ -237,7 +237,7 @@ public class MapFloatingService extends Service {
     }
 
     void checkLocationData() {
-        //if ((gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) || !isLocated) {
+        if ((gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) || !isLocated) {
             LatLng latLng = new LatLng(Double.parseDouble(gpsUtil.getLatitude()), Double.parseDouble(gpsUtil.getLongitude()));
             // 显示定位小图标，初始化时已经创建过了，这里修改位置即可
             converter.coord(latLng);
@@ -257,7 +257,7 @@ public class MapFloatingService extends Service {
                 aMap.moveCamera(CameraUpdateFactory.scrollBy(0,mapMove));
                 isLocated=true;
             }
-       // }
+        }
         showRoadLine();
     }
     private void showRoadLine(){
