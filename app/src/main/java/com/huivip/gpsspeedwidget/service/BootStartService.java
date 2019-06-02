@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
@@ -133,6 +134,7 @@ public class BootStartService extends Service {
                         startService(timeFloating);
                     }
                 }
+                GpsUtil.getInstance(getApplicationContext()).startLocationService();
                 /*if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
                     GpsUtil.getInstance(getApplicationContext()).startLocationService();
                 }*/
