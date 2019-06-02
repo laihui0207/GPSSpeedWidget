@@ -70,7 +70,7 @@ public class TmcSegmentView extends View {
         if (segments == null || segments.size()==0) {
             return;
         }
-        mPaint.setColor(color[5]);
+        mPaint.setColor(color[1]);
         canvas.drawRect(0, 0, getWidth(), getHeight(), mPaint);
         int left = 0;
         for (SegmentModel segment : segments) {
