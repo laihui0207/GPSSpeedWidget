@@ -16,7 +16,6 @@
             app:apsv_draw_width="2dp"
             app:apsv_model_bg_enabled="true"
             app:apsv_shadowed="false"
-            app:apsv_typeface="fonts/agency.ttf"
             app:apsv_start_angle="90"
             app:apsv_sweep_angle="360"
             android:background="@drawable/circle_limit"
@@ -62,6 +61,10 @@
                 android:layout_height="wrap_content" android:layout_alignTop="@+id/limit_text"
                 android:layout_centerHorizontal="true" android:id="@+id/textView_floating_distance"
                 android:layout_marginTop="10dp" android:textSize="13dp"/>
+
     </RelativeLayout>
     <include layout="@layout/floating_default_speed"/>
+    <ImageView android:layout_width="20dp" android:layout_height="20dp"
+               android:src="@drawable/close" android:layout_gravity="top|left"
+               android:id="@+id/floating_close"/>
 </RelativeLayout>

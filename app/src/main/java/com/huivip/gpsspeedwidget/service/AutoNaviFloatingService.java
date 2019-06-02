@@ -19,25 +19,32 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.view.SpeedWheel;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.view.SpeedWheel;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -76,8 +83,8 @@ public class AutoNaviFloatingService extends Service {
     ImageView goCompanyImage;
     @BindView(R.id.image_main_navi)
     ImageView goMainImage;
-    @BindView(R.id.image_auto_navi)
-    ImageView goAutoNaviImage;
+   /* @BindView(R.id.image_auto_navi)
+    ImageView goAutoNaviImage;*/
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
@@ -188,12 +195,12 @@ public class AutoNaviFloatingService extends Service {
                 startActivity(intent);
             }
         });
-        goAutoNaviImage.setOnClickListener(new View.OnClickListener() {
+       /* goAutoNaviImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendBroadcast(sendAutoBroadCase(getApplicationContext(),10034,100));
             }
-        });
+        });*/
         super.onCreate();
     }
     private Intent sendAutoBroadCase(Context context, int key,int type){
