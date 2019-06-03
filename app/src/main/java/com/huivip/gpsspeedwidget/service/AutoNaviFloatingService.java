@@ -197,7 +197,9 @@ public class AutoNaviFloatingService extends Service {
 
             }
         };
-        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        if(PrefUtils.isEnableSpeedRoadLine(getApplicationContext())) {
+            getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        }
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
        // this.roadLineTimer.schedule(this.roadLineTask,0,1000L);
         speedView.setOnTouchListener(new FloatingOnTouchListener());

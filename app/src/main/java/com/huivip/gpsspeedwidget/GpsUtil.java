@@ -87,7 +87,7 @@ public class GpsUtil implements AMapNaviListener {
     boolean gpsEnabled = false;
     boolean gpsLocationStarted = false;
     boolean gpsLocationChanged = false;
-    boolean serviceStarted = false;
+    public boolean serviceStarted = false;
     TimerTask locationScanTask;
     Timer locationTimer;
     AMapNavi aMapNavi;

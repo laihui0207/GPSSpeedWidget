@@ -6,11 +6,9 @@ import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -33,26 +31,16 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
-import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.xutils.x;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -71,9 +59,9 @@ public class NaviFloatingService extends Service {
     WindowManager.LayoutParams params;
     private View mFloatingView;
     GpsUtil gpsUtil;
-    TimerTask locationScanTask;
+    /*TimerTask locationScanTask;
     Timer locationTimer = new Timer();
-    final Handler updateHandler = new Handler();
+    final Handler updateHandler = new Handler();*/
     @BindView(R.id.textView_currentroad)
     TextView currentRoadTextView;
     @BindView(R.id.textView_nextroadname)
@@ -102,14 +90,14 @@ public class NaviFloatingService extends Service {
     TextView speedTextView;
     @BindView(R.id.imageView_auto_close)
     ImageView closeButton;
-    @BindView(R.id.segmentView)
+   /* @BindView(R.id.segmentView)
     TmcSegmentView tmcSegmentView;
-    int count = 0;
-    RoadLineService.RoadLineBinder roadLineBinder;
+    int count = 0;*/
+  /*  RoadLineService.RoadLineBinder roadLineBinder;
     private ServiceConnection mServiceConnection;
     String nextRoadDistance,nextRoadName,currentRoadName;
     String limitSpeed,limitDistance,limitTypeName,leftTravel;
-    int turnIcon,limitType,limitDistancePercent;
+    int turnIcon,limitType,limitDistancePercent;*/
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -127,7 +115,7 @@ public class NaviFloatingService extends Service {
                 return super.onStartCommand(intent, flags, startId);
             }
         }
-        count = 0;
+/*        count = 0;*/
         localNumberFormat.setMaximumFractionDigits(1);
         x.task().postDelayed(new Runnable() {
             @Override
@@ -142,10 +130,10 @@ public class NaviFloatingService extends Service {
         if (mFloatingView != null && mWindowManager != null) {
             mWindowManager.removeView(mFloatingView);
         }
-        if (locationTimer != null) {
+       /* if (locationTimer != null) {
             locationTimer.cancel();
             locationTimer.purge();
-        }
+        }*/
     }
 
     @Override
@@ -183,20 +171,20 @@ public class NaviFloatingService extends Service {
         mFloatingView.setOnTouchListener(new FloatingOnTouchListener());
         initMonitorPosition();
         EventBus.getDefault().register(this);
-        this.locationScanTask = new TimerTask() {
+    /*    this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
                 updateHandler.post(new Runnable() {
                     @Override
                     public void run()
                     {
-                       // NaviFloatingService.this.checkLocationData();
+                        NaviFloatingService.this.checkLocationData(null);
                         //Log.d("huivip","Float Service Check Location");
                     }
                 });
             }
         };
-        //this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);*/
         /*mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -225,21 +213,22 @@ public class NaviFloatingService extends Service {
         if(gpsUtil.getNavi_turn_icon()>0) {
             naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
         }
-        if(gpsUtil.getCameraSpeed()>0){
-            navicameraSpeedTextView.setText(gpsUtil.getCameraSpeed()+"");
-        }
-        else {
-            navicameraSpeedTextView.setText("0");
-        }
-        if(gpsUtil.getCameraDistance()>0){
-            navicameraDistanceTextView.setText(gpsUtil.getCameraDistance()+"米");
-            limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
-        }
-        else {
-            navicameraDistanceTextView.setText("0米");
-        }
-        cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
+
         if(gpsUtil.getCameraType()!=-1){
+            cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
+            if(gpsUtil.getCameraDistance()>0){
+                navicameraDistanceTextView.setText(gpsUtil.getCameraDistance()+"米");
+                limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
+            }
+            else {
+                navicameraDistanceTextView.setText("0米");
+            }
+            if(gpsUtil.getCameraSpeed()>0){
+                navicameraSpeedTextView.setText(gpsUtil.getCameraSpeed()+"");
+            }
+            else {
+                navicameraSpeedTextView.setText("0");
+            }
             naviCameraView.setVisibility(View.VISIBLE);
         }
         else {
@@ -269,7 +258,7 @@ public class NaviFloatingService extends Service {
        }
     }*/
 
-    @Subscribe
+   /* @Subscribe
     public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event) {
         String info = event.getInfo();
         if (TextUtils.isEmpty(info)) {
@@ -307,7 +296,7 @@ public class NaviFloatingService extends Service {
         if (models != null && models.size() > 0) {
             tmcSegmentView.setSegments(models);
         }
-    }
+    }*/
 
 
     private int getWindowType() {
@@ -530,7 +519,7 @@ public class NaviFloatingService extends Service {
                             PrefUtils.setNaviFloatingSolidLocation(getApplicationContext(), params.x, params.y);
                         }
                     }
-                    if (mIsClick && (event.getEventTime() - event.getDownTime()) > ViewConfiguration.getLongPressTimeout()) {
+               /*     if (mIsClick && (event.getEventTime() - event.getDownTime()) > ViewConfiguration.getLongPressTimeout()) {
                         if (PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
                             Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
                             PrefUtils.setEnableNaviFloatingFixed(getApplicationContext(), false);
@@ -538,7 +527,7 @@ public class NaviFloatingService extends Service {
                         Intent configActivity = new Intent(getApplicationContext(), ConfigurationActivity.class);
                         configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
                         startActivity(configActivity);
-                    }
+                    }*/
                     return true;
             }
             return false;
