@@ -1,13 +1,10 @@
 package com.huivip.gpsspeedwidget.appselection;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -22,17 +19,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.pluscubed.recyclerfastscroll.RecyclerFastScroller;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import rx.SingleSubscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -47,7 +41,7 @@ public class AppSelectionActivity extends AppCompatActivity {
     //public static final String STATE_MAPS_ONLY = "state_maps_only";
 
     private AppAdapter mAdapter;
-    private RecyclerFastScroller mScroller;
+/*    private RecyclerFastScroller mScroller;*/
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private List<String> mSelectedApps;
@@ -74,8 +68,8 @@ public class AppSelectionActivity extends AppCompatActivity {
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mScroller = (RecyclerFastScroller) findViewById(R.id.fastscroller);
-        mScroller.attachRecyclerView(recyclerView);
+        /*mScroller = (RecyclerFastScroller) findViewById(R.id.fastscroller);
+        mScroller.attachRecyclerView(recyclerView);*/
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
