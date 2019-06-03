@@ -4,8 +4,10 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
@@ -88,6 +90,10 @@ public class AutoNaviFloatingService extends Service {
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
+    @BindView(R.id.navi_roadLine)
+    ImageView daoHang_roadLine;
+    private ServiceConnection mServiceConnection;
+    RoadLineService.RoadLineBinder roadLineBinder;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -168,12 +174,26 @@ public class AutoNaviFloatingService extends Service {
                     {
                         AutoNaviFloatingService.this.checkLocationData();
                         //Log.d("huivip","Float Service Check Location");
+                        showRoadLine();
                     }
                 });
             }
         };
-        CrashHandler.getInstance().init(getApplicationContext());
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        mServiceConnection=new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                roadLineBinder= (RoadLineService.RoadLineBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        if(PrefUtils.isEnableSpeedRoadLine(getApplicationContext()))
+            getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        CrashHandler.getInstance().init(getApplicationContext());
 
         goHomeImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,7 +221,19 @@ public class AutoNaviFloatingService extends Service {
                 sendBroadcast(sendAutoBroadCase(getApplicationContext(),10034,100));
             }
         });*/
+
         super.onCreate();
+    }
+    private void showRoadLine() {
+        if(roadLineBinder!=null){
+            View vv=roadLineBinder.getRoadLineView();
+            if(vv!=null){
+                daoHang_roadLine.setImageDrawable(((ImageView)vv).getDrawable());
+                daoHang_roadLine.setVisibility(View.VISIBLE);
+            } else {
+                daoHang_roadLine.setVisibility(View.INVISIBLE);
+            }
+        }
     }
     private Intent sendAutoBroadCase(Context context, int key,int type){
         Intent intent = new Intent();

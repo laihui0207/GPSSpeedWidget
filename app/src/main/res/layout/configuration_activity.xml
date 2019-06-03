@@ -477,7 +477,15 @@
                     android:layout_toEndOf="@+id/checkBox_autoSolt"
                     android:layout_toRightOf="@+id/checkBox_autoSolt"
                     android:text="固定位置" />
-
+                <CheckBox
+                    android:id="@+id/speed_roadLine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/checkBox_speed_fixed_position"
+                    android:layout_alignBottom="@+id/checkBox_speed_fixed_position"
+                    android:layout_toEndOf="@+id/checkBox_speed_fixed_position"
+                    android:layout_toRightOf="@+id/checkBox_speed_fixed_position"
+                    android:text="车道信息" />
                 <CheckBox
                     android:id="@+id/checkBox_navi_fixed_position"
                     android:layout_width="wrap_content"
@@ -526,6 +534,7 @@
                     android:layout_alignBottom="@+id/checkBox_Navi_autoSolt"
                     android:text="测试"
                     android:visibility="gone" />
+
             </RelativeLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
