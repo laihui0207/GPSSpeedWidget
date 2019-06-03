@@ -136,7 +136,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             locationTimer.cancel();
             locationTimer.purge();
         }
-
        /* if(gpsUtil!= null) {
             gpsUtil.stopLocationService(false);
         }*/
@@ -230,18 +229,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-       /* this.roadLineTask = new TimerTask() {
-            @Override
-            public void run() {
-                roadLineHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        showRoadLine();
-                    }
-                });
-            }
-        };
-        this.roadLineTimer.schedule(this.roadLineTask,0L,1000L);*/
         mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -253,7 +240,9 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
 
             }
         };
-        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        if(PrefUtils.isEnableSpeedRoadLine(getApplicationContext())) {
+            getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        }
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }

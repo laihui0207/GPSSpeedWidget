@@ -984,6 +984,15 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableLyricFloatingFixed(getApplicationContext(),buttonView.isChecked());
             }
         });
+        CheckBox speedRoadLineCheckBox=findViewById(R.id.speed_roadLine);
+        speedRoadLineCheckBox.setChecked(PrefUtils.isEnableSpeedRoadLine(getApplicationContext()));
+        speedRoadLineCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        speedRoadLineCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableSpeedRoadLine(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         CheckBox roadLineCheckBox=findViewById(R.id.checkBox_roadLine);
         roadLineCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
         roadLineCheckBox.setChecked(PrefUtils.isEnableRoadLineFloating(getApplicationContext()));
@@ -1214,6 +1223,9 @@ public class ConfigurationActivity extends Activity {
         autoWidgetFloatingCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
         CheckBox onlyShowAutoWidgetOnTurnCheckBox=findViewById(R.id.checkBox_Auto_widget_floating_only);
         onlyShowAutoWidgetOnTurnCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
+        CheckBox speedRoadLineCheckBox=findViewById(R.id.speed_roadLine);
+        speedRoadLineCheckBox.setChecked(PrefUtils.isEnableSpeedRoadLine(getApplicationContext()));
+        speedRoadLineCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
         //mAppList
         String selectApps = PrefUtils.getAutoLaunchAppsName(getApplicationContext());
         /*if (mAppList != null && mAppList.size() > 0) {
