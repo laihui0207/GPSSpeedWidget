@@ -111,6 +111,7 @@ public abstract class PrefUtils {
     static final String LYRIC_FLOATTING_FIXED_POSITION="com.huivip.lyric.fixed.position";
     static final String ROADLINE_FLOATTING_FIXED_POSITION="com.huivip.roaldLine.fixed.position";
     static final String ROADLINE_FLOATTING="com.huivip.roaldLine.enabled";
+    static final String ROADLINE_SPEED="com.huivip.roaldLine.speed.enabled";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -645,6 +646,13 @@ public abstract class PrefUtils {
 
     public static void setEnableRoadLineFloating(Context context, boolean show) {
         edit(context).putBoolean(ROADLINE_FLOATTING, show).apply();
+    }
+    public static boolean isEnableSpeedRoadLine(Context context) {
+        return getSharedPreferences(context).getBoolean(ROADLINE_SPEED, true);
+    }
+
+    public static void setEnableSpeedRoadLine(Context context, boolean show) {
+        edit(context).putBoolean(ROADLINE_SPEED, show).apply();
     }
     public static Set<String> getApps(Context context) {
         return new HashSet<>(getSharedPreferences(context).getStringSet(PREF_APPS, new HashSet<String>()));
