@@ -232,7 +232,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     gpsUtil.setLimitSpeed(roadLimitSpeed);
                     gpsUtil.setCameraType(9999);
                 }*/
-                //if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
+                if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
                     int cameraType = intent.getIntExtra("CAMERA_TYPE", -1);
                     if (cameraType > -1) {
                         gpsUtil.setCameraType(cameraType);
@@ -251,7 +251,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }/* else {
                         gpsUtil.setCameraSpeed(0);
                     }*/
-               // }
+                }
             }
             /*if(key==10072){  // return mute status
                 Toast.makeText(context,"静音状态:"+intent.getIntExtra("EXTRA_MUTE",-1)+",临时静音:"+
