@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
 import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -149,8 +148,8 @@ public class GpsUtil {
         };
         Toast.makeText(context,"GPS服务开启",Toast.LENGTH_SHORT).show();
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        Intent recordService = new Intent(context, RecordGpsHistoryService.class);
-        context.startService(recordService);
+        /*Intent recordService = new Intent(context, RecordGpsHistoryService.class);
+        context.startService(recordService);*/
         serviceStarted = true;
 
 
@@ -162,14 +161,13 @@ public class GpsUtil {
                 this.locationTimer.purge();
             }
             //stopAimlessNavi();
-            Intent recordService = new Intent(context, RecordGpsHistoryService.class);
+           /* Intent recordService = new Intent(context, RecordGpsHistoryService.class);
             recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
-            context.startService(recordService);
+            context.startService(recordService);*/
            /* if (ttsUtil != null) {
                 ttsUtil.stop();
             }*/
             serviceStarted = false;
-            weatherService.stopLocation();
             Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
             roadLineService.putExtra(RoadLineFloatingService.EXTRA_CLOSE,true);
             context.startService(roadLineService);

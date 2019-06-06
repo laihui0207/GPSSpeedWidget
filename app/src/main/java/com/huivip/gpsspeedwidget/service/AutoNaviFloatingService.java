@@ -87,6 +87,8 @@ public class AutoNaviFloatingService extends Service {
     ImageView goMainImage;
    /* @BindView(R.id.image_auto_navi)
     ImageView goAutoNaviImage;*/
+   @BindView(R.id.image_close_navi)
+   ImageView closeImage;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
@@ -213,6 +215,13 @@ public class AutoNaviFloatingService extends Service {
                 Intent intent=new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+            }
+        });
+        closeImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onStop();
+                stopSelf();
             }
         });
        /* goAutoNaviImage.setOnClickListener(new View.OnClickListener() {

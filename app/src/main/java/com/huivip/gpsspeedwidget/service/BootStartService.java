@@ -92,21 +92,19 @@ public class BootStartService extends Service {
             Log.d(START_BOOT,"Boot Start Service Launched");
             if(start) {
                 started=true;
-                if(PrefUtils.isWidgetActived(getApplicationContext())) {
                     if(!Utils.isServiceRunning(getApplicationContext(), GpsSpeedService.class.getName())) {
                         Intent service = new Intent(getApplicationContext(), GpsSpeedService.class);
                         service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT, true);
                         startService(service);
                     }
-                }
 
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                 if(!PrefUtils.isEnableAccessibilityService(getApplicationContext())){
                     PrefUtils.setShowFlattingOn(getApplicationContext(),PrefUtils.SHOW_ALL);
                 }
-                if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+               // if (PrefUtils.getShowFlatingOn(getApplicationContext()).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
                     Utils.startFloatingWindows(getApplicationContext(),true);
-                }
+                //}
                 if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
                     GpsUtil.getInstance(getApplicationContext()).startLocationService();
                 }
