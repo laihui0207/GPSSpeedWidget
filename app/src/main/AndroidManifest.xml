@@ -332,10 +332,6 @@
                 android:label="@string/title_activity_screen_save"
                 android:theme="@style/FullscreenTheme">
         </activity>
-        <activity
-                android:name=".SettingsActivity"
-                android:label="@string/title_activity_settings">
-        </activity>
 
         <receiver
                 android:name=".listener.SwitchReceiver"
