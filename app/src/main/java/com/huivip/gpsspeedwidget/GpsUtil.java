@@ -184,8 +184,10 @@ public class GpsUtil implements AMapNaviListener {
         this.locationTimer = new Timer();
         speedAdjust = PrefUtils.getSpeedAdjust(context);
         Intent trackService=new Intent(context, NaviTrackService.class);
-       /* Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
-        context.startService(roadLineService);*/
+      /*  Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
+        if(!Utils.isServiceRunning(context,RoadLineFloatingService.class.getName())) {
+            context.startService(roadLineService);
+        }*/
         this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
@@ -284,10 +286,13 @@ public class GpsUtil implements AMapNaviListener {
             //SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context)).release();
            // }
             serviceStarted = false;
-           /* weatherService.stopLocation();
-            Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
-            roadLineService.putExtra(RoadLineFloatingService.EXTRA_CLOSE,true);
-            context.startService(roadLineService);*/
+            //weatherService.stopLocation();
+
+           /* if(Utils.isServiceRunning(context,RoadLineFloatingService.class.getName())) {
+                Intent roadLineService = new Intent(context, RoadLineFloatingService.class);
+                roadLineService.putExtra(RoadLineFloatingService.EXTRA_CLOSE, true);
+                context.startService(roadLineService);
+            }*/
         }
 
     }

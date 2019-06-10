@@ -44,7 +44,6 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.kuwo.autosdk.api.KWAPI;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -83,7 +82,6 @@ public class LyricFloatingService extends Service{
     boolean isShowing=false;
     @BindView(R.id.lrc_floatting_view)
     LrcView lrcView;
-    KWAPI mKwapi;
     @BindView(R.id.lyric_control)
     View controlView;
     @BindView(R.id.layout_lyric)
@@ -230,7 +228,6 @@ public class LyricFloatingService extends Service{
         CrashHandler.getInstance().init(getApplicationContext());
         lyricTimer = new Timer();
         EventBus.getDefault().register(this);
-        mKwapi = KWAPI.getKWAPI();
        // changeViewSize(lyricView,1024,600);
         super.onCreate();
     }

@@ -49,8 +49,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import devlight.io.library.ArcProgressStackView;
-import jp.co.recruit_lifestyle.android.floatingview.FloatingViewListener;
-import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -58,12 +56,11 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  * Created by laisun on 28/02/2018.
  */
 
-public class DefaultFloatingService extends Service implements FloatingViewListener {
+public class DefaultFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
 
     private WindowManager mWindowManager;
     private View mFloatingView;
-    private FloatingViewManager mFloatingViewManager;
     @BindView(R.id.limit)
     View mLimitView;
     @BindView(R.id.speedometer)
@@ -417,17 +414,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
         });
 
         valueAnimator.start();
-    }
-
-    @Override
-    public void onFinishFloatingView() {
-        stopForeground(true);
-        stopSelf();
-    }
-
-    @Override
-    public void onTouchFinished(boolean b, int i, int i1) {
-
     }
 
     private class FloatingOnTouchListener implements View.OnTouchListener {

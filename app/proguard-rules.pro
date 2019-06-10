@@ -93,7 +93,7 @@
     void *(**On*Event);
 }
 #----------------------------------------------------------------------------
--libraryjars libs/AMap3DMap_6.7.0_AMapNavi_6.6.0_AMapSearch_6.5.0_AMapTrack_1.0.0_AMapLocation_4.4.0_20190214.jar
+-libraryjars libs/AMap3DMap_6.9.0_AMapNavi_6.8.0_AMapTrack_1.1.0_AMapLocation_4.6.0_20190530.jar
 -libraryjars libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar
 -libraryjars libs/DUI-lite-SDK-for-Android-1.2.1.jar
 -libraryjars libs/kwmusic-autosdk-v2.0.2.jar
