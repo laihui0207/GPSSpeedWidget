@@ -108,6 +108,10 @@ public class BootStartService extends Service {
                 if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
                     GpsUtil.getInstance(getApplicationContext()).startLocationService();
                 }
+                if(PrefUtils.isEnableRoadLineFloating(getApplicationContext())){
+                    Intent roadLineFloatingService=new Intent(getApplicationContext(),RoadLineFloatingService.class);
+                    getApplicationContext().startService(roadLineFloatingService);
+                }
             }
         }
         return super.onStartCommand(intent, flags, startId);

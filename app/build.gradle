@@ -47,7 +47,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "GPS速度插件_${buildType.name}_v${variant.versionName}_${variant.versionCode}-min.apk"
+            outputFileName = "GPS速度插件_${buildType.name}_v${variant.versionName}_${variant.versionCode}-mini.apk"
         }
     }
 }
@@ -82,7 +82,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'io.reactivex:rxjava:1.3.5'
     implementation 'org.xutils:xutils:3.5.0'
-    implementation 'com.github.goweii:AnyPermission:1.1.0'
 /*    implementation 'com.google.code.gson:gson:2.8.5'*/
     implementation 'devlight.io:arcprogressstackview:1.0.4'
     implementation 'com.jakewharton.timber:timber:4.6.0'
@@ -92,7 +91,6 @@ dependencies {
     implementation 'com.zhy:percent-support-extends:1.1.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 /*    implementation 'com.android.support:-v7:28.0.0'*/
-    implementation 'com.github.pluscubed:recycler-fast-scroll:0.3.2'
     implementation 'commons-net:commons-net:3.6'
 
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'

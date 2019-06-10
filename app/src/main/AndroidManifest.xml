@@ -46,8 +46,8 @@
 &lt;!&ndash;                <category android:name="android.intent.category.HOME" />&ndash;&gt;
                &lt;!&ndash; <category android:name="android.intent.category.DEFAULT" />&ndash;&gt;
             </intent-filter>
-        </activity>-->
-       <!-- <activity android:name=".GPSLauncher">
+        </activity>
+        <activity android:name=".GPSLauncher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -58,6 +58,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
