@@ -43,8 +43,6 @@ import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
-import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
-import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.CycleQueue;
@@ -93,8 +91,6 @@ public class GpsUtil implements AMapNaviListener {
     AMapNavi aMapNavi;
     LocationManager locationManager;
     TTS tts;
-    WeatherService weatherService;
-    boolean isOnDesktop=true;
     boolean limitSpeaked = false;
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
@@ -188,8 +184,10 @@ public class GpsUtil implements AMapNaviListener {
         this.locationTimer = new Timer();
         speedAdjust = PrefUtils.getSpeedAdjust(context);
         Intent trackService=new Intent(context, NaviTrackService.class);
-        Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
-        context.startService(roadLineService);
+      /*  Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
+        if(!Utils.isServiceRunning(context,RoadLineFloatingService.class.getName())) {
+            context.startService(roadLineService);
+        }*/
         this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
@@ -288,10 +286,13 @@ public class GpsUtil implements AMapNaviListener {
             //SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context)).release();
            // }
             serviceStarted = false;
-            weatherService.stopLocation();
-            Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
-            roadLineService.putExtra(RoadLineFloatingService.EXTRA_CLOSE,true);
-            context.startService(roadLineService);
+            //weatherService.stopLocation();
+
+           /* if(Utils.isServiceRunning(context,RoadLineFloatingService.class.getName())) {
+                Intent roadLineService = new Intent(context, RoadLineFloatingService.class);
+                roadLineService.putExtra(RoadLineFloatingService.EXTRA_CLOSE, true);
+                context.startService(roadLineService);
+            }*/
         }
 
     }
