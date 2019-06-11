@@ -57,7 +57,6 @@ public class RoadLineFloatingService extends Service{
     boolean isShowing=false;
     @BindView(R.id.roadline_control)
     View controlView;
-   // WindowManager.LayoutParams params;
     GpsUtil gpsUtil;
     @BindView(R.id.imageView_floating_roadLine)
     ImageView roadLineView;

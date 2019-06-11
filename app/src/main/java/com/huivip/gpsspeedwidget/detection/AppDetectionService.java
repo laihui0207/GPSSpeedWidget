@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
 
-import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -19,7 +18,6 @@ public class AppDetectionService extends AccessibilityService {
     private static AppDetectionService INSTANCE;
 
     private Set<String> enabledApps;
-    private GpsUtil gpsUtil;
     public static AppDetectionService get() {
         return INSTANCE;
     }

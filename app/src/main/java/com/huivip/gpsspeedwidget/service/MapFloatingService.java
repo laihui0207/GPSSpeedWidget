@@ -206,7 +206,6 @@ public class MapFloatingService extends Service {
                     public void run()
                     {
                         MapFloatingService.this.checkLocationData();
-                        //Log.d("huivip","Float Service Check Location");
                     }
                 });
             }
@@ -261,23 +260,6 @@ public class MapFloatingService extends Service {
         showRoadLine();
     }
     private void showRoadLine(){
-       /* int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
-        if (id != -1) {
-            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
-            View vv = null;
-            if (gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
-                vv = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
-            } else {
-               vv = Utils.findlayoutViewById(amapView, "road_line");
-            }
-            if(vv!=null && vv instanceof  ImageView){
-                daoHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());
-                daoHang_roadLine.setVisibility(View.VISIBLE);
-            } else {
-                daoHang_roadLine.setVisibility(View.INVISIBLE);
-            }
-        }*/
        if(roadLineBinder!=null){
            View vv=roadLineBinder.getRoadLineView();
            if(vv!=null){
@@ -288,26 +270,6 @@ public class MapFloatingService extends Service {
            }
        }
     }
-   /* @Subscribe
-    public void showPluginContent(DriveWayEvent event) {
-        if (event.isShow()) {
-            int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
-            if (id != -1) {
-                AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-                final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
-                View vv = Utils.getViewByIds(amapView, new Object[]{"widget_container", "xunhang_container", 0, "road_line_container", "road_line"});
-                if (vv != null && vv instanceof ImageView) {
-                    xunHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());
-                    xunHang_roadLine.setVisibility(View.VISIBLE);
-                }
-                else {
-                    xunHang_roadLine.setVisibility(View.INVISIBLE);
-                }
-            }
-        } else {
-            xunHang_roadLine.setVisibility(View.INVISIBLE);
-        }
-    }*/
     private Bitmap getBitmap(float bearing) {
         Bitmap bitmap = null;
         View view = View.inflate(this,R.layout.floating_map_navi_icon, null);
@@ -321,7 +283,6 @@ public class MapFloatingService extends Service {
         view.buildDrawingCache();
         bitmap = view.getDrawingCache();
         if(bitmap==null){
-            Log.d("huivip","Get map icon bitmap failed");
         }
         return bitmap;
     }

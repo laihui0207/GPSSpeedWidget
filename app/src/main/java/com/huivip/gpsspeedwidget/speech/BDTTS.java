@@ -61,17 +61,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     @Override
     public void speak(String text, boolean force) {
-      /*  if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null && (force || PrefUtils.isEnableTempAudioService(context)))  {
-            if(!inited){
-                release();
-                initTTS();
-            }
-            beforeSpeak();
-            int result = mSpeechSynthesizer.speak(text);
-            if(result!=0){
-                Log.d("huivip","语音播放失败");
-            }
-        }*/
         if(PrefUtils.isEnableAudioVolumeDepress(context)) {
             customPlayer =true;
             synthesize(text, force);
@@ -107,15 +96,9 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     public void synthesize(String text, boolean force) {
         if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null && (force || PrefUtils.isEnableTempAudioService(context))) {
             if (!inited) {
-                //release();
                 initTTS();
             }
             customPlayer = true;
-            //String utteranceId=Integer.toString(text.hashCode());
-           /* int result = mSpeechSynthesizer.synthesize(text,utteranceId);
-            if(result!=0){
-                Log.d("huivip","语音合成失败");
-            }*/
             if (wordList != null)
                 wordList.addLast(text);
             else {
@@ -130,13 +113,11 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null) {
             mSpeechSynthesizer.release();
             inited = false;
-            //mSpeechSynthesizer=null;
         }
     }
 
     @Override
     public void initTTS() {
-       // LoggerProxy.printable(true); // 日志打印在logcat中
         boolean isMix = ttsMode.equals(TtsMode.MIX);
         boolean isSuccess;
 
@@ -145,8 +126,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
             isSuccess = checkOfflineResources();
             if (!isSuccess) {
                 createOfflineResource(offlineVoice);
-            } else {
-                Log.d("huivip", "离线资源存在并且可读, 目录：" + TEMP_DIR);
             }
         }
         // 1. 获取实例
@@ -198,7 +177,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         // 6. 初始化
         int result = mSpeechSynthesizer.initTts(ttsMode);
         inited = result == 0;
-        Log.d("huivip", "TTS Init:" + result);
 
     }
 
@@ -258,7 +236,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     @Override
     public void onSynthesizeStart(String utteranceId) {
-        sendMessage("准备开始合成,序列号:" + utteranceId);
     }
 
     /**
@@ -296,7 +273,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
      */
     @Override
     public void onSynthesizeFinish(String utteranceId) {
-        sendMessage("合成结束回调, 序列号:" + utteranceId);
         if(!customPlayer) return;
         String pcmFile = Environment.getExternalStorageDirectory().toString() + "/gps_tts/" + utteranceId + ".pcm";
         String wavFile = Environment.getExternalStorageDirectory().toString() + "/gps_tts/" + utteranceId ;
@@ -310,7 +286,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     @Override
     public void onSpeechStart(String utteranceId) {
-        sendMessage("播放开始回调, 序列号:" + utteranceId);
     }
 
     /**
@@ -331,8 +306,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
      */
     @Override
     public void onSpeechFinish(String utteranceId) {
-        sendMessage("播放结束回调, 序列号:" + utteranceId);
-/*        afterSpeak();*/
     }
 
     /**
@@ -343,30 +316,8 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
      */
     @Override
     public void onError(String utteranceId, SpeechError speechError) {
-        sendErrorMessage("错误发生：" + speechError.description + "，错误编码："
-                + speechError.code + "，序列号:" + utteranceId);
-        /*if(currentMusicVolume!=0){
-            am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
-        }*/
     }
 
-    private void sendErrorMessage(String message) {
-        sendMessage(message, true);
-    }
-
-
-    private void sendMessage(String message) {
-        sendMessage(message, false);
-    }
-
-    protected void sendMessage(String message, boolean isError) {
-        if (isError) {
-            Log.e(TAG, message);
-        } else {
-            Log.i(TAG, message);
-        }
-
-    }
 
     private Handler handler = new Handler() {
         @Override

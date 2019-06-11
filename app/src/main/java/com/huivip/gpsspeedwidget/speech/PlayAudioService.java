@@ -49,7 +49,6 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG,"Bind Play audio service");
         return playBinder;
     }
 
@@ -93,7 +92,6 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
         } else {
             result = mAudioManager.requestAudioFocus(this, streamType, focusType);
         }
-        Log.d("huivip", "Audio request Focus:" + result);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             return true;
         }
@@ -113,12 +111,10 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             } else {
                 mAudioManager.abandonAudioFocus(this);
             }
-            Log.d("GPS","Abandon Audio forces");
         }
     }
     @Override
     public void onAudioFocusChange(int focusChange) {
-        Log.d("GPS_Audio","focus change:"+focusChange);
        /* switch (focusChange){
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
             case AudioManager.AUDIOFOCUS_GAIN:
@@ -161,7 +157,6 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             audioTrack = new AudioTrack(type,
                     16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);
         //边读边播
-        Log.d("huivip","audio track stream type:"+type);
         byte[] buffer = new byte[bufferSize];
         int volume=PrefUtils.getAudioVolume(getApplicationContext());
         audioTrack.setVolume(volume/100f);
@@ -237,7 +232,6 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                     }
                     listener.onCompletion(mp);
                     //speakNext();
-                    Log.d("GPS","MediaPlayer play finish!");
                 }
             });
             mediaPlayer.prepareAsync();

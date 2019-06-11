@@ -19,9 +19,9 @@ public abstract class PrefUtils {
     private static final String PREF_METRIC = "pref_metric";
     private static final String PREF_FLOATING_LOCATION = "pref_floating_location";
     private static final String PREF_NAVI_FLOATING_LOCATION= "pref_navi_floating_location";
-    private static final String PREF_DRIVE_FLOATING_LOCATION= "pref_driveWay_floating_location";
+  /*  private static final String PREF_DRIVE_FLOATING_LOCATION= "pref_driveWay_floating_location";
     private static final String PREF_TIME_FLOATING_LOCATION= "pref_time_floating_location";
-    private static final String PREF_TEXT_FLOATING_LOCATION= "pref_text_floating_location";
+    private static final String PREF_TEXT_FLOATING_LOCATION= "pref_text_floating_location";*/
     private static final String PREF_OPACITY = "pref_opacity";
     private static final String PREF_SPEEDOMETER = "pref_speedometer";
     private static final String PREF_LIMITS = "pref_limits";
@@ -31,11 +31,11 @@ public abstract class PrefUtils {
     private static final String PREF_DEFAULT_LAUNCHE_APP= "pref_Default_launch_apps";
     private static final String AUTO_FLOATTING_STYLE = "com.huivip.Floating.style";
     private static final String PREF_DELAY_AUTO_START = "com.huivip.delay.started";
-    private static final String PREF_DELAY_AUTO_START_INDEX= "com.huivip.delay.started.index";
+/*    private static final String PREF_DELAY_AUTO_START_INDEX= "com.huivip.delay.started.index";*/
     private static final String PREF_DELAY_AUTO_START_GOHOME= "com.huivip.delay.started.goToHome";
     private static final String PREF_AUTO_LAUNCH_APPS = "pref_Auto_apps";
     private static final String PREF_AUTO_LAUNCH_APPS_NAME = "pref_Auto_apps_Names";
-    private static final String PREF_TERMS_ACCEPTED = "pref_terms_accepted";
+/*    private static final String PREF_TERMS_ACCEPTED = "pref_terms_accepted";*/
     public static final String AUTO_START_PREFS_NAME="AutoStart";
     public static final String PREF_AUTO_LAUNCH_WIFI_HOTSPOT="AutoStart.Wifi.hotspot";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
@@ -98,12 +98,12 @@ public abstract class PrefUtils {
     public static final String FLOATING_DEFAULT="0";
     public static final String FLOATING_METER="2";
     public static final String FLOATING_AUTONAVI="1";
-    public static final String FTP_URL="com.huivip.ftp.url";
+   /* public static final String FTP_URL="com.huivip.ftp.url";
     public static final String FTP_PORT="com.huivip.ftp.port";
     public static final String FTP_USER="com.huivip.ftp.user";
     public static final String FTP_PASSWORD="com.huivip.ftp.password";
     public static final String FTP_PATH="com.huivip.ftp.path";
-    public static final String FTP_AUTO_BACKUP="com.huivip.ftp.auto.backup";
+    public static final String FTP_AUTO_BACKUP="com.huivip.ftp.auto.backup";*/
     static final String ENABLE_NAVI_FLOATING_WINDOWS="com.huivip.navi.floating";
     static final String NAVI_MODE_NEW_DRIVER="com.huivip.navi.mode.newDriver";
     static final String NAVI_FLOATTING_FIXED_POSITION="com.huivip.navi.fixed.position";
@@ -395,9 +395,9 @@ public abstract class PrefUtils {
     public static void setEnableAutoNaviService(Context context,boolean enableService){
         edit(context).putBoolean(ENABLE_AUTONAVI_SERVICE, enableService).apply();
     }
-    public static boolean isTermsAccepted(Context context) {
+   /* public static boolean isTermsAccepted(Context context) {
         return getSharedPreferences(context).getBoolean(PREF_TERMS_ACCEPTED, false);
-    }
+    }*/
     public static void setSpeedAdjust(Context context, int value) {
         edit(context).putInt(PREF_GPS_SPEED_ADJUST, value).apply();
     }
@@ -413,13 +413,13 @@ public abstract class PrefUtils {
         return getSharedPreferences(context).getInt(PREF_DELAY_AUTO_START, 0);
     }
 
-    public static void setOtherAppIndex( Context context, int value) {
+  /*  public static void setOtherAppIndex( Context context, int value) {
         edit(context).putInt(PREF_DELAY_AUTO_START_INDEX, value).apply();
     }
 
     public static int getOtherAppIndex(Context context) {
         return getSharedPreferences(context).getInt(PREF_DELAY_AUTO_START_INDEX, 0);
-    }
+    }*/
     public static boolean isGoToHomeAfterAutoLanuch(Context context){
         return getSharedPreferences(context).getBoolean(PREF_DELAY_AUTO_START_GOHOME, false);
     }
@@ -438,9 +438,9 @@ public abstract class PrefUtils {
         edit(context).putBoolean(SEPARATED_VOLUME, value).apply();
     }
 
-    public static boolean isSeparatedVolume(Context context) {
+   /* public static boolean isSeparatedVolume(Context context) {
         return getSharedPreferences(context).getBoolean(SEPARATED_VOLUME, false);
-    }
+    }*/
 
     public static void setShowAddressWhenStop(Context context, boolean value) {
         edit(context).putBoolean(SPEED_SHOW_ADDRESS_WHEN_STOP, value).apply();
@@ -461,17 +461,17 @@ public abstract class PrefUtils {
         edit(context).putBoolean(ENABLE_WATCH_WIDGET, value).apply();
     }
 
-    public static boolean isEnabledWatchWidget(Context context) {
+   /* public static boolean isEnabledWatchWidget(Context context) {
         return getSharedPreferences(context).getBoolean(ENABLE_WATCH_WIDGET, false);
-    }
+    }*/
     public static void setEnabledNumberWidget(Context context, boolean value) {
         edit(context).putBoolean(ENABLE_NUMBER_WIDGET, value).apply();
     }
 
-    public static boolean isEnabledNumberWidget(Context context) {
+   /* public static boolean isEnabledNumberWidget(Context context) {
         return getSharedPreferences(context).getBoolean(ENABLE_NUMBER_WIDGET, false);
     }
-
+*/
 
     public static void setFlatingWindow(Context context, boolean flattingWindow) {
         edit(context).putBoolean(ENABLE_FLATING_WINDOW, flattingWindow).apply();
@@ -535,16 +535,16 @@ public abstract class PrefUtils {
         public static void setNaviFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_NAVI_FLOATING_LOCATION, left + "," + screenYRatio).apply();
     }
-    public static void setDriveWayFloatingLocation(Context context, float screenYRatio, boolean left) {
+   /* public static void setDriveWayFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_DRIVE_FLOATING_LOCATION, left + "," + screenYRatio).apply();
-    }
+    }*/
     public static String getFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_FLOATING_LOCATION, "true,0");
     }
     public static String getNaviFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_NAVI_FLOATING_LOCATION, "true,0");
     }
-    public static String getDriveWayFloatingLocation(Context context) {
+   /* public static String getDriveWayFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_DRIVE_FLOATING_LOCATION, "true,0");
     }
     public static String getTimeFloatingLocation(Context context) {
@@ -552,7 +552,7 @@ public abstract class PrefUtils {
     }
     public static String getTextFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_TEXT_FLOATING_LOCATION, "true,0");
-    }
+    }*/
     public static boolean getUseMetric(Context context) {
         boolean metricDefault;
         Locale current = Locale.getDefault();
@@ -567,9 +567,9 @@ public abstract class PrefUtils {
     }
 
 
-    public static void setOpacity(Context context, int amount) {
+  /*  public static void setOpacity(Context context, int amount) {
         edit(context).putInt(PREF_OPACITY, amount).apply();
-    }
+    }*/
 
     public static int getOpacity(Context context) {
         return getSharedPreferences(context).getInt(PREF_OPACITY, 100);
@@ -661,9 +661,9 @@ public abstract class PrefUtils {
     public static void setApps(Context context, Set<String> packageNames) {
         edit(context).putStringSet(PREF_APPS, packageNames).apply();
     }
-    public static String getDefaultLanuchApp(Context context) {
+  /*  public static String getDefaultLanuchApp(Context context) {
         return getSharedPreferences(context).getString(PREF_DEFAULT_LAUNCHE_APP,"");
-    }
+    }*/
 
     public static void setDefaultLaunchApp(Context context, String packageName) {
         edit(context).putString(PREF_DEFAULT_LAUNCHE_APP, packageName).apply();
@@ -682,7 +682,7 @@ public abstract class PrefUtils {
     public static void setAutoLaunchAppsName(Context context, String packageNames) {
         edit(context).putString(PREF_AUTO_LAUNCH_APPS_NAME, packageNames).apply();
     }
-    public static void setFtpUrl(Context context,String url){
+   /* public static void setFtpUrl(Context context,String url){
         edit(context).putString(FTP_URL,url).apply();
     }
     public static String getFTPUrl(Context context){
@@ -717,7 +717,7 @@ public abstract class PrefUtils {
     }
     public static boolean isFTPAutoBackup(Context context){
         return getSharedPreferences(context).getBoolean(FTP_AUTO_BACKUP,false);
-    }
+    }*/
     public static boolean isEnbleDrawOverFeature(Context context){
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context);
         return overlayEnabled;

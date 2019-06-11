@@ -9,7 +9,6 @@ import android.os.BadParcelableException;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.lyric.LyricServiceLowVersion;
@@ -17,8 +16,6 @@ import com.huivip.gpsspeedwidget.service.TextFloatingService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 public class MediaNotificationReceiver extends BroadcastReceiver {
-    private String preSongName;
-    private static boolean spotifyPlaying = false;
     private static final String KW_PLAYER_STATUS = "cn.kuwo.kwmusicauto.action.PLAYER_STATUS";
     AudioManager audioManager;
     @Override
@@ -35,12 +32,10 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         ) {
             return;
         }
-        Log.d("huivip","Media Action:"+intent.getAction());
         long position = extras.containsKey("position") && extras.get("position") instanceof Long ?
                 extras.getLong("position") : -1;
         if (extras.get("position") instanceof Double)
             position = Double.valueOf(extras.getDouble("position")).longValue();
-        Log.d("huivip_position","current position:"+position);
         boolean isPlaying = extras.getBoolean(extras.containsKey("playstate") ? "playstate" : "playing", true);
         Object durationObject = extras.get("duration");
         Long duration = durationObject == null ? -1 : durationObject instanceof Long ? (Long) durationObject :

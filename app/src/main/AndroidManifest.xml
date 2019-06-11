@@ -121,11 +121,11 @@
                     android:name="android.appwidget.provider"
                     android:resource="@xml/lyric_widget_provider"/>
         </receiver>
-        <receiver android:name=".listener.UploadRoadDataReceiver">
+     <!--   <receiver android:name=".listener.UploadRoadDataReceiver">
             <intent-filter>
                 <action android:name="com.huivip.recordGpsHistory.start"/>
             </intent-filter>
-        </receiver>
+        </receiver>-->
         <receiver android:name=".listener.AutoMapBoardReceiver">
             <intent-filter>
                 <action android:name="AUTONAVI_STANDARD_BROADCAST_SEND"/>
@@ -137,7 +137,7 @@
         <service android:name="com.amap.api.track.AMapTrackService"/>
         <service android:name="com.amap.api.location.APSService"/>
 
-        <receiver android:name=".listener.AutoFTPBackupReceiver"/>
+<!--        <receiver android:name=".listener.AutoFTPBackupReceiver"/>-->
         <receiver android:name=".listener.AutoLaunchSystemConfigReceiver"/>
         <receiver android:name=".listener.BootStartReceiver">
             <intent-filter android:priority="9999">
@@ -326,12 +326,6 @@
         <activity
                 android:name=".appselection.AppSelectionActivity"
                 android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
-        <activity
-                android:name=".ScreenSaveActivity"
-                android:configChanges="orientation|keyboardHidden|screenSize"
-                android:label="@string/title_activity_screen_save"
-                android:theme="@style/FullscreenTheme">
-        </activity>
 
         <receiver
                 android:name=".listener.SwitchReceiver"

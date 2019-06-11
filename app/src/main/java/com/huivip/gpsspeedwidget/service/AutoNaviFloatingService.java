@@ -116,7 +116,6 @@ public class AutoNaviFloatingService extends Service {
             try {
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
-                Log.d("huivip",e.getLocalizedMessage());
                 e.printStackTrace();
             }
         }
@@ -169,7 +168,6 @@ public class AutoNaviFloatingService extends Service {
                     public void run() {
                         AutoNaviFloatingService.this.checkLocationData();
                         showRoadLine();
-                        //Log.d("huivip","Float Service Check Location");
                     }
                 });
             }

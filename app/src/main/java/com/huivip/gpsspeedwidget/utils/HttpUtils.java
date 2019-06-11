@@ -3,14 +3,19 @@ package com.huivip.gpsspeedwidget.utils;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
-import com.huivip.gpsspeedwidget.beans.LocationVO;
-import org.json.JSONArray;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.Map;
 
 /**
  * @author sunlaihui
@@ -164,23 +169,4 @@ public class HttpUtils {
         resultData = new String(byteArrayOutputStream.toByteArray());
         return resultData;
     }
-
-    public static void main(String[] args){
-        List<LocationVO> locationVOList=new ArrayList<>();
-        LocationVO locationVO=new LocationVO();
-        locationVO.setLat("112123");
-        locationVO.setLng("34234");
-        locationVO.setCreateTime((new Date()).getTime());
-        locationVOList.add(locationVO);
-        JSONArray jsonArray = new JSONArray(locationVOList);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("deviceid", "001");
-        params.put("t", "gps");
-        params.put("data", jsonArray.toString());
-       String result= HttpUtils.submitPostData("http://localhost:2345/gps", params, "utf-8");
-       System.out.println(result);
-
-    }
-
 }

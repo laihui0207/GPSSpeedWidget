@@ -18,10 +18,8 @@ import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 
-import com.huivip.gpsspeedwidget.beans.KuWoMusiceEvent;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
@@ -30,13 +28,8 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.widget.LyricWidgetService;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.lang.ref.WeakReference;
 import java.util.List;
-
-import cn.kuwo.autosdk.api.KWAPI;
-import cn.kuwo.autosdk.api.OnConnectedListener;
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class LyricService extends NotificationListenerService implements RemoteController.OnClientUpdateListener  {
@@ -52,7 +45,6 @@ public class LyricService extends NotificationListenerService implements RemoteC
     long currentPosition=0L;
     Long duration;
     String lyricContent;
-    KWAPI mKwapi;
     private RCBinder mBinder = new RCBinder();
     private static WeakReference<RemoteController> mRemoteController = new WeakReference<>(null);
 
@@ -82,23 +74,6 @@ public class LyricService extends NotificationListenerService implements RemoteC
         }
         super.onCreate();
         //得到实例,必须在Application里初始化
-        mKwapi = KWAPI.getKWAPI();
-
-        //绑定酷我音乐盒、绑定后可以使用获取当前播放状态、获取当前歌曲信息等功能
-        mKwapi.bindAutoSdkService(this);
-        mKwapi.registerConnectedListener(new OnConnectedListener() {
-            @Override
-            public void onConnectChangeListener(boolean isConnected) {
-                if (isConnected) {
-                    EventBus.getDefault().post(new KuWoMusiceEvent(1));
-                   // Toast.makeText(getApplicationContext(), "插件_音乐盒后台服务已连接", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    EventBus.getDefault().post(new KuWoMusiceEvent(0));
-                   // Toast.makeText(getApplicationContext(), "插件_音乐盒后台服务已断开", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     @Override
@@ -131,10 +106,8 @@ public class LyricService extends NotificationListenerService implements RemoteC
         return mRemoteController.get();
     }
     public void onNotificationPosted(StatusBarNotification sbn) {
-        Log.e(TAG, "onNotificationPosted...");
     }
     public boolean sendMusicKeyEvent(int keyCode) {
-        Log.d("huvip","lyric service Send key:"+keyCode);
         if (mRemoteController != null) {
             KeyEvent keyEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
             boolean down = mRemoteController.get().sendMediaKeyEvent(keyEvent);
@@ -168,7 +141,6 @@ public class LyricService extends NotificationListenerService implements RemoteC
     @Override
 
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        Log.e(TAG, "onNotificationRemoved...");
     }
     @Override
     public void onClientChange(boolean clearing) {
@@ -177,16 +149,11 @@ public class LyricService extends NotificationListenerService implements RemoteC
 
     @Override
     public void onClientPlaybackStateUpdate(int state) {
-        Log.d("huivip","Status:"+state);
     }
 
     @Override
     public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
         /*                onPlaybackStateUpdate(state);*/
-        Log.d("huivip","Status:"+state);
-        Log.d("huivip","stateChangeTimes:"+stateChangeTimeMs);
-        Log.d("huivip","CurrentPost:"+currentPosMs);
-        Log.d("huivip","Speed:"+speed);
         if(!PrefUtils.isLyricEnabled(getApplicationContext())){
            return;
         }
@@ -256,9 +223,6 @@ public class LyricService extends NotificationListenerService implements RemoteC
         Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
         lycFloatingService.putExtra(LyricFloatingService.SONGNAME, songName);
         lycFloatingService.putExtra(LyricFloatingService.ARTIST, artistName);
-        if(mKwapi.isKuwoRunning()){
-            currentPosition=mKwapi.getCurrentPos();
-        }
         if (currentPosition>0) {
             lycFloatingService.putExtra(LyricFloatingService.POSITION, currentPosition);
         }

@@ -235,13 +235,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                     && !gpsUtil.isAutoNavi_on_Frontend()) {
                                 startDriveWayFloatingService(context);
                             }
-                            //EventBus.getDefault().post(new DriveWayEvent(true));
                         } else {
                             if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)
                                     && PrefUtils.isEnableAutoWidgetFloatingWidow(context)) {
                                 stopDriveWayFloatingService(context, false);
                             }
-                            //EventBus.getDefault().post(new DriveWayEvent(false));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

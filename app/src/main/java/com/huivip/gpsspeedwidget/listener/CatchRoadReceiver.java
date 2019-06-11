@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.text.TextUtils;
-import android.util.Log;
+
 import com.amap.api.maps.CoordinateConverter;
 import com.amap.api.maps.model.LatLng;
 import com.huivip.gpsspeedwidget.Constant;
@@ -13,6 +13,7 @@ import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.utils.CycleQueue;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,16 +31,13 @@ public class CatchRoadReceiver extends BroadcastReceiver {
         String bearingStr = "";
         String speedStr = "";
         GpsUtil gpsUtil = GpsUtil.getInstance(context.getApplicationContext());
-        Log.d("huivip","Catch Road Started");
        /* if (!gpsUtil.isGpsLocationChanged()) {
-            Log.d("huivip","Catch Road: GPS is no Ready, quit!");
             return;
         }*/
 
         CoordinateConverter converter = new CoordinateConverter(context);
         converter.from(CoordinateConverter.CoordType.GPS);
         CycleQueue<Location> cycleQueue = gpsUtil.getLocationVOCycleQueue();
-        //Log.d("huivip","location list:"+cycleQueue.get().length);
         if (cycleQueue!=null && cycleQueue.get() != null && cycleQueue.get().length > 3) {
             for (Object vo : cycleQueue.get()) {
                 if (vo == null) continue;
@@ -67,18 +65,15 @@ public class CatchRoadReceiver extends BroadcastReceiver {
             }
         }
         if(TextUtils.isEmpty(latlng) || latlng.split("|").length<3){
-            Log.d("huivip","Road locaton is empty or no enough, quit");
             return ;
         }
         String catchRoadUrl = String.format(Constant.AUTONAVI_CATCH_ROAD_WEBSERVICE, PrefUtils.getDeviceIdString(context),
                 latlng, dateStr, bearingStr, speedStr, PrefUtils.getAmapWebKey(context));
         //String catchRoadUrl="http://restapi.amap.com/v3/autograsp?carid=abcd123456&locations=117.1350502968,31.8210904697|117.1381402016,31.8211451673|117.1404147148,31.8210357720&time=1434077500,1434077501,1434077510&direction=358.95,359.26,359.12&speed=1,1,2&output=json&key=5303c7587d2ae8725d2abde74abee79d&extensions=all";
-        Log.d("huivip","catch Road:"+catchRoadUrl);
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String resultContent = HttpUtils.getData(catchRoadUrl);
-                Log.d("huivip",resultContent);
                 try {
                     JSONObject data = new JSONObject(resultContent);
                     if ("1".equalsIgnoreCase(data.getString("status"))) {

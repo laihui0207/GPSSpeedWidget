@@ -49,8 +49,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import devlight.io.library.ArcProgressStackView;
-import jp.co.recruit_lifestyle.android.floatingview.FloatingViewListener;
-import jp.co.recruit_lifestyle.android.floatingview.FloatingViewManager;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -58,12 +56,11 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  * Created by laisun on 28/02/2018.
  */
 
-public class DefaultFloatingService extends Service implements FloatingViewListener {
+public class DefaultFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
 
     private WindowManager mWindowManager;
     private View mFloatingView;
-    private FloatingViewManager mFloatingViewManager;
     @BindView(R.id.limit)
     View mLimitView;
     @BindView(R.id.speedometer)
@@ -89,20 +86,13 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
     TextView textViewAltitude;
     @BindView(R.id.textView_currentRoadName)
     TextView textViewCurrentRoadName;
-    @BindView(R.id.imageView_default_xunhang_roadLIne)
-    ImageView xunHang_roadLine;
     @BindView(R.id.imageView_default_daohang_roadLIne)
     ImageView daoHang_roadLine;
     private ServiceConnection mServiceConnection;
     RoadLineService.RoadLineBinder roadLineBinder;
-   /* @BindView(R.id.floating_close)
-    ImageView closeImage;*/
     TimerTask locationScanTask;
-    TimerTask roadLineTask;
     Timer locationTimer = new Timer();
-    Timer roadLineTimer = new Timer();
     final Handler locationHandler = new Handler();
-    final Handler roadLineHandler = new Handler();
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -128,7 +118,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             try {
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
-                Log.d("huivip",e.getLocalizedMessage());
                 e.printStackTrace();
             }
         }
@@ -136,9 +125,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
             locationTimer.cancel();
             locationTimer.purge();
         }
-       /* if(gpsUtil!= null) {
-            gpsUtil.stopLocationService(false);
-        }*/
     }
 
     @Override
@@ -295,23 +281,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
     }
 
     private void showRoadLine() {
-      /*  int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
-        if (id != -1) {
-            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
-            View vv = null;
-            if (gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
-                vv = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
-            } else {
-                vv = Utils.findlayoutViewById(amapView, "road_line");
-            }
-            if(vv!=null && vv instanceof ImageView){
-                daoHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());
-                daoHang_roadLine.setVisibility(View.VISIBLE);
-            } else {
-                daoHang_roadLine.setVisibility(View.INVISIBLE);
-            }
-        }*/
       if(roadLineBinder!=null){
           View vv=roadLineBinder.getRoadLineView();
           if(vv!=null){
@@ -419,17 +388,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
         valueAnimator.start();
     }
 
-    @Override
-    public void onFinishFloatingView() {
-        stopForeground(true);
-        stopSelf();
-    }
-
-    @Override
-    public void onTouchFinished(boolean b, int i, int i1) {
-
-    }
-
     private class FloatingOnTouchListener implements View.OnTouchListener {
 
         private float mInitialTouchX;
@@ -439,11 +397,8 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
         private long mStartClickTime;
         private boolean mIsClick;
 
-        private AnimatorSet fadeAnimator;
-        private float initialAlpha;
         private ValueAnimator fadeOut;
         private ValueAnimator fadeIn;
-        private boolean tempMove=false;
         public FloatingOnTouchListener() {
             final WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
             fadeOut = ValueAnimator.ofFloat(params.alpha, 0.1F);
@@ -506,20 +461,6 @@ public class DefaultFloatingService extends Service implements FloatingViewListe
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
-                       /* if (fadeAnimator != null && fadeAnimator.isStarted()) {
-                            fadeAnimator.cancel();
-                            params.alpha = initialAlpha;
-                            try {
-                                mWindowManager.updateViewLayout(mFloatingView, params);
-                            } catch (IllegalArgumentException ignore) {
-                            }
-                        } else {
-                            initialAlpha = params.alpha;
-
-                            fadeAnimator = new AnimatorSet();
-                            fadeAnimator.play(fadeOut).before(fadeIn);
-                            fadeAnimator.start();
-                        }*/
                         if(!Utils.isServiceRunning(getApplicationContext(), MapFloatingService.class.getName())) {
                             Intent floatingMapIntent = new Intent(getApplicationContext(), MapFloatingService.class);
                             startService(floatingMapIntent);

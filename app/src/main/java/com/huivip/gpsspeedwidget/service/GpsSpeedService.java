@@ -3,15 +3,12 @@ package com.huivip.gpsspeedwidget.service;
 import android.app.Service;
 import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -35,9 +32,6 @@ import java.util.TimerTask;
 public class GpsSpeedService extends Service {
     static final int MAX_VELOCITA_NUMBER = 140;
     public static final String EXTRA_AUTOBOOT = "com.huivip.gpsspeedwidget.EXTRA_AUTOBOOT";
-    public static final String EXTRA_AUTONAVI_AUTOBOOT = "com.huivip.gpsspeedwidget.EXTRA_AUTONAVI_AUTOBOOT";
-    public static final String EXTRA_ACION="com.huivip.widget.ACTION";
-    public static final String EXTRA_ACION_SPEED_CLICK="com.huivip.widget.speed.click";
     GpsUtil gpsUtil;
     AppWidgetManager manager;
     AppWidgetHost appWidgetHost;
@@ -47,7 +41,6 @@ public class GpsSpeedService extends Service {
 
     boolean serviceStoped = true;
     Timer locationTimer = new Timer();
-    boolean homeInofSync=false;
     ComponentName thisWidget;
     ComponentName numberWidget;
 
@@ -64,7 +57,6 @@ public class GpsSpeedService extends Service {
                     @Override
                     public void run() {
                         GpsSpeedService.this.checkLocationData();
-                        //Log.d("huivip","GPS service Check Data");
                     }
                 });
             }
@@ -148,42 +140,12 @@ public class GpsSpeedService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-    private View getRoadLineView(){
-        int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
-        if (id != -1) {
-            AppWidgetProviderInfo popupWidgetInfo = manager.getAppWidgetInfo(id);
-            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
-            View vv = null;
-            //if (daohangRoadLine == null) {
-            if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started){
-                vv = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
-            } else {
-                vv = Utils.findlayoutViewById(amapView, "road_line");
-            }
-           /* }
-            if (xunhangRoadLine == null) {*/
-            // }
-            if (vv != null && vv instanceof ImageView) {
-                return vv;
-            } else {
-                Log.d("huivip", "Can't get road line image");
-            }
-        }
-        return null;
-    }
     void checkLocationData() {
         if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             if (gpsUtil.isGpsLocationChanged()) {
                 computeAndShowData();
             }
         }
-       /* if(!homeInofSync && gpsUtil.getHomeSet()!=null){
-            this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
-            this.numberRemoteViews.setViewVisibility(R.id.image_home,View.VISIBLE);
-            this.numberRemoteViews.setViewVisibility(R.id.image_company,View.VISIBLE);
-            this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
-            homeInofSync=true;
-        }*/
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         if(gpsUtil.isAimlessStatred()){
             this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.xunhang);
@@ -195,11 +157,6 @@ public class GpsSpeedService extends Service {
         } else {
             this.numberRemoteViews.setImageViewResource(R.id.image_gas_station,R.drawable.lyric_disabled);
         }
-       /* View roadLineView=getRoadLineView();
-        if(roadLineView!=null){
-            this.numberRemoteViews..setImageViewBitmap(R.id.image_roadLine,roadLineView.getDrawingCache());
-            this.numberRemoteViews.setViewVisibility(R.id.image_roadLine,View.VISIBLE);
-        }*/
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
     }
 

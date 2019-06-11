@@ -116,13 +116,13 @@ public abstract class Utils {
         }
     }
 
-    public static String getUnitText(Context context) {
+  /*  public static String getUnitText(Context context) {
         return getUnitText(context, "");
     }
 
     public static String getUnitText(Context context, String amount) {
         return PrefUtils.getUseMetric(context) ? context.getString(R.string.kmph, amount) : context.getString(R.string.mph, amount).trim();
-    }
+    }*/
   /*  public static void updateFloatingServicePrefs(Context context) {
         if (context != null && isServiceReady(context)) {
             Intent intent = new Intent(context, LimitService.class);

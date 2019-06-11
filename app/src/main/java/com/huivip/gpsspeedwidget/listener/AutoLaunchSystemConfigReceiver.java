@@ -3,7 +3,6 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.Constant;
@@ -26,7 +25,6 @@ public class AutoLaunchSystemConfigReceiver extends BroadcastReceiver {
             Intent launchBroadcast = new Intent();
             intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
             intent.putExtra("KEY_TYPE", 10031);
-            Log.d("huivip","Auto navi not Started, GPS will backend Launch it");
             context.sendBroadcast(launchBroadcast);
         }
         // Sync home info

@@ -15,7 +15,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.amap.api.navi.AMapNavi;
@@ -42,7 +41,6 @@ import com.amap.api.navi.model.NaviInfo;
 import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
-import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.CycleQueue;
@@ -184,8 +182,10 @@ public class GpsUtil implements AMapNaviListener {
         this.locationTimer = new Timer();
         speedAdjust = PrefUtils.getSpeedAdjust(context);
         Intent trackService=new Intent(context, NaviTrackService.class);
-       /* Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
-        context.startService(roadLineService);*/
+      /*  Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
+        if(!Utils.isServiceRunning(context,RoadLineFloatingService.class.getName())) {
+            context.startService(roadLineService);
+        }*/
         this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
@@ -277,17 +277,20 @@ public class GpsUtil implements AMapNaviListener {
                 this.locationTimer.purge();
             }
             stopAimlessNavi();
-            Intent recordService = new Intent(context, RecordGpsHistoryService.class);
+          /*  Intent recordService = new Intent(context, RecordGpsHistoryService.class);
             recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
-            context.startService(recordService);
+            context.startService(recordService);*/
             //if (tts != null) {
             //SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context)).release();
            // }
             serviceStarted = false;
-           /* weatherService.stopLocation();
-            Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
-            roadLineService.putExtra(RoadLineFloatingService.EXTRA_CLOSE,true);
-            context.startService(roadLineService);*/
+            //weatherService.stopLocation();
+
+           /* if(Utils.isServiceRunning(context,RoadLineFloatingService.class.getName())) {
+                Intent roadLineService = new Intent(context, RoadLineFloatingService.class);
+                roadLineService.putExtra(RoadLineFloatingService.EXTRA_CLOSE, true);
+                context.startService(roadLineService);
+            }*/
         }
 
     }
@@ -406,7 +409,6 @@ public class GpsUtil implements AMapNaviListener {
                 catchRoadLocation = paramLocation;
             } else if (paramLocation.distanceTo(catchRoadLocation) > catchRoadDistance) {
                 if(getAutoNaviStatus()!=Constant.Navi_Status_Started) { // Auto Navi started then disable catch road service
-                    Log.d("huivip", "Launch CatchRoad receiver");
                     PendingIntent catchRoadIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, CatchRoadReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);
                     catchRoadLocation = paramLocation;
@@ -418,7 +420,6 @@ public class GpsUtil implements AMapNaviListener {
                 x.task().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("huivip","Auto Navi started will go home");
                         Utils.goHome(context);
                     }
                 },20*1000);
@@ -905,7 +906,6 @@ public class GpsUtil implements AMapNaviListener {
     @Override
     public void onStartNavi(int naviType) {
         if (naviType == NaviType.CRUISE) {
-            Log.d("huivip", "巡航模式开启");
         }
     }
 
@@ -1088,7 +1088,6 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
-        Log.d("huivip", "Time:" + aimLessModeStat.getAimlessModeTime() + ",Distance:" + aimLessModeStat.getAimlessModeDistance());
 
     }
 

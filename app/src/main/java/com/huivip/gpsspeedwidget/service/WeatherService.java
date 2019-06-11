@@ -109,7 +109,6 @@ public class WeatherService extends Service implements AMapLocationListener {
     }
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void searchEvent(SearchWeatherEvent event){
-        Log.d("huvip","Get Search Weatcher evetn");
         searchWeather();
     }
     public void searchWeather(){
@@ -179,7 +178,6 @@ public class WeatherService extends Service implements AMapLocationListener {
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null) {
             if (aMapLocation.getErrorCode() == 0) {
-                //Log.d("huivip",aMapLocation.toString());
                 if(!TextUtils.isEmpty(aMapLocation.getCity())) {
                     cityName=aMapLocation.getCity();
                     adCode =aMapLocation.getAdCode();

@@ -3,7 +3,6 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.Constant;
@@ -23,7 +22,6 @@ public class SwitchReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         GpsUtil gpsUtil=GpsUtil.getInstance(context);
-        Log.d(TAG,"Get Switch BoardCast");
         String target=intent.getStringExtra("TARGET");
         if(target!=null && SWITCH_TARGET_XUNHANG.equalsIgnoreCase(target)) {
             if (gpsUtil.isAimlessStatred()) {

@@ -27,15 +27,12 @@ import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.beans.KuWoMusiceEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.LrcView;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.x;
 
 import java.util.Timer;
@@ -44,7 +41,6 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.kuwo.autosdk.api.KWAPI;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -83,7 +79,6 @@ public class LyricFloatingService extends Service{
     boolean isShowing=false;
     @BindView(R.id.lrc_floatting_view)
     LrcView lrcView;
-    KWAPI mKwapi;
     @BindView(R.id.lyric_control)
     View controlView;
     @BindView(R.id.layout_lyric)
@@ -106,7 +101,6 @@ public class LyricFloatingService extends Service{
             }
             lyrcContent=intent.getStringExtra(LYRIC_CONTENT);//FileUtil.loadLric(getApplicationContext(),inputSongName,inputArtistName);
             long position=intent.getLongExtra(POSITION,0L);
-            Log.d("huivip","Floating Position:"+position);
             duration=intent.getLongExtra(DURATION,-1L);
             songName=intent.getStringExtra(SONGNAME);
             artistName=intent.getStringExtra(ARTIST);
@@ -140,7 +134,6 @@ public class LyricFloatingService extends Service{
         long position = System.currentTimeMillis() - startTime;
        /* if(isKuwoPlayer){
             position = mKwapi.getCurrentPos();
-            Log.d("huivip","Get current position:"+position);
         }*/
         lrcView.setPlayercurrentMillis((int) position);
         if (duration > 0 && (position + 1000) >= duration) {
@@ -192,10 +185,6 @@ public class LyricFloatingService extends Service{
             EventBus.getDefault().unregister(this);
         }
     }
-    @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void switchKuWoPlayer(KuWoMusiceEvent event){
-        isKuwoPlayer = event.getStatus() == 1;
-    }
     @Override
     public void onCreate() {
         if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
@@ -230,7 +219,6 @@ public class LyricFloatingService extends Service{
         CrashHandler.getInstance().init(getApplicationContext());
         lyricTimer = new Timer();
         EventBus.getDefault().register(this);
-        mKwapi = KWAPI.getKWAPI();
        // changeViewSize(lyricView,1024,600);
         super.onCreate();
     }

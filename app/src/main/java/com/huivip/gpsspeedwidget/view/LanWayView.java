@@ -1,3 +1,4 @@
+/*
 package com.huivip.gpsspeedwidget.view;
 
 import android.annotation.TargetApi;
@@ -222,11 +223,6 @@ public class LanWayView extends LinearLayout {
         if(i==0){
             return driveWayBackgroundId[0];
         }
-        /*Bitmap bitmap=BitmapFactory.decodeResource(getContext().getResources(), i);
-        if (bitmap == null) {
-            bitmap = BitmapFactory.decodeResource(getContext().getResources(), this.driveWayBackgroundId[paramInt1]);
-        }
-        return createBitmap(bitmap, this.driveWayWidth, this.driveWayHeight);*/
         return i;
     }
     public static boolean isThisLaneRecommended(int paramInt)
@@ -271,3 +267,4 @@ public class LanWayView extends LinearLayout {
         return null;
     }
 }
+*/

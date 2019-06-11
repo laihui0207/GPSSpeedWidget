@@ -1,3 +1,4 @@
+/*
 package com.huivip.gpsspeedwidget.activity;
 
 import android.app.Activity;
@@ -195,3 +196,4 @@ public class BackupGPSHistoryActivity extends Activity {
     }
 
 }
+*/

@@ -1,6 +1,5 @@
 package com.huivip.gpsspeedwidget.service;
 
-import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
 import android.appwidget.AppWidgetHost;
@@ -206,21 +205,10 @@ public class AutoWidgetFloatingService extends Service {
             @Override
             public void onGlobalLayout() {
                 WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-                String[] split = PrefUtils.getDriveWayFloatingLocation(getApplicationContext()).split(",");
-                boolean left = Boolean.parseBoolean(split[0]);
-                float yRatio = Float.parseFloat(split[1]);
-                /*if (PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                    Point screenSize = new Point();
-                    mWindowManager.getDefaultDisplay().getSize(screenSize);
-                    params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
-                    params.y = (int) (yRatio * screenSize.y + 0.5f);
-                } else {*/
-                    String[] xy = PrefUtils.getDriveWayFloatingSolidLocation(getApplicationContext()).split(",");
-                    params.x = (int) Float.parseFloat(xy[0]);
-                    params.y = (int) Float.parseFloat(xy[1]);
-               /* }*/
+                String[] xy = PrefUtils.getDriveWayFloatingSolidLocation(getApplicationContext()).split(",");
+                params.x = (int) Float.parseFloat(xy[0]);
+                params.y = (int) Float.parseFloat(xy[1]);
                 try {
-                    Log.d("huivip", "Windows height:" + params.height);
                     mWindowManager.updateViewLayout(mFloatingView, params);
                 } catch (IllegalArgumentException ignore) {
                 }
@@ -232,33 +220,6 @@ public class AutoWidgetFloatingService extends Service {
         });
     }
 
-    /* private void animateViewToSideSlot() {
-         Point screenSize = new Point();
-         mWindowManager.getDefaultDisplay().getSize(screenSize);
-
-         WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-         int endX;
-         if (params.x + mFloatingView.getWidth() / 2 >= screenSize.x / 2) {
-             endX = screenSize.x - mFloatingView.getWidth();
-         } else {
-             endX = 0;
-         }
-
-         PrefUtils.setDriveWayFloatingLocation(getApplicationContext(), (float) params.y / screenSize.y, endX == 0);
-         ValueAnimator valueAnimator = ValueAnimator.ofInt(params.x, endX)
-                 .setDuration(300);
-         valueAnimator.setInterpolator(new LinearOutSlowInInterpolator());
-         valueAnimator.addUpdateListener(animation -> {
-             WindowManager.LayoutParams params1 = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-             params1.x = (int) animation.getAnimatedValue();
-             try {
-                 mWindowManager.updateViewLayout(mFloatingView, params1);
-             } catch (IllegalArgumentException ignore) {
-             }
-         });
-
-         valueAnimator.start();
-     }*/
     private class FloatingOnTouchListener implements View.OnTouchListener {
 
         private float mInitialTouchX;
@@ -267,9 +228,6 @@ public class AutoWidgetFloatingService extends Service {
         private int mInitialY;
         private long mStartClickTime;
         private boolean mIsClick;
-
-        private AnimatorSet fadeAnimator;
-        private float initialAlpha;
         private ValueAnimator fadeOut;
         private ValueAnimator fadeIn;
 

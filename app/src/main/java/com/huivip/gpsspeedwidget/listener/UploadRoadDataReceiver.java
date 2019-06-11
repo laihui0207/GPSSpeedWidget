@@ -1,3 +1,4 @@
+/*
 package com.huivip.gpsspeedwidget.listener;
 
 import android.content.BroadcastReceiver;
@@ -22,9 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+*/
 /**
  * @author sunlaihui
- */
+ *//*
+
 public class UploadRoadDataReceiver extends BroadcastReceiver {
     private int BULK_SIZE=120;
     @Override
@@ -35,7 +38,9 @@ public class UploadRoadDataReceiver extends BroadcastReceiver {
                 public void run() {
                     try {
                         DeviceUuidFactory deviceUuidFactory = new DeviceUuidFactory(context);
-                        CrashHandler.getInstance().init(context);
+                        CrashHandler.getInstance().init(context)*/
+/**//*
+;
                         String deviceId = deviceUuidFactory.getDeviceUuid().toString();
                         Log.d("GPSWidget", "DeviceId:" + deviceId);
                         Date now = new Date();
@@ -112,3 +117,4 @@ public class UploadRoadDataReceiver extends BroadcastReceiver {
         return jsonArray.toString();
     }
 }
+*/

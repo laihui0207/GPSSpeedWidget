@@ -2,12 +2,10 @@ package com.huivip.gpsspeedwidget.speech;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.util.Log;
+
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 
 import java.io.IOException;
-
-import static android.content.ContentValues.TAG;
 
 
 /**
@@ -76,7 +74,6 @@ public class BDOfflineResource {
     private String copyAssetsFile(String sourceFilename) throws IOException {
         String destFilename = destPath + "/" + sourceFilename;
         FileUtil.copyFromAssets(assets, sourceFilename, destFilename, false);
-        Log.i(TAG, "文件复制成功：" + destFilename);
         return destFilename;
     }
 

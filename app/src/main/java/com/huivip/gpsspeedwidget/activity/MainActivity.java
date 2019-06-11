@@ -14,8 +14,6 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -56,7 +54,6 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.service.BootStartService;
-import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.SimpleOnTrackListener;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -285,14 +282,14 @@ public class MainActivity extends Activity implements TraceListener {
                 startActivity(new Intent(MainActivity.this, AudioTestActivity.class));
             }
         });
-        Button backupButton=(Button)findViewById(R.id.button_backup);
+       /* Button backupButton=(Button)findViewById(R.id.button_backup);
         backupButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, BackupGPSHistoryActivity.class));
             }
-        });
+        });*/
         PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
         AutoCompleteTextView textUid=findViewById(R.id.editText_UID);
         String deviceId_shortString=PrefUtils.getShortDeviceId(getApplicationContext());
@@ -385,7 +382,6 @@ public class MainActivity extends Activity implements TraceListener {
                                                         if (points.size() > 1) {
                                                             Point firstPoint = points.get(0);
                                                             LatLng firstLatLng = new LatLng(firstPoint.getLat(), firstPoint.getLng());
-                                                            Log.d("GPSWidget","first Point Time:"+firstPoint.getTime()+"");
                                                             String firstTime = dateFormat.format(new Date(firstPoint.getTime()));
                                                             Point lastedPoint = points.get(points.size() - 1);
                                                             LatLng lastedLatLng = new LatLng(lastedPoint.getLat(), lastedPoint.getLng());
@@ -487,7 +483,7 @@ public class MainActivity extends Activity implements TraceListener {
         });
         startBootService(true);
 
-        Button gpxButton = findViewById(R.id.button_gpx);
+       /* Button gpxButton = findViewById(R.id.button_gpx);
         gpxButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -503,7 +499,7 @@ public class MainActivity extends Activity implements TraceListener {
                     Toast.makeText(getApplicationContext(), "轨迹数据为空,请先查询行车轨迹", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
         Button goHomeButton=findViewById(R.id.button_goHome);
         goHomeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -527,7 +523,6 @@ public class MainActivity extends Activity implements TraceListener {
         view.buildDrawingCache();
         bitmap = view.getDrawingCache();
         if(bitmap==null){
-            Log.d("huivip","Get map icon bitmap failed");
         }
         return bitmap;
     }
@@ -888,12 +883,10 @@ public class MainActivity extends Activity implements TraceListener {
 
     @Override
     public void onRequestFailed(int i, String s) {
-        Log.d("huivip","amp draw line failed:"+s);
     }
 
     @Override
     public void onTraceProcessing(int lineId, int index, List<LatLng> list) {
-        Log.d("huivip","lineId:"+lineId);
 
     }
     @Override
@@ -919,7 +912,6 @@ public class MainActivity extends Activity implements TraceListener {
                             "行程：" + decimalFormat.format(distance / 1000D) + "公里\n时间:"
                             + dateFormat.format(new Date(locations.get(locations.size() - 1).getTime())) + "\n总行程：" + decimalFormat.format(totalDistance / 1000D) + "公里")).showInfoWindow();
         }
-        Log.d("huviip", "纠偏结束！");
     }
     private float getDistance(List<LatLng> list){
         float distance=0F;
