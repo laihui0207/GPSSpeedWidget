@@ -13,6 +13,7 @@ import com.huivip.gpsspeedwidget.service.LyricWidgetService;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.util.List;
@@ -105,6 +106,9 @@ public class LyricServiceLowVersion extends Service  {
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            if(!PrefUtils.isLyricEnabled(getApplicationContext())){
+                return;
+            }
             if(!TextUtils.isEmpty(lyricContent)) {
                 List<LrcBean> list= LrcUtil.parseStr2List(lyricContent);
                 if(list!=null && list.size()>0) {

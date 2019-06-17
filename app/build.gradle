@@ -7,7 +7,7 @@ android {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 176
+        versionCode 177
         versionName "1.7.1"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {

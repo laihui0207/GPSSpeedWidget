@@ -204,6 +204,9 @@ public class LyricService extends NotificationListenerService implements RemoteC
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            if(!PrefUtils.isLyricEnabled(getApplicationContext())){
+                return;
+            }
             if(!TextUtils.isEmpty(lyricContent)) {
                 List<LrcBean> list= LrcUtil.parseStr2List(lyricContent);
                 if(list!=null && list.size()>0) {
