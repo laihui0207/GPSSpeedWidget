@@ -27,15 +27,12 @@ import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.beans.KuWoMusiceEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.LrcView;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.x;
 
 import java.util.Timer;
@@ -190,10 +187,7 @@ public class LyricFloatingService extends Service{
             EventBus.getDefault().unregister(this);
         }
     }
-    @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void switchKuWoPlayer(KuWoMusiceEvent event){
-        isKuwoPlayer = event.getStatus() == 1;
-    }
+
     @Override
     public void onCreate() {
         if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){

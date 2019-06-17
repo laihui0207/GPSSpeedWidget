@@ -81,14 +81,14 @@ public class RoadLineService extends Service {
                 AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
                 final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
                 widgetView = amapView;
-                View vv=null;
+                View roladLineImage=null;
                 if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
-                    vv = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
+                    roladLineImage = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
                 } else {
-                    vv = Utils.findlayoutViewById(amapView, "road_line");
+                    roladLineImage = Utils.findlayoutViewById(amapView, "road_line");
                 }
-                if (vv != null && vv instanceof ImageView) {
-                    return vv;
+                if (roladLineImage != null && roladLineImage instanceof ImageView) {
+                    return roladLineImage;
                 } else {
                     return null;
                 }
