@@ -37,6 +37,8 @@ public abstract class PrefUtils {
     private static final String PREF_TERMS_ACCEPTED = "pref_terms_accepted";
     public static final String AUTO_START_PREFS_NAME="AutoStart";
     public static final String PREF_AUTO_LAUNCH_WIFI_HOTSPOT="AutoStart.Wifi.hotspot";
+    public static final String PREF_AUTO_LAUNCH_WIFI_HOTSPOT_NAME="AutoStart.Wifi.hotspot.name";
+    public static final String PREF_AUTO_LAUNCH_WIFI_HOTSPOT_PASSWORD="AutoStart.Wifi.hotspot.password";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
     public static final String GPS_SPEED_TYPE_MPH_PREFS_NAME="com.huivip.use.mph";
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
@@ -310,6 +312,18 @@ public abstract class PrefUtils {
     }
     public static void setAutoLaunchHotSpot(Context context,boolean enable){
         edit(context).putBoolean(PREF_AUTO_LAUNCH_WIFI_HOTSPOT, enable).apply();
+    }
+    public static String getAutoLauchHotSpotName(Context context){
+        return getSharedPreferences(context).getString(PREF_AUTO_LAUNCH_WIFI_HOTSPOT_NAME, Constant.WIFI_USERNAME);
+    }
+    public static void setAutoLaunchHotSpotName(Context context,String name){
+        edit(context).putString(PREF_AUTO_LAUNCH_WIFI_HOTSPOT_NAME, name).apply();
+    }
+    public static String getAutoLauchHotSpotPassword(Context context){
+        return getSharedPreferences(context).getString(PREF_AUTO_LAUNCH_WIFI_HOTSPOT_PASSWORD, Constant.WIFI_PASSWORD);
+    }
+    public static void setAutoLaunchHotSpotPassword(Context context,String password){
+        edit(context).putString(PREF_AUTO_LAUNCH_WIFI_HOTSPOT_PASSWORD, password).apply();
     }
     public static boolean isOldDriverMode(Context context){
         return getSharedPreferences(context).getBoolean(NAVI_MODE_NEW_DRIVER, false);

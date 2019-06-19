@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -169,15 +168,15 @@ public class RoadLineFloatingService extends Service{
         isShowing=false;
     }
     private void showRoadLine(){
-        if(roadLineBinder!=null){
-            View vv=roadLineBinder.getRoadLineView();
-            if(vv!=null){
-                roadLineView.setImageDrawable(((ImageView)vv).getDrawable());
-                roadLineView.setVisibility(View.VISIBLE);
-            } else {
-                roadLineView.setVisibility(View.INVISIBLE);
-            }
-        }
+       if(roadLineBinder!=null){
+           View vv=roadLineBinder.getRoadLineView();
+           if(vv!=null && !gpsUtil.isAutoNavi_on_Frontend()){
+               roadLineView.setImageDrawable(((ImageView)vv).getDrawable());
+               roadLineView.setVisibility(View.VISIBLE);
+           } else {
+               roadLineView.setVisibility(View.INVISIBLE);
+           }
+       }
     }
     @OnClick(value = {R.id.imageView_roadLine_floating_fixed})
     public void clickHandler(View view){
@@ -277,7 +276,6 @@ public class RoadLineFloatingService extends Service{
                         try {
                             mWindowManager.updateViewLayout(mFloatingView, params);
                         } catch (IllegalArgumentException ignore) {
-                            Log.d("huivip","move");
                         }
                     }
                     return true;
