@@ -633,6 +633,12 @@ public class ConfigurationActivity extends Activity {
                                 Uri.parse("package:" + getPackageName()));
                         //intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivityForResult(intentWriteSetting, 1240);
+                    } else {
+                        if (buttonView.isChecked()) {
+                            setWifiConfig(buttonView);
+                        } else {
+                            autoLaunchChanged(buttonView);
+                        }
                     }
                 } else {
                     if (buttonView.isChecked()) {
