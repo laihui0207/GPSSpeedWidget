@@ -2,15 +2,19 @@ package com.huivip.gpsspeedwidget.widget;
 
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Paint;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.RemoteViews;
+
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
@@ -176,8 +180,6 @@ public class LyricWidgetService extends Service {
                 currentPosition=0;
             }
         } catch (Exception e) {
-            Log.d("huivip","lyric widget get currentPosition failed");
-            Log.d("huiivp",e.getLocalizedMessage());
         }
     }
     private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
@@ -186,7 +188,6 @@ public class LyricWidgetService extends Service {
         public void onReceive(Context context, Intent intent) {
             if(intent!=null && intent.getAction().equalsIgnoreCase("com.huivip.widget.lyric.changed")){
                 lyric_content = intent.getStringExtra(LYRIC_CONTENT);
-                Log.d("huivip","Lyric wiget:"+lyric_content);
                 if (!TextUtils.isEmpty(lyric_content)) {
                     list = LrcUtil.parseStr2List(lyric_content);
                 } else {

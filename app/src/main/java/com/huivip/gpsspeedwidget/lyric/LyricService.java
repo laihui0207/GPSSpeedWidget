@@ -18,7 +18,6 @@ import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 
 import com.huivip.gpsspeedwidget.beans.LrcBean;
@@ -107,10 +106,8 @@ public class LyricService extends NotificationListenerService implements RemoteC
         return mRemoteController.get();
     }
     public void onNotificationPosted(StatusBarNotification sbn) {
-        Log.e(TAG, "onNotificationPosted...");
     }
     public boolean sendMusicKeyEvent(int keyCode) {
-        Log.d("huvip","lyric service Send key:"+keyCode);
         if (mRemoteController != null) {
             KeyEvent keyEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
             boolean down = mRemoteController.get().sendMediaKeyEvent(keyEvent);
@@ -144,7 +141,6 @@ public class LyricService extends NotificationListenerService implements RemoteC
     @Override
 
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        Log.e(TAG, "onNotificationRemoved...");
     }
     @Override
     public void onClientChange(boolean clearing) {
@@ -153,16 +149,11 @@ public class LyricService extends NotificationListenerService implements RemoteC
 
     @Override
     public void onClientPlaybackStateUpdate(int state) {
-        Log.d("huivip","Status:"+state);
     }
 
     @Override
     public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
         /*                onPlaybackStateUpdate(state);*/
-        Log.d("huivip","Status:"+state);
-        Log.d("huivip","stateChangeTimes:"+stateChangeTimeMs);
-        Log.d("huivip","CurrentPost:"+currentPosMs);
-        Log.d("huivip","Speed:"+speed);
         if(!PrefUtils.isLyricEnabled(getApplicationContext())){
            return;
         }

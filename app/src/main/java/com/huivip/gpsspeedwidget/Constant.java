@@ -4,7 +4,7 @@ package com.huivip.gpsspeedwidget;
  * @author sunlaihui
  */
 public class Constant {
-    public static final String LBSURL="https://gps.huivip.com.cn";
+    public static final String LBSURL="http://home.huivip.com.cn";
     public static final String LBSPOSTGPSURL="/gps";
     public static final String LBSGETLASTEDPOSTIONURL="/lasted?deviceId=%s";
     public static final String LBSGETDATADATEURL="/dates?deviceId=%s";

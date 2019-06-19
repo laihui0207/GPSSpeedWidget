@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
@@ -64,7 +63,6 @@ public class GpsSpeedService extends Service {
                     @Override
                     public void run() {
                         GpsSpeedService.this.checkLocationData();
-                        //Log.d("huivip","GPS service Check Data");
                     }
                 });
             }
@@ -165,8 +163,6 @@ public class GpsSpeedService extends Service {
             // }
             if (vv != null && vv instanceof ImageView) {
                 return vv;
-            } else {
-                Log.d("huivip", "Can't get road line image");
             }
         }
         return null;

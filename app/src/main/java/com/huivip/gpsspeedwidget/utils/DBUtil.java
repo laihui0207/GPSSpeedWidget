@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
 import com.huivip.gpsspeedwidget.beans.LocationVO;
 
 import java.util.ArrayList;
@@ -52,7 +52,6 @@ public class DBUtil extends SQLiteOpenHelper {
             db = getWritableDatabase();
             db.insertOrThrow(tableName, null, cv);
         }catch (Exception e){
-            Log.d("huivip","insert data failed");
         }finally {
             if(db!=null){
                 db.close();
@@ -69,7 +68,6 @@ public class DBUtil extends SQLiteOpenHelper {
             sql = "VACUUM";
             db.execSQL(sql);
         }catch (Exception e){
-            Log.d("huivip","delete history data failed");
         }finally {
             if(db!=null){
                 db.close();

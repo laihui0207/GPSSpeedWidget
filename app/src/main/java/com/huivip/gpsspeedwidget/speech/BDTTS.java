@@ -5,7 +5,7 @@ import android.media.AudioManager;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+
 import com.baidu.tts.auth.AuthInfo;
 import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizer;
@@ -14,7 +14,12 @@ import com.baidu.tts.client.TtsMode;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.LinkedList;
@@ -69,7 +74,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
             beforeSpeak();
             int result = mSpeechSynthesizer.speak(text);
             if(result!=0){
-                Log.d("huivip","语音播放失败");
             }
         }*/
         if(PrefUtils.isEnableAudioVolumeDepress(context)) {
@@ -114,7 +118,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
             //String utteranceId=Integer.toString(text.hashCode());
            /* int result = mSpeechSynthesizer.synthesize(text,utteranceId);
             if(result!=0){
-                Log.d("huivip","语音合成失败");
             }*/
             if (wordList != null)
                 wordList.addLast(text);
@@ -136,7 +139,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     @Override
     public void initTTS() {
-       // LoggerProxy.printable(true); // 日志打印在logcat中
         boolean isMix = ttsMode.equals(TtsMode.MIX);
         boolean isSuccess;
 
@@ -145,8 +147,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
             isSuccess = checkOfflineResources();
             if (!isSuccess) {
                 createOfflineResource(offlineVoice);
-            } else {
-                Log.d("huivip", "离线资源存在并且可读, 目录：" + TEMP_DIR);
             }
         }
         // 1. 获取实例
@@ -198,7 +198,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         // 6. 初始化
         int result = mSpeechSynthesizer.initTts(ttsMode);
         inited = result == 0;
-        Log.d("huivip", "TTS Init:" + result);
 
     }
 
@@ -217,10 +216,8 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         if (!authInfo.isSuccess()) {
             // 离线授权需要网站上的应用填写包名。本demo的包名是com.baidu.tts.sample，定义在build.gradle中
             String errorMsg = authInfo.getTtsError().getDetailMessage();
-            Log.d("huivip", "【error】鉴权失败 errorMsg=" + errorMsg);
             return false;
         } else {
-            Log.d("huivip", "验证通过，离线正式授权文件存在。");
             return true;
         }
     }
@@ -235,8 +232,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         for (String path : filenames) {
             File f = new File(path);
             if (!f.canRead()) {
-                Log.d("huivip", "[ERROR] 文件不存在或者不可读取，请从assets目录复制同名文件到：" + path);
-                Log.d("huivip", "[ERROR] 初始化失败！！！");
                 return false;
             }
         }
@@ -251,7 +246,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         } catch (IOException e) {
             // IO 错误自行处理
             e.printStackTrace();
-            Log.w("GPS", "【error】:copy files from assets failed." + e.getMessage());
         }
         return BDOfflineResource;
     }
@@ -270,7 +264,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
      */
     @Override
     public void onSynthesizeDataArrived(String utteranceId, byte[] bytes, int progress) {
-        //  Log.i(TAG, "合成进度回调, progress：" + progress + ";序列号:" + utteranceId );
         if(!customPlayer) return;
         File tempAudioFile = null;
         try {
@@ -321,7 +314,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
      */
     @Override
     public void onSpeechProgressChanged(String utteranceId, int progress) {
-        //  Log.i(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId );
     }
 
     /**
@@ -361,9 +353,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     protected void sendMessage(String message, boolean isError) {
         if (isError) {
-            Log.e(TAG, message);
         } else {
-            Log.i(TAG, message);
         }
 
     }

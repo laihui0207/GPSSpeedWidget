@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -101,7 +100,6 @@ public class LyricFloatingService extends Service{
             }
             lyrcContent=intent.getStringExtra(LYRIC_CONTENT);//FileUtil.loadLric(getApplicationContext(),inputSongName,inputArtistName);
             long position=intent.getLongExtra(POSITION,0L);
-            Log.d("huivip","Floating Position:"+position);
             duration=intent.getLongExtra(DURATION,-1L);
             songName=intent.getStringExtra(SONGNAME);
             artistName=intent.getStringExtra(ARTIST);
@@ -135,7 +133,6 @@ public class LyricFloatingService extends Service{
         long position = System.currentTimeMillis() - startTime;
        /* if(isKuwoPlayer){
             position = mKwapi.getCurrentPos();
-            Log.d("huivip","Get current position:"+position);
         }*/
         lrcView.setPlayercurrentMillis((int) position);
         if (duration > 0 && (position + 1000) >= duration) {

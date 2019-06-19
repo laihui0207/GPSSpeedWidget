@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -44,7 +43,6 @@ public class RealTimeFloatingService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     private WindowManager mWindowManager;
     private View mFloatingView;
-    final Handler locationHandler = new Handler();
     @BindView(R.id.layout_Time)
     LinearLayout timeTimeLiner;
 
@@ -121,6 +119,7 @@ public class RealTimeFloatingService extends Service{
         intent.setData(Uri.parse("package:" + packageName));
         startActivity(intent);
     }
+
     private void initMonitorPosition() {
         if (mFloatingView == null) {
             return;
@@ -129,20 +128,9 @@ public class RealTimeFloatingService extends Service{
             @Override
             public void onGlobalLayout() {
                 WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-                String[] split = PrefUtils.getTimeFloatingLocation(getApplicationContext()).split(",");
-                boolean left = Boolean.parseBoolean(split[0]);
-                float yRatio = Float.parseFloat(split[1]);
-                /*if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                    Point screenSize = new Point();
-                    mWindowManager.getDefaultDisplay().getSize(screenSize);
-                    params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
-                    params.y = (int) (yRatio * screenSize.y + 0.5f);
-                }
-                else {*/
-                    String[] xy=PrefUtils.getTimeFloatingSolidLocation(getApplicationContext()).split(",");
-                    params.x=(int)Float.parseFloat(xy[0]);
-                    params.y=(int)Float.parseFloat(xy[1]);
-               /* }*/
+                String[] xy = PrefUtils.getTimeFloatingSolidLocation(getApplicationContext()).split(",");
+                params.x = (int) Float.parseFloat(xy[0]);
+                params.y = (int) Float.parseFloat(xy[1]);
                 try {
                     mWindowManager.updateViewLayout(mFloatingView, params);
                 } catch (IllegalArgumentException ignore) {
@@ -267,26 +255,9 @@ public class RealTimeFloatingService extends Service{
                             fadeAnimator.start();
                         }
                     }
-                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
-
-                    }
                     else {
-                        /*if(PrefUtils.isNaviFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                             animateViewToSideSlot();
-                        } else {*/
-                            PrefUtils.setTimeFloatingSolidLocation(getApplicationContext(),params.x,params.y);
-                       /* }*/
+                        PrefUtils.setTimeFloatingSolidLocation(getApplicationContext(),params.x,params.y);
                     }
-                    /*if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
-                        if(PrefUtils.isEnableNaviFloatingFixed(getApplicationContext())) {
-                            Toast.makeText(getApplicationContext(),"取消悬浮窗口固定功能",Toast.LENGTH_SHORT).show();
-                            PrefUtils.setEnableNaviFloatingFixed(getApplicationContext(),false);
-                        }
-                        Intent configActivity=new Intent(getApplicationContext(),ConfigurationActivity.class);
-                        configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(configActivity);
-                    }*/
-                    return true;
             }
             return false;
         }

@@ -10,7 +10,7 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+
 import com.aispeech.AIError;
 import com.aispeech.DUILiteSDK;
 import com.aispeech.common.AIConstant;
@@ -100,7 +100,6 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             DUILiteSDK.setParameter(DUILiteSDK.KEY_AUTH_TIMEOUT, "30000");//设置授权连接超时时长，默认5000ms
 //        DUILiteSDK.setParameter(DUILiteSDK.KEY_DEVICE_PROFILE_PATH, "/sdcard/speech");//自定义设置授权文件的保存路径,需要确保该路径事先存在
             boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
-            Log.d(TAG, "DUILite SDK is isAuthorized ？ " + isAuthorized);
             if (isAuthorized) {
                 haveAuth = true;
                 return;
@@ -128,7 +127,6 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     @Override
     public void speak(String text, boolean force) {
-        Log.d("GPS","Speak:"+text);
         if(PrefUtils.isEnableAudioVolumeDepress(context)) {
             customPlayer=true;
             synthesize(text, force);
@@ -210,15 +208,10 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
         @Override
         public void onInit(int status) {
-            Log.i(Tag, "初始化完成，返回值：" + status);
-            Log.i(Tag, "onInit");
             if (status == AIConstant.OPT_SUCCESS) {
 /*                tip.setText("初始化成功!");
                 btnStart.setEnabled(true);*/
                 haveInit=true;
-                Log.i(Tag, "初始化成功!");
-            } else {
-                Log.d(Tag,"初始化失败!code:" + status);
             }
         }
 
@@ -227,7 +220,6 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
            /* tip.setText("检测到错误");
             content.setText(content.getText() + "\nError:\n" + error.toString());*/
            haveInit=false;
-            Log.d(Tag,"Error:\n" + error.toString());
         }
 
         @Override
@@ -270,7 +262,6 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         @Override
         public void onSpeechStart(String utteranceId) {
 /*            tip.setText("开始播放");*/
-            Log.i(Tag, "开始播放");
         }
 
         @Override
@@ -281,7 +272,6 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         @Override
         public void onSpeechFinish(String utteranceId) {
 /*            tip.setText("播放完成");*/
-            Log.i(Tag, "播放完成");
         }
 
 

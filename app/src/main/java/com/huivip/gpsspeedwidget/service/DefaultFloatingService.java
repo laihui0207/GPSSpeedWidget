@@ -125,7 +125,6 @@ public class DefaultFloatingService extends Service {
             try {
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
-                Log.d("huivip",e.getLocalizedMessage());
                 e.printStackTrace();
             }
         }

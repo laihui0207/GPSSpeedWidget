@@ -17,7 +17,6 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -220,7 +219,6 @@ public class AutoWidgetFloatingService extends Service {
                     params.y = (int) Float.parseFloat(xy[1]);
                /* }*/
                 try {
-                    Log.d("huivip", "Windows height:" + params.height);
                     mWindowManager.updateViewLayout(mFloatingView, params);
                 } catch (IllegalArgumentException ignore) {
                 }

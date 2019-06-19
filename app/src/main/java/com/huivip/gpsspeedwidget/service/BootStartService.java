@@ -8,7 +8,6 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
@@ -40,7 +39,6 @@ public class BootStartService extends Service {
         CrashHandler.getInstance().init(getApplicationContext());
         boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
         if (start) {
-            Log.d(START_BOOT, "Auto Boot Start Service Launched");
                   /*  PendingIntent thirdIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), ThirdSoftLaunchReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
                     alarm.setExact(AlarmManager.RTC_WAKEUP, + 100L, thirdIntent);*/
             String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
@@ -116,7 +114,6 @@ public class BootStartService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
         if (intent != null) {
-            Log.d("huivip", "Boot Start Service Launched");
             if (start) {
                 started = true;
                 if (PrefUtils.isWidgetActived(getApplicationContext())) {

@@ -9,7 +9,6 @@ import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 import android.view.KeyEvent;
 
 /**
@@ -59,13 +58,11 @@ public class MusicNotificationListenerService extends NotificationListenerServic
     @Override
 
     public void onNotificationPosted(StatusBarNotification sbn) {
-        Log.e(TAG, "onNotificationPosted...");
     }
 
     @Override
 
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        Log.e(TAG, "onNotificationRemoved...");
     }
 
     @Override

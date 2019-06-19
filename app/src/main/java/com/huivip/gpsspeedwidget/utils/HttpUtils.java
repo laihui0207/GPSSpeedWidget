@@ -2,15 +2,27 @@ package com.huivip.gpsspeedwidget.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Log;
+
 import com.huivip.gpsspeedwidget.beans.LocationVO;
+
 import org.json.JSONArray;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author sunlaihui
@@ -40,7 +52,6 @@ public class HttpUtils {
                 return dealResponseResult(inputStream);
             }
         } catch (IOException e) {
-            Log.d("huivip","post get data error:"+e.getLocalizedMessage());
             return "-1";
         }finally {
            if(httpURLConnection!=null) {
@@ -97,7 +108,6 @@ public class HttpUtils {
             pd.setMax(conn.getContentLength());
             InputStream is = conn.getInputStream();
             String fileName =localPath+"/"+appName;
-            Log.d("huivip","download file:"+fileName);
             File file = new File(fileName);
             // 目录不存在创建目录
             if (!file.getParentFile().exists())
@@ -116,7 +126,6 @@ public class HttpUtils {
             fos.close();
             bis.close();
             is.close();
-            Log.d("huivip","Download finish!");
             return file;
       /*  } else {
             throw new IOException("未发现有SD卡");

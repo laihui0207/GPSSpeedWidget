@@ -1,18 +1,27 @@
 package com.huivip.gpsspeedwidget.service;
 
 import android.annotation.TargetApi;
-import android.app.*;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.Toast;
+
 import com.amap.api.track.AMapTrackClient;
 import com.amap.api.track.ErrorCode;
 import com.amap.api.track.OnTrackLifecycleListener;
 import com.amap.api.track.TrackParam;
-import com.amap.api.track.query.model.*;
+import com.amap.api.track.query.model.AddTerminalRequest;
+import com.amap.api.track.query.model.AddTerminalResponse;
+import com.amap.api.track.query.model.AddTrackRequest;
+import com.amap.api.track.query.model.AddTrackResponse;
+import com.amap.api.track.query.model.QueryTerminalRequest;
+import com.amap.api.track.query.model.QueryTerminalResponse;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -63,7 +72,6 @@ public class NaviTrackService extends Service {
     private OnTrackLifecycleListener onTrackListener = new SimpleOnTrackLifecycleListener() {
         @Override
         public void onBindServiceCallback(int status, String msg) {
-            Log.w(TAG, "onBindServiceCallback, status: " + status + ", msg: " + msg);
         }
 
         @Override
@@ -78,13 +86,6 @@ public class NaviTrackService extends Service {
                 // 已经启动
                 Toast.makeText(getApplicationContext(), "轨迹服务已经启动", Toast.LENGTH_SHORT).show();
                 isServiceRunning = true;
-                /*                updateBtnStatus();*/
-
-            } else {
-                Log.w(TAG, "error onStartTrackCallback, status: " + status + ", msg: " + msg);
-                /*Toast.makeText(getApplicationContext(),
-                        "error onStartTrackCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();*/
             }
         }
 
@@ -97,7 +98,6 @@ public class NaviTrackService extends Service {
                 isGatherRunning = false;
                 /*                updateBtnStatus();*/
             } else {
-                Log.w(TAG, "error onStopTrackCallback, status: " + status + ", msg: " + msg);
               /*  Toast.makeText(getApplicationContext(),
                         "error onStopTrackCallback, status: " + status + ", msg: " + msg,
                         Toast.LENGTH_LONG).show();*/
@@ -116,7 +116,6 @@ public class NaviTrackService extends Service {
                 isGatherRunning = true;
                 /*                updateBtnStatus();*/
             } else {
-                Log.w(TAG, "error onStartGatherCallback, status: " + status + ", msg: " + msg);
                 /*Toast.makeText(getApplicationContext(),
                         "error onStartGatherCallback, status: " + status + ", msg: " + msg,
                         Toast.LENGTH_LONG).show();*/
@@ -130,7 +129,6 @@ public class NaviTrackService extends Service {
                 isGatherRunning = false;
                 /*                updateBtnStatus();*/
             } else {
-                Log.w(TAG, "error onStopGatherCallback, status: " + status + ", msg: " + msg);
                /* Toast.makeText(getApplicationContext(),
                         "error onStopGatherCallback, status: " + status + ", msg: " + msg,
                         Toast.LENGTH_LONG).show();*/

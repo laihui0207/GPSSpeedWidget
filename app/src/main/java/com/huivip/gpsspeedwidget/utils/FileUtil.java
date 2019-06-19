@@ -4,12 +4,19 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
-import com.alibaba.idst.nls.internal.utils.L;
+
 import com.amap.api.trace.TraceLocation;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -220,7 +227,6 @@ public class FileUtil {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         String result = logContent;
-        L.d("Huivip Log to file", result);
         sb.append(result);
         try {
             //long timestamp = System.currentTimeMillis();
@@ -247,7 +253,6 @@ public class FileUtil {
             }
             return fileName;
         } catch (Exception e) {
-            Log.e("huivip", "an error occured while writing file...", e);
         } finally {
 
         }

@@ -3,7 +3,7 @@ package com.huivip.gpsspeedwidget.speech;
 import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
-import android.util.Log;
+
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.HashMap;
@@ -93,12 +93,10 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
             int result = mts.setLanguage(Locale.CHINA);
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 inited = false;
-                Log.d(TAG,"Text Speech Not Support China Language");
             } else {
                 inited = true;
             }
         } else {
-            Log.d(TAG,"Device no install TEXT to Speech engine");
             inited=false;
         }
     }

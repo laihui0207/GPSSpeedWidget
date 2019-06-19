@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.IBinder;
-import android.util.Log;
 
 import java.util.LinkedList;
 
@@ -22,7 +21,6 @@ public abstract class TTSService implements TTS {
         mServiceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                Log.d(TAG,"Bind Service");
                 playBinder = (PlayAudioService.PlayBinder) service;
             }
 

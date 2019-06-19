@@ -20,7 +20,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -116,7 +115,6 @@ public class AutoNaviFloatingService extends Service {
             try {
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
-                Log.d("huivip",e.getLocalizedMessage());
                 e.printStackTrace();
             }
         }
@@ -169,7 +167,6 @@ public class AutoNaviFloatingService extends Service {
                     public void run() {
                         AutoNaviFloatingService.this.checkLocationData();
                         showRoadLine();
-                        //Log.d("huivip","Float Service Check Location");
                     }
                 });
             }

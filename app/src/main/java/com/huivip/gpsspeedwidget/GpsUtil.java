@@ -15,7 +15,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.amap.api.navi.AMapNavi;
@@ -411,7 +410,6 @@ public class GpsUtil implements AMapNaviListener {
                 catchRoadLocation = paramLocation;
             } else if (paramLocation.distanceTo(catchRoadLocation) > catchRoadDistance) {
                 if(getAutoNaviStatus()!=Constant.Navi_Status_Started) { // Auto Navi started then disable catch road service
-                    Log.d("huivip", "Launch CatchRoad receiver");
                     PendingIntent catchRoadIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, CatchRoadReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);
                     catchRoadLocation = paramLocation;
@@ -423,7 +421,6 @@ public class GpsUtil implements AMapNaviListener {
                 x.task().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("huivip","Auto Navi started will go home");
                         Utils.goHome(context);
                     }
                 },20*1000);
@@ -910,7 +907,6 @@ public class GpsUtil implements AMapNaviListener {
     @Override
     public void onStartNavi(int naviType) {
         if (naviType == NaviType.CRUISE) {
-            Log.d("huivip", "巡航模式开启");
         }
     }
 
@@ -1093,7 +1089,6 @@ public class GpsUtil implements AMapNaviListener {
 
     @Override
     public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
-        Log.d("huivip", "Time:" + aimLessModeStat.getAimlessModeTime() + ",Distance:" + aimLessModeStat.getAimlessModeDistance());
 
     }
 
