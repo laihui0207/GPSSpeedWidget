@@ -5,7 +5,7 @@ import android.media.AudioManager;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+
 import com.baidu.tts.auth.AuthInfo;
 import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizer;
@@ -14,7 +14,12 @@ import com.baidu.tts.client.TtsMode;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.LinkedList;
@@ -61,6 +66,16 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     @Override
     public void speak(String text, boolean force) {
+      /*  if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer!=null && (force || PrefUtils.isEnableTempAudioService(context)))  {
+            if(!inited){
+                release();
+                initTTS();
+            }
+            beforeSpeak();
+            int result = mSpeechSynthesizer.speak(text);
+            if(result!=0){
+            }
+        }*/
         if(PrefUtils.isEnableAudioVolumeDepress(context)) {
             customPlayer =true;
             synthesize(text, force);
@@ -96,9 +111,14 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     public void synthesize(String text, boolean force) {
         if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null && (force || PrefUtils.isEnableTempAudioService(context))) {
             if (!inited) {
+                //release();
                 initTTS();
             }
             customPlayer = true;
+            //String utteranceId=Integer.toString(text.hashCode());
+           /* int result = mSpeechSynthesizer.synthesize(text,utteranceId);
+            if(result!=0){
+            }*/
             if (wordList != null)
                 wordList.addLast(text);
             else {
@@ -113,6 +133,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null) {
             mSpeechSynthesizer.release();
             inited = false;
+            //mSpeechSynthesizer=null;
         }
     }
 
@@ -195,10 +216,8 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         if (!authInfo.isSuccess()) {
             // 离线授权需要网站上的应用填写包名。本demo的包名是com.baidu.tts.sample，定义在build.gradle中
             String errorMsg = authInfo.getTtsError().getDetailMessage();
-            Log.d("huivip", "【error】鉴权失败 errorMsg=" + errorMsg);
             return false;
         } else {
-            Log.d("huivip", "验证通过，离线正式授权文件存在。");
             return true;
         }
     }
@@ -213,8 +232,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         for (String path : filenames) {
             File f = new File(path);
             if (!f.canRead()) {
-                Log.d("huivip", "[ERROR] 文件不存在或者不可读取，请从assets目录复制同名文件到：" + path);
-                Log.d("huivip", "[ERROR] 初始化失败！！！");
                 return false;
             }
         }
@@ -229,13 +246,13 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         } catch (IOException e) {
             // IO 错误自行处理
             e.printStackTrace();
-            Log.w("GPS", "【error】:copy files from assets failed." + e.getMessage());
         }
         return BDOfflineResource;
     }
 
     @Override
     public void onSynthesizeStart(String utteranceId) {
+        sendMessage("准备开始合成,序列号:" + utteranceId);
     }
 
     /**
@@ -247,7 +264,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
      */
     @Override
     public void onSynthesizeDataArrived(String utteranceId, byte[] bytes, int progress) {
-        //  Log.i(TAG, "合成进度回调, progress：" + progress + ";序列号:" + utteranceId );
         if(!customPlayer) return;
         File tempAudioFile = null;
         try {
@@ -273,6 +289,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
      */
     @Override
     public void onSynthesizeFinish(String utteranceId) {
+        sendMessage("合成结束回调, 序列号:" + utteranceId);
         if(!customPlayer) return;
         String pcmFile = Environment.getExternalStorageDirectory().toString() + "/gps_tts/" + utteranceId + ".pcm";
         String wavFile = Environment.getExternalStorageDirectory().toString() + "/gps_tts/" + utteranceId ;
@@ -286,6 +303,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     @Override
     public void onSpeechStart(String utteranceId) {
+        sendMessage("播放开始回调, 序列号:" + utteranceId);
     }
 
     /**
@@ -296,7 +314,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
      */
     @Override
     public void onSpeechProgressChanged(String utteranceId, int progress) {
-        //  Log.i(TAG, "播放进度回调, progress：" + progress + ";序列号:" + utteranceId );
     }
 
     /**
@@ -306,6 +323,8 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
      */
     @Override
     public void onSpeechFinish(String utteranceId) {
+        sendMessage("播放结束回调, 序列号:" + utteranceId);
+/*        afterSpeak();*/
     }
 
     /**
@@ -316,8 +335,28 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
      */
     @Override
     public void onError(String utteranceId, SpeechError speechError) {
+        sendErrorMessage("错误发生：" + speechError.description + "，错误编码："
+                + speechError.code + "，序列号:" + utteranceId);
+        /*if(currentMusicVolume!=0){
+            am.setStreamVolume(AudioManager.STREAM_MUSIC,currentMusicVolume,0);
+        }*/
     }
 
+    private void sendErrorMessage(String message) {
+        sendMessage(message, true);
+    }
+
+
+    private void sendMessage(String message) {
+        sendMessage(message, false);
+    }
+
+    protected void sendMessage(String message, boolean isError) {
+        if (isError) {
+        } else {
+        }
+
+    }
 
     private Handler handler = new Handler() {
         @Override

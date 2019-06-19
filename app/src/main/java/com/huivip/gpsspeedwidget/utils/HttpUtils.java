@@ -2,7 +2,10 @@ package com.huivip.gpsspeedwidget.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Log;
+
+import com.huivip.gpsspeedwidget.beans.LocationVO;
+
+import org.json.JSONArray;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -15,6 +18,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,7 +52,6 @@ public class HttpUtils {
                 return dealResponseResult(inputStream);
             }
         } catch (IOException e) {
-            Log.d("huivip","post get data error:"+e.getLocalizedMessage());
             return "-1";
         }finally {
            if(httpURLConnection!=null) {
@@ -102,7 +108,6 @@ public class HttpUtils {
             pd.setMax(conn.getContentLength());
             InputStream is = conn.getInputStream();
             String fileName =localPath+"/"+appName;
-            Log.d("huivip","download file:"+fileName);
             File file = new File(fileName);
             // 目录不存在创建目录
             if (!file.getParentFile().exists())
@@ -121,7 +126,6 @@ public class HttpUtils {
             fos.close();
             bis.close();
             is.close();
-            Log.d("huivip","Download finish!");
             return file;
       /*  } else {
             throw new IOException("未发现有SD卡");
@@ -169,4 +173,23 @@ public class HttpUtils {
         resultData = new String(byteArrayOutputStream.toByteArray());
         return resultData;
     }
+
+    public static void main(String[] args){
+        List<LocationVO> locationVOList=new ArrayList<>();
+        LocationVO locationVO=new LocationVO();
+        locationVO.setLat("112123");
+        locationVO.setLng("34234");
+        locationVO.setCreateTime((new Date()).getTime());
+        locationVOList.add(locationVO);
+        JSONArray jsonArray = new JSONArray(locationVOList);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("deviceid", "001");
+        params.put("t", "gps");
+        params.put("data", jsonArray.toString());
+       String result= HttpUtils.submitPostData("http://localhost:2345/gps", params, "utf-8");
+       System.out.println(result);
+
+    }
+
 }

@@ -86,12 +86,6 @@ public class NaviTrackService extends Service {
                 // 已经启动
                 Toast.makeText(getApplicationContext(), "轨迹服务已经启动", Toast.LENGTH_SHORT).show();
                 isServiceRunning = true;
-                /*                updateBtnStatus();*/
-
-            } else {
-                /*Toast.makeText(getApplicationContext(),
-                        "error onStartTrackCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();*/
             }
         }
 

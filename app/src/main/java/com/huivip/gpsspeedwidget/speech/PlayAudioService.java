@@ -13,7 +13,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -171,7 +170,6 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                         while (fis.available() > 0) {
                             int readCount = fis.read(buffer);
                             if (readCount == -1) {
-                                Log.e(TAG, "没有更多数据可以读取了");
                                 break;
                             }
                             int writeResult = audioTrack.write(buffer, 0, readCount);

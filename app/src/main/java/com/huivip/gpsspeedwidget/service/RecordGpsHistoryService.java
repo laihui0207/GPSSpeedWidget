@@ -79,7 +79,6 @@ public class RecordGpsHistoryService extends Service{
                                 dbUtil.insert(deviceId,gpsUtil.getLongitude(),gpsUtil.getLatitude(),gpsUtil.getKmhSpeedStr()
                                         ,gpsUtil.getSpeed(),gpsUtil.getBearing(),new Date(),lineId);
                             }
-                            //Log.d("huivip","Record gps data!");
                         }
                     });
                 }

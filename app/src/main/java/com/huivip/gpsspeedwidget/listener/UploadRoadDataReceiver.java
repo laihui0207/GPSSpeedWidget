@@ -4,7 +4,6 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
@@ -42,7 +41,6 @@ public class UploadRoadDataReceiver extends BroadcastReceiver {
 /**//*
 ;
                         String deviceId = deviceUuidFactory.getDeviceUuid().toString();
-                        Log.d("GPSWidget", "DeviceId:" + deviceId);
                         Date now = new Date();
                         DBUtil dbUtil = new DBUtil(context);
                         List<LocationVO> locationVOList = dbUtil.getFromDate(now);
@@ -67,7 +65,6 @@ public class UploadRoadDataReceiver extends BroadcastReceiver {
                                     params.put("t", "gps");
                                     params.put("data", jsonStringFromList(tempList));
                                     result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context) + Constant.LBSPOSTGPSURL, params, "utf-8");
-                                    Log.d("GPSWidget", "Upload Data Result:" + result);
                                     // FileUtil.saveLogToFile("Batch Upload result:"+result);
 
                                 }
@@ -81,7 +78,6 @@ public class UploadRoadDataReceiver extends BroadcastReceiver {
                                 params.put("t", "gps");
                                 params.put("data", jsonStringFromList(locationVOList));
                                 String result = HttpUtils.submitPostData(PrefUtils.getGPSRemoteUrl(context) + Constant.LBSPOSTGPSURL, params, "utf-8");
-                                Log.d("GPSWidget", "Upload Data Result:" + result);
                                 // FileUtil.saveLogToFile("Upload result:"+result);
                                 if (result != null && result.equalsIgnoreCase("Success")) {
                                     dbUtil.delete(now);
@@ -89,10 +85,8 @@ public class UploadRoadDataReceiver extends BroadcastReceiver {
                             }
                         }
                     } catch (Exception e) {
-                        Log.d("huivip", "upload data Error:" + e.getLocalizedMessage());
                         //FileUtil.saveLogToFile("Upload result Error:"+e.getLocalizedMessage());
                     }
-                    Log.d("huivip", "Upload Data Finish");
                 }
             }.start();
         }

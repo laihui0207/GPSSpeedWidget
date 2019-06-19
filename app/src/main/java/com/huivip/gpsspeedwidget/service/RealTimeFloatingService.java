@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -44,7 +43,6 @@ public class RealTimeFloatingService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     private WindowManager mWindowManager;
     private View mFloatingView;
-    final Handler locationHandler = new Handler();
     @BindView(R.id.layout_Time)
     LinearLayout timeTimeLiner;
 
@@ -145,6 +143,33 @@ public class RealTimeFloatingService extends Service{
         });
     }
 
+   /* private void animateViewToSideSlot() {
+        Point screenSize = new Point();
+        mWindowManager.getDefaultDisplay().getSize(screenSize);
+
+        WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
+        int endX;
+        if (params.x + mFloatingView.getWidth() / 2 >= screenSize.x / 2) {
+            endX = screenSize.x - mFloatingView.getWidth();
+        } else {
+            endX = 0;
+        }
+
+        PrefUtils.setNaviFloatingLocation(getApplicationContext(), (float) params.y / screenSize.y, endX == 0);
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(params.x, endX)
+                .setDuration(300);
+        valueAnimator.setInterpolator(new LinearOutSlowInInterpolator());
+        valueAnimator.addUpdateListener(animation -> {
+            WindowManager.LayoutParams params1 = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
+            params1.x = (int) animation.getAnimatedValue();
+            try {
+                mWindowManager.updateViewLayout(mFloatingView, params1);
+            } catch (IllegalArgumentException ignore) {
+            }
+        });
+
+        valueAnimator.start();
+    }*/
     private class FloatingOnTouchListener implements View.OnTouchListener {
 
         private float mInitialTouchX;
@@ -230,13 +255,9 @@ public class RealTimeFloatingService extends Service{
                             fadeAnimator.start();
                         }
                     }
-                    else if(mIsClick && System.currentTimeMillis() - mStartClickTime > 1000) {
-
-                    }
                     else {
-                            PrefUtils.setTimeFloatingSolidLocation(getApplicationContext(),params.x,params.y);
+                        PrefUtils.setTimeFloatingSolidLocation(getApplicationContext(),params.x,params.y);
                     }
-                    return true;
             }
             return false;
         }

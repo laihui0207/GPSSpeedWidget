@@ -95,7 +95,6 @@ public class MeterFloatingService extends Service {
             try {
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
-                Log.d("huivip",e.getLocalizedMessage());
                 e.printStackTrace();
             }
         }
@@ -150,7 +149,6 @@ public class MeterFloatingService extends Service {
                     public void run()
                     {
                         MeterFloatingService.this.checkLocationData();
-                        //Log.d("huivip","Float Service Check Location");
                     }
                 });
             }

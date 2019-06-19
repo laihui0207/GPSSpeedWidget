@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -185,6 +184,7 @@ public class LyricFloatingService extends Service{
             EventBus.getDefault().unregister(this);
         }
     }
+
     @Override
     public void onCreate() {
         if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){

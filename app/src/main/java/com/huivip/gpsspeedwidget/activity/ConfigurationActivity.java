@@ -626,23 +626,65 @@ public class ConfigurationActivity extends Activity {
                         //intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivityForResult(intentWriteSetting, 1240);
                     } else {
-                        autoLaunchChanged(buttonView);
+                        if(buttonView.isChecked()) {
+                            LayoutInflater layoutInflater = LayoutInflater.from(ConfigurationActivity.this);
+                            View promptView = layoutInflater.inflate(R.layout.dialog_wifi_setting, null);
+                            android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(ConfigurationActivity.this);
+                            alertDialogBuilder.setView(promptView);
+                            final EditText nameEditText = (EditText) promptView.findViewById(R.id.input_wifiName);
+                            nameEditText.setText(PrefUtils.getAutoLauchHotSpotName(getApplicationContext()));
+                            final EditText passwordEditText = (EditText) promptView.findViewById(R.id.input_wifiPassword);
+                            passwordEditText.setText(PrefUtils.getAutoLauchHotSpotPassword(getApplicationContext()));
+                            alertDialogBuilder.setCancelable(false)
+                                    .setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            String wifiName = nameEditText.getText().toString();
+                                            String wifiPassword = passwordEditText.getText().toString();
+                                            if(wifiPassword.length()<8){
+                                                Toast.makeText(getApplicationContext(),"密码最低要求8位以上",Toast.LENGTH_LONG).show();
+                                                return;
+                                            }
+                                            if (TextUtils.isEmpty(wifiName) || TextUtils.isEmpty(wifiPassword)) {
+                                                wifiName = Constant.WIFI_USERNAME;
+                                                wifiPassword = Constant.WIFI_PASSWORD;
+                                            }
+                                            PrefUtils.setAutoLaunchHotSpotName(getApplicationContext(),wifiName);
+                                            PrefUtils.setAutoLaunchHotSpotPassword(getApplicationContext(),wifiPassword);
+                                            autoLaunchChanged(buttonView);
+                                            dialog.cancel();
+                                        }
+                                    })
+                                    .setNegativeButton("取消",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.cancel();
+                                                }
+                                            });
+
+                            final android.app.AlertDialog alert = alertDialogBuilder.create();
+                            alert.show();
+                        }
+                        else {
+                            autoLaunchChanged(buttonView);
+                        }
                     }
                 } else
                     autoLaunchChanged(buttonView);
             }
 
             private void autoLaunchChanged(CompoundButton buttonView) {
+                String wifiName=PrefUtils.getAutoLauchHotSpotName(getApplicationContext());
+                String wifiPassword=PrefUtils.getAutoLauchHotSpotPassword(getApplicationContext());
                 if (buttonView.isChecked()) {
-                    boolean enabled = WifiUtils.switchWifiHotspot(getApplicationContext(), Constant.WIFI_USERNAME, Constant.WIFI_PASSWORD, true);
+                    boolean enabled = WifiUtils.switchWifiHotspot(getApplicationContext(), wifiName, wifiPassword, true);
                     if (enabled) {
                         PrefUtils.setAutoLaunchHotSpot(getApplicationContext(), buttonView.isChecked());
-                        Toast.makeText(getApplicationContext(), "移动热点已启动:" + Constant.WIFI_USERNAME + ",密码:" + Constant.WIFI_PASSWORD, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "移动热点已启动:" + wifiName+ ",密码:" + wifiPassword, Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getApplicationContext(), "移动热点启动失败！", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    boolean enabled = WifiUtils.switchWifiHotspot(getApplicationContext(), Constant.WIFI_USERNAME, Constant.WIFI_PASSWORD, false);
+                    boolean enabled = WifiUtils.switchWifiHotspot(getApplicationContext(), wifiName, wifiPassword, false);
                     if (enabled) {
                         Toast.makeText(getApplicationContext(), "移动热点已关闭！", Toast.LENGTH_LONG).show();
                     } else {

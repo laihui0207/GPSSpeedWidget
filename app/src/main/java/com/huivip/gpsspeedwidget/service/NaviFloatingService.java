@@ -179,7 +179,6 @@ public class NaviFloatingService extends Service {
                     public void run()
                     {
                         NaviFloatingService.this.checkLocationData(null);
-                        //Log.d("huivip","Float Service Check Location");
                     }
                 });
             }

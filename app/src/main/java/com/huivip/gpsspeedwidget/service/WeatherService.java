@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -235,11 +234,6 @@ public class WeatherService extends Service implements AMapLocationListener {
                         }
                     }
                 }
-            }else {
-                //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
-                Log.e("AmapError","location Error, ErrCode:"
-                        + aMapLocation.getErrorCode() + ", errInfo:"
-                        + aMapLocation.getErrorInfo());
             }
         }
         //mLocationClient.stopLocation();
