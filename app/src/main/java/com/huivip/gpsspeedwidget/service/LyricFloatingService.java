@@ -31,7 +31,6 @@ import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.LrcView;
 
-import org.greenrobot.eventbus.EventBus;
 import org.xutils.x;
 
 import java.util.Timer;
@@ -180,9 +179,6 @@ public class LyricFloatingService extends Service{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().unregister(this);
-        }
     }
 
     @Override
@@ -218,8 +214,6 @@ public class LyricFloatingService extends Service{
         initMonitorPosition();
         CrashHandler.getInstance().init(getApplicationContext());
         lyricTimer = new Timer();
-        EventBus.getDefault().register(this);
-       // changeViewSize(lyricView,1024,600);
         super.onCreate();
     }
     //遍历设置字体
