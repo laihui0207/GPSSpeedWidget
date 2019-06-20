@@ -1,4 +1,3 @@
-/*
 package com.huivip.gpsspeedwidget.view;
 
 import android.content.Context;
@@ -39,14 +38,13 @@ public class TmcSegmentView extends View {
         if (segments == null) {
             return;
         }
-       */
-/* this.total=0;
+ this.total=0;
         for(SegmentModel model:segments){
             if(model.status>=0 && model.status<=4){
                 this.segments.add(model);
                 this.total+=model.distance;
             }
-        }*//*
+        }
 
        this.segments = segments;
         Collections.sort(this.segments, new Comparator<SegmentModel>() {
@@ -140,4 +138,3 @@ public class TmcSegmentView extends View {
         }
     }
 }
-*/
