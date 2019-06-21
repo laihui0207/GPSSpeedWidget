@@ -2,6 +2,7 @@ package com.huivip.gpsspeedwidget;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import org.greenrobot.eventbus.EventBus;
 import org.xutils.x;
@@ -12,7 +13,7 @@ public class GPSWidgetApplication extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-      //  MultiDex.install(this);
+        MultiDex.install(this);
     }
 
     @Override

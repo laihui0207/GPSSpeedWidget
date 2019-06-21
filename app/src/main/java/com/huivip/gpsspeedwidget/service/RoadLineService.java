@@ -77,9 +77,8 @@ public class RoadLineService extends Service {
     private View getRoadLineView(){
         int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
         if (id != -1) {
-            //if(vv==null || gpsUtil.getKmhSpeed()>0) {
-                AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-                final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
+                AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+                final View amapView = appWidgetHost.createView(this, id, appWidgetInfo);
                 widgetView = amapView;
                 View roladLineImage=null;
                 if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
@@ -92,9 +91,6 @@ public class RoadLineService extends Service {
                 } else {
                     return null;
                 }
-           /* } else {
-                return vv;
-            }*/
         }
         return null;
     }

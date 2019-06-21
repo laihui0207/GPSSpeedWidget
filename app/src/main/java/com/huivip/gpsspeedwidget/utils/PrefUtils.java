@@ -100,12 +100,12 @@ public abstract class PrefUtils {
     public static final String FLOATING_DEFAULT="0";
     public static final String FLOATING_METER="2";
     public static final String FLOATING_AUTONAVI="1";
-   /* public static final String FTP_URL="com.huivip.ftp.url";
+    public static final String FTP_URL="com.huivip.ftp.url";
     public static final String FTP_PORT="com.huivip.ftp.port";
     public static final String FTP_USER="com.huivip.ftp.user";
     public static final String FTP_PASSWORD="com.huivip.ftp.password";
     public static final String FTP_PATH="com.huivip.ftp.path";
-    public static final String FTP_AUTO_BACKUP="com.huivip.ftp.auto.backup";*/
+    public static final String FTP_AUTO_BACKUP="com.huivip.ftp.auto.backup";
     static final String ENABLE_NAVI_FLOATING_WINDOWS="com.huivip.navi.floating";
     static final String NAVI_MODE_NEW_DRIVER="com.huivip.navi.mode.newDriver";
     static final String NAVI_FLOATTING_FIXED_POSITION="com.huivip.navi.fixed.position";
@@ -696,7 +696,7 @@ public abstract class PrefUtils {
     public static void setAutoLaunchAppsName(Context context, String packageNames) {
         edit(context).putString(PREF_AUTO_LAUNCH_APPS_NAME, packageNames).apply();
     }
-   /* public static void setFtpUrl(Context context,String url){
+    public static void setFtpUrl(Context context,String url){
         edit(context).putString(FTP_URL,url).apply();
     }
     public static String getFTPUrl(Context context){
@@ -731,7 +731,7 @@ public abstract class PrefUtils {
     }
     public static boolean isFTPAutoBackup(Context context){
         return getSharedPreferences(context).getBoolean(FTP_AUTO_BACKUP,false);
-    }*/
+    }
     public static boolean isEnbleDrawOverFeature(Context context){
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context);
         return overlayEnabled;

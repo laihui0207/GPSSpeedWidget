@@ -14,6 +14,7 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -54,6 +55,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.SimpleOnTrackListener;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -282,14 +284,14 @@ public class MainActivity extends Activity implements TraceListener {
                 startActivity(new Intent(MainActivity.this, AudioTestActivity.class));
             }
         });
-       /* Button backupButton=(Button)findViewById(R.id.button_backup);
+        Button backupButton=(Button)findViewById(R.id.button_backup);
         backupButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, BackupGPSHistoryActivity.class));
             }
-        });*/
+        });
         PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
         AutoCompleteTextView textUid=findViewById(R.id.editText_UID);
         String deviceId_shortString=PrefUtils.getShortDeviceId(getApplicationContext());
@@ -483,7 +485,7 @@ public class MainActivity extends Activity implements TraceListener {
         });
         startBootService(true);
 
-       /* Button gpxButton = findViewById(R.id.button_gpx);
+        Button gpxButton = findViewById(R.id.button_gpx);
         gpxButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -499,7 +501,7 @@ public class MainActivity extends Activity implements TraceListener {
                     Toast.makeText(getApplicationContext(), "轨迹数据为空,请先查询行车轨迹", Toast.LENGTH_SHORT).show();
                 }
             }
-        });*/
+        });
         Button goHomeButton=findViewById(R.id.button_goHome);
         goHomeButton.setOnClickListener(new View.OnClickListener() {
             @Override

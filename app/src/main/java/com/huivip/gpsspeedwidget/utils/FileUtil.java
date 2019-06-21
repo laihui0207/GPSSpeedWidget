@@ -4,14 +4,24 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.widget.Toast;
+
+import com.amap.api.trace.TraceLocation;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by fujiayi on 2017/5/19.
@@ -73,6 +83,9 @@ public class FileUtil {
                 }
             }
         }
+    }
+    public static void uploadCrashLog(String logPath,String deviceId){
+
     }
     public static String loadLric(Context context,String songName,String artist){
         String content="";
@@ -161,7 +174,7 @@ public class FileUtil {
             //Toast.makeText(context,"File create Error:"+e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
         }
     }
-   /* public static String createGPXFile(List<TraceLocation> data, String selectDate,Context context){
+    public static String createGPXFile(List<TraceLocation> data, String selectDate,Context context){
         if(data==null && data.size()==0){
             return null;
         }
@@ -207,14 +220,13 @@ public class FileUtil {
             Toast.makeText(context,"File create Error:"+e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
         }
         return null;
-    }*/
-   /* public static String saveLogToFile(String logContent) {
+    }
+    public static String saveLogToFile(String logContent) {
         String nameString="GPSPluginLog";
         StringBuffer sb = new StringBuffer();
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         String result = logContent;
-        L.d("Huivip Log to file", result);
         sb.append(result);
         try {
             //long timestamp = System.currentTimeMillis();
@@ -227,7 +239,7 @@ public class FileUtil {
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-*//*                Files.write(Paths.get(path+fileName),sb.toString().getBytes(), StandardOpenOption.APPEND);*//*
+/*                Files.write(Paths.get(path+fileName),sb.toString().getBytes(), StandardOpenOption.APPEND);*/
                 FileWriter fw=new FileWriter(path+fileName,true);
                 BufferedWriter bw=new BufferedWriter(fw);
                 PrintWriter pw=new PrintWriter(bw);
@@ -235,13 +247,12 @@ public class FileUtil {
                 pw.close();
                 bw.close();
                 fw.close();
-               *//* FileOutputStream fos = new FileOutputStream(path + fileName);
+               /* FileOutputStream fos = new FileOutputStream(path + fileName);
                 fos.write(sb.toString().getBytes());
-                fos.close();*//*
+                fos.close();*/
             }
             return fileName;
         } catch (Exception e) {
-            Log.e("huivip", "an error occured while writing file...", e);
         } finally {
 
         }
@@ -269,12 +280,12 @@ public class FileUtil {
                 if(dir.listFiles()!=null && dir.listFiles().length>200){
                     CleanTempFile();
                 }
-                *//*for(File file:files){
+                /*for(File file:files){
                     if(file.exists()){
                         file.delete();
                     }
-                }*//*
+                }*/
             }
         }
-    }*/
+    }
 }

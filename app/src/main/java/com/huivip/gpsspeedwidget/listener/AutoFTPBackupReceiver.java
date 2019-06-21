@@ -1,4 +1,3 @@
-/*
 package com.huivip.gpsspeedwidget.listener;
 
 import android.content.BroadcastReceiver;
@@ -68,4 +67,3 @@ public class AutoFTPBackupReceiver extends BroadcastReceiver {
         }).start();
     }
 }
-*/
