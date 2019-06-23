@@ -27,7 +27,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -804,7 +803,6 @@ public class ConfigurationActivity extends Activity {
                                 JSONObject data= (JSONObject) infoObj.get("data");
                                 String updateVersion=data.getString("serverVersion");
                                 int updateVersionCode=data.getInt("serverVersionCode");
-                                Log.d("huivip","Current local Version:"+currentVersion+",Update Version:"+updateVersion);
                                 Message message = Message.obtain();
                                 message.obj =updateInfo;
                                 if(currentVersionCode!=0 && updateVersionCode!=0){
@@ -1177,12 +1175,10 @@ public class ConfigurationActivity extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         if (resultCode == RESULT_OK) {
-            Log.d("huivip","request code:"+requestCode);
             switch (requestCode) {
                 case Constant.SELECT_AMAP_PLUGIN_REQUEST_CODE: {
                     int id = data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
                     String widgetName=data.getStringExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER);
-                    Log.d("huivip","widgetName:"+widgetName);
                     boolean check = false;
                     if (id > 0) {
                         AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
@@ -1238,7 +1234,6 @@ public class ConfigurationActivity extends Activity {
         int musicVolumeCurrent=audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         int voiceVolumeCurrent=audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
         if(musicVolumeCurrent==2 && voiceVolumeCurrent==1){
-            Log.d("huivip","Separated");
             ifSeparatedAudio=true;
         }
         audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,systemVolume,0);

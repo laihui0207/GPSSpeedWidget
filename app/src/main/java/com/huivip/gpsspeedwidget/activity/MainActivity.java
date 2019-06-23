@@ -15,7 +15,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -227,7 +226,6 @@ public class MainActivity extends Activity implements TraceListener {
                             String getLastedURL = "";
                             getLastedURL = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETLASTEDPOSTIONURL, deviceId);
                             String dataResult = HttpUtils.getData(getLastedURL);
-                            Log.d("GPSWidget", "URL:" + getLastedURL + ",Result:" + dataResult);
 
                             Message message = Message.obtain();
                             message.obj = dataResult;
@@ -385,7 +383,6 @@ public class MainActivity extends Activity implements TraceListener {
                                                         if (points.size() > 1) {
                                                             Point firstPoint = points.get(0);
                                                             LatLng firstLatLng = new LatLng(firstPoint.getLat(), firstPoint.getLng());
-                                                            Log.d("GPSWidget","first Point Time:"+firstPoint.getTime()+"");
                                                             String firstTime = dateFormat.format(new Date(firstPoint.getTime()));
                                                             Point lastedPoint = points.get(points.size() - 1);
                                                             LatLng lastedLatLng = new LatLng(lastedPoint.getLat(), lastedPoint.getLng());
@@ -434,7 +431,6 @@ public class MainActivity extends Activity implements TraceListener {
                                 saveDeviceIdString(finalDeviceId);
                                 dataUrl = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETDATA, finalDeviceId, finalStartTime, finalEndTime);
                                 String dataResult = HttpUtils.getData(dataUrl);
-                                Log.d("GPSWidget", "URL:" + dataUrl);
 
                                 Message message = Message.obtain();
                                 message.arg1 = Constant.LINE;
@@ -527,7 +523,6 @@ public class MainActivity extends Activity implements TraceListener {
         view.buildDrawingCache();
         bitmap = view.getDrawingCache();
         if(bitmap==null){
-            Log.d("huivip","Get map icon bitmap failed");
         }
         return bitmap;
     }
@@ -888,12 +883,10 @@ public class MainActivity extends Activity implements TraceListener {
 
     @Override
     public void onRequestFailed(int i, String s) {
-        Log.d("huivip","amp draw line failed:"+s);
     }
 
     @Override
     public void onTraceProcessing(int lineId, int index, List<LatLng> list) {
-        Log.d("huivip","lineId:"+lineId);
 
     }
     @Override
@@ -919,7 +912,6 @@ public class MainActivity extends Activity implements TraceListener {
                             "行程：" + decimalFormat.format(distance / 1000D) + "公里\n时间:"
                             + dateFormat.format(new Date(locations.get(locations.size() - 1).getTime())) + "\n总行程：" + decimalFormat.format(totalDistance / 1000D) + "公里")).showInfoWindow();
         }
-        Log.d("huviip", "纠偏结束！");
     }
     private float getDistance(List<LatLng> list){
         float distance=0F;

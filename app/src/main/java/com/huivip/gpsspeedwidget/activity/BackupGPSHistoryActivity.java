@@ -5,9 +5,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.TextView;
+
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
@@ -73,7 +77,6 @@ public class BackupGPSHistoryActivity extends Activity {
                     @Override
                     public void run() {
                         File dataDir=getDatabasePath("GPSHistory.db");
-                        Log.d("huivip","File Path:"+dataDir.getAbsolutePath());
                         FTPUtils ftp=FTPUtils.getInstance();
                         boolean status=ftp.initFTPSetting(address,Integer.parseInt(port),user,password);
                         if(!status){
@@ -150,7 +153,6 @@ public class BackupGPSHistoryActivity extends Activity {
                     public void run() {
                         File dataDir=getDatabasePath("GPSHistory.db");
                         String fileName="GPSHistory.db";
-                        //Log.d("huivip","File Path:"+dataDir.getAbsolutePath());
                         FTPUtils ftp=FTPUtils.getInstance();
                         boolean status=ftp.initFTPSetting(address,Integer.parseInt(port),user,password);
                         if(!status){
