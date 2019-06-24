@@ -219,11 +219,12 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onClick(View v) {
                 try {
+                    if(appWidgetHost==null) return;
                     int widgetId = appWidgetHost.allocateAppWidgetId();
                     Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
                     pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
                     startActivityForResult(pickIntent, Constant.SELECT_AMAP_PLUGIN_REQUEST_CODE);
-                } catch (ActivityNotFoundException e){
+                } catch (Exception e){
                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
                     for(int id=0;id<500;id++) {
                         AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
