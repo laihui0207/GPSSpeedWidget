@@ -7,13 +7,13 @@ android {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 220
+        versionCode 221
         versionName "2.1.7"
         ndk {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
             abiFilters "armeabi-v7a"
         }
-        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
         javaCompileOptions {
             annotationProcessorOptions {
                 // 设置参数 eventBusIndex以指定要生成的索引的完全限定类
@@ -72,7 +72,7 @@ dependencies {
     implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
-    annotationProcessor 'org.greenrobot:eventbus-annotation-processor:3.1.1'
+    implementation 'com.android.support:multidex:1.0.3'
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:support-v4:28.0.0'

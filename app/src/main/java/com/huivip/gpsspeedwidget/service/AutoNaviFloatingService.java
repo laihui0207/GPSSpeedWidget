@@ -84,9 +84,6 @@ public class AutoNaviFloatingService extends Service {
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
-    TimerTask roadLineTask;
-    Timer roadLineTimer = new Timer();
-    final Handler roadLineHandler = new Handler();
     GpsUtil gpsUtil;
     private ServiceConnection mServiceConnection;
     RoadLineService.RoadLineBinder roadLineBinder;

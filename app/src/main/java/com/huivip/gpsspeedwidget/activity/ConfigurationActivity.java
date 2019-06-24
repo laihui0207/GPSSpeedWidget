@@ -223,6 +223,11 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onClick(View v) {
                 try {
+                    if(appWidgetHost==null) {
+                        Toast.makeText(getApplicationContext(),"系统不支持原生插件",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     int widgetId = appWidgetHost.allocateAppWidgetId();
                     Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
                     pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);

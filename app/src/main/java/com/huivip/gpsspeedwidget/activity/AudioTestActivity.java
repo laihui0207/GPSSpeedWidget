@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -79,7 +78,6 @@ public class AudioTestActivity extends Activity {
                 break;
 
         }
-        Log.d("Remote","position:"+mRemoteController.getEstimatedMediaPosition());
     }*/
     /*    EditText accEditText;*/
     @Override
@@ -127,16 +125,11 @@ public class AudioTestActivity extends Activity {
                 @Override
                 public void onClientPlaybackStateUpdate(int state) {
                     //onPlaybackStateUpdate(state);
-                    Log.d("huivip","Status:"+state);
                 }
 
                 @Override
                 public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
                     //onPlaybackStateUpdate(state);
-                    Log.d("huivip","Status:"+state);
-                    Log.d("huivip","stateChangeTimes:"+stateChangeTimeMs);
-                    Log.d("huivip","CurrentPost:"+currentPosMs);
-                    Log.d("huivip","Speed:"+speed);
                 }
 
                 @Override
@@ -152,7 +145,6 @@ public class AudioTestActivity extends Activity {
                     Long duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
                     Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_compass);
                     Bitmap bitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
-                    Log.d("huivip", "artist:" + artist + "album:" + album + "title:" + title + "duration:" + duration);
                     ToastUtil.show(getApplicationContext(),title,10000);
                 }
             };
@@ -169,7 +161,6 @@ public class AudioTestActivity extends Activity {
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
-                Log.d("huivip","Remote Controller connected");
 
             }
         };
@@ -187,9 +178,7 @@ public class AudioTestActivity extends Activity {
         buttonPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("huivip","Play click");
                 if(lyricService!=null){
-                    Log.d("huivip","Send Play click");
                     lyricService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
                 }
             }
@@ -198,7 +187,6 @@ public class AudioTestActivity extends Activity {
         buttonPre.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("huivip","Prev click");
                 if(lyricService!=null){
                     lyricService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
                 }
@@ -208,7 +196,6 @@ public class AudioTestActivity extends Activity {
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("huivip","next click");
                 if(lyricService!=null){
                     lyricService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_NEXT);
                 }
@@ -480,7 +467,6 @@ public class AudioTestActivity extends Activity {
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            Log.d("huivip","request code:"+requestCode);
            /* switch (requestCode) {
                 case REQUEST_SELECT_AMAP_PLUGIN: {
                     int id = data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);

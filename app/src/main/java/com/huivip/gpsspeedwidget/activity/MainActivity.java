@@ -226,7 +226,6 @@ public class MainActivity extends Activity implements TraceListener {
                             String getLastedURL = "";
                             getLastedURL = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETLASTEDPOSTIONURL, deviceId);
                             String dataResult = HttpUtils.getData(getLastedURL);
-                            Log.d("GPSWidget", "URL:" + getLastedURL + ",Result:" + dataResult);
 
                             Message message = Message.obtain();
                             message.obj = dataResult;
@@ -432,7 +431,6 @@ public class MainActivity extends Activity implements TraceListener {
                                 saveDeviceIdString(finalDeviceId);
                                 dataUrl = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETDATA, finalDeviceId, finalStartTime, finalEndTime);
                                 String dataResult = HttpUtils.getData(dataUrl);
-                                Log.d("GPSWidget", "URL:" + dataUrl);
 
                                 Message message = Message.obtain();
                                 message.arg1 = Constant.LINE;
