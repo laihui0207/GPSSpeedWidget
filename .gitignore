@@ -10,3 +10,4 @@
 app/proguardMapping.txt
 .idea
 /app/proguardMapping.txt
+.idea/caches .idea/encodings.xml .idea/gradle.xml .idea/libraries .idea/misc.xml .idea/modules.xml .idea/runConfigurations.xml .idea/uiDesigner.xml .idea/vcs.xml .idea/workspace.xml
