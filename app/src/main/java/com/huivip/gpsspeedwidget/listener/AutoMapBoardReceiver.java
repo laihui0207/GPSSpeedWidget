@@ -67,9 +67,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             if (PrefUtils.isHideFloatingWidowOnNaviApp(context) && gpsUtil.getAutoNaviStatus() != Constant.Navi_Status_Started) {
                                 Utils.startFloatingWindows(context.getApplicationContext(), true);
                             }
-                            if (PrefUtils.isEnableAutoMute(context)) {
+                          /*  if (PrefUtils.isEnableAutoMute(context)) {
                                 PrefUtils.setEnableTempAudioService(context, false);
-                            }
+                            }*/
                             //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                             break;
                         /*case 24:  // xun hang started

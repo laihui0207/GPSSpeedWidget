@@ -71,6 +71,11 @@ public class BootStartService extends Service {
 
                         }
                     }).start();
+                } else if (PrefUtils.isGoToHomeAfterAutoLanuch(getApplicationContext())) {
+                    AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
+                    PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                            new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
                 }
             }
 
