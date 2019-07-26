@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.Constant;
@@ -24,6 +25,7 @@ public class SwitchReceiver extends BroadcastReceiver {
         GpsUtil gpsUtil=GpsUtil.getInstance(context);
         String target=intent.getStringExtra("TARGET");
         if(SWITCH_TARGET_XUNHANG.equalsIgnoreCase(target)) {
+            Log.d("gpswidget","GEt switch xunhang event");
             if (gpsUtil.isAimlessStatred()) {
                 gpsUtil.stopAimlessNavi();
             } else {

@@ -231,9 +231,9 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     public void startAimlessNavi() {
-        if (!PrefUtils.isWidgetActived(context) && !PrefUtils.isEnableFlatingWindow(context)) {
+       /* if (!PrefUtils.isWidgetActived(context) && !PrefUtils.isEnableFlatingWindow(context)) {
             return;
-        }
+        }*/
         if (PrefUtils.isEnableAutoNaviService(context) && !aimlessStatred) {
             aMapNavi = AMapNavi.getInstance(context);
             aMapNavi.setIgnoreWifiCheck(true);
@@ -865,7 +865,7 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     public void setAutoNaviStatus(int autoNaviStatus) {
-        if(autoNaviStatus == Constant.Navi_Status_Started && this.autoNaviStatus != Constant.Navi_Status_Started){
+        if(autoNaviStatus == Constant.Navi_Status_Started  && aimlessStatred){
             Toast.makeText(context,"导航开始，巡航暂时关闭",Toast.LENGTH_SHORT).show();
             stopAimlessNavi();
         }/* else if(this.autoNaviStatus == Constant.Navi_Status_Started && autoNaviStatus == Constant.Navi_Status_Ended){
@@ -883,8 +883,7 @@ public class GpsUtil implements AMapNaviListener {
             stopAimlessNavi();
            // autoMuteIntent.putExtra("EXTRA_CASUAL_MUTE",0);
            // context.sendBroadcast(autoMuteIntent);
-        } else if(autoXunHangStatus == Constant.XunHang_Status_Ended
-                && !aimlessStatred){
+        } else if(autoXunHangStatus == Constant.XunHang_Status_Ended && !aimlessStatred){
             Toast.makeText(context,"高德巡航结束，插件巡航开启",Toast.LENGTH_SHORT).show();
             startAimlessNavi();
            // autoMuteIntent.putExtra("EXTRA_CASUAL_MUTE",1);
