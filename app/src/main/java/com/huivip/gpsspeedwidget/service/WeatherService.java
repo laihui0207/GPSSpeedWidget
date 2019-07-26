@@ -23,7 +23,6 @@ import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
-import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -131,10 +130,9 @@ public class WeatherService extends Service implements AMapLocationListener {
                                     + cityWeather.getString("winddirection") + "风" + cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
                             if (PrefUtils.isPlayWeather(getApplicationContext())) {
-                                SpeechFactory.getInstance(getApplicationContext())
+                                /*SpeechFactory.getInstance(getApplicationContext())
                                         .getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()))
-                                        .speak(resultText, true);
-                                //gpsUtil.getTts().speak(resultText,true);
+                                        .speak(resultText, true);*/
                                 handler.post(runnableUi);
                             }
                         }
@@ -158,6 +156,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                 } else {
                     showStr+="\n\n"+ resultText;
                 }
+                gpsUtil.getTts().speak(resultText,true);
             }
             if(!TextUtils.isEmpty(showStr)) {
                 Intent textFloat=new Intent(getApplicationContext(),TextFloatingService.class);
@@ -226,7 +225,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                                         /*SpeechFactory.getInstance(getApplicationContext())
                                                 .getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()))
                                                 .speak(address, true);*/
-                                        gpsUtil.getTts().speak(address,true);
+                                       // gpsUtil.getTts().speak(address,true);
                                         handler.post(runnableUi);
                                     }
                                 }

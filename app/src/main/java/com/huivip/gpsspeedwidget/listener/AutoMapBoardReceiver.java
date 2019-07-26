@@ -67,16 +67,16 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             if (PrefUtils.isHideFloatingWidowOnNaviApp(context) && gpsUtil.getAutoNaviStatus() != Constant.Navi_Status_Started) {
                                 Utils.startFloatingWindows(context.getApplicationContext(), true);
                             }
-                            if (PrefUtils.isEnableAutoMute(context)) {
+                          /*  if (PrefUtils.isEnableAutoMute(context)) {
                                 PrefUtils.setEnableTempAudioService(context, false);
-                            }
+                            }*/
                             //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                             break;
                         /*case 24:  // xun hang started
                             break;*/
                         case 8: // start navi
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
-                            PrefUtils.setEnableTempAudioService(context, false);
+                            //PrefUtils.setEnableTempAudioService(context, false);
                             launchSpeedFloatingWindows(context, true);
                             break;
                         case 10:  // simulate navi
@@ -87,7 +87,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             startDriveWayFloatingService(context);
                             launchSpeedFloatingWindows(context, true);
                             break;
-                        case 2: // auto map in end
+                        case 2: // auto map have closed
                             //gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                             gpsUtil.setCurrentRoadName("");
                             gpsUtil.setAutoMapBackendProcessStarted(false);
@@ -95,10 +95,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             if (PrefUtils.isHideFloatingWidowOnNaviApp(context)) {
                                 Utils.startFloatingWindows(context.getApplicationContext(), true);
                             }
-                        case 25:  // xunhang end
                             gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
+                        case 25:  // xunhang end
+                           // gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
                         case 9:  // navi end
-                            gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
+                            //gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                         case 12:
                             stopBackendNaviFloatingService(context, true);
                             stopDriveWayFloatingService(context, true);
@@ -173,6 +174,8 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }
                     int naviIcon = intent.getIntExtra("ICON", -1);
                     if (naviIcon >= 0) {
+                        // 导航状态下 关闭插件巡航
+                        gpsUtil.stopAimlessNavi();
                         gpsUtil.setNavi_turn_icon(naviIcon);
                     } else {
                         gpsUtil.setNavi_turn_icon(0);

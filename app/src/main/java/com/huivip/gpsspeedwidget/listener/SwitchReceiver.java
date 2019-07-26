@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.Constant;
@@ -23,14 +24,15 @@ public class SwitchReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         GpsUtil gpsUtil=GpsUtil.getInstance(context);
         String target=intent.getStringExtra("TARGET");
-        if(target!=null && SWITCH_TARGET_XUNHANG.equalsIgnoreCase(target)) {
+        if(SWITCH_TARGET_XUNHANG.equalsIgnoreCase(target)) {
+            Log.d("gpswidget","GEt switch xunhang event");
             if (gpsUtil.isAimlessStatred()) {
                 gpsUtil.stopAimlessNavi();
             } else {
                 gpsUtil.startAimlessNavi();
             }
         }
-        if(target!=null && SWITCH_TARGET_MAPFLOATING.equalsIgnoreCase(target)){
+        if(SWITCH_TARGET_MAPFLOATING.equalsIgnoreCase(target)){
             Intent floatingMapIntent = new Intent(context, MapFloatingService.class);
             if(!Utils.isServiceRunning(context, MapFloatingService.class.getName())) {
                 context.startService(floatingMapIntent);
@@ -39,12 +41,14 @@ public class SwitchReceiver extends BroadcastReceiver {
                 context.startService(floatingMapIntent);
             }
         }
-        if(target!=null && SWITCH_TARGET_AUTOAMAP.equalsIgnoreCase(target)){
+        if(SWITCH_TARGET_AUTOAMAP.equalsIgnoreCase(target)){
             Intent appIntent = context.getPackageManager().getLaunchIntentForPackage(Constant.AMAPAUTOPACKAGENAME);
-            appIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(appIntent);
+            if(appIntent!=null) {
+                appIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(appIntent);
+            }
         }
-        if(target!=null && SWITCH_TARGET_LYRIC.equalsIgnoreCase(target)){
+        if(SWITCH_TARGET_LYRIC.equalsIgnoreCase(target)){
             PrefUtils.setLyricEnabled(context,!PrefUtils.isLyricEnabled(context));
             if(PrefUtils.isLyricEnabled(context)){
                 Toast.makeText(context, "歌词功能开启", Toast.LENGTH_SHORT).show();
