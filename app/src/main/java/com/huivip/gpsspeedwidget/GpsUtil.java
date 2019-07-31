@@ -52,7 +52,6 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -155,7 +154,6 @@ public class GpsUtil implements AMapNaviListener {
 
     private GpsUtil(Context context) {
         this.context = context;
-        Random random = new Random();
         localNumberFormat.setMaximumFractionDigits(1);
         alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         tts = SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
