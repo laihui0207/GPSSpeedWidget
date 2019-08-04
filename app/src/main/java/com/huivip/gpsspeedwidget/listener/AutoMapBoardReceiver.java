@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
@@ -53,6 +54,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 PrefUtils.setEnableTempAudioService(context, false);
                             }
                             gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Started);
+                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
                             break;
                         case 4: // auto map in backend
                             gpsUtil.setAutoNavi_on_Frontend(false);
@@ -61,6 +63,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 if (!PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)) {
                                     startDriveWayFloatingService(context);
                                 }
+                                EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
                                 gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
                             }
                             launchSpeedFloatingWindows(context, false);
@@ -76,6 +79,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             break;*/
                         case 8: // start navi
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
+                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
                             //PrefUtils.setEnableTempAudioService(context, false);
                             launchSpeedFloatingWindows(context, true);
                             break;
@@ -95,6 +99,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             if (PrefUtils.isHideFloatingWidowOnNaviApp(context)) {
                                 Utils.startFloatingWindows(context.getApplicationContext(), true);
                             }
+                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(false));
                             gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
                         case 25:  // xunhang end
                            // gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
@@ -175,7 +180,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     int naviIcon = intent.getIntExtra("ICON", -1);
                     if (naviIcon >= 0) {
                         // 导航状态下 关闭插件巡航
-                        gpsUtil.stopAimlessNavi();
+                       // gpsUtil.stopAimlessNavi();
                         gpsUtil.setNavi_turn_icon(naviIcon);
                     } else {
                         gpsUtil.setNavi_turn_icon(0);

@@ -102,7 +102,7 @@ public class LyricFloatingService extends Service{
             duration=intent.getLongExtra(DURATION,-1L);
             songName=intent.getStringExtra(SONGNAME);
             artistName=intent.getStringExtra(ARTIST);
-            startTime=System.currentTimeMillis()-position-1000;
+            startTime=System.currentTimeMillis()-position;//-1000;
             lrcView.setLrc(lyrcContent);
             lrcView.init();
             isShowing = true;

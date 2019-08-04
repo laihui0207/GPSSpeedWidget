@@ -1,5 +1,6 @@
 package com.huivip.gpsspeedwidget.widget;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
@@ -25,31 +26,22 @@ import java.util.TimerTask;
 
 public class LyricWidgetService extends Service {
     public static final String EXTRA_CLOSE="lyric.widget.close";
-    public static String SONGNAME="lyric.songName";
-    public static String ARTIST="lyric.artist";
     public static String POSITION="lyfic.position";
-    public static String STATUS="lyric.status";
-    public static String DURATION="lyric.duration";
     public static String LYRIC_CONTENT="lyric.content";
     AppWidgetManager manager;
     AudioManager audioManager;
     ComponentName lyricWidget;
     private Paint gPaint;
     private Paint hPaint;
-    private int highLineColor;
-    private int lrcColor;
-    private int width = 0, height = 0;
     String lyric_content;
     long position;
     TimerTask lyricTask;
     final Handler lyricHandler = new Handler();
-    long duration=0;
     Timer lyricTimer;
     long startTime;
     boolean started=false;
     private int currentPosition = 0;
     private int playercurrentMillis=0;
-    private int lastPosition = 0;
     private List<LrcBean> list;
     private String currentLyricContentString="";
     @Nullable
@@ -58,6 +50,7 @@ public class LyricWidgetService extends Service {
         return null;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onCreate() {
         this.manager = AppWidgetManager.getInstance(this);

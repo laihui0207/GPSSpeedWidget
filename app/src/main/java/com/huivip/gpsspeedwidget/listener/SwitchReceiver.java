@@ -3,15 +3,17 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.Constant;
-import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.service.AutoXunHangService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.MapFloatingService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class SwitchReceiver extends BroadcastReceiver {
     private String TAG="huivip";
@@ -22,15 +24,16 @@ public class SwitchReceiver extends BroadcastReceiver {
     public static String SWITCH_EVENT="com.huivip.switch.event";
     @Override
     public void onReceive(Context context, Intent intent) {
-        GpsUtil gpsUtil=GpsUtil.getInstance(context);
         String target=intent.getStringExtra("TARGET");
         if(SWITCH_TARGET_XUNHANG.equalsIgnoreCase(target)) {
-            Log.d("gpswidget","GEt switch xunhang event");
-            if (gpsUtil.isAimlessStatred()) {
-                gpsUtil.stopAimlessNavi();
+            Intent xunhangService=new Intent(context, AutoXunHangService.class);
+            if (Utils.isServiceRunning(context,AutoXunHangService.class.getName())) {
+                xunhangService.putExtra(AutoXunHangService.EXTRA_CLOSE,true);
+                Toast.makeText(context, " 关闭智能巡航", Toast.LENGTH_SHORT).show();
             } else {
-                gpsUtil.startAimlessNavi();
+                Toast.makeText(context, "开启智能巡航", Toast.LENGTH_SHORT).show();
             }
+            context.startService(xunhangService);
         }
         if(SWITCH_TARGET_MAPFLOATING.equalsIgnoreCase(target)){
             Intent floatingMapIntent = new Intent(context, MapFloatingService.class);
@@ -38,6 +41,7 @@ public class SwitchReceiver extends BroadcastReceiver {
                 context.startService(floatingMapIntent);
             } else {
                 floatingMapIntent.putExtra(MapFloatingService.EXTRA_CLOSE,true);
+                EventBus.getDefault().post(new AimlessStatusUpdateEvent(false));
                 context.startService(floatingMapIntent);
             }
         }

@@ -5,42 +5,17 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.amap.api.navi.AMapNavi;
-import com.amap.api.navi.AMapNaviListener;
-import com.amap.api.navi.enums.AMapNaviRingType;
-import com.amap.api.navi.enums.AimLessMode;
-import com.amap.api.navi.enums.BroadcastMode;
-import com.amap.api.navi.enums.CarEnterCameraStatus;
-import com.amap.api.navi.enums.NaviType;
-import com.amap.api.navi.enums.SoundQuality;
-import com.amap.api.navi.model.AMapCalcRouteResult;
-import com.amap.api.navi.model.AMapLaneInfo;
-import com.amap.api.navi.model.AMapModelCross;
-import com.amap.api.navi.model.AMapNaviCameraInfo;
-import com.amap.api.navi.model.AMapNaviCross;
-import com.amap.api.navi.model.AMapNaviInfo;
-import com.amap.api.navi.model.AMapNaviLocation;
-import com.amap.api.navi.model.AMapNaviRouteNotifyData;
-import com.amap.api.navi.model.AMapNaviTrafficFacilityInfo;
-import com.amap.api.navi.model.AMapServiceAreaInfo;
-import com.amap.api.navi.model.AimLessModeCongestionInfo;
-import com.amap.api.navi.model.AimLessModeStat;
-import com.amap.api.navi.model.NaviInfo;
-import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
-import com.huivip.gpsspeedwidget.service.NaviTrackService;
+import com.huivip.gpsspeedwidget.service.AutoXunHangService;
 import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
@@ -51,16 +26,13 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static android.content.Context.CONNECTIVITY_SERVICE;
 
 /**
  * @author sunlaihui
  */
-public class GpsUtil implements AMapNaviListener {
+public class GpsUtil /*implements AMapNaviListener */{
     Context context;
     private String latitude;
     private String longitude;
@@ -86,7 +58,6 @@ public class GpsUtil implements AMapNaviListener {
     public boolean serviceStarted = false;
     TimerTask locationScanTask;
     Timer locationTimer;
-    AMapNavi aMapNavi;
     LocationManager locationManager;
     TTS tts;
     boolean limitSpeaked = false;
@@ -173,18 +144,13 @@ public class GpsUtil implements AMapNaviListener {
         if(tts!=null){
             tts.release();
         }
-        stopAimlessNavi();
+        //stopAimlessNavi();
         stopLocationService(true);
     }
     public void startLocationService() {
         if (serviceStarted) return;
         this.locationTimer = new Timer();
         speedAdjust = PrefUtils.getSpeedAdjust(context);
-        Intent trackService=new Intent(context, NaviTrackService.class);
-      /*  Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
-        if(!Utils.isServiceRunning(context,RoadLineFloatingService.class.getName())) {
-            context.startService(roadLineService);
-        }*/
         this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
@@ -198,71 +164,12 @@ public class GpsUtil implements AMapNaviListener {
         };
         Toast.makeText(context, "GPS服务开启", Toast.LENGTH_SHORT).show();
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        if (Utils.isNetworkConnected(context)) {
-            startAimlessNavi();
-            context.startService(trackService);
-        } else {
-            broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    ConnectivityManager connectMgr = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
-                    NetworkInfo activeNetwork = connectMgr.getActiveNetworkInfo();
-                    if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                        if (!aimlessStatred && serviceStarted) {
-                            startAimlessNavi();
-                            if(PrefUtils.isEnableNAVIUploadGPSHistory(context)) {
-                                context.startService(trackService);
-                            }
-                        }
-                        context.getApplicationContext().unregisterReceiver(broadcastReceiver);
-                    }
-                }
-            };
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-            context.getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
-        }
-        // disable record gps history service
-       /* Intent recordService = new Intent(context, RecordGpsHistoryService.class);
-        context.startService(recordService);*/
+       if(!Utils.isServiceRunning(context,AutoXunHangService.class.getName())) {
+           Intent xunhangService = new Intent(context, AutoXunHangService.class);
+           xunhangService.putExtra(AutoXunHangService.EXTRA_CLOSE, true);
+           context.startService(xunhangService);
+       }
         serviceStarted = true;
-    }
-
-    public void startAimlessNavi() {
-       /* if (!PrefUtils.isWidgetActived(context) && !PrefUtils.isEnableFlatingWindow(context)) {
-            return;
-        }*/
-        if (PrefUtils.isEnableAutoNaviService(context) && !aimlessStatred) {
-            aMapNavi = AMapNavi.getInstance(context);
-            aMapNavi.setIgnoreWifiCheck(true);
-            aMapNavi.addAMapNaviListener(this);
-
-            if(PrefUtils.getTtsEngine(context).equalsIgnoreCase(SpeechFactory.SDKTTS)){
-                aMapNavi.setUseInnerVoice(true);
-                aMapNavi.getNaviSetting().setUseOfflineVoice(true);
-                aMapNavi.getNaviSetting().setIgnoreWifi(true);
-                aMapNavi.setSoundQuality(SoundQuality.High_Quality);
-            } else {
-                aMapNavi.setUseInnerVoice(false);
-            }
-
-            if (PrefUtils.isOldDriverMode(context)) {
-                aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
-                aMapNavi.startAimlessMode(AimLessMode.CAMERA_DETECTED);
-            } else {
-                aMapNavi.setBroadcastMode(BroadcastMode.DETAIL);
-                aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
-            }
-        }
-    }
-
-    public void stopAimlessNavi() {
-        if (aMapNavi != null && aimlessStatred) {
-            aMapNavi.stopAimlessMode();
-            aMapNavi.removeAMapNaviListener(this);
-            aMapNavi = null;
-            aimlessStatred = false;
-        }
     }
 
     public boolean isAimlessStatred() {
@@ -275,21 +182,13 @@ public class GpsUtil implements AMapNaviListener {
                 this.locationTimer.cancel();
                 this.locationTimer.purge();
             }
-            stopAimlessNavi();
+            Intent xunhangService=new Intent(context, AutoXunHangService.class);
+            xunhangService.putExtra(AutoXunHangService.EXTRA_CLOSE,true);
+            context.startService(xunhangService);
             Intent recordService = new Intent(context, RecordGpsHistoryService.class);
             recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
             context.startService(recordService);
-            //if (tts != null) {
-            //SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context)).release();
-           // }
             serviceStarted = false;
-            //weatherService.stopLocation();
-
-           /* if(Utils.isServiceRunning(context,RoadLineFloatingService.class.getName())) {
-                Intent roadLineService = new Intent(context, RoadLineFloatingService.class);
-                roadLineService.putExtra(RoadLineFloatingService.EXTRA_CLOSE, true);
-                context.startService(roadLineService);
-            }*/
         }
 
     }
@@ -793,10 +692,10 @@ public class GpsUtil implements AMapNaviListener {
         if (nextRoadDistance > 1000) {
             //BigDecimal bd=new BigDecimal(nextRoadDistance);
             //return bd.divide(km,1, RoundingMode.HALF_UP) + "公里 后";
-            return decimalFormat.format((float)nextRoadDistance/1000)+ "km后";
+            return decimalFormat.format((float)nextRoadDistance/1000)+ "公里 后";
            // return new BigDecimal((double)nextRoadDistance / 1000).setScale(1, BigDecimal.ROUND_HALF_DOWN).doubleValue() + "km后";
         }
-        return nextRoadDistance + "m后";
+        return nextRoadDistance + "米 后";
     }
 
     public void setNextRoadDistance(int nextRoadDistance) {
@@ -805,7 +704,7 @@ public class GpsUtil implements AMapNaviListener {
 
     public String getTotalLeftDistance() {
         if (totalLeftDistance > 1000) {
-            return decimalFormat.format(totalLeftDistance >> 10) + "KM";
+            return decimalFormat.format(totalLeftDistance >> 10) + "公里";
         } else {
             return totalLeftDistance + "米";
         }
@@ -863,267 +762,9 @@ public class GpsUtil implements AMapNaviListener {
     }
 
     public void setAutoNaviStatus(int autoNaviStatus) {
-        if(autoNaviStatus == Constant.Navi_Status_Started  && aimlessStatred){
-            Toast.makeText(context,"导航开始，巡航暂时关闭",Toast.LENGTH_SHORT).show();
-            stopAimlessNavi();
-        }/* else if(this.autoNaviStatus == Constant.Navi_Status_Started && autoNaviStatus == Constant.Navi_Status_Ended){
-            Toast.makeText(context,"导航结束，巡航开启",Toast.LENGTH_SHORT).show();
-            startAimlessNavi();
-        }*/
         this.autoNaviStatus = autoNaviStatus;
     }
     public void setAutoXunHangStatus(int autoXunHangStatus){
-       /* Intent autoMuteIntent=new Intent();
-        autoMuteIntent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
-        autoMuteIntent.putExtra("KEY_TYPE",10047);*/
-        if(autoXunHangStatus == Constant.XunHang_Status_Started && aimlessStatred){
-            Toast.makeText(context,"高德巡航开始，插件巡航暂时关闭",Toast.LENGTH_SHORT).show();
-            stopAimlessNavi();
-           // autoMuteIntent.putExtra("EXTRA_CASUAL_MUTE",0);
-           // context.sendBroadcast(autoMuteIntent);
-        } else if(autoXunHangStatus == Constant.XunHang_Status_Ended && !aimlessStatred){
-            Toast.makeText(context,"高德巡航结束，插件巡航开启",Toast.LENGTH_SHORT).show();
-            startAimlessNavi();
-           // autoMuteIntent.putExtra("EXTRA_CASUAL_MUTE",1);
-           // context.sendBroadcast(autoMuteIntent);
-        }
         this.autoXunHangStatus=autoXunHangStatus;
-    }
-
-    @Override
-    public void onInitNaviFailure() {
-        aimlessStatred = false;
-    }
-
-    @Override
-    public void onInitNaviSuccess() {
-        aimlessStatred = true;
-        Toast.makeText(context, "智能巡航服务开启", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onStartNavi(int naviType) {
-        if (naviType == NaviType.CRUISE) {
-        }
-    }
-
-    @Override
-    public void onTrafficStatusUpdate() {
-
-    }
-
-    @Override
-    public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-       /* if(cameraDistance>0 && aMapNaviLocation.getSpeed()>15 && locationUpdateCount>40){
-            setCameraDistance(0);
-            setCameraSpeed(0);
-            locationUpdateCount=0;
-        }
-        else  if(cameraDistance>0 && aMapNaviLocation.getSpeed()>15 ) {
-            locationUpdateCount++;
-        } */
-    }
-
-    @Override
-    public void onGetNavigationText(int i, String s) {
-
-    }
-
-    @Override
-    public void onGetNavigationText(String s) {
-       // if(!PrefUtils.getTtsEngine(context).equalsIgnoreCase(SpeechFactory.SDKTTS)) {
-            tts.speak(s);
-       // }
-    }
-
-    @Override
-    public void onEndEmulatorNavi() {
-
-    }
-
-    @Override
-    public void onArriveDestination() {
-
-    }
-
-    @Override
-    public void onCalculateRouteFailure(int i) {
-
-    }
-
-    @Override
-    public void onReCalculateRouteForYaw() {
-
-    }
-
-    @Override
-    public void onReCalculateRouteForTrafficJam() {
-
-    }
-
-    @Override
-    public void onArrivedWayPoint(int i) {
-
-    }
-
-    @Override
-    public void onGpsOpenStatus(boolean b) {
-        gpsEnabled = b;
-    }
-
-    @Override
-    public void onNaviInfoUpdate(NaviInfo naviInfo) {
-        String roadName=naviInfo.getCurrentRoadName();
-        if(!TextUtils.isEmpty(roadName)){
-            setCurrentRoadName(roadName);
-        }
-    }
-
-    @Override
-    public void onNaviInfoUpdated(AMapNaviInfo aMapNaviInfo) {
-    }
-
-    @Override
-    public void updateCameraInfo(AMapNaviCameraInfo[] aMapNaviCameraInfos) {
-        for (AMapNaviCameraInfo aMapNaviCameraInfo : aMapNaviCameraInfos) {
-            cameraType = aMapNaviCameraInfo.getCameraType();
-            if (aMapNaviCameraInfo.getCameraSpeed() > 0 && aMapNaviCameraInfo.getCameraDistance() > 0) {
-                setCameraDistance(aMapNaviCameraInfo.getCameraDistance());
-                setCameraSpeed(aMapNaviCameraInfo.getCameraSpeed());
-            }
-        }
-    }
-
-    @Override
-    public void updateIntervalCameraInfo(AMapNaviCameraInfo aMapNaviCameraInfo, AMapNaviCameraInfo
-            aMapNaviCameraInfo1, int status) {
-        if (status == CarEnterCameraStatus.ENTER) {
-            setCameraType(aMapNaviCameraInfo.getCameraType());
-            setCameraSpeed(aMapNaviCameraInfo.getCameraSpeed());
-            setCameraDistance(aMapNaviCameraInfo.getCameraDistance());
-        } else if (status == CarEnterCameraStatus.LEAVE) {
-            setCameraType(aMapNaviCameraInfo1.getCameraType());
-            setCameraSpeed(aMapNaviCameraInfo1.getCameraSpeed());
-            setCameraDistance(aMapNaviCameraInfo1.getCameraDistance());
-        }
-    }
-
-    @Override
-    public void onServiceAreaUpdate(AMapServiceAreaInfo[] aMapServiceAreaInfos) {
-
-    }
-
-    @Override
-    public void showCross(AMapNaviCross aMapNaviCross) {
-
-    }
-
-    @Override
-    public void hideCross() {
-
-    }
-
-    @Override
-    public void showModeCross(AMapModelCross aMapModelCross) {
-
-    }
-
-    @Override
-    public void hideModeCross() {
-
-    }
-
-    @Override
-    public void showLaneInfo(AMapLaneInfo[] aMapLaneInfos, byte[] bytes, byte[] bytes1) {
-
-    }
-
-    @Override
-    public void showLaneInfo(AMapLaneInfo aMapLaneInfo) {
-       // Toast.makeText(context,aMapLaneInfo.getLaneTypeIdArray().toString(),Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void hideLaneInfo() {
-
-    }
-
-    @Override
-    public void onCalculateRouteSuccess(int[] ints) {
-
-    }
-
-    @Override
-    public void notifyParallelRoad(int i) {
-
-    }
-
-    @Override
-    public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
-    }
-
-    Integer[] broadcastTypes = {4, 5, 11, 28, 29, 93, 92, 101, 102};
-
-    @Override
-    public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
-        if(getAutoNaviStatus()!=Constant.Navi_Status_Started) {
-            for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
-                cameraType = info.getBroadcastType();
-                if (Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
-                    setCameraDistance(info.getDistance());
-                    if (info.getLimitSpeed() > 0) {
-                        setCameraSpeed(info.getLimitSpeed());
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void OnUpdateTrafficFacility(TrafficFacilityInfo trafficFacilityInfo) {
-
-    }
-
-    @Override
-    public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
-
-    }
-
-    @Override
-    public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {
-        /*if (!TextUtils.isEmpty(aimLessModeCongestionInfo.getRoadName())) {
-            Toast.makeText(context, aimLessModeCongestionInfo.getRoadName(), Toast.LENGTH_SHORT).show();
-        }*/
-    }
-
-    @Override
-    public void onPlayRing(int status) {
-        if (getAutoNaviStatus()!=Constant.Navi_Status_Started && (status == AMapNaviRingType.RING_EDOG || status == AMapNaviRingType.RING_CAMERA)) {
-            setCameraSpeed(0);
-            limitDistance = 0;
-            cameraType=-1;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    tts.speak("已通过");
-                }
-            }, 500L);
-
-        }
-    }
-
-    @Override
-    public void onCalculateRouteSuccess(AMapCalcRouteResult aMapCalcRouteResult) {
-
-    }
-
-    @Override
-    public void onCalculateRouteFailure(AMapCalcRouteResult aMapCalcRouteResult) {
-
-    }
-
-    @Override
-    public void onNaviRouteNotify(AMapNaviRouteNotifyData aMapNaviRouteNotifyData) {
-
     }
 }

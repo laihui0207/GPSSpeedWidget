@@ -9,7 +9,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
@@ -136,7 +135,8 @@ public class BootStartService extends Service {
                         startService(timeFloating);
                     }
                 }
-                GpsUtil.getInstance(getApplicationContext()).startLocationService();
+                //GpsUtil.getInstance(getApplicationContext()).startLocationService();
+
                 /*if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
                     GpsUtil.getInstance(getApplicationContext()).startLocationService();
                 }*/
@@ -145,6 +145,14 @@ public class BootStartService extends Service {
                     getApplicationContext().startService(roadLineFloatingService);
                 }
                 Utils.startFloatingWindows(getApplicationContext(), true);
+                if(!Utils.isServiceRunning(getApplicationContext(),AutoXunHangService.class.getName())) {
+                    Intent xunHangService=new Intent(getApplicationContext(),AutoXunHangService.class);
+                    startService(xunHangService);
+                }
+                if(PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
+                    Intent trackService=new Intent(getApplicationContext(), NaviTrackService.class);
+                    startService(trackService);
+                }
             }
         }
         return super.onStartCommand(intent, flags, startId);

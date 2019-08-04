@@ -15,12 +15,15 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.widget.GpsSpeedNumberWidget;
 import com.huivip.gpsspeedwidget.widget.GpsSpeedWidget;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.xutils.x;
 
 import java.util.Timer;
@@ -43,6 +46,7 @@ public class GpsSpeedService extends Service {
     TimerTask locationScanTask;
 
     boolean serviceStoped = true;
+    boolean aimlessNaviStarted=false;
     Timer locationTimer = new Timer();
     boolean homeInofSync=false;
     ComponentName thisWidget;
@@ -68,6 +72,7 @@ public class GpsSpeedService extends Service {
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         CrashHandler.getInstance().init(getApplicationContext());
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        EventBus.getDefault().register(this);
         super.onCreate();
     }
 
@@ -137,6 +142,9 @@ public class GpsSpeedService extends Service {
         if(gpsUtil!=null){
             gpsUtil.destory();
         }
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroy();
     }
 
@@ -151,7 +159,7 @@ public class GpsSpeedService extends Service {
             }
         }
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
-        if(gpsUtil.isAimlessStatred()){
+        if(aimlessNaviStarted){
             this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.xunhang);
         } else {
             this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.xunhang_closed);
@@ -163,7 +171,10 @@ public class GpsSpeedService extends Service {
         }
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
     }
-
+    @Subscribe
+    public void updateAimessStatus(AimlessStatusUpdateEvent event){
+        aimlessNaviStarted=event.isStarted();
+    }
     @Override
     public void onLowMemory() {
         super.onLowMemory();

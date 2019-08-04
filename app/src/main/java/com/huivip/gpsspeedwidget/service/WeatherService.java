@@ -23,6 +23,7 @@ import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
+import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -130,9 +131,6 @@ public class WeatherService extends Service implements AMapLocationListener {
                                     + cityWeather.getString("winddirection") + "风" + cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
                             if (PrefUtils.isPlayWeather(getApplicationContext())) {
-                                /*SpeechFactory.getInstance(getApplicationContext())
-                                        .getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()))
-                                        .speak(resultText, true);*/
                                 handler.post(runnableUi);
                             }
                         }
@@ -156,15 +154,15 @@ public class WeatherService extends Service implements AMapLocationListener {
                 } else {
                     showStr+="\n\n"+ resultText;
                 }
-                gpsUtil.getTts().speak(resultText,true);
+                SpeechFactory.getInstance(getApplicationContext())
+                        .getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()))
+                        .speak(resultText,true);
             }
             if(!TextUtils.isEmpty(showStr)) {
                 Intent textFloat=new Intent(getApplicationContext(),TextFloatingService.class);
                 textFloat.putExtra(TextFloatingService.SHOW_TEXT,showStr);
                 textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
                 getApplicationContext().startService(textFloat);
-                //ToastUtil.show(getApplicationContext(),showStr,100000);
-                //Toast.makeText(getApplicationContext(), showStr, Toast.LENGTH_LONG).show();
             }
             resultText =null;
         }
@@ -222,10 +220,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                                 @Override
                                 public void run() {
                                     if(gpsUtil.getSpeed()==0) {
-                                        /*SpeechFactory.getInstance(getApplicationContext())
-                                                .getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()))
-                                                .speak(address, true);*/
-                                       // gpsUtil.getTts().speak(address,true);
+                                        resultText ="当前地址："+address;
                                         handler.post(runnableUi);
                                     }
                                 }
