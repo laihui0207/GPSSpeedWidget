@@ -224,7 +224,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                                         handler.post(runnableUi);
                                     }
                                 }
-                            }, 3000);
+                            }, 5000);
                         }
                     }
                 }

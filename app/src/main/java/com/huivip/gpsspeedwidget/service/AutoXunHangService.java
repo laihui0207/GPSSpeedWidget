@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -80,9 +79,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    ConnectivityManager connectMgr = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
-                    NetworkInfo activeNetwork = connectMgr.getActiveNetworkInfo();
-                    if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+                    if (Utils.isNetworkConnected(getApplicationContext())) {
                         if (!aimlessStarted) {
                             startAimlessNavi();
                         }
