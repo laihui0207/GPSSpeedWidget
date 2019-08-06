@@ -6,7 +6,11 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -27,18 +31,19 @@ import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.SimpleOnTrackLifecycleListener;
 import com.huivip.gpsspeedwidget.utils.SimpleOnTrackListener;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 public class NaviTrackService extends Service {
     private String TAG = "GpSWidget";
     private static final String CHANNEL_ID_SERVICE_RUNNING = "CHANNEL_ID_SERVICE_RUNNING";
     boolean isServiceRunning;
-    boolean isGatherRunning;
+    boolean isGatherRunning=false;
     private AMapTrackClient aMapTrackClient;
     private long terminalId;
     private long trackId;
     private long serviceId;
     private String TERMINAL_NAME;
-    private boolean uploadToTrack = true;
+    BroadcastReceiver broadcastReceiver;
 
     @Nullable
     @Override
@@ -57,8 +62,25 @@ public class NaviTrackService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        startTrack();
-        return super.onStartCommand(intent, flags, startId);
+        if (Utils.isNetworkConnected(getApplicationContext())) {
+            startTrack();
+        } else {
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    if (Utils.isNetworkConnected(getApplicationContext())) {
+                        if(!isGatherRunning) {
+                            startTrack();
+                        }
+                        context.getApplicationContext().unregisterReceiver(broadcastReceiver);
+                    }
+                }
+            };
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
+        }
+        return Service.START_REDELIVER_INTENT;
     }
 
     @Override
@@ -96,12 +118,6 @@ public class NaviTrackService extends Service {
                 Toast.makeText(getApplicationContext(), "停止轨迹服务成功", Toast.LENGTH_SHORT).show();
                 isServiceRunning = false;
                 isGatherRunning = false;
-                /*                updateBtnStatus();*/
-            } else {
-              /*  Toast.makeText(getApplicationContext(),
-                        "error onStopTrackCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();*/
-
             }
         }
 
@@ -110,15 +126,9 @@ public class NaviTrackService extends Service {
             if (status == ErrorCode.TrackListen.START_GATHER_SUCEE) {
                 Toast.makeText(getApplicationContext(), "定位采集开启成功", Toast.LENGTH_SHORT).show();
                 isGatherRunning = true;
-                /*                updateBtnStatus();*/
             } else if (status == ErrorCode.TrackListen.START_GATHER_ALREADY_STARTED) {
                 Toast.makeText(getApplicationContext(), "定位采集已经开启", Toast.LENGTH_SHORT).show();
                 isGatherRunning = true;
-                /*                updateBtnStatus();*/
-            } else {
-                /*Toast.makeText(getApplicationContext(),
-                        "error onStartGatherCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();*/
             }
         }
 
@@ -127,11 +137,6 @@ public class NaviTrackService extends Service {
             if (status == ErrorCode.TrackListen.STOP_GATHER_SUCCE) {
                 Toast.makeText(getApplicationContext(), "定位采集停止成功", Toast.LENGTH_SHORT).show();
                 isGatherRunning = false;
-                /*                updateBtnStatus();*/
-            } else {
-               /* Toast.makeText(getApplicationContext(),
-                        "error onStopGatherCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();*/
             }
         }
     };

@@ -1,5 +1,6 @@
 package com.huivip.gpsspeedwidget.speech;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -30,7 +32,8 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
     PlayBinder playBinder;
 
     public  class PlayBinder extends Binder {
-        public void play(String fileName,MediaPlayer.OnCompletionListener listener){
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        public void play(String fileName, MediaPlayer.OnCompletionListener listener){
             playAudio(fileName,listener);
         }
         public void playByAudioTrack(String fileName,MediaPlayer.OnCompletionListener listener){
@@ -148,7 +151,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
     }
     public void playAudioByAudioTrack(String fileName,MediaPlayer.OnCompletionListener listener){
         int bufferSize = AudioTrack.getMinBufferSize(16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        int type=AudioManager.USE_DEFAULT_STREAM_TYPE;
+        int type=AudioManager.STREAM_MUSIC;
        /* if(!PrefUtils.isEnableAudioMixService(getApplicationContext())) {
             type=AudioManager.STREAM_VOICE_CALL;
         }*/
@@ -158,7 +161,9 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
         //边读边播
         byte[] buffer = new byte[bufferSize];
         int volume=PrefUtils.getAudioVolume(getApplicationContext());
-        audioTrack.setVolume(volume/100f);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            audioTrack.setVolume(volume/100f);
+        }
         /*new Thread(new Runnable() {
             @Override
             public void run() {*/
@@ -206,7 +211,8 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
 
         }).start();*/
     }
-    public void playAudio(String fileName,MediaPlayer.OnCompletionListener listener){
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void playAudio(String fileName, MediaPlayer.OnCompletionListener listener){
         try {
             mediaPlayer.reset();
             FileInputStream fis = new FileInputStream(fileName);

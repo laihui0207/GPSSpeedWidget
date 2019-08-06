@@ -166,16 +166,17 @@ public class RoadLineFloatingService extends Service{
         }
         isShowing=false;
     }
-    private void showRoadLine(){
-       if(roadLineBinder!=null){
-           View vv=roadLineBinder.getRoadLineView();
-           if(vv!=null && !gpsUtil.isAutoNavi_on_Frontend()){
-               roadLineView.setImageDrawable(((ImageView)vv).getDrawable());
-               roadLineView.setVisibility(View.VISIBLE);
-           } else {
-               roadLineView.setVisibility(View.INVISIBLE);
-           }
-       }
+
+    private void showRoadLine() {
+        if (roadLineBinder != null && roadLineView != null) {
+            View vv = roadLineBinder.getRoadLineView();
+            if (vv != null && !gpsUtil.isAutoNavi_on_Frontend()) {
+                roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
+                roadLineView.setVisibility(View.VISIBLE);
+            } else {
+                roadLineView.setVisibility(View.INVISIBLE);
+            }
+        }
     }
     @OnClick(value = {R.id.imageView_roadLine_floating_fixed})
     public void clickHandler(View view){
