@@ -316,6 +316,7 @@
                 <action android:name="android.service.notification.NotificationListenerService"/>
             </intent-filter>
         </service>
+        <service android:name=".speech.AudioService" />
 
         <activity
                 android:name=".activity.AudioTestActivity"

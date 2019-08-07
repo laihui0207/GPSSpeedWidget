@@ -40,11 +40,12 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     private SBCTTS(Context context){
         super(context);
-        auth();
         if (Utils.isNetworkConnected(context)) {
             boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
             if (isAuthorized) {
                 initTTS();
+            } else {
+                auth();
             }
         } else {
             broadcastReceiver = new BroadcastReceiver() {
@@ -57,6 +58,8 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
                         if (isAuthorized) {
                             initTTS();
                             context.getApplicationContext().unregisterReceiver(broadcastReceiver);
+                        } else {
+                            auth();
                         }
                     }
                 }
@@ -99,11 +102,11 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     public void auth(){
             DUILiteSDK.setParameter(DUILiteSDK.KEY_AUTH_TIMEOUT, "30000");//设置授权连接超时时长，默认5000ms
 //        DUILiteSDK.setParameter(DUILiteSDK.KEY_DEVICE_PROFILE_PATH, "/sdcard/speech");//自定义设置授权文件的保存路径,需要确保该路径事先存在
-           /* boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
+            boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
             if (isAuthorized) {
                 haveAuth = true;
                 return;
-            }*/
+            }
 
       /*  String core_version = DUILiteSDK.getCoreVersion();//获取内核版本号
         Log.d(TAG, "core version is: " + core_version);*/

@@ -4,11 +4,14 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -31,16 +34,24 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.x;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,9 +70,9 @@ public class NaviFloatingService extends Service {
     WindowManager.LayoutParams params;
     private View mFloatingView;
     GpsUtil gpsUtil;
-    /*TimerTask locationScanTask;
+    TimerTask locationScanTask;
     Timer locationTimer = new Timer();
-    final Handler updateHandler = new Handler();*/
+    final Handler updateHandler = new Handler();
     @BindView(R.id.textView_currentroad)
     TextView currentRoadTextView;
     @BindView(R.id.textView_nextroadname)
@@ -84,18 +95,20 @@ public class NaviFloatingService extends Service {
     TextView cameraTypeNameTextView;
     @BindView(R.id.navi_limit_view)
     View naviCameraView;
-    /*@BindView(R.id.imageView_backNavi_roadLine)
-    ImageView roadLineView;*/
+    @BindView(R.id.imageView_backNavi_roadLine)
+    ImageView roadLineView;
     @BindView(R.id.textView_autonavi_speedText)
     TextView speedTextView;
     @BindView(R.id.imageView_auto_close)
     ImageView closeButton;
-   /* @BindView(R.id.segmentView)
+    @BindView(R.id.segmentView)
     TmcSegmentView tmcSegmentView;
-    int count = 0;*/
-  /*  RoadLineService.RoadLineBinder roadLineBinder;
+/*
+    int count = 0;
+*/
+    RoadLineService.RoadLineBinder roadLineBinder;
     private ServiceConnection mServiceConnection;
-    String nextRoadDistance,nextRoadName,currentRoadName;
+   /* String nextRoadDistance,nextRoadName,currentRoadName;
     String limitSpeed,limitDistance,limitTypeName,leftTravel;
     int turnIcon,limitType,limitDistancePercent;*/
     @Nullable
@@ -171,20 +184,21 @@ public class NaviFloatingService extends Service {
         mFloatingView.setOnTouchListener(new FloatingOnTouchListener());
         initMonitorPosition();
         EventBus.getDefault().register(this);
-    /*    this.locationScanTask = new TimerTask() {
+        this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
                 updateHandler.post(new Runnable() {
                     @Override
                     public void run()
                     {
-                        NaviFloatingService.this.checkLocationData(null);
+                        NaviFloatingService.this.checkLocationData();
+                        showRoadLine();
                     }
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);*/
-        /*mServiceConnection=new ServiceConnection() {
+        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 roadLineBinder= (RoadLineService.RoadLineBinder) service;
@@ -195,20 +209,21 @@ public class NaviFloatingService extends Service {
 
             }
         };
-        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);*/
+        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
-    @Subscribe
-    public void checkLocationData(NaviInfoUpdateEvent event) {
+    //@Subscribe
+    @SuppressLint("DefaultLocale")
+    public void checkLocationData() {
         if(!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
-            currentRoadTextView.setText(gpsUtil.getCurrentRoadName()+"");
+            currentRoadTextView.setText(String.format("%s", gpsUtil.getCurrentRoadName()));
         }
         if(!TextUtils.isEmpty(gpsUtil.getNextRoadName())){
             nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
         }
         nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
-        naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+"/"+gpsUtil.getTotalLeftTime());
+        naviLeftTextView.setText(String.format("%s/%s", gpsUtil.getTotalLeftDistance(), gpsUtil.getTotalLeftTime()));
         if(gpsUtil.getNavi_turn_icon()>0) {
             naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
         }
@@ -216,14 +231,14 @@ public class NaviFloatingService extends Service {
         if(gpsUtil.getCameraType()!=-1){
             cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
             if(gpsUtil.getCameraDistance()>0){
-                navicameraDistanceTextView.setText(gpsUtil.getCameraDistance()+"米");
+                navicameraDistanceTextView.setText(String.format("%d米", gpsUtil.getCameraDistance()));
                 limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
             }
             else {
                 navicameraDistanceTextView.setText("0米");
             }
             if(gpsUtil.getCameraSpeed()>0){
-                navicameraSpeedTextView.setText(gpsUtil.getCameraSpeed()+"");
+                navicameraSpeedTextView.setText(String.format("%d", gpsUtil.getCameraSpeed()));
             }
             else {
                 navicameraSpeedTextView.setText("0");
@@ -245,7 +260,7 @@ public class NaviFloatingService extends Service {
         stopSelf();
     }
 
-   /* private void showRoadLine() {
+    private void showRoadLine() {
        if(roadLineBinder!=null){
            View vv=roadLineBinder.getRoadLineView();
            if(vv!=null){
@@ -255,9 +270,9 @@ public class NaviFloatingService extends Service {
                roadLineView.setVisibility(View.INVISIBLE);
            }
        }
-    }*/
+    }
 
-   /* @Subscribe
+    @Subscribe
     public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event) {
         String info = event.getInfo();
         if (TextUtils.isEmpty(info)) {
@@ -295,7 +310,7 @@ public class NaviFloatingService extends Service {
         if (models != null && models.size() > 0) {
             tmcSegmentView.setSegments(models);
         }
-    }*/
+    }
 
 
     private int getWindowType() {

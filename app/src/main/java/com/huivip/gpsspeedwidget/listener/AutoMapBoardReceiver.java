@@ -9,6 +9,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.NaviFloatingService;
@@ -227,12 +228,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     //}
                     EventBus.getDefault().post(new NaviInfoUpdateEvent());
                     break;
-               /* case 13011:
+                case 13011:
                     String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");
                     if (!TextUtils.isEmpty(info)) {
                         EventBus.getDefault().post(new TMCSegmentEvent(info));
                     }
-                    break;*/
+                    break;
                 case 13012:
                     String wayInfo = intent.getStringExtra("EXTRA_DRIVE_WAY");
                     try {

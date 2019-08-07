@@ -46,11 +46,12 @@ import com.bumptech.glide.Glide;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
-import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
+import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
+import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
@@ -58,7 +59,6 @@ import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RealTimeFloatingService;
 import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
-import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
@@ -67,6 +67,7 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.utils.WifiUtils;
 import com.judemanutd.autostarter.AutoStartPermissionHelper;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -339,9 +340,10 @@ public class ConfigurationActivity extends Activity {
                 SeekBar seekBarVolume=findViewById(R.id.seekBar_audioVolume);
                 int volume=seekBarVolume.getProgress();
                 PrefUtils.setAudioVolume(getApplicationContext(),volume);
-                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+                //TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
 /*                tts.speak(speakText);*/
-                GpsUtil.getInstance(getApplicationContext()).setTts(tts);
+                //GpsUtil.getInstance(getApplicationContext()).setTts(tts);
+                EventBus.getDefault().post(new TTSEngineChangeEvent());
             }
         });
 
@@ -364,8 +366,8 @@ public class ConfigurationActivity extends Activity {
                 SeekBar seekBarVolume=findViewById(R.id.seekBar_audioVolume);
                 int volume=seekBarVolume.getProgress();
                 PrefUtils.setAudioVolume(getApplicationContext(),volume);
-                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
-                tts.speak("北京第三区交通委提醒您：道路千万条，安全第一条。行车不规范，亲人两行泪。");
+                //TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+                EventBus.getDefault().post(new PlayAudioEvent("北京第三区交通委提醒您：道路千万条，安全第一条。行车不规范，亲人两行泪。",true));
             }
         });
         enableAutoNaviCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){

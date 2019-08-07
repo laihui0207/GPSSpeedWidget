@@ -6,9 +6,8 @@ import android.content.Intent;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
-import com.huivip.gpsspeedwidget.speech.SpeechFactory;
-import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -38,8 +37,8 @@ public class DateChangeReceiver extends BroadcastReceiver {
             }
             if(PrefUtils.isPlayTime(context)){
                 try {
-                   TTS tts= SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
-                tts.speak(text,true);
+                   //TTS tts= SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
+                EventBus.getDefault().post(new PlayAudioEvent(text,true));
                 } catch (Exception e){
 
                 }

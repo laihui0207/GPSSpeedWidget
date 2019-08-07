@@ -290,23 +290,6 @@ public class DefaultFloatingService extends Service {
     }
 
     private void showRoadLine() {
-      /*  int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
-        if (id != -1) {
-            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
-            View vv = null;
-            if (gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
-                vv = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
-            } else {
-                vv = Utils.findlayoutViewById(amapView, "road_line");
-            }
-            if(vv!=null && vv instanceof ImageView){
-                daoHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());
-                daoHang_roadLine.setVisibility(View.VISIBLE);
-            } else {
-                daoHang_roadLine.setVisibility(View.INVISIBLE);
-            }
-        }*/
       if(roadLineBinder!=null){
           View vv=roadLineBinder.getRoadLineView();
           if(vv!=null){

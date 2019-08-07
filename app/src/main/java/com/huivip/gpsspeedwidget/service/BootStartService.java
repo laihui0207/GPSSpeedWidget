@@ -13,6 +13,7 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
 import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
+import com.huivip.gpsspeedwidget.speech.AudioService;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TimeThread;
@@ -145,6 +146,10 @@ public class BootStartService extends Service {
                     getApplicationContext().startService(roadLineFloatingService);
                 }
                 Utils.startFloatingWindows(getApplicationContext(), true);
+                if(!Utils.isServiceRunning(getApplicationContext(), AudioService.class.getName())){
+                    Intent audioService=new Intent(getApplicationContext(),AudioService.class);
+                    startService(audioService);
+                }
                 if(!Utils.isServiceRunning(getApplicationContext(),AutoXunHangService.class.getName())) {
                     Intent xunHangService=new Intent(getApplicationContext(),AutoXunHangService.class);
                     startService(xunHangService);
