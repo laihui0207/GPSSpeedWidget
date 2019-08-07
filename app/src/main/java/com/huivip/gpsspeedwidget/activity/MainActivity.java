@@ -54,8 +54,11 @@ import com.amap.api.track.query.model.QueryTrackResponse;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.LocationVO;
 import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.utils.DBUtil;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
+import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.SimpleOnTrackListener;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -348,7 +351,7 @@ public class MainActivity extends Activity implements TraceListener {
                 TERMINAL_NAME = "Track_" + deviceId;
                 Date finalStartDate = startDate;
                 Date finalEndDate = endDate;
-/*                if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {*/
+                if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
                     aMapTrackClient.queryTerminal(new QueryTerminalRequest(serviceId, TERMINAL_NAME), new SimpleOnTrackListener() {
                         @Override
                         public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
@@ -415,7 +418,7 @@ public class MainActivity extends Activity implements TraceListener {
                             }
                         }
                     });
-                /*} else {
+                } else {
                     String finalDeviceId = deviceId;
                     String finalStartTime = startTime;
                     String finalEndTime = endTime;
@@ -466,7 +469,7 @@ public class MainActivity extends Activity implements TraceListener {
                             }
                         }
                     }).start();
-                }*/
+                }
             }
         };
         trackBtn.setOnClickListener(trackBtnListener);

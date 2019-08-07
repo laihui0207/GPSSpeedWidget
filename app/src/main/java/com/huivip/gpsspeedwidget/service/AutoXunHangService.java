@@ -36,7 +36,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
-import com.huivip.gpsspeedwidget.speech.SpeechFactory;
+import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -180,7 +180,8 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     public void onGetNavigationText(String s) {
         EventBus.getDefault().post(new AimlessStatusUpdateEvent(true));
         if(!autoMapStarted) {
-            SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext())).speak(s);
+            //SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext())).speak(s);
+            EventBus.getDefault().post(new PlayAudioEvent(s,false));
         }
 
     }
@@ -347,9 +348,11 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    SpeechFactory.getInstance(getApplicationContext())
+                   /* SpeechFactory.getInstance(getApplicationContext())
                             .getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()))
-                            .speak("已通过");
+                            .speak("已通过");*/
+
+                    EventBus.getDefault().post(new PlayAudioEvent("已通过",false));
                 }
             }, 500L);
 

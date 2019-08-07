@@ -2,7 +2,6 @@ package com.huivip.gpsspeedwidget;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -14,15 +13,16 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.service.AutoXunHangService;
-import com.huivip.gpsspeedwidget.speech.SpeechFactory;
-import com.huivip.gpsspeedwidget.speech.TTS;
+import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
 import com.huivip.gpsspeedwidget.utils.CycleQueue;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
-import java.math.BigDecimal;
+import org.greenrobot.eventbus.EventBus;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Timer;
@@ -31,7 +31,7 @@ import java.util.TimerTask;
 /**
  * @author sunlaihui
  */
-public class GpsUtil /*implements AMapNaviListener */{
+public class GpsUtil {
     Context context;
     private String latitude;
     private String longitude;
@@ -58,7 +58,6 @@ public class GpsUtil /*implements AMapNaviListener */{
     TimerTask locationScanTask;
     Timer locationTimer;
     LocationManager locationManager;
-    TTS tts;
     boolean limitSpeaked = false;
     Integer limitCounter = Integer.valueOf(0);
     boolean hasLimited = false;
@@ -67,7 +66,6 @@ public class GpsUtil /*implements AMapNaviListener */{
     boolean autoMapBackendProcessStarted=false;
     boolean catchRoadServiceStarted=false;
     final Handler locationHandler = new Handler();
-    BroadcastReceiver broadcastReceiver;
     int limitDistancePercentage = 0;
     float distance = 0F;
     Location preLocation;
@@ -126,7 +124,6 @@ public class GpsUtil /*implements AMapNaviListener */{
         this.context = context;
         localNumberFormat.setMaximumFractionDigits(1);
         alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        tts = SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
     }
 
     public static GpsUtil getInstance(Context context) {
@@ -140,10 +137,6 @@ public class GpsUtil /*implements AMapNaviListener */{
         return instance;
     }
     public void destory(){
-        if(tts!=null){
-            tts.release();
-        }
-        //stopAimlessNavi();
         stopLocationService(true);
     }
     public void startLocationService() {
@@ -168,13 +161,10 @@ public class GpsUtil /*implements AMapNaviListener */{
            xunhangService.putExtra(AutoXunHangService.EXTRA_CLOSE, true);
            context.startService(xunhangService);
        }
+        Intent recordService = new Intent(context, RecordGpsHistoryService.class);
+        context.startService(recordService);
         serviceStarted = true;
     }
-
-    public boolean isAimlessStatred() {
-        return aimlessStatred;
-    }
-
     public void stopLocationService(boolean stop) {
         if (serviceStarted && ((!stop && !PrefUtils.isWidgetActived(context)) || (PrefUtils.isWidgetActived(context) && stop))) {
             if (this.locationTimer != null) {
@@ -184,6 +174,9 @@ public class GpsUtil /*implements AMapNaviListener */{
             Intent xunhangService=new Intent(context, AutoXunHangService.class);
             xunhangService.putExtra(AutoXunHangService.EXTRA_CLOSE,true);
             context.startService(xunhangService);
+            Intent recordService = new Intent(context, RecordGpsHistoryService.class);
+            recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
+            context.startService(recordService);
             serviceStarted = false;
         }
 
@@ -245,11 +238,6 @@ public class GpsUtil /*implements AMapNaviListener */{
     public Double getSpeed() {
         return speed;
     }
-
-    public String getHomeSet() {
-        return homeSet;
-    }
-
 
     public void setHomeSet(String homeSet) {
         this.homeSet = homeSet;
@@ -327,10 +315,10 @@ public class GpsUtil /*implements AMapNaviListener */{
         }
     }
 
-    void checkLocationData() {
+    private void checkLocationData() {
         try {
             locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-            if (locationManager.getProvider(this.providerId) == null) {
+            if (locationManager==null || locationManager.getProvider(this.providerId) == null) {
                 return;
             }
             gpsEnabled = locationManager.isProviderEnabled(this.providerId);
@@ -354,7 +342,7 @@ public class GpsUtil /*implements AMapNaviListener */{
         }
     }
 
-    void computeAndShowData() {
+    private void computeAndShowData() {
 
         mphSpeed = (int) (this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         kmhSpeed = (int) (this.speed.doubleValue() * 3.6D);
@@ -379,7 +367,8 @@ public class GpsUtil /*implements AMapNaviListener */{
             if (!limitSpeaked || limitCounter > 300) {
                 limitSpeaked = true;
                 limitCounter = 0;
-                tts.speak("您已超速");
+                EventBus.getDefault().post(new PlayAudioEvent("您已超速",true));
+                //tts.speak("您已超速");
             }
             limitCounter++;
         } else {
@@ -442,12 +431,12 @@ public class GpsUtil /*implements AMapNaviListener */{
     public void setLimitSpeed(Integer limit){
         limitSpeed=limit;
     }
-    public void setTts(TTS tts) {
+    /*public void setTts(TTS tts) {
         this.tts = tts;
     }
     public TTS getTts(){
         return tts;
-    }
+    }*/
     public Integer getLimitDistance() {
         return limitDistance;
     }
@@ -683,15 +672,11 @@ public class GpsUtil /*implements AMapNaviListener */{
         this.nextRoadName = nextRoadName;
     }
 
-    BigDecimal km=new BigDecimal(1000);
     public String getNextRoadDistance() {
         if (nextRoadDistance > 1000) {
-            //BigDecimal bd=new BigDecimal(nextRoadDistance);
-            //return bd.divide(km,1, RoundingMode.HALF_UP) + "公里 后";
-            return decimalFormat.format((float)nextRoadDistance/1000)+ "km后";
-           // return new BigDecimal((double)nextRoadDistance / 1000).setScale(1, BigDecimal.ROUND_HALF_DOWN).doubleValue() + "km后";
+            return decimalFormat.format((float)nextRoadDistance/1000)+ "公里 后";
         }
-        return nextRoadDistance + "m后";
+        return nextRoadDistance + "米 后";
     }
 
     public void setNextRoadDistance(int nextRoadDistance) {
@@ -700,7 +685,7 @@ public class GpsUtil /*implements AMapNaviListener */{
 
     public String getTotalLeftDistance() {
         if (totalLeftDistance > 1000) {
-            return decimalFormat.format(totalLeftDistance >> 10) + "KM";
+            return decimalFormat.format(totalLeftDistance >> 10) + "公里";
         } else {
             return totalLeftDistance + "米";
         }

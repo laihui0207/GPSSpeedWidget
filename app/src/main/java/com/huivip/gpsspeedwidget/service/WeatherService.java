@@ -22,8 +22,8 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
-import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -154,9 +154,10 @@ public class WeatherService extends Service implements AMapLocationListener {
                 } else {
                     showStr+="\n\n"+ resultText;
                 }
-                SpeechFactory.getInstance(getApplicationContext())
+                /*SpeechFactory.getInstance(getApplicationContext())
                         .getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()))
-                        .speak(resultText,true);
+                        .speak(resultText,true);*/
+                EventBus.getDefault().post(new PlayAudioEvent(resultText,true));
             }
             if(!TextUtils.isEmpty(showStr)) {
                 Intent textFloat=new Intent(getApplicationContext(),TextFloatingService.class);
