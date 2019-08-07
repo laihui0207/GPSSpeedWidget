@@ -1,4 +1,3 @@
-/*
 package com.huivip.gpsspeedwidget.service;
 
 import android.app.AlarmManager;
@@ -10,8 +9,7 @@ import android.os.IBinder;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.GpsUtil;
-*/
-/*import com.huivip.gpsspeedwidget.listener.UploadRoadDataReceiver;*//*
+import com.huivip.gpsspeedwidget.listener.UploadRoadDataReceiver;
 
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.DBUtil;
@@ -20,11 +18,10 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-
-*/
-/**
+/*
+*
  * @author sunlaihui
- *//*
+ */
 
 public class RecordGpsHistoryService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsrecordService.EXTRA_CLOSE";
@@ -106,4 +103,3 @@ public class RecordGpsHistoryService extends Service{
         super.onDestroy();
     }
 }
-*/
