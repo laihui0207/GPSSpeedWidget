@@ -64,7 +64,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 if (!PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)) {
                                     startDriveWayFloatingService(context);
                                 }
-                                EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
+                                EventBus.getDefault().post(new AutoMapStatusUpdateEvent(false));
                                 gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
                             }
                             launchSpeedFloatingWindows(context, false);

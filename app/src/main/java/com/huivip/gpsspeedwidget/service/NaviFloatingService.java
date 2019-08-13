@@ -232,7 +232,7 @@ public class NaviFloatingService extends Service {
             cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
             if(gpsUtil.getCameraDistance()>0){
                 navicameraDistanceTextView.setText(String.format("%d米", gpsUtil.getCameraDistance()));
-                limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
+                //limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
             }
             else {
                 navicameraDistanceTextView.setText("0米");
