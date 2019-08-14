@@ -181,7 +181,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
         EventBus.getDefault().post(new AimlessStatusUpdateEvent(true));
         if(!autoMapStarted) {
             //SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext())).speak(s);
-            EventBus.getDefault().post(new PlayAudioEvent(s,false));
+            EventBus.getDefault().post(new PlayAudioEvent(s,true));
         }
 
     }
