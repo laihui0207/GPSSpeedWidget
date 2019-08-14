@@ -7,10 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -31,7 +28,6 @@ import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.SimpleOnTrackLifecycleListener;
 import com.huivip.gpsspeedwidget.utils.SimpleOnTrackListener;
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 public class NaviTrackService extends Service {
     private String TAG = "GpSWidget";
@@ -62,9 +58,9 @@ public class NaviTrackService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (Utils.isNetworkConnected(getApplicationContext())) {
+       // if (Utils.isNetworkConnected(getApplicationContext())) {
             startTrack();
-        } else {
+       /* } else {
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -79,7 +75,7 @@ public class NaviTrackService extends Service {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
-        }
+        }*/
         return Service.START_REDELIVER_INTENT;
     }
 

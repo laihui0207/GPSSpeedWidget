@@ -4,7 +4,9 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -12,6 +14,7 @@ import android.text.TextUtils;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
+import com.huivip.gpsspeedwidget.listener.NetWorkConnectChangedReceiver;
 import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
 import com.huivip.gpsspeedwidget.speech.AudioService;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
@@ -150,13 +153,20 @@ public class BootStartService extends Service {
                     Intent audioService=new Intent(getApplicationContext(),AudioService.class);
                     startService(audioService);
                 }
-                if(!Utils.isServiceRunning(getApplicationContext(),AutoXunHangService.class.getName())) {
-                    Intent xunHangService=new Intent(getApplicationContext(),AutoXunHangService.class);
-                    startService(xunHangService);
-                }
-                if(PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
-                    Intent trackService=new Intent(getApplicationContext(), NaviTrackService.class);
-                    startService(trackService);
+                if(Utils.isNetworkConnected(getApplicationContext())) {
+                    if (!Utils.isServiceRunning(getApplicationContext(), AutoXunHangService.class.getName())) {
+                        Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
+                        startService(xunHangService);
+                    }
+                    if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
+                        Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
+                        startService(trackService);
+                    }
+                } else {
+                    IntentFilter intentFilter = new IntentFilter();
+                    intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+                    NetWorkConnectChangedReceiver broadcastReceiver=new NetWorkConnectChangedReceiver();
+                    getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
                 }
             }
         }
