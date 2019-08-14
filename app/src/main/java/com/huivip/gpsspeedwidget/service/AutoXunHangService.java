@@ -3,10 +3,7 @@ package com.huivip.gpsspeedwidget.service;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -38,7 +35,6 @@ import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -73,9 +69,9 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             return super.onStartCommand(intent,flags,startId);
         }
         gpsUtil= GpsUtil.getInstance(getApplicationContext());
-        if (Utils.isNetworkConnected(getApplicationContext())) {
+        //if (Utils.isNetworkConnected(getApplicationContext())) {
             startAimlessNavi();
-        } else {
+        /*} else {
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -90,7 +86,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
-        }
+        }*/
         return Service.START_REDELIVER_INTENT;
     }
 
