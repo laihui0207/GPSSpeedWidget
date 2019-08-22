@@ -24,5 +24,11 @@
             android:layout_height="30dp"
             android:layout_marginLeft="10dp"
             android:src="@drawable/fixed" />
+        <ImageView
+            android:id="@+id/imageView_roadLine_floating_close"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/widget_close" />
     </LinearLayout>
 </FrameLayout>

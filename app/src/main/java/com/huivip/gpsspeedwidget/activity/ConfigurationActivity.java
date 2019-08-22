@@ -92,8 +92,8 @@ public class ConfigurationActivity extends Activity {
     private int mAppWidgetId = 0 ;
     @BindView(R.id.EnableFalting)
     Button enableFloatingButton;
-    @BindView(R.id.button_select_app)
-    Button appSelectionButton;
+   /* @BindView(R.id.button_select_app)
+    Button appSelectionButton*/;
     @BindView(R.id.enableOver)
     Button enableServiceButton;
     CheckBox enableFloatingWidnowCheckBox;
@@ -389,6 +389,14 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 PrefUtils.setShowLimits(getApplicationContext(),compoundButton.isChecked());
+            }
+        });
+        CheckBox showNaviLimitCheckbox=findViewById(R.id.checkBox_navi_showLimit);
+        showNaviLimitCheckbox.setChecked(PrefUtils.getShowNaviLimits(getApplicationContext()));
+        showNaviLimitCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PrefUtils.setShowNaviLimits(getApplicationContext(),compoundButton.isChecked());
             }
         });
         CheckBox cacheAudioFileCheckBox=findViewById(R.id.checkBox_cacheAudioFile);

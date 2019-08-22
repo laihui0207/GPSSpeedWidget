@@ -179,7 +179,7 @@ public class RoadLineFloatingService extends Service{
             }
         }
     }
-    @OnClick(value = {R.id.imageView_roadLine_floating_fixed})
+    @OnClick(value = {R.id.imageView_roadLine_floating_fixed,R.id.imageView_roadLine_floating_close})
     public void clickHandler(View view){
         switch (view.getId()){
             case R.id.imageView_roadLine_floating_fixed:
@@ -189,6 +189,10 @@ public class RoadLineFloatingService extends Service{
                 controlView.setVisibility(View.INVISIBLE);
                 mWindowManager.updateViewLayout(mFloatingView, params);
                 PrefUtils.setEnableRoadLineFloatingFixed(getApplicationContext(),true);
+                break;
+            case R.id.imageView_roadLine_floating_close:
+                onStop();
+                stopSelf();
                 break;
         }
     }

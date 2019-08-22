@@ -14,8 +14,11 @@ import android.widget.ImageView;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,6 +32,7 @@ public class RoadLineService extends Service {
     Handler scanHandler=new Handler();
     GpsUtil gpsUtil;
     View roadLineView = null;
+    View preRoadLineView=null;
     View widgetView=null;
     @Nullable
     @Override
@@ -60,6 +64,14 @@ public class RoadLineService extends Service {
                     @Override
                     public void run() {
                        roadLineView = getRoadLineView();
+                       if(preRoadLineView!=roadLineView){
+                           if(roadLineView!=null) {
+                               EventBus.getDefault().post(new RoadLineEvent(true,roadLineView));
+                           } else {
+                               EventBus.getDefault().post(new RoadLineEvent(false));
+                           }
+                           preRoadLineView = roadLineView;
+                       }
                     }
                 });
             }

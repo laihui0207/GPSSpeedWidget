@@ -158,7 +158,6 @@ public class GpsUtil {
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
        if(!Utils.isServiceRunning(context,AutoXunHangService.class.getName())) {
            Intent xunhangService = new Intent(context, AutoXunHangService.class);
-           xunhangService.putExtra(AutoXunHangService.EXTRA_CLOSE, true);
            context.startService(xunhangService);
        }
         Intent recordService = new Intent(context, RecordGpsHistoryService.class);

@@ -25,6 +25,7 @@ public abstract class PrefUtils {
     private static final String PREF_OPACITY = "pref_opacity";
     private static final String PREF_SPEEDOMETER = "pref_speedometer";
     private static final String PREF_LIMITS = "pref_limits";
+    private static final String PREF_NAVI_LIMITS = "pref_NAVI_limits";
     private static final String PREF_SHOW_SMALL_FLOATING= "pref_small_floating_style";
     private static final String PREF_HIDE_FLOATING_WHEN_STOP= "pref_hide_floating_window_when_stop";
     private static final String PREF_APPS = "pref_apps";
@@ -603,6 +604,13 @@ public abstract class PrefUtils {
 
     public static void setShowLimits(Context context, boolean show) {
         edit(context).putBoolean(PREF_LIMITS, show).apply();
+    }
+    public static boolean getShowNaviLimits(Context context) {
+        return getSharedPreferences(context).getBoolean(PREF_NAVI_LIMITS, true);
+    }
+
+    public static void setShowNaviLimits(Context context, boolean show) {
+        edit(context).putBoolean(PREF_NAVI_LIMITS, show).apply();
     }
     public static boolean isShowSmallFloatingStyle(Context context) {
         return getSharedPreferences(context).getBoolean(PREF_SHOW_SMALL_FLOATING, false);

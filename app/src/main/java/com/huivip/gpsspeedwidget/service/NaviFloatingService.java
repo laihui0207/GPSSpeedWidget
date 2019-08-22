@@ -4,10 +4,8 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
@@ -34,6 +32,7 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
@@ -42,6 +41,7 @@ import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -106,8 +106,8 @@ public class NaviFloatingService extends Service {
 /*
     int count = 0;
 */
-    RoadLineService.RoadLineBinder roadLineBinder;
-    private ServiceConnection mServiceConnection;
+   /* RoadLineService.RoadLineBinder roadLineBinder;
+    private ServiceConnection mServiceConnection;*/
    /* String nextRoadDistance,nextRoadName,currentRoadName;
     String limitSpeed,limitDistance,limitTypeName,leftTravel;
     int turnIcon,limitType,limitDistancePercent;*/
@@ -192,13 +192,13 @@ public class NaviFloatingService extends Service {
                     public void run()
                     {
                         NaviFloatingService.this.checkLocationData();
-                        showRoadLine();
+                        //showRoadLine();
                     }
                 });
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        mServiceConnection=new ServiceConnection() {
+       /* mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 roadLineBinder= (RoadLineService.RoadLineBinder) service;
@@ -209,7 +209,7 @@ public class NaviFloatingService extends Service {
 
             }
         };
-        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);*/
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
@@ -259,8 +259,19 @@ public class NaviFloatingService extends Service {
         onStop();
         stopSelf();
     }
-
-    private void showRoadLine() {
+    @Subscribe(threadMode= ThreadMode.MAIN)
+    public void showRoadLine(RoadLineEvent event) {
+        if (event.isShowed()) {
+            View vv = event.getRoadLineView();
+            if (vv != null) {
+                roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
+                roadLineView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            roadLineView.setVisibility(View.INVISIBLE);
+        }
+    }
+   /* private void showRoadLine() {
        if(roadLineBinder!=null){
            View vv=roadLineBinder.getRoadLineView();
            if(vv!=null){
@@ -270,7 +281,7 @@ public class NaviFloatingService extends Service {
                roadLineView.setVisibility(View.INVISIBLE);
            }
        }
-    }
+    }*/
 
     @Subscribe
     public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event) {

@@ -4,7 +4,6 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -36,9 +35,14 @@ import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
+import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -137,6 +141,14 @@ public class DefaultFloatingService extends Service {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    @Override
     public void onCreate() {
         if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
             Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_LONG).show();
@@ -218,13 +230,13 @@ public class DefaultFloatingService extends Service {
                     public void run()
                     {
                         DefaultFloatingService.this.checkLocationData();
-                        showRoadLine();
+                        //showRoadLine();
                     }
                 });
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        mServiceConnection=new ServiceConnection() {
+     /*   mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 roadLineBinder= (RoadLineService.RoadLineBinder) service;
@@ -237,7 +249,8 @@ public class DefaultFloatingService extends Service {
         };
         if(PrefUtils.isEnableSpeedRoadLine(getApplicationContext())) {
             getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
-        }
+        }*/
+        EventBus.getDefault().register(this);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
@@ -289,7 +302,7 @@ public class DefaultFloatingService extends Service {
         }
     }
 
-    private void showRoadLine() {
+/*    private void showRoadLine() {
       if(roadLineBinder!=null){
           View vv=roadLineBinder.getRoadLineView();
           if(vv!=null){
@@ -299,6 +312,18 @@ public class DefaultFloatingService extends Service {
               daoHang_roadLine.setVisibility(View.INVISIBLE);
           }
       }
+    }*/
+    @Subscribe(threadMode= ThreadMode.MAIN)
+    public void showRoadLine(RoadLineEvent event) {
+        if (PrefUtils.isEnableSpeedRoadLine(getApplicationContext()) && event.isShowed()) {
+            View vv = event.getRoadLineView();
+            if (vv != null) {
+                daoHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());
+                daoHang_roadLine.setVisibility(View.VISIBLE);
+            }
+        } else {
+            daoHang_roadLine.setVisibility(View.INVISIBLE);
+        }
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?

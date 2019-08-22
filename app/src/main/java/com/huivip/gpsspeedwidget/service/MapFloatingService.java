@@ -4,10 +4,8 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.net.Uri;
@@ -44,10 +42,15 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TimeThread;
 import com.huivip.gpsspeedwidget.view.ImageWheelView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Calendar;
 import java.util.Timer;
@@ -99,8 +102,8 @@ public class MapFloatingService extends Service {
     // 屏幕静止DELAY_TIME之后，再次跟随
     private long DELAY_TIME = 5000;
     boolean focused=false;
-    private ServiceConnection mServiceConnection;
-    RoadLineService.RoadLineBinder roadLineBinder;
+  /*  private ServiceConnection mServiceConnection;
+    RoadLineService.RoadLineBinder roadLineBinder;*/
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -210,8 +213,8 @@ public class MapFloatingService extends Service {
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
-        //EventBus.getDefault().register(this);
-        mServiceConnection=new ServiceConnection() {
+        EventBus.getDefault().register(this);
+      /*  mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 roadLineBinder= (RoadLineService.RoadLineBinder) service;
@@ -222,16 +225,16 @@ public class MapFloatingService extends Service {
 
             }
         };
-        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);*/
         super.onCreate();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        /*if(EventBus.getDefault().isRegistered(this)){
+        if(EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().unregister(this);
-        }*/
+        }
     }
 
     void checkLocationData() {
@@ -245,12 +248,13 @@ public class MapFloatingService extends Service {
             carMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBitmap(bearing)));
             carMarker.setRotateAngle(360-bearing);
             //carMarker.setIcon();
+            windowHeight=mMapView.getHeight();
             if(gpsUtil.getKmhSpeed()>60){
                 mapZoom=14;
-                mapMove=-140;
+                mapMove=-((windowHeight-140)/4);
             } else {
                 mapZoom=16;
-                mapMove=-100;
+                mapMove=-((windowHeight-140)/5);
             }
             if (isNeedFollow) {
                 // 跟随
@@ -260,35 +264,19 @@ public class MapFloatingService extends Service {
                 isLocated=true;
             }
         }
-        showRoadLine();
+        //showRoadLine();
     }
-    private void showRoadLine(){
-       /* int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
-        if (id != -1) {
-            AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-            final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
-            View vv = null;
-            if (gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started) {
-                vv = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
-            } else {
-               vv = Utils.findlayoutViewById(amapView, "road_line");
-            }
-            if(vv!=null && vv instanceof  ImageView){
+    @Subscribe(threadMode=ThreadMode.MAIN)
+    public void showRoadLine(RoadLineEvent event) {
+        if (event.isShowed()) {
+            View vv = event.getRoadLineView();
+            if (vv != null) {
                 daoHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());
                 daoHang_roadLine.setVisibility(View.VISIBLE);
-            } else {
-                daoHang_roadLine.setVisibility(View.INVISIBLE);
             }
-        }*/
-       if(roadLineBinder!=null){
-           View vv=roadLineBinder.getRoadLineView();
-           if(vv!=null){
-               daoHang_roadLine.setImageDrawable(((ImageView)vv).getDrawable());
-               daoHang_roadLine.setVisibility(View.VISIBLE);
-           } else {
-               daoHang_roadLine.setVisibility(View.INVISIBLE);
-           }
-       }
+        } else {
+            daoHang_roadLine.setVisibility(View.INVISIBLE);
+        }
     }
     private Bitmap getBitmap(float bearing) {
         Bitmap bitmap = null;
@@ -390,10 +378,11 @@ public class MapFloatingService extends Service {
                 }
 
                 mFloatingView.setVisibility(View.VISIBLE);
-                windowHeight = params.height;
+                //windowHeight = params.height;
                 mFloatingView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+
     }
     private class FloatingOnTouchListener implements View.OnTouchListener {
 
