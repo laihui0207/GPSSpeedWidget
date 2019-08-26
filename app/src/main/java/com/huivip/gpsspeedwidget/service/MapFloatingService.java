@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -212,20 +213,8 @@ public class MapFloatingService extends Service {
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         EventBus.getDefault().register(this);
-      /*  mServiceConnection=new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                roadLineBinder= (RoadLineService.RoadLineBinder) service;
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        };
-        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);*/
         super.onCreate();
     }
 
@@ -239,6 +228,12 @@ public class MapFloatingService extends Service {
 
     void checkLocationData() {
         if ((gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) || !isLocated) {
+            if (gpsUtil!=null && !TextUtils.isEmpty(gpsUtil.getLongitude()) && !TextUtils.isEmpty(gpsUtil.getLatitude())) {
+                return;
+            }
+            if(gpsUtil==null){
+                return;
+            }
             LatLng latLng = new LatLng(Double.parseDouble(gpsUtil.getLatitude()), Double.parseDouble(gpsUtil.getLongitude()));
             // 显示定位小图标，初始化时已经创建过了，这里修改位置即可
             converter.coord(latLng);
@@ -247,14 +242,16 @@ public class MapFloatingService extends Service {
             float bearing=gpsUtil.getBearing();
             carMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBitmap(bearing)));
             carMarker.setRotateAngle(360-bearing);
+            carMarker.setZIndex(0);
+            carMarker.setAnchor(0.5f,0.5f);
             //carMarker.setIcon();
             windowHeight=mMapView.getHeight();
             if(gpsUtil.getKmhSpeed()>60){
                 mapZoom=14;
-                mapMove=-((windowHeight-140)/4);
+                mapMove=-(windowHeight*4/25);
             } else {
                 mapZoom=16;
-                mapMove=-((windowHeight-140)/5);
+                mapMove=-((windowHeight-10)*4/25);
             }
             if (isNeedFollow) {
                 // 跟随
@@ -283,15 +280,11 @@ public class MapFloatingService extends Service {
         View view = View.inflate(this,R.layout.floating_map_navi_icon, null);
         ImageWheelView directionView=view.findViewById(R.id.imageview_direction);
         directionView.setRotation(360-bearing);
-        //SpeedWheel car_directionView=view.findViewById(R.id.imageView_car_direction);
-       // car_directionView.setRotation(bearing);
         view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         view.buildDrawingCache();
         bitmap = view.getDrawingCache();
-        if(bitmap==null){
-        }
         return bitmap;
     }
 

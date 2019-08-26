@@ -11,7 +11,9 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.RegistEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
 import com.huivip.gpsspeedwidget.listener.NetWorkConnectChangedReceiver;
@@ -22,12 +24,15 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TimeThread;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 
 public class BootStartService extends Service {
     public static String START_BOOT = "FromSTARTBOOT";
     boolean started = false;
     AlarmManager alarm;
-
+    String deviceId;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -40,6 +45,8 @@ public class BootStartService extends Service {
     public void onCreate() {
         alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
         CrashHandler.getInstance().init(getApplicationContext());
+        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
+        deviceId=deviceUuidFactory.getDeviceUuid().toString();
         boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
         if (start) {
                   /*  PendingIntent thirdIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), ThirdSoftLaunchReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -172,5 +179,8 @@ public class BootStartService extends Service {
         }
         return super.onStartCommand(intent, flags, startId);
     }
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void registSelf(RegistEvent event){
 
+    }
 }

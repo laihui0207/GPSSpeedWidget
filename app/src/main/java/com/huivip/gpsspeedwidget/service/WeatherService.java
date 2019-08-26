@@ -38,6 +38,7 @@ import org.json.JSONObject;
 public class WeatherService extends Service implements AMapLocationListener {
     String cityName;
     String adCode;
+    String cityCode;
     String address;
     String pre_adCode;
     String pre_address;
@@ -177,10 +178,13 @@ public class WeatherService extends Service implements AMapLocationListener {
             if (aMapLocation.getErrorCode() == 0) {
                 if(!TextUtils.isEmpty(aMapLocation.getCity())) {
                     cityName=aMapLocation.getCity();
+                    cityCode=aMapLocation.getCityCode();
                     adCode =aMapLocation.getAdCode();
                     gpsUtil.setCityName(cityName);
+
                     //Toast.makeText(getApplicationContext(),cityName+ adCode,Toast.LENGTH_SHORT).show();
                 }
+                gpsUtil.setCityCode(cityCode);
                 if(!TextUtils.isEmpty(aMapLocation.getAdCode())){
                     //district=aMapLocation.getDistrict();
                     if(TextUtils.isEmpty(pre_adCode)){

@@ -81,8 +81,11 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
+<!--
         <activity android:name="com.amap.api.maps.offlinemap.OfflineMapActivity"/>
-
+-->
+        <activity android:name="com.amap.api.maps.offlinemap.OfflineMapActivity"
+            android:screenOrientation="landscape"  />
         <receiver
                 android:name=".widget.GpsSpeedWidget"
                 android:icon="@drawable/icon"
@@ -317,6 +320,7 @@
             </intent-filter>
         </service>
         <service android:name=".speech.AudioService" />
+        <service android:name=".service.SearchTrafficService" />
 
         <activity
                 android:name=".activity.AudioTestActivity"

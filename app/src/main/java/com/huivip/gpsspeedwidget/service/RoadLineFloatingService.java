@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,9 +24,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.amap.api.services.traffic.TrafficSearch;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.SearchTrafficEvent;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -147,7 +150,6 @@ public class RoadLineFloatingService extends Service{
                 mFloatingView.setLayoutParams(params);
                 mWindowManager.updateViewLayout(mFloatingView, params);
             }
-            isShowing = true;
             if(!PrefUtils.isEnableRoadLineFloatingFixed(getApplicationContext())) {
                 hideControlView();
             } else {
@@ -165,7 +167,6 @@ public class RoadLineFloatingService extends Service{
 
             }
         }
-        isShowing=false;
     }
 
     private void showRoadLine() {
@@ -174,8 +175,16 @@ public class RoadLineFloatingService extends Service{
             if (vv != null && !gpsUtil.isAutoNavi_on_Frontend()) {
                 roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
                 roadLineView.setVisibility(View.VISIBLE);
+                if(!isShowing && !TextUtils.isEmpty(gpsUtil.getLatitude()) && !TextUtils.isEmpty(gpsUtil.getLongitude())) {
+                    EventBus.getDefault().post(
+                            new SearchTrafficEvent(Double.parseDouble(gpsUtil.getLatitude()),
+                                    Double.parseDouble(gpsUtil.getLongitude()),
+                                    2000, TrafficSearch.ROAD_LEVEL_NONAME_WAY));
+                }
+                isShowing=true;
             } else {
                 roadLineView.setVisibility(View.INVISIBLE);
+                isShowing=false;
             }
         }
     }

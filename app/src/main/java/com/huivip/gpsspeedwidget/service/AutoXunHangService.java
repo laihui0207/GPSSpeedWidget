@@ -111,6 +111,8 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             aMapNavi.setBroadcastMode(BroadcastMode.DETAIL);
             aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
         }
+        Intent trafficSearchService=new Intent(getApplicationContext(),SearchTrafficService.class);
+        startService(trafficSearchService);
     }
 
     public void stopAimlessNavi() {
@@ -120,6 +122,9 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             aMapNavi = null;
             aimlessStarted = false;
         }
+        Intent trafficSearchService=new Intent(getApplicationContext(),SearchTrafficService.class);
+        trafficSearchService.putExtra(SearchTrafficService.EXTRA_CLOSE,true);
+        startService(trafficSearchService);
     }
 
     public boolean isAimlessStarted() {
@@ -146,6 +151,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     public void onInitNaviSuccess() {
         aimlessStarted = true;
         aimlessNaviTryCount=0;
+        EventBus.getDefault().post(new AimlessStatusUpdateEvent(true));
         Toast.makeText(getApplicationContext(), "智能巡航服务开启成功", Toast.LENGTH_SHORT).show();
     }
 

@@ -554,6 +554,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/button_pay" />
+            <Button
+                android:text="下载离线地图"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/button_download_offlineMap" />
         </LinearLayout>
         <!-- </ScrollView>-->
         <LinearLayout  android:layout_width="match_parent" android:layout_height="wrap_content"

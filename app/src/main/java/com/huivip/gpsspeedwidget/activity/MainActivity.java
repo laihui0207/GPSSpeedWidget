@@ -510,6 +510,13 @@ public class MainActivity extends Activity implements TraceListener {
                 Utils.goHome(getApplicationContext());
             }
         });
+        goHomeButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                startActivity(new Intent(MainActivity.this, AudioTestActivity.class));
+                return false;
+            }
+        });
          Set<String> desktopPackages=Utils.getDesktopPackageName(getApplicationContext());
          PrefUtils.setApps(getApplicationContext(),desktopPackages);
     }

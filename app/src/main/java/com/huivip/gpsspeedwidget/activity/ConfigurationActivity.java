@@ -84,6 +84,8 @@ import java.util.Map;
 import java.util.Set;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * @author sunlaihui
@@ -145,6 +147,8 @@ public class ConfigurationActivity extends Activity {
             }
             Utils.startFloatingWindows(getApplicationContext(),true);
         }
+        ButterKnife.bind(this);
+
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         enableFloatingWidnowCheckBox.setChecked(PrefUtils.isEnableFlatingWindow(getApplicationContext()));
         //enableShowFlattingOnDesktopCheckBox=findViewById(R.id.checkBox_showondescktop);
@@ -1314,6 +1318,11 @@ public class ConfigurationActivity extends Activity {
         else {
             btnOk.setEnabled(false);
         }
+    }
+    @OnClick(value = R.id.button_download_offlineMap)
+    public void downloadOffLineMap(View view){
+        startActivity(new Intent(this.getApplicationContext(),
+                com.amap.api.maps.offlinemap.OfflineMapActivity.class));
     }
     private void openSettings(String settingsAction, String packageName) {
         Intent intent = new Intent(settingsAction);

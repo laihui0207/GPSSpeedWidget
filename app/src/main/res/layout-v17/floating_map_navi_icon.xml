@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"
               xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="80dip"
-                    android:layout_height="80dip">
+    <RelativeLayout android:id="@+id/SpeedRelativeLayout" android:layout_width="60dip"
+                    android:layout_height="60dip">
         <com.huivip.gpsspeedwidget.view.ImageWheelView android:id="@+id/imageview_direction" android:background="@drawable/navi_direction_outside_day"
                    android:layout_width="match_parent" android:layout_height="match_parent"
                    android:layout_centerHorizontal="true" android:layout_centerVertical="true"/>
         <com.huivip.gpsspeedwidget.view.ImageWheelView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" android:background="@drawable/navi_direction_inside_day"
-                android:id="@+id/imageView_car_direction" android:layout_margin="15dp"/>
+                android:id="@+id/imageView_car_direction" android:layout_margin="10dp"/>
     </RelativeLayout>
 </LinearLayout>

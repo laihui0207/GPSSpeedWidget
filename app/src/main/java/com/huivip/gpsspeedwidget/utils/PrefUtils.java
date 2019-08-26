@@ -209,7 +209,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(RECORD_GPS_HISTORY_PREFS_NAME, recordHistory).apply();
     }
     public static boolean isEnableRecordGPSHistory(Context context){
-        return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, false);
+        return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, true);
     }
     public static void setEnableGPSUseMPH(Context context,boolean recordHistory){
         edit(context).putBoolean(GPS_SPEED_TYPE_MPH_PREFS_NAME, recordHistory).apply();
@@ -293,7 +293,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, uploadHistory).apply();
     }
     public static boolean isEnableUploadGPSHistory(Context context){
-        return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, false);
+        return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, true);
     }
     public static void setUploadNAVIGPSHistory(Context context,boolean uploadHistory){
         edit(context).putBoolean(UPLOAD_GPS_HISTORY_NAVI_PREFS_NAME, uploadHistory).apply();

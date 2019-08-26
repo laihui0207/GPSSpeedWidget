@@ -21,7 +21,9 @@ public class NetWorkConnectChangedReceiver extends BroadcastReceiver {
                 Intent trackService=new Intent(context, NaviTrackService.class);
                 context.startService(trackService);
             }
+
             context.getApplicationContext().unregisterReceiver(this);
+
         }
     }
 }

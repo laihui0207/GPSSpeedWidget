@@ -116,11 +116,10 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
     }
     @Override
     public void onAudioFocusChange(int focusChange) {
-       /* switch (focusChange){
+        switch (focusChange){
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
             case AudioManager.AUDIOFOCUS_GAIN:
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
-                Log.d("GPS_Audio","GET Audio Focus");
                 if(!mediaPlayer.isPlaying()){
                     mediaPlayer.start();
                 }
@@ -140,13 +139,12 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                 }
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                Log.d("GPS_Audio","Loss Audio Focus");
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.setVolume(0.1f,0.1f);
                 }
                 break;
 
-        }*/
+        }
     }
 
     public void playAudioByAudioTrack(String fileName, MediaPlayer.OnCompletionListener listener) {
