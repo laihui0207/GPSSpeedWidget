@@ -53,12 +53,14 @@ import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
+import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RealTimeFloatingService;
 import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
@@ -114,7 +116,6 @@ public class ConfigurationActivity extends Activity {
     private static  final int REQUEST_STORAGE=106;
     private static final int REQUEST_PHONE=107;
     AppWidgetHost appWidgetHost;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,17 +130,18 @@ public class ConfigurationActivity extends Activity {
 
         }
         initPermission();
+        AppSettings appSettings= Setup.appSettings();
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         handler=new Handler();
         CheckBox autoStartCheckBox=(CheckBox)findViewById(R.id.autoStart);
-        autoStartCheckBox.setChecked(PrefUtils.isEnableAutoStart(getApplicationContext()));
+        autoStartCheckBox.setChecked(appSettings.getAutoStart());
         CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
         recordGPSCheckBox.setChecked(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()));
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         uploadGPSCheckBox.setChecked(PrefUtils.isEnableUploadGPSHistory(getApplicationContext()));
         CheckBox cleanDataCheckBox = findViewById(R.id.checkBox_cleanData);
         cleanDataCheckBox.setChecked(PrefUtils.isEnableAutoCleanGPSHistory(getApplicationContext()));
-        if(PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
+        if(PrefUtils.isEnableDrawOverFeature(getApplicationContext())){
             if(PrefUtils.isAppFirstRun(getApplicationContext())) {
                 PrefUtils.setFlatingWindow(getApplicationContext(), true);
                 PrefUtils.setEnableNaviFloating(getApplicationContext(), true);

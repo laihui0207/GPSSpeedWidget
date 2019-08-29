@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.amap.api.trace.TraceLocation;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -87,10 +88,10 @@ public class FileUtil {
     public static void uploadCrashLog(String logPath,String deviceId){
 
     }
-    public static String loadLric(Context context,String songName,String artist){
+    public static String loadLyric(Context context, String songName, String artist){
         String content="";
         if(TextUtils.isEmpty(songName)) return content;
-        String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";
+        String path = AppSettings.get().getLyricPath();
         File dir=new File(path);
         if(!dir.exists()){
             return content;
@@ -129,8 +130,8 @@ public class FileUtil {
         }
         return content;
     }
-    public static void deleteLric(Context context,String songName,String artist){
-        String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";
+    public static void deleteLyric(Context context, String songName, String artist){
+        String path = AppSettings.get().getLyricPath();
         File dir=new File(path);
         if(!dir.exists()){
             return;
@@ -146,8 +147,8 @@ public class FileUtil {
             lrcFile.delete();
         }
     }
-    public static void saveLric(Context context,String songName,String artist,String content){
-        String path =Environment.getExternalStorageDirectory().toString()+"/lyric/";
+    public static void saveLyric(Context context, String songName, String artist, String content){
+        String path = AppSettings.get().getLyricPath();
         File dir=new File(path);
         if(!dir.exists()){
             dir.mkdirs();

@@ -167,7 +167,7 @@ public abstract class PrefUtils {
         edit(context).putString(TTS_ENGINE, style).apply();
     }
     public static String getTtsEngine(Context context){
-        return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.SIBICHITTS);
+        return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.BAIDUTTS);
     }
     public static String getAmapWebKey(Context context){
         String deviceId=getShortDeviceId(context);
@@ -209,7 +209,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(RECORD_GPS_HISTORY_PREFS_NAME, recordHistory).apply();
     }
     public static boolean isEnableRecordGPSHistory(Context context){
-        return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, true);
+        return getSharedPreferences(context).getBoolean(RECORD_GPS_HISTORY_PREFS_NAME, false);
     }
     public static void setEnableGPSUseMPH(Context context,boolean recordHistory){
         edit(context).putBoolean(GPS_SPEED_TYPE_MPH_PREFS_NAME, recordHistory).apply();
@@ -293,7 +293,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, uploadHistory).apply();
     }
     public static boolean isEnableUploadGPSHistory(Context context){
-        return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, true);
+        return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_PREFS_NAME, false);
     }
     public static void setUploadNAVIGPSHistory(Context context,boolean uploadHistory){
         edit(context).putBoolean(UPLOAD_GPS_HISTORY_NAVI_PREFS_NAME, uploadHistory).apply();
@@ -740,7 +740,7 @@ public abstract class PrefUtils {
     public static boolean isFTPAutoBackup(Context context){
         return getSharedPreferences(context).getBoolean(FTP_AUTO_BACKUP,false);
     }
-    public static boolean isEnbleDrawOverFeature(Context context){
+    public static boolean isEnableDrawOverFeature(Context context){
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context);
         return overlayEnabled;
     }

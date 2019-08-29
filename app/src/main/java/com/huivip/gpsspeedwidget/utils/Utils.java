@@ -41,6 +41,7 @@ import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
 import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.MeterFloatingService;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -335,7 +336,7 @@ public abstract class Utils {
         if(enabled){
             GpsUtil gpsUtil=GpsUtil.getInstance(context.getApplicationContext());
             boolean onDesktop =PrefUtils.isOnDesktop(context);
-            if(!PrefUtils.isEnableFlatingWindow(context)){
+            if(!AppSettings.get().isEnableSpeed()){
                 defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);

@@ -2,7 +2,6 @@ package com.huivip.gpsspeedwidget.service;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
@@ -34,6 +33,7 @@ import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -48,7 +48,9 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     boolean aimlessStarted =false;
     GpsUtil gpsUtil;
     boolean autoMapStarted=false;
+/*
     BroadcastReceiver broadcastReceiver;
+*/
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -58,17 +60,17 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     @Override
     public void onCreate() {
         super.onCreate();
+        gpsUtil= GpsUtil.getInstance(getApplicationContext());
         EventBus.getDefault().register(this);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(!PrefUtils.isEnableAutoNaviService(getApplicationContext()) || intent.getBooleanExtra(EXTRA_CLOSE,false)){
+        if(!AppSettings.get().isEanbleXunHang() || intent.getBooleanExtra(EXTRA_CLOSE,false)){
             stopAimlessNavi();
             stopSelf();
             return super.onStartCommand(intent,flags,startId);
         }
-        gpsUtil= GpsUtil.getInstance(getApplicationContext());
         //if (Utils.isNetworkConnected(getApplicationContext())) {
             startAimlessNavi();
         /*} else {
@@ -111,8 +113,8 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             aMapNavi.setBroadcastMode(BroadcastMode.DETAIL);
             aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
         }
-        Intent trafficSearchService=new Intent(getApplicationContext(),SearchTrafficService.class);
-        startService(trafficSearchService);
+       /* Intent trafficSearchService=new Intent(getApplicationContext(),SearchTrafficService.class);
+        startService(trafficSearchService);*/
     }
 
     public void stopAimlessNavi() {
@@ -122,9 +124,9 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             aMapNavi = null;
             aimlessStarted = false;
         }
-        Intent trafficSearchService=new Intent(getApplicationContext(),SearchTrafficService.class);
+       /* Intent trafficSearchService=new Intent(getApplicationContext(),SearchTrafficService.class);
         trafficSearchService.putExtra(SearchTrafficService.EXTRA_CLOSE,true);
-        startService(trafficSearchService);
+        startService(trafficSearchService);*/
     }
 
     public boolean isAimlessStarted() {

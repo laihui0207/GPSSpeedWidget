@@ -78,7 +78,7 @@ public class RealTimeFloatingService extends Service{
 
     @Override
     public void onCreate() {
-        if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
+        if(!PrefUtils.isEnableDrawOverFeature(getApplicationContext())){
             Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_LONG).show();
             try {
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);

@@ -9,12 +9,14 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import com.huivip.gpsspeedwidget.service.LyricFloatingService;
-import com.huivip.gpsspeedwidget.widget.LyricWidgetService;
+
 import com.huivip.gpsspeedwidget.beans.LrcBean;
+import com.huivip.gpsspeedwidget.service.LyricFloatingService;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
+import com.huivip.gpsspeedwidget.widget.LyricWidgetService;
 
 import java.util.List;
 
@@ -90,7 +92,7 @@ public class LyricServiceLowVersion extends Service  {
             @Override
             public void run() {
                 long startedTime=System.currentTimeMillis();
-                lyricContent = FileUtil.loadLric(getApplicationContext(), inputSongName, inputArtist);
+                lyricContent = FileUtil.loadLyric(getApplicationContext(), inputSongName, inputArtist);
                 if (TextUtils.isEmpty(lyricContent)) {
                     lyricContent = WangYiYunMusic.downloadLyric(inputSongName, inputArtist);
                 }
@@ -106,14 +108,17 @@ public class LyricServiceLowVersion extends Service  {
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            if(!AppSettings.get().isLyricEnable()){
+                return;
+            }
             if(!TextUtils.isEmpty(lyricContent)) {
                 List<LrcBean> list= LrcUtil.parseStr2List(lyricContent);
                 if(list!=null && list.size()>0) {
-                    FileUtil.saveLric(getApplicationContext(), songName, artistName, lyricContent);
+                    FileUtil.saveLyric(getApplicationContext(), songName, artistName, lyricContent);
                     launchLrcFloationgWindows(true);
                 } else {
                     launchLrcFloationgWindows(false);
-                    FileUtil.deleteLric(getApplicationContext(),songName,artistName);
+                    FileUtil.deleteLyric(getApplicationContext(),songName,artistName);
                 }
             } else {
                 launchLrcFloationgWindows(false);

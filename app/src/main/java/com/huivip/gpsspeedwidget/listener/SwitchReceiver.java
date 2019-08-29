@@ -10,7 +10,7 @@ import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.service.AutoXunHangService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.MapFloatingService;
-import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -53,8 +53,9 @@ public class SwitchReceiver extends BroadcastReceiver {
             }
         }
         if(SWITCH_TARGET_LYRIC.equalsIgnoreCase(target)){
-            PrefUtils.setLyricEnabled(context,!PrefUtils.isLyricEnabled(context));
-            if(PrefUtils.isLyricEnabled(context)){
+           // PrefUtils.setLyricEnabled(context,!PrefUtils.isLyricEnabled(context));
+            AppSettings.get().setLyricEnable(!AppSettings.get().isLyricEnable());
+            if(AppSettings.get().isLyricEnable()){
                 Toast.makeText(context, "歌词功能开启", Toast.LENGTH_SHORT).show();
             } else {
                 if(Utils.isServiceRunning(context, LyricFloatingService.class.getName())){

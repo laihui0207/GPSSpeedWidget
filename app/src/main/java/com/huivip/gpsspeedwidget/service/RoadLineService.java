@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -48,6 +49,15 @@ public class RoadLineService extends Service {
             return widgetView;
         }
 
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if(!AppSettings.get().isEnableRoadLine()){
+            stopSelf();
+            return super.onStartCommand(intent, flags, startId);
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override

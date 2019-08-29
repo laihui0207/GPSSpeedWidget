@@ -141,7 +141,7 @@ public class MapFloatingService extends Service {
 
     @Override
     public void onCreate() {
-        if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
+        if(!PrefUtils.isEnableDrawOverFeature(getApplicationContext())){
             Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_LONG).show();
             try {
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
@@ -228,10 +228,10 @@ public class MapFloatingService extends Service {
 
     void checkLocationData() {
         if ((gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) || !isLocated) {
-            if (gpsUtil!=null && !TextUtils.isEmpty(gpsUtil.getLongitude()) && !TextUtils.isEmpty(gpsUtil.getLatitude())) {
+            if(gpsUtil==null){
                 return;
             }
-            if(gpsUtil==null){
+            if (TextUtils.isEmpty(gpsUtil.getLongitude()) || TextUtils.isEmpty(gpsUtil.getLatitude())) {
                 return;
             }
             LatLng latLng = new LatLng(Double.parseDouble(gpsUtil.getLatitude()), Double.parseDouble(gpsUtil.getLongitude()));

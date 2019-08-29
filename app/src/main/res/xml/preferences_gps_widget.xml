@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:title="@string/pref_title__gps_plugin">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pref_key__auto_start"
+        android:title="开机自动启动" />
+    <PreferenceCategory android:title="开机启动项目">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__auto_start_wifi_hotpot"
+            android:summary="开机自动启动wifi热点"
+            android:title=" 开机启动热点" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__auto_start_play_warn"
+            android:summary="开机播放安全提醒语音"
+            android:title="安全提醒语音" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="启动第三方应用">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__auto_start_launch_other_app_enable"
+            android:title="开机启动其它应用" />
+        <Preference
+            android:defaultValue="0"
+            android:key="@string/pref_key__auto_start_launch_select_other_apps"
+            android:title="选择第三方应用" />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/items__delay_return_desktop"
+            android:entryValues="@array/values__delay_return_desktop"
+            android:key="@string/pref_key__auto_start_launch_other_app_delay_time"
+            android:summary="应用之间延时启动"
+            android:title="应用之间延时时间" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__auto_start_launch_other_app_return_desktop"
+            android:title="启动结束返回桌面" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="高德服务">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__speed_enable"
+            android:title="启用速度悬浮窗" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__XunHang_enable"
+            android:title="启用智能巡航" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__Tracker_enable"
+            android:title="启用猎鹰轨迹服务" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__Tracker_enable"
+            android:title="启用导航悬浮窗" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__Road_line_enable"
+            android:title="启用车道窗口" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="语音合成">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__Audio_enable"
+            android:title="启用语音" />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/items__audio_engine"
+            android:entryValues="@array/values__audio_engine"
+            android:key="@string/pref_key__Audio_engine"
+            android:summary="选择使用的语音引擎"
+            android:title="语音引擎" />
+        <SeekBarPreference
+            android:defaultValue="50"
+            android:key="@string/pref_key__Audio_volume"
+            android:max="100"
+            android:title="语音音量"
+            app:min="0" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="歌词">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__lyric_enable"
+            android:title="启用歌词服务" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__lyric_fixed"
+            android:summary="歌词悬浮窗位置固定，点击透穿"
+            android:title="歌词位置固定" />
+        <Preference
+            android:defaultValue=""
+            android:key="@string/pref_key__lyric_path"
+            android:title="选择歌词保存路径" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_title__color">
+
+        <com.flask.colorpicker.ColorPickerPreference
+            android:defaultValue="@color/transparent"
+            android:key="@string/pref_key__dock_background_color"
+            android:title="@string/pref_title__dock_background_color"
+            app:lightnessSlider="true"
+            app:alphaSlider="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

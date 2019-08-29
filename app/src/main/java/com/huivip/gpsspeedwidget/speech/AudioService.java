@@ -7,8 +7,9 @@ import android.support.annotation.Nullable;
 
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
+import com.huivip.gpsspeedwidget.manager.Setup;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
-import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -25,27 +26,27 @@ public class AudioService extends Service {
     public void onCreate() {
         super.onCreate();
         EventBus.getDefault().register(this);
-        tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+       // tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
         CrashHandler.getInstance().init(getApplicationContext());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(tts==null){
-            tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+            tts=SpeechFactory.getInstance(Setup.appContext()).getTTSEngine(AppSettings.get().getAudioEngine());
         }
         return Service.START_REDELIVER_INTENT;
     }
     @Subscribe
     public void playTTS(PlayAudioEvent event){
         if(tts==null){
-            tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+            tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(AppSettings.get().getAudioEngine());
         }
         tts.speak(event.getText(),event.isForce());
     }
     @Subscribe
     public void changeTTSEngine(TTSEngineChangeEvent engineChangeEvent){
-        tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()));
+        tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(AppSettings.get().getAudioEngine());
     }
     @Override
     public void onDestroy() {

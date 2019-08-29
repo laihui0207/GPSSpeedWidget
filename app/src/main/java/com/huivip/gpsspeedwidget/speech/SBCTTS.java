@@ -29,16 +29,16 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     private static final String TAG = "GPS_SBC_TAG";
     final String Tag = this.getClass().getName();
     AILocalTTSEngine mEngine;
-    boolean haveInit=false;
-    private String[] mBackResBinArray = new String[] {Constant.TTS_BACK_RES_ZHILING};
+    boolean haveInit = false;
+    private String[] mBackResBinArray = new String[]{Constant.TTS_BACK_RES_ZHILING};
 
-    private String[] mBackResBinMd5sumArray = new String[] {Constant.TTS_BACK_RES_ZHILING_MD5};
-    boolean haveAuth=false;
-    private static SBCTTS tts=null;
-    private int mauthCount=0;
+    private String[] mBackResBinMd5sumArray = new String[]{Constant.TTS_BACK_RES_ZHILING_MD5};
+    boolean haveAuth = false;
+    private static SBCTTS tts = null;
+    private int mauthCount = 0;
     BroadcastReceiver broadcastReceiver;
 
-    private SBCTTS(Context context){
+    private SBCTTS(Context context) {
         super(context);
         if (Utils.isNetworkConnected(context)) {
             boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
@@ -93,52 +93,53 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             mEngine.setStreamType(AudioManager.STREAM_VOICE_CALL);
         }
         mEngine.setUseSSML(false);//设置是否使用ssml合成语法，默认为false
-        int volume=PrefUtils.getAudioVolume(context);
-        mEngine.setSpeechVolume((int)(volume*1.0f/100 * 500));
+        int volume = PrefUtils.getAudioVolume(context);
+        mEngine.setSpeechVolume((int) (volume * 1.0f / 100 * 500));
         //mEngine.setSpeechVolume(500);//设置合成音频的音量，范围为1～500
         mEngine.init(new AILocalTTSListenerImpl());//初始化合成引擎
     }
+
     @Override
-    public void auth(){
-            DUILiteSDK.setParameter(DUILiteSDK.KEY_AUTH_TIMEOUT, "30000");//设置授权连接超时时长，默认5000ms
+    public void auth() {
+        DUILiteSDK.setParameter(DUILiteSDK.KEY_AUTH_TIMEOUT, "30000");//设置授权连接超时时长，默认5000ms
 //        DUILiteSDK.setParameter(DUILiteSDK.KEY_DEVICE_PROFILE_PATH, "/sdcard/speech");//自定义设置授权文件的保存路径,需要确保该路径事先存在
-            boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
-            if (isAuthorized) {
-                haveAuth = true;
-                return;
-            }
+        boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
+        if (isAuthorized) {
+            haveAuth = true;
+            return;
+        }
 
       /*  String core_version = DUILiteSDK.getCoreVersion();//获取内核版本号
         Log.d(TAG, "core version is: " + core_version);*/
 
-            //设置SDK录音模式
-            DUILiteSDK.setAudioRecorderType(DUILiteSDK.TYPE_COMMON_MIC);//默认单麦模式
-            // DUILiteSDK.openLog();//须在init之前调用.同时会保存日志文件在/sdcard/duilite/DUILite_SDK.log
-            //TODO 新建产品需要填入productKey和productSecret，否则会授权不通过
-            DUILiteSDK.init(context,
-                    Constant.SBC_API_KEY,
-                    Constant.SBC_PRODUCT_ID,
-                    Constant.SBC_PRODUCT_KEY,
-                    Constant.SBC_PRODUCT_SECERT, this);
+        //设置SDK录音模式
+        DUILiteSDK.setAudioRecorderType(DUILiteSDK.TYPE_COMMON_MIC);//默认单麦模式
+        // DUILiteSDK.openLog();//须在init之前调用.同时会保存日志文件在/sdcard/duilite/DUILite_SDK.log
+        //TODO 新建产品需要填入productKey和productSecret，否则会授权不通过
+        DUILiteSDK.init(context,
+                Constant.SBC_API_KEY,
+                Constant.SBC_PRODUCT_ID,
+                Constant.SBC_PRODUCT_KEY,
+                Constant.SBC_PRODUCT_SECERT, this);
     }
 
 
     @Override
     public void speak(String text) {
-        speak(text,true);
+        speak(text, true);
     }
 
     @Override
     public void speak(String text, boolean force) {
-        if(PrefUtils.isEnableAudioVolumeDepress(context)) {
-            customPlayer=true;
+        if (PrefUtils.isEnableAudioVolumeDepress(context)) {
+            customPlayer = true;
             synthesize(text, force);
         } else {
             if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
-                customPlayer=false;
-                if(mEngine!=null) {
-                    int volume=PrefUtils.getAudioVolume(context);
-                    mEngine.setSpeechVolume((int)(volume*1.0f/100 * 500));
+                customPlayer = false;
+                if (mEngine != null) {
+                    int volume = PrefUtils.getAudioVolume(context);
+                    mEngine.setSpeechVolume((int) (volume * 1.0f / 100 * 500));
                     mEngine.speak(text, text.hashCode() + "");
                 } else {
                     initTTS();
@@ -159,13 +160,13 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     @Override
     public void synthesize(String text) {
-        synthesize(text,false);
+        synthesize(text, false);
     }
 
     @Override
     public void synthesize(String text, boolean force) {
         if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
-            customPlayer=true;
+            customPlayer = true;
             if (wordList != null)
                 wordList.addLast(text);
             else {
@@ -180,7 +181,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     @Override
     public void release() {
         stop();
-        if(mEngine!=null) {
+        if (mEngine != null) {
             mEngine.destroy();
             mEngine = null;
         }
@@ -189,7 +190,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
     @Override
     public void success() {
         haveAuth = true;
-        mauthCount=0;
+        mauthCount = 0;
         initTTS();
     }
 
@@ -201,7 +202,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             e.printStackTrace();
         }
         mauthCount++;
-        if(mauthCount<5){
+        if (mauthCount < 5) {
             auth();
         } else {
             //Toast.makeText(context,"思必驰语音授权失败",Toast.LENGTH_SHORT).show();;
@@ -215,7 +216,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             if (status == AIConstant.OPT_SUCCESS) {
 /*                tip.setText("初始化成功!");
                 btnStart.setEnabled(true);*/
-                haveInit=true;
+                haveInit = true;
             }
         }
 
@@ -223,7 +224,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         public void onError(String utteranceId, AIError error) {
            /* tip.setText("检测到错误");
             content.setText(content.getText() + "\nError:\n" + error.toString());*/
-           haveInit=false;
+            haveInit = false;
         }
 
         @Override
@@ -254,28 +255,28 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
                     Log.d(Tag, "合成结束");
                 }
             });*/
-           if(!customPlayer) {
-               return;
-           }
-            String fileName=Environment.getExternalStorageDirectory() + "/gps_tts/"
-                    + utteranceId ;
+            if (!customPlayer) {
+                return;
+            }
+            String fileName = Environment.getExternalStorageDirectory() + "/gps_tts/"
+                    + utteranceId;
             playAudio(fileName);
 
         }
 
         @Override
         public void onSpeechStart(String utteranceId) {
-/*            tip.setText("开始播放");*/
+            /*            tip.setText("开始播放");*/
         }
 
         @Override
         public void onSpeechProgress(int currentTime, int totalTime, boolean isRefTextTTSFinished) {
-/*            showTip("当前:" + currentTime + "ms, 总计:" + totalTime + "ms, 可信度:" + isRefTextTTSFinished);*/
+            /*            showTip("当前:" + currentTime + "ms, 总计:" + totalTime + "ms, 可信度:" + isRefTextTTSFinished);*/
         }
 
         @Override
         public void onSpeechFinish(String utteranceId) {
-/*            tip.setText("播放完成");*/
+            /*            tip.setText("播放完成");*/
         }
 
 
@@ -288,25 +289,25 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             switch (msg.what) {
                 case TTS_PLAY:
                     //while (wordList.size() > 0) {
-                        if (!isPlaying && mEngine != null && wordList.size() > 0) {
-                            isPlaying = true;
-                            String playString = wordList.removeFirst();
-                            if (mEngine == null) {
-                                initTTS();
-                            }
-                            int trackID = playString.hashCode();
-                            String fileName = Environment.getExternalStorageDirectory() + "/gps_tts/"
-                                    + trackID ;
-                            File file = new File(fileName);
-                            if (PrefUtils.isEnableCacheAudioFile(context) && file.exists()) {
-                                playAudio(fileName);
-                            } else {
-                                    mEngine.synthesizeToFile(playString, fileName, Integer.toString(trackID));//合成并保存到文件
-                            }
-                        }
-                        if(mEngine==null){
+                    if (!isPlaying && mEngine != null && wordList.size() > 0) {
+                        isPlaying = true;
+                        String playString = wordList.removeFirst();
+                        if (mEngine == null) {
                             initTTS();
                         }
+                        int trackID = playString.hashCode();
+                        String fileName = Environment.getExternalStorageDirectory() + "/gps_tts/"
+                                + trackID;
+                        File file = new File(fileName);
+                        if (PrefUtils.isEnableCacheAudioFile(context) && file.exists()) {
+                            playAudio(fileName);
+                        } else {
+                            mEngine.synthesizeToFile(playString, fileName, Integer.toString(trackID));//合成并保存到文件
+                        }
+                    }
+                    if (mEngine == null) {
+                        initTTS();
+                    }
                     //}
                     break;
                 case CHECK_TTS_PLAY:

@@ -35,6 +35,7 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
@@ -122,7 +123,7 @@ public class NaviFloatingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableNaviFloating(getApplicationContext())) {
+            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !AppSettings.get().isEanbleDaoHang()) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
@@ -159,7 +160,7 @@ public class NaviFloatingService extends Service {
 
     @Override
     public void onCreate() {
-        if (!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())) {
+        if (!PrefUtils.isEnableDrawOverFeature(getApplicationContext())) {
             Toast.makeText(getApplicationContext(), "需要打开GPS插件的悬浮窗口权限", Toast.LENGTH_LONG).show();
             try {
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);

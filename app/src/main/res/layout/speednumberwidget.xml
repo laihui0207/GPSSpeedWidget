@@ -12,7 +12,7 @@
                android:src="@drawable/gocompany"  android:layout_gravity="bottom|center"
                android:id="@+id/image_company"/>
     <ImageView android:layout_width="40dp" android:layout_height="40dp"
-               android:src="@mipmap/ic_launcher"  android:layout_gravity="top|right"
+               android:src="@drawable/ic_launcher"  android:layout_gravity="top|right"
                android:id="@+id/image_config"/>
     <ImageView android:layout_width="40dp" android:layout_height="40dp"
                android:src="@drawable/autonavi_icon" android:layout_gravity="top|left"

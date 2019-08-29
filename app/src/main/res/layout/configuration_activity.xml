@@ -530,7 +530,7 @@
                     android:id="@+id/confirm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/str_btn_ok"
+                    android:text="OK"
                     android:layout_weight="1"
                     android:elevation="21dp"
                     />

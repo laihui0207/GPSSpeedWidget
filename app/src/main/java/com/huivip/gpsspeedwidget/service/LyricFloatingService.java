@@ -26,10 +26,14 @@ import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.activity.HomeActivity;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.LrcView;
+
+import net.gsantner.opoc.util.PermissionChecker;
 
 import org.xutils.x;
 
@@ -97,7 +101,7 @@ public class LyricFloatingService extends Service{
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
-            lyrcContent=intent.getStringExtra(LYRIC_CONTENT);//FileUtil.loadLric(getApplicationContext(),inputSongName,inputArtistName);
+            lyrcContent=intent.getStringExtra(LYRIC_CONTENT);//FileUtil.loadLyric(getApplicationContext(),inputSongName,inputArtistName);
             long position=intent.getLongExtra(POSITION,0L);
             duration=intent.getLongExtra(DURATION,-1L);
             songName=intent.getStringExtra(SONGNAME);
@@ -106,7 +110,7 @@ public class LyricFloatingService extends Service{
             lrcView.setLrc(lyrcContent);
             lrcView.init();
             isShowing = true;
-            if(!PrefUtils.isEnableLyricFloatingFixed(getApplicationContext())) {
+            if(!AppSettings.get().isLyricFixed()) {
                 hideControlView();
             } else {
                 controlView.setVisibility(View.INVISIBLE);
@@ -165,10 +169,11 @@ public class LyricFloatingService extends Service{
                 mFloatingView.setLayoutParams(params);
                 controlView.setVisibility(View.INVISIBLE);
                 mWindowManager.updateViewLayout(mFloatingView, params);
-                PrefUtils.setEnableLyricFloatingFixed(getApplicationContext(),true);
+                //PrefUtils.setEnableLyricFloatingFixed(getApplicationContext(),true);
+                AppSettings.get().setLyricFixed(true);
                 break;
             case R.id.imageView_lyrc_floating_delete:
-                FileUtil.deleteLric(getApplicationContext(),songName,artistName);
+                FileUtil.deleteLyric(getApplicationContext(),songName,artistName);
                 break;
         }
     }
@@ -183,7 +188,7 @@ public class LyricFloatingService extends Service{
 
     @Override
     public void onCreate() {
-        if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
+        if(!new PermissionChecker(HomeActivity._launcher).doIfCanDrayOver()){
             Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_LONG).show();
             try {
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
@@ -197,7 +202,7 @@ public class LyricFloatingService extends Service{
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_lyrc_window, null);
         int flag= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        if(PrefUtils.isEnableLyricFloatingFixed(getApplicationContext())){
+        if(AppSettings.get().isLyricFixed()){
             flag=flag | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
         }
         params = new WindowManager.LayoutParams(
