@@ -1,5 +1,8 @@
 package com.huivip.gpsspeedwidget.activity;
 
+import android.appwidget.AppWidgetHost;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,11 +11,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageView;
 
+import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.fragment.SettingsBaseFragment;
 import com.huivip.gpsspeedwidget.fragment.SettingsMasterFragment;
 import com.huivip.gpsspeedwidget.manager.Setup;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.BackupHelper;
 import com.huivip.gpsspeedwidget.util.Definitions;
 import com.nononsenseapps.filepicker.Utils;
@@ -77,9 +84,29 @@ public class SettingsActivity extends ThemeActivity implements SettingsBaseFragm
                     BackupHelper.restoreConfig(this, Utils.getFileForUri(files.get(0)).toString());
                     System.exit(0);
                     break;
-                    case Definitions.INTENT_LYRIC_PATH:
-                        Setup.appSettings().setLyricPath(files.get(0).getPath());
-                        break;
+                case Definitions.INTENT_LYRIC_PATH:
+                    Setup.appSettings().setLyricPath(files.get(0).getPath());
+                    break;
+                case Constant.SELECT_AMAP_PLUGIN_REQUEST_CODE:
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+                    AppWidgetHost appWidgetHost = new AppWidgetHost(this, Constant.APP_WIDGET_HOST_ID);
+                    int id = data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+                    boolean check = false;
+                    if (id > 0) {
+                        AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+                        final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
+                        View vv = com.huivip.gpsspeedwidget.utils.Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
+                        if (vv instanceof ImageView) {
+                            check = true;
+                        }
+                    }
+                    if (check) {
+                        AppSettings.get().setAmapPluginId(id);
+                    } else {
+                        AppSettings.get().setAmapPluginId(-1);
+                    }
+                    break;
+
             }
         }
     }

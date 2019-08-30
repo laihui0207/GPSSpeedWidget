@@ -31,9 +31,9 @@
             android:title="@string/pref_title__appearance" />
         <PreferenceScreen
             android:fragment="com.huivip.gpsspeedwidget.fragment.SettingGPSWidgetFragment"
-            android:icon="@drawable/ic_palette_black_24dp"
+            android:icon="@drawable/ic_plugin"
             android:key="@string/pref_key__gps_plugin"
-            android:title="GPS Plugin" />
+            android:title="GPS插件" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_title__others">

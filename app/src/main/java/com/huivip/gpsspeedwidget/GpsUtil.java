@@ -19,6 +19,7 @@ import com.huivip.gpsspeedwidget.beans.SearchTrafficEvent;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.service.AutoXunHangService;
 import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CycleQueue;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -146,7 +147,7 @@ public class GpsUtil {
     public void startLocationService() {
         if (serviceStarted) return;
         this.locationTimer = new Timer();
-        speedAdjust = PrefUtils.getSpeedAdjust(context);
+        speedAdjust = AppSettings.get().getSpeedAdjust();
         this.locationScanTask = new TimerTask() {
             @Override
             public void run() {
@@ -349,7 +350,7 @@ public class GpsUtil {
 
         mphSpeed = (int) (this.velocitaNumber.intValue() * 3.6D / 1.609344D);
         kmhSpeed = (int) (this.speed.doubleValue() * 3.6D);
-        if (PrefUtils.isEnableGPSUseMPH(context)) {
+        if (AppSettings.get().isSpeedMPH()) {
             kmhSpeed = mphSpeed;
         }
         if (speedAdjust != 0) {
@@ -363,7 +364,7 @@ public class GpsUtil {
                 (cameraSpeed>0 && kmhSpeed > cameraSpeed)) {
             hasLimited = true;
             if(limitCounter%10==0){
-                if(PrefUtils.isEnableAudioService(context)) {
+                if(AppSettings.get().isEnableAudio()) {
                     Utils.playBeeps();
                 }
             }

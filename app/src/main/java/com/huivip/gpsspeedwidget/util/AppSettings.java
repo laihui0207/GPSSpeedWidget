@@ -48,20 +48,74 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public int getDesktopIndicatorMode() {
         return getIntOfStringPref(R.string.pref_key__desktop_indicator_style, PagerIndicator.Mode.DOTS);
     }
-    public boolean isEanbleXunHang(){
+    public boolean isEnableTimeWindow(){
+        return getBool(R.string.pref_key__auto_start_time_window,false);
+    }
+    public boolean isEnableXunHang(){
         return getBool(R.string.pref_key__XunHang_enable,false);
     }
-    public boolean isEanbleDaoHang(){
+    public boolean isEnableDaoHang(){
         return getBool(R.string.pref_key__DaoHang_enable,false);
     }
-    public boolean isEanbleTracker(){
+    public boolean isEnableTracker(){
         return getBool(R.string.pref_key__Tracker_enable,false);
     }
     public boolean isEnableRoadLine(){
         return getBool(R.string.pref_key__Road_line_enable,false);
     }
+    public int getAmapPluginId(){
+        return getInt(R.string.pref_key__Road_line_plugin_select,-1);
+    }
+    public void setAmapPluginId(int id){
+        setInt(R.string.pref_key__Road_line_plugin_select,id);
+    }
+    public boolean isShowRoadLineOnSpeed(){
+        return getBool(R.string.pref_key__speed_road_line_show,false);
+    }
+    public boolean isRoadLineFixed(){
+        return getBool(R.string.pref_key__road_line_fixed,false);
+    }
+    public void setRoadLineFixed(boolean value){
+        setBool(R.string.pref_key__road_line_fixed,value);
+    }
+    public boolean isShowAmapWidgetContent(){
+        return getBool(R.string.pref_key__Amap_widget_content,false);
+    }
+    public boolean isOnlyCrossShowWidgetContent(){
+        return getBool(R.string.pref_key__Amap_widget_show_only_cross,true);
+    }
     public boolean isEnableSpeed(){
         return getBool(R.string.pref_key__speed_enable,false);
+    }
+    public String getSpeedFlattingStyle(){
+        return getString(R.string.pref_key__speed_style,"0");
+    }
+    public boolean isDefaultSpeedShowSpeed(){
+        return getBool(R.string.pref_key__speed_default_speed_show,true);
+    }
+    public boolean isDefaultSpeedShowLimit(){
+        return getBool(R.string.pref_key__speed_default_limit_show,true);
+    }
+    public boolean isDefaultSpeedhorizontalShow(){
+        return getBool(R.string.pref_key__speed_default_horizontal_show,false);
+    }
+    public boolean isAmapShowLimit(){
+        return getBool(R.string.pref_key__speed_AutoMap_limit_show,true);
+    }
+    public boolean isCloseFlattingOnStop(){
+        return getBool(R.string.pref_key__speed_close_stop,false);
+    }
+    public boolean isCloseFlattingOnAmap(){
+        return  getBool(R.string.pref_key__speed_close_Amap,false);
+    }
+    public boolean isSpeedSmallShow(){
+        return  getBool(R.string.pref_key__speed_small_style,false);
+    }
+    public boolean isSpeedMPH(){
+        return  getBool(R.string.pref_key__speed_mph,false);
+    }
+    public int getSpeedAdjust(){
+        return getInt(R.string.pref_key__speed_adjust,0);
     }
     public void setLyricPath(String path){
         setString(R.string.pref_key__lyric_path,path);
@@ -81,6 +135,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public void setLyricFixed(boolean value){
         setBool(R.string.pref_key__lyric_fixed,value);
     }
+    public int getLyricFontColor(){
+        return getInt(R.string.pref_key__lyric_font_color,R.color.blue);
+    }
     public boolean isEnableLaunchOtherApp(){
         return getBool(R.string.pref_key__auto_start_launch_other_app_enable,false);
     }
@@ -90,6 +147,27 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public String getAudioEngine(){
         return getString(R.string.pref_key__Audio_engine, SpeechFactory.SIBICHITTS);
     }
+    public String getAudioBaiDuSpeaker(){
+        return getString(R.string.pref_key__Audio_engine_baidu_speaker,"0");
+    }
+    public int getAudioVolume(){
+        return getInt(R.string.pref_key__Audio_volume,50);
+    }
+    public boolean isAudioMix(){
+        return getBool(R.string.pref_key__Audio_mixed,false);
+    }
+    public boolean isAudioMusicDuck(){
+        return getBool(R.string.pref_key__Audio_music_duck,false);
+    }
+    public boolean isPlayTime(){
+        return getBool(R.string.pref_key__Audio_play_time,true);
+    }
+    public boolean isPlayWeather(){
+        return getBool(R.string.pref_key__Audio_play_weather,true);
+    }
+    public boolean isPlayAddressOnStop(){
+        return getBool(R.string.pref_key__Audio_play_Address,false);
+    }
     public boolean isReturnHomeAfterLaunchOtherApp(){
         return getBool(R.string.pref_key__auto_start_launch_other_app_return_desktop,false);
     }
@@ -97,7 +175,7 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
         return getIntOfStringPref(R.string.pref_key__auto_start_launch_other_app_delay_time,0);
     }
     public boolean getDesktopRotate() {
-        return getBool(R.string.pref_key__desktop_rotate, false);
+        return getBool(R.string.pref_key__desktop_rotate, true);
     }
 
     public boolean getDesktopShowGrid() {
@@ -117,7 +195,7 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     }
 
     public boolean getSearchBarEnable() {
-        return getBool(R.string.pref_key__search_bar_enable, true);
+        return getBool(R.string.pref_key__search_bar_enable, false);
     }
 
     public String getSearchBarBaseURI() {

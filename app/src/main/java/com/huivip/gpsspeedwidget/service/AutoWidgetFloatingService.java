@@ -33,6 +33,7 @@ import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -76,7 +77,7 @@ public class AutoWidgetFloatingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableAutoWidgetFloatingWidow(getApplicationContext())
+            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !AppSettings.get().isShowAmapWidgetContent()
                 /*|| gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started*/) {
                 onStop();
                 stopSelf();

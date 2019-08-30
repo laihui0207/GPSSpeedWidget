@@ -86,7 +86,7 @@ public class RoadLineFloatingService extends Service{
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_roadline_window, null);
         int flag= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        if(PrefUtils.isEnableRoadLineFloatingFixed(getApplicationContext())){
+        if(AppSettings.get().isRoadLineFixed()){
             flag=flag | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
         }
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
@@ -198,7 +198,8 @@ public class RoadLineFloatingService extends Service{
                 mFloatingView.setLayoutParams(params);
                 controlView.setVisibility(View.INVISIBLE);
                 mWindowManager.updateViewLayout(mFloatingView, params);
-                PrefUtils.setEnableRoadLineFloatingFixed(getApplicationContext(),true);
+                //PrefUtils.setEnableRoadLineFloatingFixed(getApplicationContext(),true);
+                AppSettings.get().setRoadLineFixed(true);
                 break;
             case R.id.imageView_roadLine_floating_close:
                 onStop();

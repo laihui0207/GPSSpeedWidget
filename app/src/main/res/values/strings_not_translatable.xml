@@ -7,6 +7,8 @@
     <string name="app_web_url" translatable="false">https://github.com/openlauncherteam/openlauncher</string>
     <string name="app_source_code_url" translatable="false">https://github.com/openlauncherteam/openlauncher</string>
     <string name="app_donate_url" translatable="false"><![CDATA[https://gsantner.net/supportme/?project=openlauncher&source=inapp_supdon]]></string>
+    <string name="pref_key__donate" translatable="false">pref_key__donate</string>
+    <string name="pref_key__upload_log" translatable="false">pref_key__upload_log</string>
     <string name="app_contribution_info_url" translatable="false">https://github.com/openlauncherteam/openlauncher/blob/master/README.md#contributions</string>
 
     <string name="pref_default__date_bar_date_format_custom_1" translatable="false"><![CDATA[EEEE\', \'dd\'.\']]></string>
@@ -22,25 +24,48 @@
     <string name="pref_key__auto_start_launch_select_other_apps" translatable="false">pref_key__auto_start_launch_select_other_apps</string>
     <string name="pref_key__auto_start_launch_other_app_delay_time" translatable="false">pref_key__auto_start_launch_other_app_delay_time</string>
     <string name="pref_key__auto_start_launch_other_app_return_desktop" translatable="false">pref_key__auto_start_launch_other_app_return_desktop</string>
+    <string name="pref_key__auto_start_time_window" translatable="false">pref_key__auto_start_time_window</string>
     <!-- music lyric -->
     <string name="pref_key__lyric_enable" translatable="false">pref_key__lyric_enable</string>
     <string name="pref_key__lyric_fixed" translatable="false">pref_key__lyric_fixed</string>
     <string name="pref_key__lyric_path" translatable="false">pref_key__lyric_path</string>
+    <string name="pref_key__lyric_font_color" translatable="false">pref_key__lyric_font_color</string>
     <!-- Auto map  -->
     <string name="pref_key__XunHang_enable" translatable="false">pref_key__XunHang_enable</string>
     <string name="pref_key__speed_enable" translatable="false">pref_key__speed_enable</string>
+    <string name="pref_key__speed_style" translatable="false">pref_key__speed_style</string>
+    <string name="pref_key__speed_adjust" translatable="false">pref_key__speed_adjust</string>
+    <string name="pref_key__speed_close_stop" translatable="false">pref_key__speed_close_stop</string>
+    <string name="pref_key__speed_mph" translatable="false">pref_key__speed_mph</string>
+    <string name="pref_key__speed_close_Amap" translatable="false">pref_key__speed_close_Amap</string>
+    <string name="pref_key__speed_small_style" translatable="false">pref_key__speed_small_style</string>
+    <string name="pref_key__speed_default_speed_show" translatable="false">pref_key__speed_default_speed_show</string>
+    <string name="pref_key__speed_default_limit_show" translatable="false">pref_key__speed_default_limit_show</string>
+    <string name="pref_key__speed_default_horizontal_show" translatable="false">pref_key__speed_default_horizontal_show</string>
+    <string name="pref_key__speed_AutoMap_limit_show" translatable="false">pref_key__speed_AutoMap_limit_show</string>
     <string name="pref_key__Tracker_enable" translatable="false">pref_key__Tracker_enable</string>
     <string name="pref_key__DaoHang_enable" translatable="false">pref_key__DaoHang_enable</string>
     <string name="pref_key__Road_line_enable" translatable="false">pref_key__Road_line_enable</string>
+    <string name="pref_key__Road_line_plugin_select" translatable="false">pref_key__Road_line_plugin_select</string>
+    <string name="pref_key__speed_road_line_show" translatable="false">pref_key__speed_road_line_show</string>
+    <string name="pref_key__road_line_fixed" translatable="false">pref_key__road_line_fixed</string>
+    <string name="pref_key__Amap_widget_content" translatable="false">pref_key__Amap_widget_content</string>
+    <string name="pref_key__Amap_widget_show_only_cross" translatable="false">pref_key__Amap_widget_show_only_cross</string>
+    <string name="pref_key__download_offline_map" translatable="false">pref_key__download_offline_map</string>
     <!-- Preference Keys -->
     <string name="pref_key__Audio_enable" translatable="false">pref_key__Audio_enable</string>
     <string name="pref_key__Audio_engine" translatable="false">pref_key__Audio_engine</string>
+    <string name="pref_key__Audio_engine_baidu_speaker" translatable="false">pref_key__Audio_engine_baidu_speaker</string>
     <string name="pref_key__Audio_test" translatable="false">pref_key__Audio_test</string>
     <string name="pref_key__Audio_volume" translatable="false">pref_key__Audio_volume</string>
     <string name="pref_key__Audio_mixed" translatable="false">pref_key__Audio_mixed</string>
+    <string name="pref_key__Audio_music_duck" translatable="false">pref_key__Audio_music_duck</string>
     <string name="pref_key__Audio_play_time" translatable="false">pref_key__Audio_play_time</string>
     <string name="pref_key__Audio_play_weather" translatable="false">pref_key__Audio_play_weather</string>
+    <string name="pref_key__Audio_play_Address" translatable="false">pref_key__Audio_play_Address</string>
     <string name="pref_key__Audio_auto_mute" translatable="false">pref_key__Audio_auto_mute</string>
+    <!-- Preference Keys -->
+    <string name="pref_key__check_update" translatable="false">pref_key__check_update</string>
     <!-- Preference Keys -->
     <string name="pref_key__desktop_columns" translatable="false">pref_key__desktop_columns</string>
     <string name="pref_key__desktop_rows" translatable="false">pref_key__desktop_rows</string>

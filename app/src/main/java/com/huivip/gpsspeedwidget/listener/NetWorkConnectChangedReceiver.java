@@ -13,11 +13,11 @@ public class NetWorkConnectChangedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if(Utils.isNetworkConnected(context)) {
-            if(AppSettings.get().isEanbleXunHang() && !Utils.isServiceRunning(context, AutoXunHangService.class.getName())) {
+            if(AppSettings.get().isEnableXunHang() && !Utils.isServiceRunning(context, AutoXunHangService.class.getName())) {
                 Intent xunHangService=new Intent(context,AutoXunHangService.class);
                 context.startService(xunHangService);
             }
-            if(AppSettings.get().isEanbleTracker()) {
+            if(AppSettings.get().isEnableTracker()) {
                 Intent trackService=new Intent(context, NaviTrackService.class);
                 context.startService(trackService);
             }

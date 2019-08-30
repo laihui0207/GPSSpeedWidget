@@ -1,5 +1,6 @@
 package com.huivip.gpsspeedwidget.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -29,8 +30,8 @@ public class LrcView extends View {
     private int playercurrentMillis=0;
     private MediaPlayer player;
     private int lastPosition = 0;
-    private int highLineColor;
-    private int lrcColor;
+    private int highLineColor=R.color.blue;
+    private int lrcColor=R.color.white;
     private int mode = 0;
     public final static int KARAOKE = 1;
 
@@ -71,6 +72,7 @@ public class LrcView extends View {
         this(context, attrs, 0);
     }
 
+    @SuppressLint("ResourceAsColor")
     public LrcView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 

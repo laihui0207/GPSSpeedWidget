@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
@@ -67,12 +68,12 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             mAudioManager = (AudioManager) getSystemService(
                     Context.AUDIO_SERVICE);
         }
-        if(!PrefUtils.isEnableAudioVolumeDepress(getApplicationContext())){
+        if(!AppSettings.get().isAudioMusicDuck()){
             return true;
         }
         int focusType = -1;
         int streamType = -1;
-        if (PrefUtils.isEnableAudioMixService(getApplicationContext())) {
+        if (AppSettings.get().isAudioMix()) {
             focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK;
         } else {
             focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
@@ -123,7 +124,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                 if(!mediaPlayer.isPlaying()){
                     mediaPlayer.start();
                 }
-                int volume=PrefUtils.getAudioVolume(getApplicationContext());
+                int volume= AppSettings.get().getAudioVolume();
                 mediaPlayer.setVolume(volume/100f,volume/100f);
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
@@ -158,7 +159,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                     16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);
         //边读边播
         byte[] buffer = new byte[bufferSize];
-        int volume = PrefUtils.getAudioVolume(getApplicationContext());
+        int volume = AppSettings.get().getAudioVolume();
         float realVolume=volume / 100f;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             audioTrack.setVolume(realVolume);
@@ -211,18 +212,18 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             mediaPlayer.reset();
             FileInputStream fis = new FileInputStream(fileName);
             mediaPlayer.setDataSource(fis.getFD());
-            int volume=PrefUtils.getAudioVolume(getApplicationContext());
+            int volume=AppSettings.get().getAudioVolume();
             mediaPlayer.setVolume(volume/100f,volume/100f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 AudioAttributes.Builder attrBuilder = new AudioAttributes.Builder();
-                if (PrefUtils.isEnableAudioMixService(getApplicationContext())) {
+                if (AppSettings.get().isAudioMix()) {
                     attrBuilder.setLegacyStreamType(AudioManager.STREAM_MUSIC);
                 } else {
                     attrBuilder.setLegacyStreamType(AudioManager.STREAM_VOICE_CALL);
                 }
                 mediaPlayer.setAudioAttributes(attrBuilder.build());
             } else {
-                if (PrefUtils.isEnableAudioMixService(getApplicationContext())) {
+                if (AppSettings.get().isAudioMix()) {
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 } else {
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);

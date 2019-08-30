@@ -162,7 +162,7 @@ public class DefaultFloatingService extends Service {
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        if(PrefUtils.isShowSmallFloatingStyle(getApplicationContext())){
+        if(AppSettings.get().isSpeedSmallShow()){
             mFloatingView = inflater.inflate(R.layout.floating_default_limit_small, null);
         }
         else {
@@ -180,15 +180,15 @@ public class DefaultFloatingService extends Service {
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         mSpeedometerText.setOnTouchListener(new FloatingOnTouchListener());
-        boolean isShowLimit=PrefUtils.getShowLimits(getApplicationContext());
+        boolean isShowLimit=AppSettings.get().isDefaultSpeedShowLimit();
         if(mLimitArcView!=null) {
             mLimitView.setVisibility(isShowLimit ? View.VISIBLE : View.GONE);
         }
-        boolean isShowSpeed=PrefUtils.getShowSpeedometer(getApplicationContext());
+        boolean isShowSpeed=AppSettings.get().isDefaultSpeedShowSpeed();
         if(mSpeedometerView!=null) {
             mSpeedometerView.setVisibility(isShowSpeed ? View.VISIBLE : View.GONE);
         }
-        if(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext())) {
+        if(AppSettings.get().isDefaultSpeedhorizontalShow()) {
             RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
             speedLayout.addRule(RelativeLayout.RIGHT_OF, R.id.limit);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -316,7 +316,7 @@ public class DefaultFloatingService extends Service {
     }*/
     @Subscribe(threadMode= ThreadMode.MAIN)
     public void showRoadLine(RoadLineEvent event) {
-        if (PrefUtils.isEnableSpeedRoadLine(getApplicationContext()) && event.isShowed()) {
+        if (AppSettings.get().isShowRoadLineOnSpeed() && event.isShowed()) {
             View vv = event.getRoadLineView();
             if (vv != null) {
                 daoHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());

@@ -123,7 +123,7 @@ public class NaviFloatingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !AppSettings.get().isEanbleDaoHang()) {
+            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !AppSettings.get().isEnableDaoHang()) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);

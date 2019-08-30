@@ -79,11 +79,44 @@
         <item>4</item>
     </string-array>
     <string-array name="items__audio_engine" translatable="false">
-        <item>百度语音</item>
         <item>思必驰语音</item>
+        <item>百度语音</item>
     </string-array>
     <string-array name="values__audio_engine" translatable="false">
-        <item>baiduTTS</item>
         <item>SBCTTS</item>
+        <item>baiduTTS</item>
     </string-array>
+    <string-array name="items__audio_engine_baidu_speaker" translatable="false">
+        <item>度小美（标准女声）</item>
+        <item>度小宇（标准男声）</item>
+        <item>度逍遥（情感男声）</item>
+        <item>度丫丫（情感儿童声）</item>
+        <item>度小娇（情感女声）</item>
+        <item>度米朵（情感儿童声）</item>
+        <item>度博文（情感男声）</item>
+        <item>度小童（情感儿童声）</item>
+        <item>度小萌（情感女声）</item>
+    </string-array>
+    <string-array name="values__audio_engine_baidu_speaker" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>103</item>
+        <item>106</item>
+        <item>110</item>
+        <item>111</item>
+    </string-array>
+    <string-array name="items__speed_flatting_style" translatable="false">
+        <item>双圈样式</item>
+        <item>高德样式</item>
+        <item>仪表样式</item>
+    </string-array>
+    <string-array name="values__speed_flatting_style" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
 </resources>

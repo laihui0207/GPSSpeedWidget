@@ -363,7 +363,7 @@ public abstract class Utils {
                 meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 needClose=true;
             }
-            String floatingStyle=PrefUtils.getFloatingStyle(context);
+            String floatingStyle=AppSettings.get().getSpeedFlattingStyle();
             if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
                 if(Utils.isServiceRunning(context,MeterFloatingService.class.getName())){
                     meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE, true);

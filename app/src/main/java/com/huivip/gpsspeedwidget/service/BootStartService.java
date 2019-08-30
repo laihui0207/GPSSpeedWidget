@@ -100,9 +100,9 @@ public class BootStartService extends Service {
                     new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
 
-            if (PrefUtils.isPlayTime(getApplicationContext()) || PrefUtils.isPlayWeather(getApplicationContext()) || PrefUtils.isShowAddressWhenStop(getApplicationContext())) {
-                Intent weatcherService = new Intent(getApplicationContext(), WeatherService.class);
-                getApplicationContext().startService(weatcherService);
+            if (AppSettings.get().isPlayTime()|| AppSettings.get().isPlayWeather() || PrefUtils.isShowAddressWhenStop(getApplicationContext())) {
+                Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
+                getApplicationContext().startService(weatherService);
 
                 PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                         new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -143,7 +143,7 @@ public class BootStartService extends Service {
                 }
 
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
-                if (PrefUtils.isEnableTimeFloatingWidow(getApplicationContext())) {
+                if (AppSettings.get().isEnableTimeWindow()) {
                     if (!Utils.isServiceRunning(getApplicationContext(), RealTimeFloatingService.class.getName())) {
                         Intent timeFloating = new Intent(getApplicationContext(), RealTimeFloatingService.class);
                         startService(timeFloating);
@@ -170,7 +170,7 @@ public class BootStartService extends Service {
                         Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
                         startService(xunHangService);
                     }
-                    if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
+                    if (AppSettings.get().isEnableTracker()) {
                         Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
                         startService(trackService);
                     }

@@ -17,6 +17,7 @@ import com.aispeech.common.AIConstant;
 import com.aispeech.export.engines.AILocalTTSEngine;
 import com.aispeech.export.listeners.AILocalTTSListener;
 import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -71,7 +72,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     }
     public static SBCTTS getInstance(Context context){
-        if(!Utils.isPhonePermissionGranted(context)) return null;
+        if(!Utils.isPhonePermissionGranted(context) || !Utils.isStoragePermissionGranted(context)) return null;
         if(tts==null){
             tts = new SBCTTS(context);
         }
@@ -87,13 +88,13 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         mEngine.setDictDb(Constant.TTS_DICT_RES, Constant.TTS_DICT_MD5);//设置assets目录下合成字典名和相应的Md5文件名
         mEngine.setBackResBinArray(mBackResBinArray, mBackResBinMd5sumArray);//设置后端合成音色资源，如果只需设置一个，则array只需要传一个成员值就可以，init前设置setBackResBin接口无效
         mEngine.setSpeechRate(1.0f);//设置合成音语速，范围为0.5～2.0
-        if (PrefUtils.isEnableAudioMixService(context)) {
+        if (AppSettings.get().isAudioMix()) {
             mEngine.setStreamType(AudioManager.STREAM_MUSIC);//设置audioTrack的播放流，默认为music
         } else {
             mEngine.setStreamType(AudioManager.STREAM_VOICE_CALL);
         }
         mEngine.setUseSSML(false);//设置是否使用ssml合成语法，默认为false
-        int volume = PrefUtils.getAudioVolume(context);
+        int volume = AppSettings.get().getAudioVolume();
         mEngine.setSpeechVolume((int) (volume * 1.0f / 100 * 500));
         //mEngine.setSpeechVolume(500);//设置合成音频的音量，范围为1～500
         mEngine.init(new AILocalTTSListenerImpl());//初始化合成引擎
@@ -131,14 +132,14 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     @Override
     public void speak(String text, boolean force) {
-        if (PrefUtils.isEnableAudioVolumeDepress(context)) {
+        if (AppSettings.get().isAudioMusicDuck()) {
             customPlayer = true;
             synthesize(text, force);
         } else {
-            if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
+            if (AppSettings.get().isEnableAudio() && (force || PrefUtils.isEnableTempAudioService(context))) {
                 customPlayer = false;
                 if (mEngine != null) {
-                    int volume = PrefUtils.getAudioVolume(context);
+                    int volume =AppSettings.get().getAudioVolume();
                     mEngine.setSpeechVolume((int) (volume * 1.0f / 100 * 500));
                     mEngine.speak(text, text.hashCode() + "");
                 } else {
@@ -165,7 +166,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     @Override
     public void synthesize(String text, boolean force) {
-        if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
+        if (AppSettings.get().isEnableAudio() && (force || PrefUtils.isEnableTempAudioService(context))) {
             customPlayer = true;
             if (wordList != null)
                 wordList.addLast(text);

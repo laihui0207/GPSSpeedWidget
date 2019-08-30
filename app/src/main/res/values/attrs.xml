@@ -5,7 +5,7 @@
         <attr name="lrcMode" format="enum">
             <enum name="KARAOKE" value="1"/>
         </attr>
-        <attr name="hignLineColor" format="color|reference"/>
+        <attr name="hignLineColor" format="integer|color|reference"/>
         <attr name="lrcColor" format="color|reference"/>
     </declare-styleable>
 

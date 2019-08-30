@@ -24,7 +24,10 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_title__debug">
-
+        <Preference
+            android:key="@string/pref_key__upload_log"
+            android:summary="上传异常日志给作者，帮助分析系统异常"
+            android:title="提交异常日志" />
         <Preference
             android:key="@string/pref_key__reset_settings"
             android:summary="@string/pref_summary__reset_settings"

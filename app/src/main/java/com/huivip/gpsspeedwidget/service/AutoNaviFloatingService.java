@@ -247,7 +247,7 @@ public class AutoNaviFloatingService extends Service {
     }*/
     @Subscribe(threadMode= ThreadMode.MAIN)
     public void showRoadLine(RoadLineEvent event) {
-        if (PrefUtils.isEnableSpeedRoadLine(getApplicationContext()) && event.isShowed()) {
+        if (AppSettings.get().isShowRoadLineOnSpeed() && event.isShowed()) {
             View vv = event.getRoadLineView();
             if (vv != null) {
                 roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
@@ -286,7 +286,7 @@ public class AutoNaviFloatingService extends Service {
         }
     }
     public void setSpeedOveral(boolean speeding) {
-        if(!PrefUtils.getShowNaviLimits(getApplicationContext())){
+        if(!AppSettings.get().isAmapShowLimit()){
             speedOveralView.setVisibility(View.GONE);
             return;
         }

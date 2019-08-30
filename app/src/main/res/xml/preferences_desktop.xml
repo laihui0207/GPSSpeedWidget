@@ -111,12 +111,12 @@
     <PreferenceCategory android:title="@string/pref_title__search_bar">
 
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="@string/pref_key__search_bar_enable"
             android:summary="@string/pref_summary__search_bar_enable"
             android:title="@string/pref_title__search_bar_enable" />
 
-        <EditTextPreference
+        <!--<EditTextPreference
             android:defaultValue="@string/pref_default__search_bar_base_uri"
             android:dependency="@string/pref_key__search_bar_enable"
             android:dialogMessage="@string/pref_dialog__search_bar_base_uri"
@@ -131,7 +131,7 @@
             android:dependency="@string/pref_key__search_bar_enable"
             android:key="@string/pref_key__search_bar_force_browser"
             android:summary="@string/pref_summary__search_bar_force_browser"
-            android:title="@string/pref_title__search_bar_force_browser" />
+            android:title="@string/pref_title__search_bar_force_browser" />-->
 
         <CheckBoxPreference
             android:defaultValue="false"
@@ -142,7 +142,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_title__date_bar">
+   <!-- <PreferenceCategory android:title="@string/pref_title__date_bar">
 
         <com.flask.colorpicker.ColorPickerPreference
             android:defaultValue="@color/white"
@@ -172,6 +172,6 @@
             android:summary="@string/pref_title__date_bar"
             android:title="@string/pref_title__date_bar_date_format_custom_2" />
 
-    </PreferenceCategory>
+    </PreferenceCategory>-->
 
 </PreferenceScreen>

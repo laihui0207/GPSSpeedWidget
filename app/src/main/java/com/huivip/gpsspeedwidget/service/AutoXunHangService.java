@@ -66,7 +66,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(!AppSettings.get().isEanbleXunHang() || intent.getBooleanExtra(EXTRA_CLOSE,false)){
+        if(!AppSettings.get().isEnableXunHang() || intent.getBooleanExtra(EXTRA_CLOSE,false)){
             stopAimlessNavi();
             stopSelf();
             return super.onStartCommand(intent,flags,startId);

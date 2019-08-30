@@ -26,14 +26,11 @@ import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.activity.HomeActivity;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.LrcView;
-
-import net.gsantner.opoc.util.PermissionChecker;
 
 import org.xutils.x;
 
@@ -108,6 +105,7 @@ public class LyricFloatingService extends Service{
             artistName=intent.getStringExtra(ARTIST);
             startTime=System.currentTimeMillis()-position;//-1000;
             lrcView.setLrc(lyrcContent);
+           // lrcView.setHighLineColor(AppSettings.get().getLyricFontColor());
             lrcView.init();
             isShowing = true;
             if(!AppSettings.get().isLyricFixed()) {
@@ -188,7 +186,7 @@ public class LyricFloatingService extends Service{
 
     @Override
     public void onCreate() {
-        if(!new PermissionChecker(HomeActivity._launcher).doIfCanDrayOver()){
+        if(!PrefUtils.isEnableDrawOverFeature(getApplicationContext())){
             Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_LONG).show();
             try {
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);

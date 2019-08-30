@@ -12,7 +12,7 @@
     <string name="accessibility_service_description">启用此功能，可以让GPS插件根据当前程序与您的选择判断是否打开或关闭速度悬浮窗</string>
     <string name="kmph">%s km/h</string>
     <string name="mph">%s mph</string>
-    <string name="notif_title">Velociraptor is running</string>
+    <string name="notif_title">GPS plugin  is running</string>
     <!--Notification Channels-->
     <string name="channel_toggles">Show/hide toggles</string>
     <string name="channel_warnings">Warnings</string>
@@ -257,6 +257,8 @@
     <string name="pref_summary__icon_pack">Select an installed icon pack.</string>
     <string name="pref_title__animation_speed_modifier">Animation Speed</string>
     <string name="pref_summary__animation_speed_modifier">Modify the overall speed of animations</string>
+
+    <string name="pref_title__donate">Donate Owner</string>
 
     <string name="pref_title__language">Language</string>
     <string name="pref_summary__language">Change language of this app. Restart app for changes to take effect</string>
