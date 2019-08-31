@@ -54,18 +54,11 @@
                 android:name="com.amap.api.v2.apikey"
                 android:value="6d91e53ca05dee32ec58c9d257224e7b"/>
 
-        <!--<activity
+        <activity
                 android:name=".activity.MainActivity"
                 android:excludeFromRecents="true"
                 android:windowSoftInputMode="stateHidden|stateUnchanged">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-                &lt;!&ndash; <category android:name="android.intent.category.HOME" /> &ndash;&gt;
-                &lt;!&ndash; <category android:name="android.intent.category.DEFAULT" /> &ndash;&gt;
-            </intent-filter>
-        </activity>-->
+        </activity>
         <!--
         <activity android:name=".GPSLauncher">
             <intent-filter>
@@ -167,33 +160,6 @@
             <intent-filter>
                 <action android:name="com.nwd.action.ACTION_MCU_STATE_CHANGE"/>
             </intent-filter>
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.ANY_DATA_STATE"/>
-            </intent-filter>
-            -->
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
-                <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
-                <data android:scheme="file">
-                </data>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED"/>
-                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
-                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
-                <data android:scheme="package"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
-                <action android:name="android.intent.action.ANY_DATA_STATE"/>
-                <action android:name="android.net.wifi.STATE_CHANGE"/>
-                <action android:name="android.intent.action.DATE_CHANGED"/>
-                <action android:name="com.huivip.gpsspeedwidget.autostarted"/>
-            </intent-filter>
-            -->
-
         </receiver>
         <receiver android:name=".listener.MediaNotificationReceiver">
             <intent-filter>

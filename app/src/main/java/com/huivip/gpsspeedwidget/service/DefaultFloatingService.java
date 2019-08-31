@@ -121,6 +121,7 @@ public class DefaultFloatingService extends Service {
                 return super.onStartCommand(intent, flags, startId);
             }
             gpsUtil.startLocationService();
+
         }
         return Service.START_REDELIVER_INTENT;
     }

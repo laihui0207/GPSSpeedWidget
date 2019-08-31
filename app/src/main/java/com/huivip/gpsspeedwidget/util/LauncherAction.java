@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.HomeActivity;
+import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.activity.MinibarEditActivity;
 import com.huivip.gpsspeedwidget.activity.SettingsActivity;
 import com.huivip.gpsspeedwidget.appselection.AppInfo;
@@ -31,27 +32,28 @@ import java.util.List;
 public class LauncherAction {
 
     public enum Action {
-        EditMinibar, SetWallpaper, LockScreen, LauncherSettings, VolumeDialog, DeviceSettings, AppDrawer, SearchBar, MobileNetworkSettings, ShowNotifications, TurnOffScreen, SelectApps
+        EditMinibar, SelectApps,SearchTracker, LockScreen, LauncherSettings, VolumeDialog, DeviceSettings, SetWallpaper, AppDrawer, SearchBar, MobileNetworkSettings, ShowNotifications, TurnOffScreen
     }
 
     public static ActionDisplayItem[] actionDisplayItems = new ActionDisplayItem[]{
             new ActionDisplayItem(Action.EditMinibar, HomeActivity._launcher.getResources().getString(R.string.minibar_title__edit_minibar), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__edit_minibar), R.drawable.ic_mode_edit_black_24dp, 98),
-            new ActionDisplayItem(Action.SetWallpaper, HomeActivity._launcher.getResources().getString(R.string.minibar_title__set_wallpaper), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__set_wallpaper), R.drawable.ic_photo_black_24dp, 36),
+            new ActionDisplayItem(Action.SelectApps, "选择第三方应用", "选择开机要拉起的应用", R.drawable.ic_autolauncher, 46),
+            new ActionDisplayItem(Action.SearchTracker, "查询轨迹", "查询车辆历史轨迹", R.drawable.ic_searchtracker, 47),
             new ActionDisplayItem(Action.LockScreen, HomeActivity._launcher.getResources().getString(R.string.minibar_title__lock_screen), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__lock_screen), R.drawable.ic_lock_black_24dp, 24),
-            new ActionDisplayItem(Action.LauncherSettings, HomeActivity._launcher.getResources().getString(R.string.minibar_title__launcher_settings), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__launcher_settings), R.drawable.ic_settings_launcher_black_24dp, 50),
+            new ActionDisplayItem(Action.LauncherSettings, HomeActivity._launcher.getResources().getString(R.string.minibar_title__launcher_settings), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__launcher_settings), R.drawable.ic_launchersetting, 50),
             new ActionDisplayItem(Action.VolumeDialog, HomeActivity._launcher.getResources().getString(R.string.minibar_title__volume_dialog), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__volume_dialog), R.drawable.ic_volume_up_black_24dp, 71),
-            new ActionDisplayItem(Action.DeviceSettings, HomeActivity._launcher.getResources().getString(R.string.minibar_title__device_settings), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__device_settings), R.drawable.ic_android_minimal, 25),
+            new ActionDisplayItem(Action.DeviceSettings, HomeActivity._launcher.getResources().getString(R.string.minibar_title__device_settings), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__device_settings), R.drawable.ic_settings_launcher_black_24dp, 25),
+            new ActionDisplayItem(Action.SetWallpaper, HomeActivity._launcher.getResources().getString(R.string.minibar_title__set_wallpaper), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__set_wallpaper), R.drawable.ic_photo_black_24dp, 36),
             new ActionDisplayItem(Action.AppDrawer, HomeActivity._launcher.getResources().getString(R.string.minibar_title__app_drawer), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__app_drawer), R.drawable.ic_apps_dark_24dp, 73),
             new ActionDisplayItem(Action.SearchBar, HomeActivity._launcher.getResources().getString(R.string.minibar_title__search_bar), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__search_bar), R.drawable.ic_search_light_24dp, 89),
             new ActionDisplayItem(Action.MobileNetworkSettings, HomeActivity._launcher.getResources().getString(R.string.minibar_title__mobile_network), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__mobile_network), R.drawable.ic_network_24dp, 46),
             new ActionDisplayItem(Action.ShowNotifications, HomeActivity._launcher.getResources().getString(R.string.minibar_title__show_notifications), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__show_notifications), R.drawable.ic_notifications, 46),
-            new ActionDisplayItem(Action.SelectApps, "选择第三方应用", "选择开机要拉起的应用", R.drawable.ic_android, 46),
     };
 
     public static List<Action> defaultArrangement = Arrays.asList(
-            Action.EditMinibar, Action.SetWallpaper,
-            Action.LockScreen, Action.LauncherSettings,
-            Action.VolumeDialog, Action.DeviceSettings,Action.SelectApps
+            Action.EditMinibar,Action.SelectApps, Action.SearchTracker,
+            Action.LockScreen, Action.LauncherSettings,Action.VolumeDialog,
+             Action.DeviceSettings,Action.SetWallpaper
     );
 
     public static void RunAction(Action action, final Context context) {
@@ -68,6 +70,9 @@ public class LauncherAction {
                 Glide.get(Setup.appContext())
                         .register(AppInfo.class, InputStream.class, new AppInfoIconLoader.Factory());
                 context.startActivity(new Intent(context, AppSelectionActivity.class));
+                break;
+            case SearchTracker:
+                context.startActivity(new Intent(context, MainActivity.class));
                 break;
             case SetWallpaper:
                 context.startActivity(Intent.createChooser(new Intent(Intent.ACTION_SET_WALLPAPER), context.getString(R.string.select_wallpaper)));
