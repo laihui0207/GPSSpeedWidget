@@ -153,10 +153,10 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                     baiDuSpeaker.setSummary("度小萌（情感女声");
                     break;
             }
-        } else if(SpeechFactory.SIBICHITTS.equalsIgnoreCase(audioEngine)){
+        } /*else if(SpeechFactory.SIBICHITTS.equalsIgnoreCase(audioEngine)){
             pre_audio_engine.setSummary("思必驰语音");
             baiDuSpeaker.setVisible(false);
-        }
+        }*/
         EventBus.getDefault().post(new TTSEngineChangeEvent());
         Preference pre_speedFlatting_Stylee=findPreference(getString(R.string.pref_key__speed_style));
         Preference default_speed_show=findPreference(getString(R.string.pref_key__speed_default_speed_show));

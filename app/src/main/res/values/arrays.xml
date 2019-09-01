@@ -79,11 +79,9 @@
         <item>4</item>
     </string-array>
     <string-array name="items__audio_engine" translatable="false">
-        <item>思必驰语音</item>
         <item>百度语音</item>
     </string-array>
     <string-array name="values__audio_engine" translatable="false">
-        <item>SBCTTS</item>
         <item>baiduTTS</item>
     </string-array>
     <string-array name="items__audio_engine_baidu_speaker" translatable="false">

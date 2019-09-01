@@ -145,7 +145,7 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
         return getBool(R.string.pref_key__Audio_enable,false);
     }
     public String getAudioEngine(){
-        return getString(R.string.pref_key__Audio_engine, SpeechFactory.SIBICHITTS);
+        return getString(R.string.pref_key__Audio_engine, SpeechFactory.BAIDUTTS);
     }
     public String getAudioBaiDuSpeaker(){
         return getString(R.string.pref_key__Audio_engine_baidu_speaker,"0");
