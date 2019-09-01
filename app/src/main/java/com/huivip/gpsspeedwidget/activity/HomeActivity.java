@@ -203,6 +203,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             decorView.setSystemUiVisibility(1536);
         }
         init();
+
     }
 
     private void startBootService(boolean enabled) {
@@ -617,7 +618,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     protected void onStart() {
         _appWidgetHost.startListening();
         _launcher = this;
-
         super.onStart();
     }
 

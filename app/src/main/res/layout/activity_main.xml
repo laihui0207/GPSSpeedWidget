@@ -48,7 +48,14 @@
             android:inputType="textPersonName"
             android:text=""
             android:textColor="@color/white" />
-
+        <EditText
+            android:id="@+id/selectDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:hint="选择日期"
+            android:textColor="@color/white" />
         <Button
             android:id="@+id/TrackBtn"
             android:layout_width="wrap_content"
@@ -69,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="配置"
-            android:visibility="gone" />
+            />
 
         <Button
             android:id="@+id/button_goHome"
@@ -92,15 +99,6 @@
             android:layout_height="wrap_content"
             android:text="测试功能"
             android:visibility="gone" />
-
-        <EditText
-            android:id="@+id/selectDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:hint="选择日期"
-            android:textColor="@color/white" />
     </LinearLayout>
 
     <RelativeLayout
