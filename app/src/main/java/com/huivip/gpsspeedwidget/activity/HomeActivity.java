@@ -20,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -54,6 +55,7 @@ import com.huivip.gpsspeedwidget.util.LauncherAction;
 import com.huivip.gpsspeedwidget.util.LauncherAction.Action;
 import com.huivip.gpsspeedwidget.util.Tool;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.viewutil.DialogHelper;
 import com.huivip.gpsspeedwidget.viewutil.MinibarAdapter;
 import com.huivip.gpsspeedwidget.viewutil.WidgetHost;
@@ -618,6 +620,11 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     protected void onStart() {
         _appWidgetHost.startListening();
         _launcher = this;
+        Log.d("huivip",BuildConfig.APPLICATION_ID+"~~~~"+Utils.getDefaultDesktop(getApplicationContext()));
+        if(!BuildConfig.APPLICATION_ID.equalsIgnoreCase(Utils.getDefaultDesktop(getApplicationContext()))){
+            Intent mainActivity=new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(mainActivity);
+        }
         super.onStart();
     }
 

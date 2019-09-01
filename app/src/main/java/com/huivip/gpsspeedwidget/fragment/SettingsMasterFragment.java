@@ -32,6 +32,10 @@ public class SettingsMasterFragment extends SettingsBaseFragment {
             startActivity(new Intent(getActivity(), MoreInfoActivity.class));
             return true;
         }
+        if(key == R.string.pref_key__system_setting) {
+            startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+            return true;
+        }
         return false;
     }
 

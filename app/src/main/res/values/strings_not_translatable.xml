@@ -66,6 +66,7 @@
     <string name="pref_key__Audio_auto_mute" translatable="false">pref_key__Audio_auto_mute</string>
     <!-- Preference Keys -->
     <string name="pref_key__check_update" translatable="false">pref_key__check_update</string>
+    <string name="pref_key__system_setting" translatable="false">pref_key__system_setting</string>
     <!-- Preference Keys -->
     <string name="pref_key__desktop_columns" translatable="false">pref_key__desktop_columns</string>
     <string name="pref_key__desktop_rows" translatable="false">pref_key__desktop_rows</string>

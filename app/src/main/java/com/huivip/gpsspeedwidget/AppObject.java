@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
+import com.huivip.gpsspeedwidget.utils.Utils;
+
 import org.greenrobot.eventbus.EventBus;
 import org.xutils.x;
 
@@ -29,6 +31,7 @@ public class AppObject extends Application {
                 .logNoSubscriberMessages(false)
                 .sendNoSubscriberEvent(false)
                 .build();
+        Utils.getDesktopPackageName(getApplicationContext());
     }
     public static Context getContext() {
         return mContext;

@@ -37,7 +37,10 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_title__others">
-
+        <PreferenceScreen
+            android:icon="@drawable/ic_settings_launcher_black_24dp"
+            android:key="@string/pref_key__system_setting"
+            android:title="@string/minibar_title__device_settings" />
         <PreferenceScreen
             android:fragment="com.huivip.gpsspeedwidget.fragment.SettingsBehaviorFragment"
             android:icon="@drawable/ic_behavior"
