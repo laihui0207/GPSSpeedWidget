@@ -85,6 +85,11 @@
             android:key="@string/pref_key__speed_small_style"
             android:summary="显示小号样式的速度悬浮窗口"
             android:title="小号样式" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key__speed_auto_keep_side"
+            android:summary="速度悬浮窗自动靠边"
+            android:title="自动靠边" />
         <SeekBarPreference
             android:defaultValue="0"
             android:key="@string/pref_key__speed_adjust"

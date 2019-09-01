@@ -36,6 +36,7 @@
     <string name="pref_key__speed_style" translatable="false">pref_key__speed_style</string>
     <string name="pref_key__speed_adjust" translatable="false">pref_key__speed_adjust</string>
     <string name="pref_key__speed_close_stop" translatable="false">pref_key__speed_close_stop</string>
+    <string name="pref_key__speed_auto_keep_side" translatable="false">pref_key__speed_auto_keep_side</string>
     <string name="pref_key__speed_mph" translatable="false">pref_key__speed_mph</string>
     <string name="pref_key__speed_close_Amap" translatable="false">pref_key__speed_close_Amap</string>
     <string name="pref_key__speed_small_style" translatable="false">pref_key__speed_small_style</string>

@@ -111,6 +111,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isSpeedSmallShow(){
         return  getBool(R.string.pref_key__speed_small_style,false);
     }
+    public boolean isSpeedAutoKeepSide(){
+        return getBool(R.string.pref_key__speed_auto_keep_side,true);
+    }
     public boolean isSpeedMPH(){
         return  getBool(R.string.pref_key__speed_mph,false);
     }
