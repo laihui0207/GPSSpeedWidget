@@ -11,6 +11,7 @@ import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -76,13 +77,13 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
             if(result!=0){
             }
         }*/
-        if(PrefUtils.isEnableAudioVolumeDepress(context)) {
+        if(AppSettings.get().isAudioMusicDuck()) {
             customPlayer =true;
             synthesize(text, force);
         } else {
-            if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null && (force || PrefUtils.isEnableTempAudioService(context))) {
+            if (AppSettings.get().isEnableAudio() && mSpeechSynthesizer != null && (force || PrefUtils.isEnableTempAudioService(context))) {
                 customPlayer = false;
-                int volume=PrefUtils.getAudioVolume(context);
+                int volume= AppSettings.get().getAudioVolume();
                 float realVolume=volume/100f * 9;
                 mSpeechSynthesizer.setStereoVolume(realVolume,realVolume);
                 mSpeechSynthesizer.speak(text);
@@ -91,7 +92,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     }
 
     public void stop() {
-        if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null) {
+        if (AppSettings.get().isEnableAudio() && mSpeechSynthesizer != null) {
             wordList.clear();
             mSpeechSynthesizer.stop();
         }
@@ -109,7 +110,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     @Override
     public void synthesize(String text, boolean force) {
-        if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null && (force || PrefUtils.isEnableTempAudioService(context))) {
+        if (AppSettings.get().isEnableAudio() && mSpeechSynthesizer != null && (force || PrefUtils.isEnableTempAudioService(context))) {
             if (!inited) {
                 //release();
                 initTTS();
@@ -130,7 +131,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     }
 
     public void release() {
-        if (PrefUtils.isEnableAudioService(context) && mSpeechSynthesizer != null) {
+        if (AppSettings.get().isEnableAudio() && mSpeechSynthesizer != null) {
             mSpeechSynthesizer.release();
             inited = false;
             //mSpeechSynthesizer=null;
@@ -176,9 +177,9 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
         // 5. 以下setParam 参数选填。不填写则默认值生效
         // 设置在线发声音人： 0 普通女声（默认） 1 普通男声 2 特别男声 3 情感男声<度逍遥> 4 情感儿童声<度丫丫>
-        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "0");
+        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, AppSettings.get().getAudioBaiDuSpeaker());
         // 设置合成的音量，0-9 ，默认 5
-        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "9");
+        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "12");
         // 设置合成的语速，0-9 ，默认 5
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, "5");
         // 设置合成的语调，0-9 ，默认 5
@@ -190,7 +191,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE_WIFI wifi状态下使用在线，非wifi离线。在线状态下， 请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_NETWORK ， 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
-        if (PrefUtils.isEnableAudioMixService(context)) {
+        if (AppSettings.get().isAudioMix()) {
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         } else {
             mSpeechSynthesizer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);

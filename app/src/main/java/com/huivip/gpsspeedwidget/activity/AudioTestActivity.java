@@ -2,8 +2,6 @@ package com.huivip.gpsspeedwidget.activity;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetHost;
-import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -26,17 +24,18 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.amap.api.services.traffic.TrafficSearch;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.SearchTrafficEvent;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.ToastUtil;
-import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.LrcView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -276,11 +275,13 @@ public class AudioTestActivity extends Activity {
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                EventBus.getDefault().post(
+                        new SearchTrafficEvent("340000","习友西路",TrafficSearch.ROAD_LEVEL_NONAME_WAY));
                 /*int widgetId = appWidgetHost.allocateAppWidgetId();
                 Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
                 pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
                 startActivityForResult(pickIntent, REQUEST_SELECT_AMAP_PLUGIN);*/
-                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+          /*      AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
                 for(int id=0;id<500;id++) {
                     AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
                     final View amapView = appWidgetHost.createView(getApplicationContext(), id, popupWidgetInfo);
@@ -290,7 +291,7 @@ public class AudioTestActivity extends Activity {
                         PrefUtils.setSelectAmapPluginId(getApplicationContext(),id);
                         break;
                     }
-                }
+                }*/
          /*       DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String time = formatter.format(new Date());
                 Intent sinpIntent = new Intent();

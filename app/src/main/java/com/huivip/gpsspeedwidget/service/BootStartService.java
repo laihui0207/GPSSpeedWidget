@@ -10,24 +10,31 @@ import android.net.ConnectivityManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.RegistEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
 import com.huivip.gpsspeedwidget.listener.NetWorkConnectChangedReceiver;
 import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
 import com.huivip.gpsspeedwidget.speech.AudioService;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.TimeThread;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 
 public class BootStartService extends Service {
     public static String START_BOOT = "FromSTARTBOOT";
     boolean started = false;
     AlarmManager alarm;
-
+    String deviceId;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -40,18 +47,21 @@ public class BootStartService extends Service {
     public void onCreate() {
         alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
         CrashHandler.getInstance().init(getApplicationContext());
-        boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
+        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
+        deviceId=deviceUuidFactory.getDeviceUuid().toString();
+        boolean start = AppSettings.get().getAutoStart();
+        Log.d("huivip","Auto Start: "+start);
         if (start) {
                   /*  PendingIntent thirdIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), ThirdSoftLaunchReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
                     alarm.setExact(AlarmManager.RTC_WAKEUP, + 100L, thirdIntent);*/
             String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
-            if (!TextUtils.isEmpty(apps)) {
+            if (AppSettings.get().isEnableLaunchOtherApp() && !TextUtils.isEmpty(apps)) {
                 String[] autoApps = apps.split(",");
                 if (autoApps != null || autoApps.length > 0) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            int delayTime = PrefUtils.getDelayStartOtherApp(getApplicationContext());
+                            int delayTime = AppSettings.get().getDelayTimeBetweenLaunchOtherApp();
                             for (String packageName : autoApps) {
                                 try {
                                     Thread.sleep(delayTime * 1000 + 500L);
@@ -65,7 +75,7 @@ public class BootStartService extends Service {
 
                                 }
                             }
-                            if (PrefUtils.isGoToHomeAfterAutoLanuch(getApplicationContext())) {
+                            if (AppSettings.get().isReturnHomeAfterLaunchOtherApp()) {
                                 AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
                                 PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                                         new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
@@ -74,7 +84,7 @@ public class BootStartService extends Service {
 
                         }
                     }).start();
-                } else if (PrefUtils.isGoToHomeAfterAutoLanuch(getApplicationContext())) {
+                } else if (AppSettings.get().isReturnHomeAfterLaunchOtherApp()) {
                     AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
                     PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                             new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
@@ -90,15 +100,15 @@ public class BootStartService extends Service {
                     new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
 
-            if (PrefUtils.isPlayTime(getApplicationContext()) || PrefUtils.isPlayWeather(getApplicationContext()) || PrefUtils.isShowAddressWhenStop(getApplicationContext())) {
-                Intent weatcherService = new Intent(getApplicationContext(), WeatherService.class);
-                getApplicationContext().startService(weatcherService);
+            if (AppSettings.get().isPlayTime()|| AppSettings.get().isPlayWeather() || PrefUtils.isShowAddressWhenStop(getApplicationContext())) {
+                Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
+                getApplicationContext().startService(weatherService);
 
                 PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                         new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
                 alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 60000L, weatherServiceIntent);
             }
-            if (PrefUtils.isPlayWarn(getApplicationContext())) {
+            if (AppSettings.get().isEnablePlayWarnAudio()) {
                 mPlayer = MediaPlayer.create(this, R.raw.warn);
                 if (mPlayer != null) {
                     mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -120,7 +130,7 @@ public class BootStartService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
+        boolean start = AppSettings.get().getAutoStart();
         if (intent != null) {
             if (start) {
                 started = true;
@@ -133,7 +143,7 @@ public class BootStartService extends Service {
                 }
 
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
-                if (PrefUtils.isEnableTimeFloatingWidow(getApplicationContext())) {
+                if (AppSettings.get().isEnableTimeWindow()) {
                     if (!Utils.isServiceRunning(getApplicationContext(), RealTimeFloatingService.class.getName())) {
                         Intent timeFloating = new Intent(getApplicationContext(), RealTimeFloatingService.class);
                         startService(timeFloating);
@@ -144,12 +154,14 @@ public class BootStartService extends Service {
                 /*if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
                     GpsUtil.getInstance(getApplicationContext()).startLocationService();
                 }*/
-                if(PrefUtils.isEnableRoadLineFloating(getApplicationContext())){
+                if(AppSettings.get().isEnableRoadLine()){
                     Intent roadLineFloatingService=new Intent(getApplicationContext(),RoadLineFloatingService.class);
                     getApplicationContext().startService(roadLineFloatingService);
                 }
-                Utils.startFloatingWindows(getApplicationContext(), true);
-                if(!Utils.isServiceRunning(getApplicationContext(), AudioService.class.getName())){
+                if(AppSettings.get().isEnableSpeed()) {
+                    Utils.startFloatingWindows(getApplicationContext(), true);
+                }
+                if(AppSettings.get().isEnableAudio() &&  !Utils.isServiceRunning(getApplicationContext(), AudioService.class.getName())){
                     Intent audioService=new Intent(getApplicationContext(),AudioService.class);
                     startService(audioService);
                 }
@@ -158,7 +170,7 @@ public class BootStartService extends Service {
                         Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
                         startService(xunHangService);
                     }
-                    if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
+                    if (AppSettings.get().isEnableTracker()) {
                         Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
                         startService(trackService);
                     }
@@ -172,5 +184,8 @@ public class BootStartService extends Service {
         }
         return super.onStartCommand(intent, flags, startId);
     }
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void registSelf(RegistEvent event){
 
+    }
 }

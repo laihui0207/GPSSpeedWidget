@@ -41,6 +41,7 @@ import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
 import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.MeterFloatingService;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -152,6 +153,13 @@ public abstract class Utils {
             }
         }
         return false;
+    }
+    public static String getDefaultDesktop(Context context){
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        String defaultLauncher=packageManager.resolveActivity(intent,PackageManager.MATCH_DEFAULT_ONLY).activityInfo.packageName;
+        return defaultLauncher;
     }
     public static Set<String> getDesktopPackageName(Context context){
         List<String> names =new ArrayList<>();
@@ -335,7 +343,7 @@ public abstract class Utils {
         if(enabled){
             GpsUtil gpsUtil=GpsUtil.getInstance(context.getApplicationContext());
             boolean onDesktop =PrefUtils.isOnDesktop(context);
-            if(!PrefUtils.isEnableFlatingWindow(context)){
+            if(!AppSettings.get().isEnableSpeed()){
                 defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
@@ -362,7 +370,7 @@ public abstract class Utils {
                 meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 needClose=true;
             }
-            String floatingStyle=PrefUtils.getFloatingStyle(context);
+            String floatingStyle=AppSettings.get().getSpeedFlattingStyle();
             if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
                 if(Utils.isServiceRunning(context,MeterFloatingService.class.getName())){
                     meterFloatingService.putExtra(MeterFloatingService.EXTRA_CLOSE, true);

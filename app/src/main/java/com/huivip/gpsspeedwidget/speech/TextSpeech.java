@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.HashMap;
@@ -35,12 +36,12 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
     @Override
     public void speak(String text, boolean force) {
         if(inited) {
-            if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
+            if (AppSettings.get().isEnableAudio() && (force || PrefUtils.isEnableTempAudioService(context))) {
                 //beforeSpeak();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Map<String,String> params=new HashMap<>();
                     params.put("KEY_PARAM_STREAM","STREAM_MUSIC");
-                    params.put("KEY_PARAM_VOLUME",PrefUtils.getAudioVolume(context)/100f+"");
+                    params.put("KEY_PARAM_VOLUME", AppSettings.get().getAudioVolume()/100f+"");
                     mts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
                 } else {
                     mts.speak(text, TextToSpeech.QUEUE_FLUSH, null);

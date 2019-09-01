@@ -1,71 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent" android:orientation="vertical">
-    <LinearLayout android:layout_width="match_parent" android:visibility="gone" android:layout_height="50dp" android:orientation="horizontal">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
     </LinearLayout>
-    <LinearLayout android:layout_width="match_parent" android:layout_height="50dp"
-                  android:orientation="horizontal" android:visibility="gone">
-        <Button
-                android:text="备份行车记录"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/button_backup" android:layout_weight="0.04"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <Button
-                android:text="打赏支持"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/button_paymain" android:layout_weight="0.04"/>
+            android:id="@+id/button_backup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.04"
+            android:text="备份行车记录" />
+
+        <Button
+            android:id="@+id/button_paymain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.04"
+            android:text="打赏支持" />
 
     </LinearLayout>
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <AutoCompleteTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:text=""
-                android:hint="本机ID"
-                android:ems="6"
-                android:layout_weight="1"
-                android:id="@+id/editText_UID"/>
+            android:id="@+id/editText_UID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="6"
+            android:hint="本机ID"
+            android:inputType="textPersonName"
+            android:text=""
+            android:textColor="@color/white" />
         <EditText
-                android:id="@+id/selectDate"
-                android:layout_weight="1"
-                android:clickable="true" android:layout_width="wrap_content"
-                android:hint="选择日期" android:layout_height="wrap_content"
-        />
-        <Button android:layout_width="wrap_content" android:id="@+id/TrackBtn"
-                android:layout_weight="1" android:layout_height="wrap_content"
-                android:text="行车轨迹"/>
+            android:id="@+id/selectDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:hint="选择日期"
+            android:textColor="@color/white" />
         <Button
-                android:text="车辆位置"
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/lastedBtn" />
+            android:id="@+id/TrackBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="行车轨迹" />
+
         <Button
-                android:text="配置"
-                android:layout_width="wrap_content"
-                android:id="@+id/button_config" android:layout_height="wrap_content" android:layout_weight="1"/>
+            android:id="@+id/lastedBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="车辆位置" />
+
         <Button
-                android:text="桌面"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/button_goHome"/>
+            android:id="@+id/button_config"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="配置"
+            />
+
         <Button
-                android:text="生成gpx"
-                android:layout_width="wrap_content" android:visibility="gone"
-                android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/button_gpx"
-        />
+            android:id="@+id/button_goHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="桌面" />
+
         <Button
-                android:text="测试功能" android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/button_test"/>
+            android:id="@+id/button_gpx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="生成gpx"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/button_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="测试功能"
+            android:visibility="gone" />
     </LinearLayout>
-    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
         <com.amap.api.maps.MapView
-                android:id="@+id/map"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
 
         </com.amap.api.maps.MapView>

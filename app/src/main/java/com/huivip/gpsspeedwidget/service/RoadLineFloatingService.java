@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,9 +24,12 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.amap.api.services.traffic.TrafficSearch;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.SearchTrafficEvent;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -68,7 +72,7 @@ public class RoadLineFloatingService extends Service{
     }
     @Override
     public void onCreate() {
-        if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
+        if(!PrefUtils.isEnableDrawOverFeature(getApplicationContext())){
             Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_LONG).show();
             try {
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
@@ -81,7 +85,7 @@ public class RoadLineFloatingService extends Service{
         LayoutInflater inflater = LayoutInflater.from(this);
         mFloatingView = inflater.inflate(R.layout.floating_roadline_window, null);
         int flag= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        if(PrefUtils.isEnableRoadLineFloatingFixed(getApplicationContext())){
+        if(AppSettings.get().isRoadLineFixed()){
             flag=flag | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
         }
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
@@ -131,7 +135,7 @@ public class RoadLineFloatingService extends Service{
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if(intent!=null){
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableRoadLineFloating(getApplicationContext())) {
+            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !AppSettings.get().isEnableRoadLine()) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
@@ -146,7 +150,6 @@ public class RoadLineFloatingService extends Service{
                 mFloatingView.setLayoutParams(params);
                 mWindowManager.updateViewLayout(mFloatingView, params);
             }
-            isShowing = true;
             if(!PrefUtils.isEnableRoadLineFloatingFixed(getApplicationContext())) {
                 hideControlView();
             } else {
@@ -164,7 +167,6 @@ public class RoadLineFloatingService extends Service{
 
             }
         }
-        isShowing=false;
     }
 
     private void showRoadLine() {
@@ -173,12 +175,20 @@ public class RoadLineFloatingService extends Service{
             if (vv != null && !gpsUtil.isAutoNavi_on_Frontend()) {
                 roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
                 roadLineView.setVisibility(View.VISIBLE);
+                if(!isShowing && !TextUtils.isEmpty(gpsUtil.getLatitude()) && !TextUtils.isEmpty(gpsUtil.getLongitude())) {
+                    EventBus.getDefault().post(
+                            new SearchTrafficEvent(Double.parseDouble(gpsUtil.getLatitude()),
+                                    Double.parseDouble(gpsUtil.getLongitude()),
+                                    2000, TrafficSearch.ROAD_LEVEL_NONAME_WAY));
+                }
+                isShowing=true;
             } else {
                 roadLineView.setVisibility(View.INVISIBLE);
+                isShowing=false;
             }
         }
     }
-    @OnClick(value = {R.id.imageView_roadLine_floating_fixed})
+    @OnClick(value = {R.id.imageView_roadLine_floating_fixed,R.id.imageView_roadLine_floating_close})
     public void clickHandler(View view){
         switch (view.getId()){
             case R.id.imageView_roadLine_floating_fixed:
@@ -187,7 +197,12 @@ public class RoadLineFloatingService extends Service{
                 mFloatingView.setLayoutParams(params);
                 controlView.setVisibility(View.INVISIBLE);
                 mWindowManager.updateViewLayout(mFloatingView, params);
-                PrefUtils.setEnableRoadLineFloatingFixed(getApplicationContext(),true);
+                //PrefUtils.setEnableRoadLineFloatingFixed(getApplicationContext(),true);
+                AppSettings.get().setRoadLineFixed(true);
+                break;
+            case R.id.imageView_roadLine_floating_close:
+                onStop();
+                stopSelf();
                 break;
         }
     }

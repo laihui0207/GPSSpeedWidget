@@ -24,6 +24,7 @@ import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -38,6 +39,7 @@ import org.json.JSONObject;
 public class WeatherService extends Service implements AMapLocationListener {
     String cityName;
     String adCode;
+    String cityCode;
     String address;
     String pre_adCode;
     String pre_address;
@@ -130,7 +132,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                                     ",气温:" + cityWeather.getString("temperature") + "°,"
                                     + cityWeather.getString("winddirection") + "风" + cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
-                            if (PrefUtils.isPlayWeather(getApplicationContext())) {
+                            if (AppSettings.get().isPlayWeather()) {
                                 handler.post(runnableUi);
                             }
                         }
@@ -177,10 +179,13 @@ public class WeatherService extends Service implements AMapLocationListener {
             if (aMapLocation.getErrorCode() == 0) {
                 if(!TextUtils.isEmpty(aMapLocation.getCity())) {
                     cityName=aMapLocation.getCity();
+                    cityCode=aMapLocation.getCityCode();
                     adCode =aMapLocation.getAdCode();
                     gpsUtil.setCityName(cityName);
+
                     //Toast.makeText(getApplicationContext(),cityName+ adCode,Toast.LENGTH_SHORT).show();
                 }
+                gpsUtil.setCityCode(cityCode);
                 if(!TextUtils.isEmpty(aMapLocation.getAdCode())){
                     //district=aMapLocation.getDistrict();
                     if(TextUtils.isEmpty(pre_adCode)){
@@ -211,10 +216,10 @@ public class WeatherService extends Service implements AMapLocationListener {
                 }
                 if (gpsUtil.getSpeed() == 0 && running) {
                     running = false;
-                    if (PrefUtils.isHideFlatingWindowWhenStop(getApplicationContext())) {
+                    if (AppSettings.get().isCloseFlattingOnStop()) {
                         Utils.startFloatingWindows(getApplicationContext().getApplicationContext(), false);
                     }
-                    if(PrefUtils.isShowAddressWhenStop(getApplicationContext())) {
+                    if(AppSettings.get().isPlayAddressOnStop()) {
                         if (!address.equalsIgnoreCase(pre_address)) {
                             pre_address = address;
                             new Handler().postDelayed(new Runnable() {

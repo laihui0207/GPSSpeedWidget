@@ -14,8 +14,8 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.io.File;
@@ -68,12 +68,12 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             mAudioManager = (AudioManager) getSystemService(
                     Context.AUDIO_SERVICE);
         }
-        if(!PrefUtils.isEnableAudioVolumeDepress(getApplicationContext())){
+        if(!AppSettings.get().isAudioMusicDuck()){
             return true;
         }
         int focusType = -1;
         int streamType = -1;
-        if (PrefUtils.isEnableAudioMixService(getApplicationContext())) {
+        if (AppSettings.get().isAudioMix()) {
             focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK;
         } else {
             focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
@@ -117,15 +117,14 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
     }
     @Override
     public void onAudioFocusChange(int focusChange) {
-       /* switch (focusChange){
+        switch (focusChange){
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
             case AudioManager.AUDIOFOCUS_GAIN:
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
-                Log.d("GPS_Audio","GET Audio Focus");
                 if(!mediaPlayer.isPlaying()){
                     mediaPlayer.start();
                 }
-                int volume=PrefUtils.getAudioVolume(getApplicationContext());
+                int volume= AppSettings.get().getAudioVolume();
                 mediaPlayer.setVolume(volume/100f,volume/100f);
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
@@ -141,91 +140,95 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                 }
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                Log.d("GPS_Audio","Loss Audio Focus");
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.setVolume(0.1f,0.1f);
                 }
                 break;
 
-        }*/
+        }
     }
-    public void playAudioByAudioTrack(String fileName,MediaPlayer.OnCompletionListener listener){
+
+    public void playAudioByAudioTrack(String fileName, MediaPlayer.OnCompletionListener listener) {
         int bufferSize = AudioTrack.getMinBufferSize(16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        int type=AudioManager.STREAM_MUSIC;
+        int type = AudioManager.STREAM_MUSIC;
        /* if(!PrefUtils.isEnableAudioMixService(getApplicationContext())) {
             type=AudioManager.STREAM_VOICE_CALL;
         }*/
-        if(audioTrack==null)
+        if (audioTrack == null)
             audioTrack = new AudioTrack(type,
                     16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);
         //边读边播
         byte[] buffer = new byte[bufferSize];
-        int volume=PrefUtils.getAudioVolume(getApplicationContext());
+        int volume = AppSettings.get().getAudioVolume();
+        float realVolume=volume / 100f;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            audioTrack.setVolume(volume/100f);
+            audioTrack.setVolume(realVolume);
+        } else {
+            audioTrack.setStereoVolume(realVolume,realVolume);
         }
-        /*new Thread(new Runnable() {
-            @Override
-            public void run() {*/
-                try {
-                    if(beforeSpeak()) {
-                        audioTrack.play();
-                        FileInputStream fis = null;
-                        fis = new FileInputStream(fileName);
-                        while (fis.available() > 0) {
-                            int readCount = fis.read(buffer);
-                            if (readCount == -1) {
-                                break;
-                            }
-                            int writeResult = audioTrack.write(buffer, 0, readCount);
-                            if (writeResult >= 0) {
-                                //success
-                            } else {
-                                //fail
-                                //丢掉这一块数据
-                                continue;
-                            }
-                        }
-                        audioTrack.stop();
-                        audioTrack.flush();
-                        //if (audioTrack.getPlayState() == AudioTrack.PLAYSTATE_STOPPED) {
-                            listener.onCompletion(null);
-                        //}
-                        audioTrack.release();
-                        audioTrack=null;
-                        fis.close();
-                        afterSpeak();
-                        if (!PrefUtils.isEnableCacheAudioFile(getApplicationContext())) {
-                            File file = new File(fileName);
-                            file.delete();
-                        }
+        try {
+            if (beforeSpeak()) {
+                audioTrack.play();
+                FileInputStream fis = null;
+                fis = new FileInputStream(fileName);
+                while (fis.available() > 0) {
+                    int readCount = fis.read(buffer);
+                    if (readCount == -1) {
+                        break;
                     }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (IllegalArgumentException e){
-
+                    int writeResult = audioTrack.write(buffer, 0, readCount);
+                    if (writeResult >= 0) {
+                        //success
+                    } else {
+                        //fail
+                        //丢掉这一块数据
+                        continue;
+                    }
                 }
-          /*  }
+                audioTrack.stop();
+                audioTrack.flush();
+                //if (audioTrack.getPlayState() == AudioTrack.PLAYSTATE_STOPPED) {
+                listener.onCompletion(null);
+                //}
+                audioTrack.release();
+                audioTrack = null;
+                fis.close();
+                afterSpeak();
+                if (!PrefUtils.isEnableCacheAudioFile(getApplicationContext())) {
+                    File file = new File(fileName);
+                    file.delete();
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
 
-        }).start();*/
+        }
     }
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void playAudio(String fileName, MediaPlayer.OnCompletionListener listener){
         try {
             mediaPlayer.reset();
             FileInputStream fis = new FileInputStream(fileName);
             mediaPlayer.setDataSource(fis.getFD());
-            int volume=PrefUtils.getAudioVolume(getApplicationContext());
+            int volume=AppSettings.get().getAudioVolume();
             mediaPlayer.setVolume(volume/100f,volume/100f);
-            AudioAttributes.Builder attrBuilder = new AudioAttributes.Builder();
-            if(PrefUtils.isEnableAudioMixService(getApplicationContext())) {
-                attrBuilder.setLegacyStreamType(AudioManager.STREAM_MUSIC);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                AudioAttributes.Builder attrBuilder = new AudioAttributes.Builder();
+                if (AppSettings.get().isAudioMix()) {
+                    attrBuilder.setLegacyStreamType(AudioManager.STREAM_MUSIC);
+                } else {
+                    attrBuilder.setLegacyStreamType(AudioManager.STREAM_VOICE_CALL);
+                }
+                mediaPlayer.setAudioAttributes(attrBuilder.build());
             } else {
-                attrBuilder.setLegacyStreamType(AudioManager.STREAM_VOICE_CALL);
+                if (AppSettings.get().isAudioMix()) {
+                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                } else {
+                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
+                }
             }
-            mediaPlayer.setAudioAttributes(attrBuilder.build());
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {

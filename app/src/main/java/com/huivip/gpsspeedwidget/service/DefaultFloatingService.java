@@ -4,7 +4,6 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -36,9 +35,15 @@ import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
+import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -101,7 +106,7 @@ public class DefaultFloatingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent!=null){
-            boolean enableFloatingService=PrefUtils.isEnableFlatingWindow(getApplicationContext());
+            boolean enableFloatingService= AppSettings.get().isEnableSpeed();
             boolean userClosedService=PrefUtils.isUserManualClosedService(getApplicationContext());
             if (!enableFloatingService || userClosedService || intent.getBooleanExtra(EXTRA_CLOSE, false)) {
                 onStop();
@@ -109,6 +114,7 @@ public class DefaultFloatingService extends Service {
                 return super.onStartCommand(intent, flags, startId);
             }
             gpsUtil.startLocationService();
+
         }
         return Service.START_REDELIVER_INTENT;
     }
@@ -127,8 +133,16 @@ public class DefaultFloatingService extends Service {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    @Override
     public void onCreate() {
-        if(!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
+        if(!PrefUtils.isEnableDrawOverFeature(getApplicationContext())){
             Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_LONG).show();
             try {
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
@@ -139,7 +153,7 @@ public class DefaultFloatingService extends Service {
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        if(PrefUtils.isShowSmallFloatingStyle(getApplicationContext())){
+        if(AppSettings.get().isSpeedSmallShow()){
             mFloatingView = inflater.inflate(R.layout.floating_default_limit_small, null);
         }
         else {
@@ -157,15 +171,15 @@ public class DefaultFloatingService extends Service {
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         mSpeedometerText.setOnTouchListener(new FloatingOnTouchListener());
-        boolean isShowLimit=PrefUtils.getShowLimits(getApplicationContext());
+        boolean isShowLimit=AppSettings.get().isDefaultSpeedShowLimit();
         if(mLimitArcView!=null) {
             mLimitView.setVisibility(isShowLimit ? View.VISIBLE : View.GONE);
         }
-        boolean isShowSpeed=PrefUtils.getShowSpeedometer(getApplicationContext());
+        boolean isShowSpeed=AppSettings.get().isDefaultSpeedShowSpeed();
         if(mSpeedometerView!=null) {
             mSpeedometerView.setVisibility(isShowSpeed ? View.VISIBLE : View.GONE);
         }
-        if(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext())) {
+        if(AppSettings.get().isDefaultSpeedhorizontalShow()) {
             RelativeLayout.LayoutParams speedLayout = (RelativeLayout.LayoutParams) mSpeedometerView.getLayoutParams();
             speedLayout.addRule(RelativeLayout.RIGHT_OF, R.id.limit);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -208,13 +222,13 @@ public class DefaultFloatingService extends Service {
                     public void run()
                     {
                         DefaultFloatingService.this.checkLocationData();
-                        showRoadLine();
+                        //showRoadLine();
                     }
                 });
             }
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        mServiceConnection=new ServiceConnection() {
+     /*   mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 roadLineBinder= (RoadLineService.RoadLineBinder) service;
@@ -227,7 +241,8 @@ public class DefaultFloatingService extends Service {
         };
         if(PrefUtils.isEnableSpeedRoadLine(getApplicationContext())) {
             getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
-        }
+        }*/
+        EventBus.getDefault().register(this);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
@@ -279,7 +294,7 @@ public class DefaultFloatingService extends Service {
         }
     }
 
-    private void showRoadLine() {
+/*    private void showRoadLine() {
       if(roadLineBinder!=null){
           View vv=roadLineBinder.getRoadLineView();
           if(vv!=null){
@@ -289,6 +304,18 @@ public class DefaultFloatingService extends Service {
               daoHang_roadLine.setVisibility(View.INVISIBLE);
           }
       }
+    }*/
+    @Subscribe(threadMode= ThreadMode.MAIN)
+    public void showRoadLine(RoadLineEvent event) {
+        if (AppSettings.get().isShowRoadLineOnSpeed() && event.isShowed()) {
+            View vv = event.getRoadLineView();
+            if (vv != null) {
+                daoHang_roadLine.setImageDrawable(((ImageView) vv).getDrawable());
+                daoHang_roadLine.setVisibility(View.VISIBLE);
+            }
+        } else {
+            daoHang_roadLine.setVisibility(View.INVISIBLE);
+        }
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?

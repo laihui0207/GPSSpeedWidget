@@ -266,7 +266,7 @@ public class MainActivity extends Activity implements TraceListener {
         };
         lastedPosition.setOnClickListener(lastedButtonClickLister);
         Button configButton=findViewById(R.id.button_config);
-        configButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ConfigurationActivity.class)));
+        configButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
         EditText edittext= (EditText) findViewById(R.id.selectDate);
 
         edittext.setOnClickListener(new View.OnClickListener() {
@@ -508,6 +508,13 @@ public class MainActivity extends Activity implements TraceListener {
             @Override
             public void onClick(View v) {
                 Utils.goHome(getApplicationContext());
+            }
+        });
+        goHomeButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                startActivity(new Intent(MainActivity.this, AudioTestActivity.class));
+                return false;
             }
         });
          Set<String> desktopPackages=Utils.getDesktopPackageName(getApplicationContext());

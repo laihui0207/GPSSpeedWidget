@@ -32,6 +32,7 @@ import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -75,7 +76,7 @@ public class AutoWidgetFloatingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !PrefUtils.isEnableAutoWidgetFloatingWidow(getApplicationContext())
+            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !AppSettings.get().isShowAmapWidgetContent()
                 /*|| gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started*/) {
                 onStop();
                 stopSelf();
@@ -113,7 +114,7 @@ public class AutoWidgetFloatingService extends Service {
 
     @Override
     public void onCreate() {
-        if (!PrefUtils.isEnbleDrawOverFeature(getApplicationContext())) {
+        if (!PrefUtils.isEnableDrawOverFeature(getApplicationContext())) {
             Toast.makeText(getApplicationContext(), "需要打开GPS插件的悬浮窗口权限", Toast.LENGTH_LONG).show();
             try {
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);

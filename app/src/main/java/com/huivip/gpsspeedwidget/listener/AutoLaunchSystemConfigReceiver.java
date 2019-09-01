@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.utils.WifiUtils;
@@ -18,7 +19,7 @@ public class AutoLaunchSystemConfigReceiver extends BroadcastReceiver {
     BroadcastReceiver broadcastReceiver;
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(PrefUtils.isAutoLauchHotSpot(context)) {
+        if(AppSettings.get().isEnableWifiHotpot()) {
             if(Utils.isNetworkConnected(context)) {
                startHotSpot(context);
             } else {

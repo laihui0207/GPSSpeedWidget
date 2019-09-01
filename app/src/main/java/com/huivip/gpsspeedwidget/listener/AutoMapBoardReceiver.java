@@ -13,6 +13,7 @@ import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.NaviFloatingService;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -48,7 +49,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 gpsUtil.setAutoMapBackendProcessStarted(true);
                             }
                             launchSpeedFloatingWindows(context, true);
-                            if (PrefUtils.isHideFloatingWidowOnNaviApp(context) && PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
+                            if (AppSettings.get().isCloseFlattingOnAmap() && PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
                                 Utils.startFloatingWindows(context.getApplicationContext(), false);
                             }
                             if (PrefUtils.isEnableAutoMute(context)) {
@@ -61,14 +62,14 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             gpsUtil.setAutoNavi_on_Frontend(false);
                             if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
                                 startBackendNaviFloatingService(context);
-                                if (!PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)) {
+                                if (!AppSettings.get().isOnlyCrossShowWidgetContent()) {
                                     startDriveWayFloatingService(context);
                                 }
                                 EventBus.getDefault().post(new AutoMapStatusUpdateEvent(false));
                                 gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
                             }
                             launchSpeedFloatingWindows(context, false);
-                            if (PrefUtils.isHideFloatingWidowOnNaviApp(context) && gpsUtil.getAutoNaviStatus() != Constant.Navi_Status_Started) {
+                            if (AppSettings.get().isCloseFlattingOnAmap() && gpsUtil.getAutoNaviStatus() != Constant.Navi_Status_Started) {
                                 Utils.startFloatingWindows(context.getApplicationContext(), true);
                             }
                           /*  if (PrefUtils.isEnableAutoMute(context)) {
@@ -239,14 +240,14 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     try {
                         JSONObject object = new JSONObject(wayInfo);
                         if (object.getBoolean("drive_way_enabled")) {
-                            if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)
-                                    && PrefUtils.isEnableAutoWidgetFloatingWidow(context)
+                            if ( AppSettings.get().isOnlyCrossShowWidgetContent()
+                                    && AppSettings.get().isShowAmapWidgetContent()
                                     && !gpsUtil.isAutoNavi_on_Frontend()) {
                                 startDriveWayFloatingService(context);
                             }
                         } else {
-                            if (PrefUtils.isEnableAutoWidgetFloatingWidowOnlyTurn(context)
-                                    && PrefUtils.isEnableAutoWidgetFloatingWidow(context)) {
+                            if (AppSettings.get().isOnlyCrossShowWidgetContent()
+                                    && AppSettings.get().isShowAmapWidgetContent()) {
                                 stopDriveWayFloatingService(context, false);
                             }
                         }
@@ -295,14 +296,18 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
     }
 
     private void startDriveWayFloatingService(Context context) {
-        Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
-        context.startService(autoWidgetFloatingService);
+        if(AppSettings.get().isShowAmapWidgetContent()) {
+            Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
+            context.startService(autoWidgetFloatingService);
+        }
     }
 
     private void stopDriveWayFloatingService(Context context, boolean closeIt) {
-        Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
-        autoWidgetFloatingService.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
-        context.startService(autoWidgetFloatingService);
+        if(Utils.isServiceRunning(context,AutoWidgetFloatingService.class.getName())) {
+            Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
+            autoWidgetFloatingService.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
+            context.startService(autoWidgetFloatingService);
+        }
     }
 
     private void launchSpeedFloatingWindows(Context context, boolean enabled) {

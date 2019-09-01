@@ -8,7 +8,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
-import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -35,7 +35,7 @@ public class DateChangeReceiver extends BroadcastReceiver {
             else {
                 text="半点报时：当前时间:"+hour+"点"+min+"分";
             }
-            if(PrefUtils.isPlayTime(context)){
+            if(AppSettings.get().isPlayTime()){
                 try {
                    //TTS tts= SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
                 EventBus.getDefault().post(new PlayAudioEvent(text,true));

@@ -52,12 +52,14 @@ import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
+import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RealTimeFloatingService;
 import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
@@ -83,6 +85,8 @@ import java.util.Map;
 import java.util.Set;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * @author sunlaihui
@@ -91,8 +95,8 @@ public class ConfigurationActivity extends Activity {
     private int mAppWidgetId = 0 ;
     @BindView(R.id.EnableFalting)
     Button enableFloatingButton;
-    @BindView(R.id.button_select_app)
-    Button appSelectionButton;
+   /* @BindView(R.id.button_select_app)
+    Button appSelectionButton*/;
     @BindView(R.id.enableOver)
     Button enableServiceButton;
     CheckBox enableFloatingWidnowCheckBox;
@@ -111,7 +115,6 @@ public class ConfigurationActivity extends Activity {
     private static  final int REQUEST_STORAGE=106;
     private static final int REQUEST_PHONE=107;
     AppWidgetHost appWidgetHost;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,17 +129,18 @@ public class ConfigurationActivity extends Activity {
 
         }
         initPermission();
+        AppSettings appSettings= Setup.appSettings();
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         handler=new Handler();
         CheckBox autoStartCheckBox=(CheckBox)findViewById(R.id.autoStart);
-        autoStartCheckBox.setChecked(PrefUtils.isEnableAutoStart(getApplicationContext()));
+        autoStartCheckBox.setChecked(appSettings.getAutoStart());
         CheckBox recordGPSCheckBox= (CheckBox) findViewById(R.id.recordGPS);
         recordGPSCheckBox.setChecked(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()));
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         uploadGPSCheckBox.setChecked(PrefUtils.isEnableUploadGPSHistory(getApplicationContext()));
         CheckBox cleanDataCheckBox = findViewById(R.id.checkBox_cleanData);
         cleanDataCheckBox.setChecked(PrefUtils.isEnableAutoCleanGPSHistory(getApplicationContext()));
-        if(PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
+        if(PrefUtils.isEnableDrawOverFeature(getApplicationContext())){
             if(PrefUtils.isAppFirstRun(getApplicationContext())) {
                 PrefUtils.setFlatingWindow(getApplicationContext(), true);
                 PrefUtils.setEnableNaviFloating(getApplicationContext(), true);
@@ -144,6 +148,8 @@ public class ConfigurationActivity extends Activity {
             }
             Utils.startFloatingWindows(getApplicationContext(),true);
         }
+        ButterKnife.bind(this);
+
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         enableFloatingWidnowCheckBox.setChecked(PrefUtils.isEnableFlatingWindow(getApplicationContext()));
         //enableShowFlattingOnDesktopCheckBox=findViewById(R.id.checkBox_showondescktop);
@@ -380,6 +386,14 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 PrefUtils.setShowLimits(getApplicationContext(),compoundButton.isChecked());
+            }
+        });
+        CheckBox showNaviLimitCheckbox=findViewById(R.id.checkBox_navi_showLimit);
+        showNaviLimitCheckbox.setChecked(PrefUtils.getShowNaviLimits(getApplicationContext()));
+        showNaviLimitCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PrefUtils.setShowNaviLimits(getApplicationContext(),compoundButton.isChecked());
             }
         });
         CheckBox cacheAudioFileCheckBox=findViewById(R.id.checkBox_cacheAudioFile);
@@ -1297,6 +1311,11 @@ public class ConfigurationActivity extends Activity {
         else {
             btnOk.setEnabled(false);
         }
+    }
+    @OnClick(value = R.id.button_download_offlineMap)
+    public void downloadOffLineMap(View view){
+        startActivity(new Intent(this.getApplicationContext(),
+                com.amap.api.maps.offlinemap.OfflineMapActivity.class));
     }
     private void openSettings(String settingsAction, String packageName) {
         Intent intent = new Intent(settingsAction);
