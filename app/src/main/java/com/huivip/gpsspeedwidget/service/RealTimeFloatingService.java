@@ -30,11 +30,11 @@ import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
-import com.huivip.gpsspeedwidget.utils.DateUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -131,10 +131,10 @@ public class RealTimeFloatingService extends Service{
         super.onCreate();
     }
     private void updateTime(){
-        SimpleDateFormat sdf = new SimpleDateFormat(AppSettings.get().getTimeWindowDateFormat());
+        SimpleDateFormat sdf = new SimpleDateFormat(AppSettings.get().getTimeWindowDateFormat(), Locale.CHINA);
         String date = sdf.format(new Date());
         timeTextView.setTextColor(AppSettings.get().getTimeWindowTextColor());
-        timeTextView.setText(date + " " + DateUtil.getWeek());
+        timeTextView.setText(date);
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?

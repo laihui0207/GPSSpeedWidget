@@ -48,7 +48,6 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
-import com.huivip.gpsspeedwidget.utils.DateUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.ImageWheelView;
 
@@ -59,6 +58,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -244,9 +244,9 @@ public class MapFloatingService extends Service {
 
     }
     private void updateTime(){
-        SimpleDateFormat sdf = new SimpleDateFormat(AppSettings.get().getTimeWindowDateFormat());
+        SimpleDateFormat sdf = new SimpleDateFormat(AppSettings.get().getTimeWindowDateFormat(), Locale.CHINA);
         String date = sdf.format(new Date());
-        timeTextView.setText(date + " " + DateUtil.getWeek());
+        timeTextView.setText(date);
     }
     void checkLocationData() {
         if ((gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) || !isLocated) {

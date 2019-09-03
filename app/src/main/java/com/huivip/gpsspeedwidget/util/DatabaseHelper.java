@@ -42,6 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_STATE + " INTEGER)";
     protected static final String SQL_DELETE = "DROP TABLE IF EXISTS ";
     protected static final String SQL_QUERY = "SELECT * FROM ";
+    protected static final String SQL_INIT="INSERT "+TABLE_HOME +"Values()";
 
     protected SQLiteDatabase _db;
     protected Context _context;

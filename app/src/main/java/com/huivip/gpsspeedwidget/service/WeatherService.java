@@ -22,9 +22,11 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.NightNowEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
+import com.huivip.gpsspeedwidget.utils.DateUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -36,6 +38,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 public class WeatherService extends Service implements AMapLocationListener {
     String cityName;
     String adCode;
@@ -45,6 +49,7 @@ public class WeatherService extends Service implements AMapLocationListener {
     String pre_address;
     String deviceId;
     String resultText;
+    boolean isNight =false;
     AMapLocationClient mLocationClient = null;
     GpsUtil gpsUtil;
     private Handler handler=null;
@@ -218,6 +223,12 @@ public class WeatherService extends Service implements AMapLocationListener {
                     running = false;
                     if (AppSettings.get().isCloseFlattingOnStop()) {
                         Utils.startFloatingWindows(getApplicationContext().getApplicationContext(), false);
+                    }
+                    boolean tempNight= DateUtil.isNight(lastedLocation.getLongitude(),lastedLocation.getLatitude(),new Date());
+                    if(tempNight!= isNight){
+                        gpsUtil.setNight(tempNight);
+                        EventBus.getDefault().post(new NightNowEvent(tempNight));
+                        isNight=tempNight;
                     }
                     if(AppSettings.get().isPlayAddressOnStop()) {
                         if (!address.equalsIgnoreCase(pre_address)) {

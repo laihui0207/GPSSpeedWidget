@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -27,7 +28,6 @@ import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.Definitions;
 import com.huivip.gpsspeedwidget.util.LauncherAction;
-import com.huivip.gpsspeedwidget.utils.DateUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.utils.WifiUtils;
@@ -82,6 +82,9 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             case R.string.pref_key__wifi_hotpot_setting:
                 setWifiConfig();
                 break;
+            case R.string.pref_key__overdraw_permission:
+                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                break;
         }
         return false;
     }
@@ -133,6 +136,12 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
 
     @Override
     public void updateSummaries() {
+        Preference overLayPermission=findPreference(getString(R.string.pref_key__overdraw_permission));
+        boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(getContext());
+        if(overlayEnabled){
+            overLayPermission.setSummary("权限已附");
+            overLayPermission.setEnabled(false);
+        }
         Preference pre_delay_time=findPreference(getString(R.string.pref_key__auto_start_launch_other_app_delay_time));
         Preference pre_selectApps=findPreference(getString(R.string.pref_key__auto_start_launch_select_other_apps));
         pre_delay_time.setSummary("延时:"+ AppSettings.get().getDelayTimeBetweenLaunchOtherApp()+"秒");
@@ -220,7 +229,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             dateTimeFontColor.setVisible(true);
             dateTimeFormat.setVisible(true);
             DateFormat sdf = new SimpleDateFormat(AppSettings.get().getTimeWindowDateFormat());
-            dateTimeFormat.setSummary(sdf.format(new Date()) + " " + DateUtil.getWeek());
+            dateTimeFormat.setSummary(sdf.format(new Date()));
         } else {
             dateTimeFontColor.setVisible(false);
             dateTimeFormat.setVisible(false);

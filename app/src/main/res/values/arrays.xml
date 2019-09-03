@@ -38,18 +38,25 @@
         <item>@string/light</item>
         <item>@string/dark</item>
         <item>@string/black</item>
+        <item>@string/auto</item>
     </string-array>
 
 
     <string-array name="entries__date_format" translatable="false">
         <item>10:35 周一</item>
         <item>2019-09-23 10:35 周一</item>
+        <item>2019-09-23 10:35</item>
         <item>09-23 10:35 周一</item>
+        <item>2019年10月23日 10:35 周一</item>
+        <item>2019年10月23日 10:35</item>
     </string-array>
     <string-array name="values__date_format" translatable="false">
-        <item>HH:mm</item>
+        <item>HH:mm EEE</item>
+        <item>yyyy-MM-dd HH:mm EEE</item>
         <item>yyyy-MM-dd HH:mm</item>
-        <item>MM-dd HH:mm</item>
+        <item>MM-dd HH:mm EEE</item>
+        <item>yyyy年MM月dd日 HH:mm EEE</item>
+        <item>yyyy年MM月dd日 HH:mm</item>
     </string-array>
     <string-array name="values__zero_to_one" translatable="false">
         <item>0</item>
@@ -72,7 +79,12 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-
+    <string-array name="values__zero_to_three" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
     <string-array name="values__zero_to_four" translatable="false">
         <item>0</item>
         <item>1</item>
