@@ -15,6 +15,10 @@
             android:key="@string/pref_key__auto_start_wifi_hotpot"
             android:summary="开机自动启动wifi热点"
             android:title=" 开机启动热点" />
+        <Preference
+            android:defaultValue="0"
+            android:key="@string/pref_key__wifi_hotpot_setting"
+            android:title="设置wifi密码" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key__auto_start_play_warn"
@@ -25,6 +29,20 @@
             android:key="@string/pref_key__auto_start_time_window"
             android:summary="显示时间悬浮窗口"
             android:title="时间悬浮窗" />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/entries__date_format"
+            android:entryValues="@array/values__date_format"
+            android:key="@string/pref_key__auto_start_time_window_dateFormat"
+            android:summary="选择时间悬浮窗时间格式"
+            android:title="时间格式" />
+         <com.flask.colorpicker.ColorPickerPreference
+           android:defaultValue="@color/blue"
+           android:key="@string/pref_key__time_window_font_color"
+           android:title="时间字体颜色"
+           app:lightnessSlider="true"
+           app:alphaSlider="true"
+            />
     </PreferenceCategory>
     <PreferenceCategory android:title="启动第三方应用">
         <SwitchPreference
@@ -125,7 +143,7 @@
             android:title="启用猎鹰轨迹服务" />
         <SwitchPreference
             android:defaultValue="false"
-            android:key="@string/pref_key__Tracker_enable"
+            android:key="@string/pref_key__DaoHang_enable"
             android:summary="高德地图切换到后台时显示当前导航信息"
             android:title="启用导航悬浮窗" />
         <Preference
@@ -235,13 +253,13 @@
             android:defaultValue=""
             android:key="@string/pref_key__lyric_path"
             android:title="选择歌词保存路径" />
-       <!-- <com.flask.colorpicker.ColorPickerPreference
+        <com.flask.colorpicker.ColorPickerPreference
             android:defaultValue="@color/blue"
             android:key="@string/pref_key__lyric_font_color"
             android:title="歌词字体颜色"
             app:lightnessSlider="true"
             app:alphaSlider="true"
-             />-->
+             />
     </PreferenceCategory>
 
    <!-- <PreferenceCategory android:title="@string/pref_title__color">

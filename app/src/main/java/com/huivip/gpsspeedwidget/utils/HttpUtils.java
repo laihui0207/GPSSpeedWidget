@@ -3,10 +3,6 @@ package com.huivip.gpsspeedwidget.utils;
 import android.app.ProgressDialog;
 import android.content.Context;
 
-import com.huivip.gpsspeedwidget.beans.LocationVO;
-
-import org.json.JSONArray;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,10 +14,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -174,7 +166,7 @@ public class HttpUtils {
         return resultData;
     }
 
-    public static void main(String[] args){
+ /*   public static void main(String[] args){
         List<LocationVO> locationVOList=new ArrayList<>();
         LocationVO locationVO=new LocationVO();
         locationVO.setLat("112123");
@@ -190,6 +182,6 @@ public class HttpUtils {
        String result= HttpUtils.submitPostData("http://localhost:2345/gps", params, "utf-8");
        System.out.println(result);
 
-    }
+    }*/
 
 }

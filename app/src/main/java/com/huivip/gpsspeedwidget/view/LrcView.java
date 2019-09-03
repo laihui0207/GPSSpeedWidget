@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.huivip.gpsspeedwidget.R;
@@ -80,6 +83,7 @@ public class LrcView extends View {
         highLineColor = ta.getColor(R.styleable.LrcView_hignLineColor, getResources().getColor(R.color.blue));
         lrcColor = ta.getColor(R.styleable.LrcView_lrcColor, getResources().getColor(android.R.color.white));
         mode = ta.getInt(R.styleable.LrcView_lrcMode,mode);
+        Log.d("huivip","color:"+new ColorDrawable(highLineColor).getColor()+","+new ColorDrawable(highLineColor).getAlpha());
         ta.recycle();
         gPaint = new Paint();
         gPaint.setAntiAlias(true);
@@ -88,7 +92,7 @@ public class LrcView extends View {
         gPaint.setTextAlign(Paint.Align.CENTER);
         hPaint = new Paint();
         hPaint.setAntiAlias(true);
-        hPaint.setColor(highLineColor);
+        hPaint.setARGB(Color.alpha(highLineColor),Color.red(highLineColor),Color.green(highLineColor),Color.blue(highLineColor));
         hPaint.setTextSize(45);
         hPaint.setTextAlign(Paint.Align.CENTER);
     }

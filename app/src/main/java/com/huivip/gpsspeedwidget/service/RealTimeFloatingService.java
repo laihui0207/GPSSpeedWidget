@@ -4,8 +4,10 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -26,9 +28,13 @@ import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
+import com.huivip.gpsspeedwidget.utils.DateUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.TimeThread;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,10 +51,10 @@ public class RealTimeFloatingService extends Service{
     private View mFloatingView;
     @BindView(R.id.layout_Time)
     LinearLayout timeTimeLiner;
-
+    BroadcastReceiver broadcastReceiver;
     @BindView(R.id.textView_time)
     TextView timeTextView;
-    TimeThread timeThread;
+   // TimeThread timeThread;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -64,16 +70,26 @@ public class RealTimeFloatingService extends Service{
                 return super.onStartCommand(intent, flags, startId);
             }
         }
-        timeThread.running=true;
+        /*timeThread.running=true;
         timeThread.setContext(getApplicationContext());
-        timeThread.start();
+        timeThread.start();*/
         return Service.START_REDELIVER_INTENT;
     }
+
+    @Override
+    public void onDestroy() {
+        if(broadcastReceiver!=null){
+            getApplicationContext().unregisterReceiver(broadcastReceiver);
+        }
+        super.onDestroy();
+    }
+
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
             mWindowManager.removeView(mFloatingView);
         }
-        timeThread.running=false;
+
+       // timeThread.running=false;
     }
 
     @Override
@@ -102,12 +118,24 @@ public class RealTimeFloatingService extends Service{
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         initMonitorPosition();
-
-        timeThread=new TimeThread(timeTextView);
+        updateTime();
+        broadcastReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateTime();
+            }
+        };
+        getApplicationContext().registerReceiver(broadcastReceiver,new IntentFilter(Intent.ACTION_TIME_TICK));
+       // timeThread=new TimeThread(timeTextView);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
-
+    private void updateTime(){
+        SimpleDateFormat sdf = new SimpleDateFormat(AppSettings.get().getTimeWindowDateFormat());
+        String date = sdf.format(new Date());
+        timeTextView.setTextColor(AppSettings.get().getTimeWindowTextColor());
+        timeTextView.setText(date + " " + DateUtil.getWeek());
+    }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
@@ -142,6 +170,10 @@ public class RealTimeFloatingService extends Service{
             }
         });
     }
+    /**
+     * 获取今天星期几
+     * @return
+     */
 
    /* private void animateViewToSideSlot() {
         Point screenSize = new Point();

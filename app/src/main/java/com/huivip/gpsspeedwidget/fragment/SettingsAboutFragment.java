@@ -27,10 +27,8 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.activity.HomeActivity;
 import com.huivip.gpsspeedwidget.activity.SettingsActivity;
 import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -181,8 +179,8 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                 String updateInfo= HttpUtils.getData(Constant.LBSURL+"/updateInfo?type=full");
                 try {
                     if(!TextUtils.isEmpty(updateInfo) && !updateInfo.equalsIgnoreCase("-1")) {
-                        String currentVersion= Utils.getLocalVersion(HomeActivity._launcher);
-                        int currentVersionCode=Utils.getLocalVersionCode(Setup.appContext());
+                        String currentVersion= Utils.getLocalVersion(getContext());
+                        int currentVersionCode=Utils.getLocalVersionCode(getContext());
                         JSONObject infoObj = new JSONObject(updateInfo);
                         JSONObject data= (JSONObject) infoObj.get("data");
                         String updateVersion=data.getString("serverVersion");
@@ -241,7 +239,7 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                             JSONObject data= (JSONObject) updateInfo.get("data");
                             String updateUrl=data.getString("updateurl");
                             String appName=data.getString("appname");
-                            HttpUtils.downLoadApk(AppObject.getContext(),updateUrl,appName);
+                            HttpUtils.downLoadApk(getContext(),updateUrl,appName);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

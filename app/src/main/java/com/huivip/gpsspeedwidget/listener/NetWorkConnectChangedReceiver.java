@@ -17,13 +17,11 @@ public class NetWorkConnectChangedReceiver extends BroadcastReceiver {
                 Intent xunHangService=new Intent(context,AutoXunHangService.class);
                 context.startService(xunHangService);
             }
-            if(AppSettings.get().isEnableTracker()) {
+            if(AppSettings.get().isEnableTracker() && !Utils.isServiceRunning(context,NaviTrackService.class.getName())) {
                 Intent trackService=new Intent(context, NaviTrackService.class);
                 context.startService(trackService);
             }
-
             context.getApplicationContext().unregisterReceiver(this);
-
         }
     }
 }

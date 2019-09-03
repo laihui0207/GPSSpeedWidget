@@ -25,7 +25,6 @@ import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
-import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.widget.LyricWidgetService;
 
@@ -155,7 +154,7 @@ public class LyricService extends NotificationListenerService implements RemoteC
     @Override
     public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
         /*                onPlaybackStateUpdate(state);*/
-        if(!PrefUtils.isLyricEnabled(getApplicationContext())){
+        if(!AppSettings.get().isLyricEnable()){
            return;
         }
         if(state==RemoteControlClient.PLAYSTATE_PAUSED){

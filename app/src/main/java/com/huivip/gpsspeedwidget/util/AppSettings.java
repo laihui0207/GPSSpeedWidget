@@ -51,6 +51,12 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isEnableTimeWindow(){
         return getBool(R.string.pref_key__auto_start_time_window,false);
     }
+    public String getTimeWindowDateFormat(){
+        return getString(R.string.pref_key__auto_start_time_window_dateFormat,"HH:mm");
+    }
+    public int getTimeWindowTextColor(){
+        return getInt(R.string.pref_key__time_window_font_color,R.color.blue);
+    }
     public boolean isEnableXunHang(){
         return getBool(R.string.pref_key__XunHang_enable,false);
     }

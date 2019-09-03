@@ -2,12 +2,17 @@ package com.huivip.gpsspeedwidget.fragment;
 
 import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.preference.Preference;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
@@ -22,14 +27,20 @@ import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.Definitions;
 import com.huivip.gpsspeedwidget.util.LauncherAction;
+import com.huivip.gpsspeedwidget.utils.DateUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+import com.huivip.gpsspeedwidget.utils.WifiUtils;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import net.gsantner.opoc.util.ContextUtils;
 import net.gsantner.opoc.util.PermissionChecker;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SettingGPSWidgetFragment extends SettingsBaseFragment {
     @Override
@@ -68,6 +79,9 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                 startActivity(new Intent(getActivity(),
                         com.amap.api.maps.offlinemap.OfflineMapActivity.class));
                 break;
+            case R.string.pref_key__wifi_hotpot_setting:
+                setWifiConfig();
+                break;
         }
         return false;
     }
@@ -75,35 +89,44 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         super.onSharedPreferenceChanged(sharedPreferences, key);
-        if (AppSettings.get().isEnableTimeWindow()) {
-            if (!Utils.isServiceRunning(getContext(), RealTimeFloatingService.class.getName())) {
-                Intent timefloating = new Intent(getContext(), RealTimeFloatingService.class);
-                getContext().startService(timefloating);
-            }
-        } else {
-            if (Utils.isServiceRunning(getContext(), RealTimeFloatingService.class.getName())) {
-                Intent timefloating = new Intent(getContext(), RealTimeFloatingService.class);
-                timefloating.putExtra(RealTimeFloatingService.EXTRA_CLOSE, true);
-                getContext().startService(timefloating);
-            }
-        }
-        if(AppSettings.get().isLyricEnable()){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (!Utils.isNotificationEnabled(getContext())) {
-                    Utils.openNotificationWindows(getContext());
+        if(key.equalsIgnoreCase(getString(R.string.pref_key__auto_start_time_window))) {
+            if (AppSettings.get().isEnableTimeWindow()) {
+                if (!Utils.isServiceRunning(getContext(), RealTimeFloatingService.class.getName())) {
+                    Intent timefloating = new Intent(getContext(), RealTimeFloatingService.class);
+                    getContext().startService(timefloating);
+                }
+            } else {
+                if (Utils.isServiceRunning(getContext(), RealTimeFloatingService.class.getName())) {
+                    Intent timefloating = new Intent(getContext(), RealTimeFloatingService.class);
+                    timefloating.putExtra(RealTimeFloatingService.EXTRA_CLOSE, true);
+                    getContext().startService(timefloating);
                 }
             }
-        } else {
-            if (Utils.isServiceRunning(getContext(), LyricFloatingService.class.getName())) {
-                Intent lycFloatingService = new Intent(getContext(), LyricFloatingService.class);
-                lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE, true);
-                getContext().startService(lycFloatingService);
+        }
+        if(key.equalsIgnoreCase(getString(R.string.pref_key__lyric_enable))) {
+            if (AppSettings.get().isLyricEnable()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    if (!Utils.isNotificationEnabled(getContext())) {
+                        Utils.openNotificationWindows(getContext());
+                    }
+                }
+            } else {
+                if (Utils.isServiceRunning(getContext(), LyricFloatingService.class.getName())) {
+                    Intent lycFloatingService = new Intent(getContext(), LyricFloatingService.class);
+                    lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE, true);
+                    getContext().startService(lycFloatingService);
+                }
             }
         }
-        if(AppSettings.get().isEnableSpeed()){
-            Utils.startFloatingWindows(getContext(),true);
-        }else {
-            Utils.startFloatingWindows(getContext(),false);
+        if(key.equalsIgnoreCase(getString(R.string.pref_key__speed_enable))) {
+            if (AppSettings.get().isEnableSpeed()) {
+                Utils.startFloatingWindows(getContext(), true);
+            } else {
+                Utils.startFloatingWindows(getContext(), false);
+            }
+        }
+        if(key.equalsIgnoreCase(getString(R.string.pref_key__auto_start_wifi_hotpot))) {
+            autoLaunchChanged(AppSettings.get().isEnableWifiHotpot());
         }
 
     }
@@ -191,14 +214,86 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             Intent audioService=new Intent(getContext(),AudioService.class);
             getContext().startService(audioService);
         }
-
+        Preference dateTimeFormat=findPreference(getString(R.string.pref_key__auto_start_time_window_dateFormat));
+        Preference dateTimeFontColor=findPreference(getString(R.string.pref_key__time_window_font_color));
+        if(AppSettings.get().isEnableTimeWindow()) {
+            dateTimeFontColor.setVisible(true);
+            dateTimeFormat.setVisible(true);
+            DateFormat sdf = new SimpleDateFormat(AppSettings.get().getTimeWindowDateFormat());
+            dateTimeFormat.setSummary(sdf.format(new Date()) + " " + DateUtil.getWeek());
+        } else {
+            dateTimeFontColor.setVisible(false);
+            dateTimeFormat.setVisible(false);
+        }
         Preference aMapPlugin=findPreference(getString(R.string.pref_key__Road_line_plugin_select));
         if(AppSettings.get().getAmapPluginId()!=-1){
             aMapPlugin.setSummary("已选择");
         } else {
             aMapPlugin.setSummary("请选择高德小部件（4*3）");
         }
-
+        Preference setWifi=findPreference(getString(R.string.pref_key__wifi_hotpot_setting));
+        if(AppSettings.get().isEnableWifiHotpot()){
+            setWifi.setVisible(true);
+        } else {
+            setWifi.setVisible(false);
+        }
         super.updateSummaries();
+    }
+    private void setWifiConfig(){
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View promptView = layoutInflater.inflate(R.layout.dialog_wifi_setting, null);
+        android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setView(promptView);
+        final EditText nameEditText = (EditText) promptView.findViewById(R.id.input_wifiName);
+        nameEditText.setText(PrefUtils.getAutoLauchHotSpotName(getContext()));
+        final EditText passwordEditText = (EditText) promptView.findViewById(R.id.input_wifiPassword);
+        passwordEditText.setText(PrefUtils.getAutoLauchHotSpotPassword(getContext()));
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String wifiName = nameEditText.getText().toString();
+                        String wifiPassword = passwordEditText.getText().toString();
+                        if(wifiPassword.length()<8){
+                            Toast.makeText(getContext(),"密码最低要求8位以上",Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        if (TextUtils.isEmpty(wifiName) || TextUtils.isEmpty(wifiPassword)) {
+                            wifiName = Constant.WIFI_USERNAME;
+                            wifiPassword = Constant.WIFI_PASSWORD;
+                        }
+                        PrefUtils.setAutoLaunchHotSpotName(getContext(),wifiName);
+                        PrefUtils.setAutoLaunchHotSpotPassword(getContext(),wifiPassword);
+                        //autoLaunchChanged(buttonView);
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("取消",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        final android.app.AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+    private void autoLaunchChanged(boolean enable) {
+        String wifiName=PrefUtils.getAutoLauchHotSpotName(getContext());
+        String wifiPassword=PrefUtils.getAutoLauchHotSpotPassword(getContext());
+        if (enable) {
+            boolean enabled = WifiUtils.switchWifiHotspot(getContext(), wifiName, wifiPassword, true);
+            if (enabled) {
+                Toast.makeText(getContext(), "移动热点已启动:" + wifiName+ ",密码:" + wifiPassword, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getContext(), "移动热点启动失败！", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            boolean enabled = WifiUtils.switchWifiHotspot(getContext(), wifiName, wifiPassword, false);
+            if (enabled) {
+                Toast.makeText(getContext(), "移动热点已关闭！", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getContext(), "移动热点关闭失败！", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

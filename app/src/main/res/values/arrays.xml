@@ -42,13 +42,15 @@
 
 
     <string-array name="entries__date_format" translatable="false">
-        <item>@string/custom</item>
-        <item>February 17\nSaturday, 2018</item>
-        <item>February 17\n15:48</item>
-        <item>February 17, 2018\n15:48</item>
-        <item>15:48\nFebruary 17, 2018</item>
+        <item>10:35 周一</item>
+        <item>2019-09-23 10:35 周一</item>
+        <item>09-23 10:35 周一</item>
     </string-array>
-
+    <string-array name="values__date_format" translatable="false">
+        <item>HH:mm</item>
+        <item>yyyy-MM-dd HH:mm</item>
+        <item>MM-dd HH:mm</item>
+    </string-array>
     <string-array name="values__zero_to_one" translatable="false">
         <item>0</item>
         <item>1</item>

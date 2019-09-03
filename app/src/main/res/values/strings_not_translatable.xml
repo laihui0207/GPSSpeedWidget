@@ -18,6 +18,7 @@
     <string name="pref_key__gps_plugin" translatable="false">pref_key__gps_plugin</string>
     <string name="pref_key__auto_start" translatable="false">pref_key__auto_start</string>
     <string name="pref_key__auto_start_wifi_hotpot" translatable="false">pref_key__auto_start_wifi_hotpot</string>
+    <string name="pref_key__wifi_hotpot_setting" translatable="false">pref_key__wifi_hotpot_setting</string>
     <string name="pref_key__auto_start_play_warn" translatable="false">pref_key__auto_start_play_warn</string>
     <string name="pref_key__auto_start_launch_other_app_enable" translatable="false">pref_key__auto_start_launch_other_app_enable</string>
     <string name="pref_key__auto_start_launch_other_apps" translatable="false">pref_key__auto_start_launch_other_apps</string>
@@ -25,6 +26,8 @@
     <string name="pref_key__auto_start_launch_other_app_delay_time" translatable="false">pref_key__auto_start_launch_other_app_delay_time</string>
     <string name="pref_key__auto_start_launch_other_app_return_desktop" translatable="false">pref_key__auto_start_launch_other_app_return_desktop</string>
     <string name="pref_key__auto_start_time_window" translatable="false">pref_key__auto_start_time_window</string>
+    <string name="pref_key__auto_start_time_window_dateFormat" translatable="false">pref_key__auto_start_time_window_dateFormat</string>
+    <string name="pref_key__time_window_font_color" translatable="false">pref_key__time_window_font_color</string>
     <!-- music lyric -->
     <string name="pref_key__lyric_enable" translatable="false">pref_key__lyric_enable</string>
     <string name="pref_key__lyric_fixed" translatable="false">pref_key__lyric_fixed</string>
