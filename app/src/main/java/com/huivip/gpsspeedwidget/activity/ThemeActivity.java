@@ -7,7 +7,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.NightNowEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public abstract class ThemeActivity extends AppCompatActivity {
 
@@ -22,16 +26,37 @@ public abstract class ThemeActivity extends AppCompatActivity {
             setTheme(R.style.NormalActivity_Light);
         } else if (_appSettings.getTheme().equals("1")) {
             setTheme(R.style.NormalActivity_Dark);
-        } else {
+        } else if(_appSettings.getTheme().equals("2")){
             setTheme(R.style.NormalActivity_Black);
+        } else {
+            setTheme(R.style.NormalActivity_Light);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(dark(_appSettings.getPrimaryColor(), 0.8));
             getWindow().setNavigationBarColor(_appSettings.getPrimaryColor());
         }
+        EventBus.getDefault().register(this);
         super.onCreate(savedInstanceState);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    @Subscribe
+    public void nightNow(NightNowEvent event){
+        if(_appSettings.getTheme().equals("3")){
+            if(event.isNight() && !_appSettings.getTheme().equals("1")){
+                setTheme(R.style.NormalActivity_Dark);
+            } else if(!event.isNight() && !_appSettings.getTheme().equals("0")) {
+                setTheme(R.style.NormalActivity_Light);
+            }
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();

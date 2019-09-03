@@ -51,6 +51,12 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isEnableTimeWindow(){
         return getBool(R.string.pref_key__auto_start_time_window,false);
     }
+    public String getTimeWindowDateFormat(){
+        return getString(R.string.pref_key__auto_start_time_window_dateFormat,"HH:mm");
+    }
+    public int getTimeWindowTextColor(){
+        return getInt(R.string.pref_key__time_window_font_color,R.color.blue);
+    }
     public boolean isEnableXunHang(){
         return getBool(R.string.pref_key__XunHang_enable,false);
     }
@@ -110,6 +116,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     }
     public boolean isSpeedSmallShow(){
         return  getBool(R.string.pref_key__speed_small_style,false);
+    }
+    public boolean isSpeedAutoKeepSide(){
+        return getBool(R.string.pref_key__speed_auto_keep_side,true);
     }
     public boolean isSpeedMPH(){
         return  getBool(R.string.pref_key__speed_mph,false);

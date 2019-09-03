@@ -27,10 +27,8 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.activity.HomeActivity;
 import com.huivip.gpsspeedwidget.activity.SettingsActivity;
 import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -76,7 +74,7 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
         if (isAdded() && preference.hasKey()) {
             switch (keyToStringResId(preference)) {
                 case R.string.pref_key__more_info__app: {
-                    _cu.openWebpageInExternalBrowser(getString(R.string.app_web_url));
+                   /// _cu.openWebpageInExternalBrowser(getString(R.string.app_web_url));
                     return true;
                 }
                 case R.string.pref_key__more_info__settings: {
@@ -94,7 +92,7 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                             .setPositiveButton("关闭", null).show();
                     return true;
                 }
-                case R.string.pref_key__more_info__rate_app: {
+           /*     case R.string.pref_key__more_info__rate_app: {
                     au.showGooglePlayEntryForThisApp();
                     return true;
                 }
@@ -117,13 +115,13 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                 case R.string.pref_key__more_info__project_contribution_info: {
                     _cu.openWebpageInExternalBrowser(getString(R.string.app_contribution_info_url));
                     return true;
-                }
-                case R.string.pref_key__more_info__android_contribution_guide: {
+                }*/
+              /*  case R.string.pref_key__more_info__android_contribution_guide: {
                     _cu.openWebpageInExternalBrowser(
                             String.format("https://gsantner.net/android-contribution-guide/?packageid=%s&name=%s&web=%s",
                                     _cu.context().getPackageName(), getString(R.string.app_name), getString(R.string.app_web_url).replace("=", "%3D")));
                     return true;
-                }
+                }*/
                 case R.string.pref_key__more_info__source_code: {
                     _cu.openWebpageInExternalBrowser(getString(R.string.app_source_code_url));
                     return true;
@@ -181,8 +179,8 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                 String updateInfo= HttpUtils.getData(Constant.LBSURL+"/updateInfo?type=full");
                 try {
                     if(!TextUtils.isEmpty(updateInfo) && !updateInfo.equalsIgnoreCase("-1")) {
-                        String currentVersion= Utils.getLocalVersion(HomeActivity._launcher);
-                        int currentVersionCode=Utils.getLocalVersionCode(Setup.appContext());
+                        String currentVersion= Utils.getLocalVersion(getContext());
+                        int currentVersionCode=Utils.getLocalVersionCode(getContext());
                         JSONObject infoObj = new JSONObject(updateInfo);
                         JSONObject data= (JSONObject) infoObj.get("data");
                         String updateVersion=data.getString("serverVersion");
@@ -241,7 +239,7 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                             JSONObject data= (JSONObject) updateInfo.get("data");
                             String updateUrl=data.getString("updateurl");
                             String appName=data.getString("appname");
-                            HttpUtils.downLoadApk(AppObject.getContext(),updateUrl,appName);
+                            HttpUtils.downLoadApk(getContext(),updateUrl,appName);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

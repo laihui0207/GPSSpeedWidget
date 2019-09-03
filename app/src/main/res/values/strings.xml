@@ -285,6 +285,7 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="black">Black</string>
+    <string name="auto">Auto</string>
 
     <!-- Dialogs -->
     <string name="please_wait">Searching for installed apps. Please wait.</string>

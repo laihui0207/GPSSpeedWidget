@@ -4,8 +4,10 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.net.Uri;
@@ -44,16 +46,19 @@ import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.TimeThread;
 import com.huivip.gpsspeedwidget.view.ImageWheelView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -76,7 +81,7 @@ public class MapFloatingService extends Service {
     AMap aMap=null;
     @BindView(R.id.textview_floating_map_title)
     TextView timeTextView;
-    TimeThread timeThread;
+    //TimeThread timeThread;
     private Marker carMarker;
     //LBSTraceClient mTraceClient=null;
     @BindView(R.id.button_map_close)
@@ -97,6 +102,7 @@ public class MapFloatingService extends Service {
     // 是否需要跟随定位s
     private boolean isNeedFollow = true;
     boolean isLocated=false;
+    BroadcastReceiver broadcastReceiver;
 
     // 处理静止后跟随的timer
     private Timer needFollowTimer;
@@ -119,9 +125,9 @@ public class MapFloatingService extends Service {
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
-            timeThread.running=true;
+           /* timeThread.running=true;
             timeThread.setContext(getApplicationContext());
-            timeThread.start();
+            timeThread.start();*/
         }
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -136,7 +142,7 @@ public class MapFloatingService extends Service {
         if(mFloatingView!=null && mWindowManager!=null){
             mWindowManager.removeView(mFloatingView);
         }
-        timeThread.running=false;
+       // timeThread.running=false;
     }
 
     @Override
@@ -166,7 +172,7 @@ public class MapFloatingService extends Service {
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         timeTextView.setOnTouchListener(new FloatingOnTouchListener());
         initMonitorPosition();
-        timeThread=new TimeThread(timeTextView);
+        //timeThread=new TimeThread(timeTextView);
         CrashHandler.getInstance().init(getApplicationContext());
         //mMapView = (MapView) findViewById(R.id.map);
         Bundle savedInstanceState=new Bundle();
@@ -215,17 +221,33 @@ public class MapFloatingService extends Service {
         };
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
         EventBus.getDefault().register(this);
+        updateTime();
+        broadcastReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateTime();
+            }
+        };
+        getApplicationContext().registerReceiver(broadcastReceiver,new IntentFilter(Intent.ACTION_TIME_TICK));
         super.onCreate();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(broadcastReceiver!=null){
+            getApplicationContext().unregisterReceiver(broadcastReceiver);
+        }
         if(EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().unregister(this);
         }
-    }
 
+    }
+    private void updateTime(){
+        SimpleDateFormat sdf = new SimpleDateFormat(AppSettings.get().getTimeWindowDateFormat(), Locale.CHINA);
+        String date = sdf.format(new Date());
+        timeTextView.setText(date);
+    }
     void checkLocationData() {
         if ((gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) || !isLocated) {
             if(gpsUtil==null){

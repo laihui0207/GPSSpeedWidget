@@ -23,7 +23,6 @@ import com.huivip.gpsspeedwidget.speech.AudioService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.TimeThread;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -92,15 +91,15 @@ public class BootStartService extends Service {
                 }
             }
 
-            TimeThread timeThread = new TimeThread(null);
+           /* TimeThread timeThread = new TimeThread(null);
             timeThread.setContext(getApplicationContext());
-            timeThread.start();
+            timeThread.start();*/
 
             PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                     new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
 
-            if (AppSettings.get().isPlayTime()|| AppSettings.get().isPlayWeather() || PrefUtils.isShowAddressWhenStop(getApplicationContext())) {
+            if (AppSettings.get().isPlayTime()|| AppSettings.get().isPlayWeather() || AppSettings.get().isPlayAddressOnStop()) {
                 Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
                 getApplicationContext().startService(weatherService);
 
@@ -166,11 +165,11 @@ public class BootStartService extends Service {
                     startService(audioService);
                 }
                 if(Utils.isNetworkConnected(getApplicationContext())) {
-                    if (!Utils.isServiceRunning(getApplicationContext(), AutoXunHangService.class.getName())) {
+                    if (AppSettings.get().isEnableXunHang() && !Utils.isServiceRunning(getApplicationContext(), AutoXunHangService.class.getName())) {
                         Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
                         startService(xunHangService);
                     }
-                    if (AppSettings.get().isEnableTracker()) {
+                    if (AppSettings.get().isEnableTracker() && !Utils.isServiceRunning(getApplicationContext(),NaviTrackService.class.getName())) {
                         Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
                         startService(trackService);
                     }

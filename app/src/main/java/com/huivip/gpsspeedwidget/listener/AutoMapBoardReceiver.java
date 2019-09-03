@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
@@ -52,9 +53,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             if (AppSettings.get().isCloseFlattingOnAmap() && PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
                                 Utils.startFloatingWindows(context.getApplicationContext(), false);
                             }
-                            if (PrefUtils.isEnableAutoMute(context)) {
+                            /*if (PrefUtils.isEnableAutoMute(context)) {
                                 PrefUtils.setEnableTempAudioService(context, false);
-                            }
+                            }*/
+                            EventBus.getDefault().post(new AudioTempMuteEvent(true));
                             gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Started);
                             EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
                             break;
@@ -65,7 +67,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 if (!AppSettings.get().isOnlyCrossShowWidgetContent()) {
                                     startDriveWayFloatingService(context);
                                 }
-                                EventBus.getDefault().post(new AutoMapStatusUpdateEvent(false));
+                               // EventBus.getDefault().post(new AutoMapStatusUpdateEvent(false));
                                 gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
                             }
                             launchSpeedFloatingWindows(context, false);
@@ -82,6 +84,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         case 8: // start navi
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
                             EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
+                            EventBus.getDefault().post(new AudioTempMuteEvent(true));
                             //PrefUtils.setEnableTempAudioService(context, false);
                             launchSpeedFloatingWindows(context, true);
                             break;
@@ -102,6 +105,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 Utils.startFloatingWindows(context.getApplicationContext(), true);
                             }
                             EventBus.getDefault().post(new AutoMapStatusUpdateEvent(false));
+                            EventBus.getDefault().post(new AudioTempMuteEvent(false));
                             gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
                         case 25:  // xunhang end
                            // gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
@@ -285,14 +289,18 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
     }
 
     private void startBackendNaviFloatingService(Context context) {
-        Intent floatService = new Intent(context, NaviFloatingService.class);
-        context.startService(floatService);
+        if(AppSettings.get().isEnableDaoHang()) {
+            Intent floatService = new Intent(context, NaviFloatingService.class);
+            context.startService(floatService);
+        }
     }
 
     private void stopBackendNaviFloatingService(Context context, boolean closeIt) {
-        Intent floatService = new Intent(context, NaviFloatingService.class);
-        floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
-        context.startService(floatService);
+        if(Utils.isServiceRunning(context,NaviFloatingService.class.getName())) {
+            Intent floatService = new Intent(context, NaviFloatingService.class);
+            floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
+            context.startService(floatService);
+        }
     }
 
     private void startDriveWayFloatingService(Context context) {

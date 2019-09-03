@@ -37,7 +37,7 @@
     <string name="minibar_title__device_settings">系统设置</string>
     <string name="minibar_summary__device_settings">系统设置快捷方式</string>
     <string name="minibar_title__launcher_settings">桌面设置</string>
-    <string name="minibar_summary__launcher_settings">OpenLauncher 设置快捷方式</string>
+    <string name="minibar_summary__launcher_settings">打开桌面设置快捷方式</string>
     <string name="minibar_title__volume_dialog">调节音量</string>
     <string name="minibar_summary__volume_dialog">显示音量调节</string>
     <string name="minibar_title__app_drawer">打开应用列表</string>
@@ -158,6 +158,7 @@
     <string name="light">白天模式</string>
     <string name="dark">黑暗模式</string>
     <string name="black">黑色模式</string>
+    <string name="auto">自动模式</string>
     <string name="default_icons">默认</string>
     <string name="pref_title__gps_plugin">GPS插件配置</string>
     <string name="pref_title__donate">捐助作者</string>

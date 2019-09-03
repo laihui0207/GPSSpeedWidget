@@ -16,6 +16,8 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -41,7 +43,7 @@ public class GpsSpeedService extends Service {
     RemoteViews remoteViews;
     RemoteViews numberRemoteViews;
     TimerTask locationScanTask;
-
+    boolean tempMute=false;
     boolean serviceStoped = true;
     boolean aimlessNaviStarted=false;
     Timer locationTimer = new Timer();
@@ -156,11 +158,15 @@ public class GpsSpeedService extends Service {
         }
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         if(aimlessNaviStarted){
-            this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.xunhang);
+            this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.ic_xunhang_enable);
+            if(tempMute){
+                this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.ic_xunhang_mute);
+
+            }
         } else {
-            this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.xunhang_closed);
+            this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.ic_xunhang_disable);
         }
-        if(PrefUtils.isLyricEnabled(getApplicationContext())){
+        if(AppSettings.get().isLyricEnable()){
             this.numberRemoteViews.setImageViewResource(R.id.image_gas_station,R.drawable.lyric);
         } else {
             this.numberRemoteViews.setImageViewResource(R.id.image_gas_station,R.drawable.lyric_disabled);
@@ -170,6 +176,10 @@ public class GpsSpeedService extends Service {
     @Subscribe
     public void updateAimessStatus(AimlessStatusUpdateEvent event){
         aimlessNaviStarted=event.isStarted();
+    }
+    @Subscribe
+    public void setTempMute(AudioTempMuteEvent event){
+        this.tempMute = event.isMute();
     }
     @Override
     public void onLowMemory() {

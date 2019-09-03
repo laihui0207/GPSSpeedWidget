@@ -13,7 +13,7 @@ import android.text.TextUtils;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.lyric.LyricServiceLowVersion;
 import com.huivip.gpsspeedwidget.service.TextFloatingService;
-import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 
 public class MediaNotificationReceiver extends BroadcastReceiver {
     private static final String KW_PLAYER_STATUS = "cn.kuwo.kwmusicauto.action.PLAYER_STATUS";
@@ -112,7 +112,7 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
             editor.commit();
         else
             editor.apply();
-        if (PrefUtils.isLyricEnabled(context)) {
+        if (AppSettings.get().isLyricEnable()) {
             if (!TextUtils.isEmpty(showString.toString())) {
                 Intent textFloat = new Intent(context, TextFloatingService.class);
                 textFloat.putExtra(TextFloatingService.SHOW_TEXT, showString.toString());

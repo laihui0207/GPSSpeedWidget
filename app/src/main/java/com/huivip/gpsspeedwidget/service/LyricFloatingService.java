@@ -105,7 +105,7 @@ public class LyricFloatingService extends Service{
             artistName=intent.getStringExtra(ARTIST);
             startTime=System.currentTimeMillis()-position;//-1000;
             lrcView.setLrc(lyrcContent);
-           // lrcView.setHighLineColor(AppSettings.get().getLyricFontColor());
+            lrcView.setHighLineColor(AppSettings.get().getLyricFontColor());
             lrcView.init();
             isShowing = true;
             if(!AppSettings.get().isLyricFixed()) {
