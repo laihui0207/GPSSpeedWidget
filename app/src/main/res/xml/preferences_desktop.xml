@@ -4,9 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:title="@string/pref_title__desktop">
-
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_key__desktop_default_home"
+        android:summary="@string/pref_summary__desktop_default_home"
+        android:title="@string/pref_title__desktop_default_home" />
     <PreferenceCategory android:title="@string/pref_title__size">
-
         <SeekBarPreference
             android:defaultValue="4"
             android:key="@string/pref_key__desktop_columns"
@@ -108,7 +111,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_title__search_bar">
+   <!-- <PreferenceCategory android:title="@string/pref_title__search_bar">
 
         <CheckBoxPreference
             android:defaultValue="false"
@@ -116,7 +119,7 @@
             android:summary="@string/pref_summary__search_bar_enable"
             android:title="@string/pref_title__search_bar_enable" />
 
-        <!--<EditTextPreference
+        <EditTextPreference
             android:defaultValue="@string/pref_default__search_bar_base_uri"
             android:dependency="@string/pref_key__search_bar_enable"
             android:dialogMessage="@string/pref_dialog__search_bar_base_uri"
@@ -131,7 +134,7 @@
             android:dependency="@string/pref_key__search_bar_enable"
             android:key="@string/pref_key__search_bar_force_browser"
             android:summary="@string/pref_summary__search_bar_force_browser"
-            android:title="@string/pref_title__search_bar_force_browser" />-->
+            android:title="@string/pref_title__search_bar_force_browser" />
 
         <CheckBoxPreference
             android:defaultValue="false"
@@ -140,7 +143,7 @@
             android:summary="@string/pref_summary__search_bar_show_hidden_apps"
             android:title="@string/pref_title__search_bar_show_hidden_apps" />
 
-    </PreferenceCategory>
+    </PreferenceCategory-->>
 
    <!-- <PreferenceCategory android:title="@string/pref_title__date_bar">
 

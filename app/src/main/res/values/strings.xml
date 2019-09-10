@@ -160,6 +160,8 @@
     <!-- Settings -->
     <string name="pref_title__settings">Settings</string>
     <string name="pref_title__desktop">Desktop</string>
+    <string name="pref_summary__desktop_default_home">if not as default desktop, then open plugin main page</string>
+    <string name="pref_title__desktop_default_home">Detect default Home launcher</string>
     <string name="pref_title__dock">Dock</string>
     <string name="pref_title__gps_plugin">GPS Plugin</string>
     <string name="pref_title__app_drawer">App Drawer</string>
@@ -328,6 +330,7 @@
 
     <!-- Toasts -->
     <string name="toast_not_enough_space">Not enough space.</string>
+    <string name="toast_widget_add_failed">Widget Add failed!</string>
     <string name="toast_app_uninstalled">App uninstalled.</string>
     <string name="toast_device_admin_required">Please enable device administration.</string>
     <string name="toast_backup_success">Done.</string>

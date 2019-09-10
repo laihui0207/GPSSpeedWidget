@@ -32,4 +32,10 @@
     <color name="blue">#267acd</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="theme_item_title">#333e54</color>
+    <color name="theme_time_shijian">#333e54</color>
+    <color name="theme_time_week">#666f80</color>
+    <color name="theme_time_day">#666f80</color>
+    <color name="theme_time_lunar">#666f80</color>
 </resources>

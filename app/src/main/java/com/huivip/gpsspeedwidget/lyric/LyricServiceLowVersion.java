@@ -16,7 +16,7 @@ import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
-import com.huivip.gpsspeedwidget.widget.LyricWidgetService;
+import com.huivip.gpsspeedwidget.service.LyricWidgetService;
 
 import java.util.List;
 

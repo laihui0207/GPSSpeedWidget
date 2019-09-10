@@ -133,13 +133,13 @@ public class BootStartService extends Service {
         if (intent != null) {
             if (start) {
                 started = true;
-                if (PrefUtils.isWidgetActived(getApplicationContext())) {
-                    if (!Utils.isServiceRunning(getApplicationContext(), GpsSpeedService.class.getName())) {
-                        Intent service = new Intent(getApplicationContext(), GpsSpeedService.class);
-                        service.putExtra(GpsSpeedService.EXTRA_AUTOBOOT, true);
+              /*  if (PrefUtils.isWidgetActived(getApplicationContext())) {
+                    if (!Utils.isServiceRunning(getApplicationContext(), GpsSpeedMeterService.class.getName())) {
+                        Intent service = new Intent(getApplicationContext(), GpsSpeedMeterService.class);
+                        service.putExtra(GpsSpeedMeterService.EXTRA_AUTOBOOT, true);
                         startService(service);
                     }
-                }
+                }*/
 
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                 if (AppSettings.get().isEnableTimeWindow()) {

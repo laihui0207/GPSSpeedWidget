@@ -923,7 +923,7 @@ public class ConfigurationActivity extends Activity {
                 final EditText inputText = new EditText(ConfigurationActivity.this);
                 DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
                 String deviceId=deviceUuidFactory.getDeviceUuid().toString();
-                new AlertDialog.Builder(new ContextThemeWrapper(ConfigurationActivity.this,R.style.Theme_AppCompat_DayNight)).setTitle("请输入反馈内容").setIcon(
+                new AlertDialog.Builder(new ContextThemeWrapper(getApplicationContext(),R.style.Theme_AppCompat_DayNight)).setTitle("请输入反馈内容").setIcon(
                         android.R.drawable.ic_dialog_info).setView(inputText).
                         setPositiveButton("提交", new DialogInterface.OnClickListener() {
                             @Override

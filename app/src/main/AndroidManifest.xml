@@ -81,7 +81,7 @@
         <activity android:name="com.amap.api.maps.offlinemap.OfflineMapActivity"
             android:screenOrientation="landscape"  />
         <receiver
-                android:name=".widget.GpsSpeedWidget"
+                android:name=".widget.GpsSpeedMeterWidget"
                 android:icon="@drawable/icon"
                 android:label="SpeedMeter">
             <intent-filter>
@@ -107,16 +107,25 @@
                     android:resource="@xml/number_widget_provider"/>
         </receiver>
         <receiver
-                android:name=".widget.LyricWidgetProvider"
+                android:name=".widget.LyricWidget"
                 android:label="LyricWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="Lyric_WIDGET_UPDATE"/>
             </intent-filter>
-
             <meta-data
                     android:name="android.appwidget.provider"
                     android:resource="@xml/lyric_widget_provider"/>
+        </receiver>
+        <receiver
+            android:name=".widget.TimeWidget"
+            android:label="timeWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/time_widget_provider"/>
         </receiver>
         <receiver android:name=".listener.UploadRoadDataReceiver">
             <intent-filter>
@@ -244,12 +253,14 @@
         </receiver>
         <receiver android:name=".listener.CatchRoadReceiver"/>
 
-        <service android:name=".service.GpsSpeedService"/>
-        <service android:name=".widget.LyricWidgetService">
+        <service android:name=".service.GpsSpeedMeterService"/>
+        <service android:name=".service.LyricWidgetService">
             <intent-filter>
                 <action android:name="com.huivip.widget.lyric.changed"/>
             </intent-filter>
         </service>
+        <service android:name=".service.TimeWidgetService"/>
+        <service android:name=".service.GpsSpeedNumberService"/>
         <service android:name=".service.DefaultFloatingService"/>
         <service android:name=".service.RecordGpsHistoryService"/>
         <service android:name=".service.NaviFloatingService"/>

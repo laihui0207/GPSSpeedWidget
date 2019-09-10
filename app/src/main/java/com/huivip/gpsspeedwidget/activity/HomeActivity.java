@@ -37,7 +37,6 @@ import com.huivip.gpsspeedwidget.activity.homeparts.HpAppDrawer;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpDesktopPickAction;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpDragOption;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpInitSetup;
-import com.huivip.gpsspeedwidget.activity.homeparts.HpSearchBar;
 import com.huivip.gpsspeedwidget.interfaces.AppDeleteListener;
 import com.huivip.gpsspeedwidget.interfaces.AppUpdateListener;
 import com.huivip.gpsspeedwidget.manager.Setup;
@@ -274,7 +273,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     }
 
     protected void initViews() {
-        new HpSearchBar(this, getSearchBar()).initSearchBar();
+      //  new HpSearchBar(this, getSearchBar()).initSearchBar();
         getAppDrawerController().init();
         getDock().setHome(this);
 
@@ -546,7 +545,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     }
 
     public final void updateHomeLayout() {
-        updateSearchBar(true);
+        //updateSearchBar(true);
         updateDock(true);
         updateDesktopIndicator(true);
     }
@@ -576,10 +575,15 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     private void createWidget(Intent data) {
         Bundle extras = data.getExtras();
         int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+        if(_appWidgetManager==null) return;
         AppWidgetProviderInfo appWidgetInfo = _appWidgetManager.getAppWidgetInfo(appWidgetId);
         Item item = Item.newWidgetItem(appWidgetId);
         Desktop desktop = getDesktop();
         List<CellContainer> pages = desktop.getPages();
+        if(pages==null || pages.size()==0){
+            Tool.toast(this, R.string.toast_widget_add_failed);
+            return;
+        }
         item._spanX = (appWidgetInfo.minWidth - 1) / pages.get(desktop.getCurrentItem()).getCellWidth() + 1;
         item._spanY = (appWidgetInfo.minHeight - 1) / pages.get(desktop.getCurrentItem()).getCellHeight() + 1;
         Point point = desktop.getCurrentPage().findFreeSpace(item._spanX, item._spanY);
@@ -621,7 +625,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         _appWidgetHost.startListening();
         _launcher = this;
         Log.d("huivip",BuildConfig.APPLICATION_ID+"~~~~"+Utils.getDefaultDesktop(getApplicationContext()));
-        if(!BuildConfig.APPLICATION_ID.equalsIgnoreCase(Utils.getDefaultDesktop(getApplicationContext()))){
+        if(AppSettings.get().isDetectDefaultHomeDesktop() && !BuildConfig.APPLICATION_ID.equalsIgnoreCase(Utils.getDefaultDesktop(getApplicationContext()))){
             Intent mainActivity=new Intent(getApplicationContext(),MainActivity.class);
             startActivity(mainActivity);
         }

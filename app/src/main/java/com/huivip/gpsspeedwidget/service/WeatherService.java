@@ -25,6 +25,7 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.NightNowEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
+import com.huivip.gpsspeedwidget.beans.WeatherEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.DateUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
@@ -140,6 +141,9 @@ public class WeatherService extends Service implements AMapLocationListener {
                             if (AppSettings.get().isPlayWeather()) {
                                 handler.post(runnableUi);
                             }
+                            WeatherEvent weatherEvent=new WeatherEvent(cityWeather.getString("city"),gpsUtil.getAltitude()+"米",
+                                    cityWeather.getString("weather"),cityWeather.getString("temperature"));
+                            EventBus.getDefault().post(weatherEvent);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

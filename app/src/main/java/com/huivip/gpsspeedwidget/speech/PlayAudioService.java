@@ -150,7 +150,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
 
     public void playAudioByAudioTrack(String fileName, MediaPlayer.OnCompletionListener listener) {
         int bufferSize = AudioTrack.getMinBufferSize(16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        int type = AudioManager.STREAM_MUSIC;
+        int type=AudioManager.USE_DEFAULT_STREAM_TYPE;
        /* if(!PrefUtils.isEnableAudioMixService(getApplicationContext())) {
             type=AudioManager.STREAM_VOICE_CALL;
         }*/

@@ -11,8 +11,8 @@ import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
-import com.huivip.gpsspeedwidget.service.BootStartService;
-import com.huivip.gpsspeedwidget.service.GpsSpeedService;
+import com.huivip.gpsspeedwidget.service.GpsSpeedMeterService;
+import com.huivip.gpsspeedwidget.service.GpsSpeedNumberService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -25,16 +25,16 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent paramIntent) {
         super.onReceive(context, paramIntent);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.speednumberwidget);
-        Intent service = new Intent(context, GpsSpeedService.class);
+        Intent service = new Intent(context, GpsSpeedNumberService.class);
         views.setOnClickPendingIntent(R.id.number_speed, PendingIntent.getService(context, 0,
                 service, 0));
+        views.setOnClickPendingIntent(R.id.widget_number_base,null);
 /*        Intent mapFloatingService=new Intent(context, MapFloatingService.class);*/
-        PendingIntent launchMapFloatingService=sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_MAPFLOATING,301);//PendingIntent.getService(context,1,mapFloatingService,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent launchMapFloatingService=sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_MAPFLOATING,302);//PendingIntent.getService(context,1,mapFloatingService,PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.number_limit, launchMapFloatingService);
-        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
-            Intent bootService=new Intent(context,BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
-            context.startService(bootService);
+        if(!Utils.isServiceRunning(context, GpsSpeedNumberService.class.getName())){
+            Intent widgetService=new Intent(context, GpsSpeedNumberService.class);
+            context.startService(widgetService);
         }
         Intent configureActivity=new Intent(context, MainActivity.class);
         PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,configureActivity,0);
@@ -63,7 +63,7 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         PrefUtils.setWidgetActived(context,false);
         PrefUtils.setEnabledNumberWidget(context,false);
-        context.stopService(new Intent(context,GpsSpeedService.class));
+        context.stopService(new Intent(context, GpsSpeedMeterService.class));
         super.onDeleted(context, appWidgetIds);
     }
 
