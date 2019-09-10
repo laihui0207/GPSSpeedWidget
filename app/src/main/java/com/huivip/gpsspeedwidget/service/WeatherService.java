@@ -141,7 +141,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                             if (AppSettings.get().isPlayWeather()) {
                                 handler.post(runnableUi);
                             }
-                            WeatherEvent weatherEvent=new WeatherEvent(cityWeather.getString("city"),gpsUtil.getAltitude()+"米",
+                            WeatherEvent weatherEvent=new WeatherEvent(cityWeather.getString("city"),gpsUtil.getAltitude(),
                                     cityWeather.getString("weather"),cityWeather.getString("temperature"));
                             EventBus.getDefault().post(weatherEvent);
                         }

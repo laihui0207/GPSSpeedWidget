@@ -67,6 +67,8 @@
     <string name="pref_title__icons">图标</string>
     <string name="pref_title__miscellaneous">杂项</string>
     <string name="pref_title__about">关于</string>
+    <string name="pref_title__desktop_widget">桌面插件</string>
+
 
     <string name="pref_title__size">尺寸</string>
     <string name="pref_title__style">样式</string>

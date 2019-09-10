@@ -111,7 +111,7 @@
 
     </PreferenceCategory>
 
-   <!-- <PreferenceCategory android:title="@string/pref_title__search_bar">
+    <PreferenceCategory android:title="@string/pref_title__search_bar">
 
         <CheckBoxPreference
             android:defaultValue="false"
@@ -143,7 +143,7 @@
             android:summary="@string/pref_summary__search_bar_show_hidden_apps"
             android:title="@string/pref_title__search_bar_show_hidden_apps" />
 
-    </PreferenceCategory-->>
+    </PreferenceCategory>
 
    <!-- <PreferenceCategory android:title="@string/pref_title__date_bar">
 

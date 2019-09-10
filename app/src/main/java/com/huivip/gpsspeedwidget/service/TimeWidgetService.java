@@ -16,8 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.WeatherEvent;
+import com.huivip.gpsspeedwidget.model.WeatherItem;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.ChinaDateUtil;
 import com.huivip.gpsspeedwidget.view.DigtalView;
 import com.huivip.gpsspeedwidget.widget.TimeWidget;
@@ -34,10 +37,11 @@ import java.util.Locale;
 public class TimeWidgetService extends Service {
     public static final String EXTRA_CLOSE="lyric.widget.close";
     DateFormat timeFormat=new SimpleDateFormat("HH:mm", Locale.CHINA);
-    DateFormat weekFormat=new SimpleDateFormat("E", Locale.CHINA);
+    DateFormat weekFormat=new SimpleDateFormat("EEEE", Locale.CHINA);
     DateFormat dateFormat=new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
     AppWidgetManager manager;
     ComponentName thisWidget;
+    GpsUtil gpsUtil;
 
     @Nullable
     @Override
@@ -52,6 +56,7 @@ public class TimeWidgetService extends Service {
         getApplicationContext().registerReceiver(myBroadcastReceiver,new IntentFilter(Intent.ACTION_TIME_TICK));
         this.thisWidget = new ComponentName(this, TimeWidget.class);
         EventBus.getDefault().register(this);
+        gpsUtil=GpsUtil.getInstance(getApplicationContext());
         super.onCreate();
     }
 
@@ -80,18 +85,29 @@ public class TimeWidgetService extends Service {
     @Subscribe
     public void updateWeather(WeatherEvent event){
        RemoteViews weatherView = new RemoteViews(getPackageName(), R.layout.time_weather_widget);
+       weatherView.setImageViewResource(R.id.image_weather, WeatherItem.getWeatherResId(event.getWeather()));
+
        weatherView.setTextViewText(R.id.text_city,event.getCity()+"   "+event.getWeather());
-       weatherView.setTextViewText(R.id.text_temperature,"温度:"+event.getTemperature());
-       weatherView.setTextViewText(R.id.text_altitude,"海拔:"+event.getAltitude());
+       weatherView.setTextColor(R.id.text_city,AppSettings.get().getTimeWidgetOtherTextColor());
+       weatherView.setTextViewText(R.id.text_temperature,"温度:"+event.getTemperature()+"\u2103  ");
+        weatherView.setTextColor(R.id.text_temperature,AppSettings.get().getTimeWidgetOtherTextColor());
+       weatherView.setTextViewText(R.id.text_altitude,"海拔:"+event.getAltitude()+"米");
+        weatherView.setTextColor(R.id.text_altitude,AppSettings.get().getTimeWidgetOtherTextColor());
        manager.updateAppWidget(thisWidget,weatherView);
     }
     private void updateView(){
         Date date=new Date();
        RemoteViews timeView = new RemoteViews(getPackageName(), R.layout.time_weather_widget);
-        timeView.setTextViewText(R.id.text_day,dateFormat.format(date));
         timeView.setImageViewBitmap(R.id.image_time, getBitmap(timeFormat.format(date)));
+
+        timeView.setTextViewText(R.id.text_day,dateFormat.format(date));
+        timeView.setTextColor(R.id.text_day,AppSettings.get().getTimeWidgetOtherTextColor());
         timeView.setTextViewText(R.id.text_week,weekFormat.format(date));
+        timeView.setTextColor(R.id.text_week,AppSettings.get().getTimeWidgetOtherTextColor());
         timeView.setTextViewText(R.id.text_chinaDate, new ChinaDateUtil(Calendar.getInstance()).toString());
+        timeView.setTextColor(R.id.text_chinaDate,AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewText(R.id.text_altitude,"海拔:"+gpsUtil.getAltitude()+"米");
+        timeView.setTextColor(R.id.text_altitude,AppSettings.get().getTimeWidgetOtherTextColor());
         manager.updateAppWidget(thisWidget,timeView);
     }
     private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
@@ -107,8 +123,9 @@ public class TimeWidgetService extends Service {
         Bitmap bitmap = null;
         View view = View.inflate(getApplicationContext(),R.layout.view_widget_time, null);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        DigtalView directionView=view.findViewById(R.id.v_widget_time);
-        directionView.setText(text);
+        DigtalView timeView=view.findViewById(R.id.v_widget_time);
+        timeView.setText(text);
+        timeView.setTextColor(AppSettings.get().getTimeWidgetTimeTextColor());
         view.measure(view.getMeasuredWidth(),view.getMeasuredHeight());
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());;
         view.buildDrawingCache();

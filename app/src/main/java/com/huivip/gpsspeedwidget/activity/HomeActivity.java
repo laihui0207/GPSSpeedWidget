@@ -37,6 +37,7 @@ import com.huivip.gpsspeedwidget.activity.homeparts.HpAppDrawer;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpDesktopPickAction;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpDragOption;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpInitSetup;
+import com.huivip.gpsspeedwidget.activity.homeparts.HpSearchBar;
 import com.huivip.gpsspeedwidget.interfaces.AppDeleteListener;
 import com.huivip.gpsspeedwidget.interfaces.AppUpdateListener;
 import com.huivip.gpsspeedwidget.manager.Setup;
@@ -273,7 +274,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     }
 
     protected void initViews() {
-      //  new HpSearchBar(this, getSearchBar()).initSearchBar();
+        new HpSearchBar(this, getSearchBar()).initSearchBar();
         getAppDrawerController().init();
         getDock().setHome(this);
 
