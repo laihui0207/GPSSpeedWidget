@@ -21,6 +21,7 @@ public class LyricWidget extends AppWidgetProvider {
         super.onReceive(context, paramIntent);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.lyric_widget);
         ComponentName localComponentName = new ComponentName(context, LyricWidget.class);
+        views.setOnClickPendingIntent(R.id.lyric_widget,null);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
 

@@ -2,15 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:layout_width="200dp"
-                android:layout_height="200dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
     <ImageView android:id="@+id/ialtimetro"
                android:layout_width="match_parent"
                android:layout_height="match_parent"
                android:src="@drawable/base" android:layout_alignParentTop="true"
-               android:layout_alignParentBottom="true" android:scaleType="fitCenter"
-               android:layout_alignParentLeft="true"
-               android:layout_alignParentStart="true" android:paddingTop="10dp"/>
+               android:layout_alignParentBottom="true" android:scaleType="fitXY" />
     <ImageView android:id="@+id/ifreccia_all" android:layout_width="match_parent" android:layout_height="match_parent"
                android:src="@drawable/alt_0" android:scaleType="fitCenter"
                android:layout_centerHorizontal="true" android:layout_alignParentBottom="true" android:padding="10dp"/>

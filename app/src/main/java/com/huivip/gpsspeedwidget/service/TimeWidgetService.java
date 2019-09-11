@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
 import com.huivip.gpsspeedwidget.beans.WeatherEvent;
 import com.huivip.gpsspeedwidget.model.WeatherItem;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -67,6 +69,7 @@ public class TimeWidgetService extends Service {
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
         }
+        EventBus.getDefault().post(new SearchWeatherEvent(false));
         updateView();
         return Service.START_REDELIVER_INTENT;
     }
@@ -99,7 +102,7 @@ public class TimeWidgetService extends Service {
         Date date=new Date();
        RemoteViews timeView = new RemoteViews(getPackageName(), R.layout.time_weather_widget);
         timeView.setImageViewBitmap(R.id.image_time, getBitmap(timeFormat.format(date)));
-
+        timeView.setInt(R.layout.time_weather_widget,"setBackgroundColor", Color.GREEN);
         timeView.setTextViewText(R.id.text_day,dateFormat.format(date));
         timeView.setTextColor(R.id.text_day,AppSettings.get().getTimeWidgetOtherTextColor());
         timeView.setTextViewText(R.id.text_week,weekFormat.format(date));

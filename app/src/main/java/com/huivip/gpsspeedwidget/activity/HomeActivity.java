@@ -546,7 +546,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     }
 
     public final void updateHomeLayout() {
-        //updateSearchBar(true);
+        updateSearchBar(true);
         updateDock(true);
         updateDesktopIndicator(true);
     }
