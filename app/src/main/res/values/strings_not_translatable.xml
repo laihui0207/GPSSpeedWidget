@@ -14,8 +14,11 @@
     <string name="pref_default__date_bar_date_format_custom_1" translatable="false"><![CDATA[EEEE\', \'dd\'.\']]></string>
     <string name="pref_default__date_bar_date_format_custom_2" translatable="false"><![CDATA[MMMM yyyy\', KW \'ww]]></string>
     <string name="pref_default__search_bar_base_uri" translatable="false"><![CDATA[https://duckduckgo.com/?kae=c&k1=-1&kaj=m&kv=l&kp=-1&q={query}]]></string>
+    <!--Desktop-->
+    <string name="pref_key__desktop_default_home" translatable="false">pref_key__desktop_default_home</string>
     <!--GPS plugin Auto Start-->
     <string name="pref_key__gps_plugin" translatable="false">pref_key__gps_plugin</string>
+    <string name="pref_key__gps_widget" translatable="false">pref_key__gps_widget</string>
     <string name="pref_key__auto_start" translatable="false">pref_key__auto_start</string>
     <string name="pref_key__auto_start_wifi_hotpot" translatable="false">pref_key__auto_start_wifi_hotpot</string>
     <string name="pref_key__wifi_hotpot_setting" translatable="false">pref_key__wifi_hotpot_setting</string>
@@ -72,6 +75,9 @@
     <!-- Preference Keys -->
     <string name="pref_key__check_update" translatable="false">pref_key__check_update</string>
     <string name="pref_key__system_setting" translatable="false">pref_key__system_setting</string>
+    <!-- Time Weather widget Keys -->
+    <string name="pref_key__widget_time_font_color" translatable="false">pref_key__widget_time_font_color</string>
+    <string name="pref_key__widget_time_other_font_color" translatable="false">pref_key__widget_time_other_font_color</string>
     <!-- Preference Keys -->
     <string name="pref_key__desktop_columns" translatable="false">pref_key__desktop_columns</string>
     <string name="pref_key__desktop_rows" translatable="false">pref_key__desktop_rows</string>

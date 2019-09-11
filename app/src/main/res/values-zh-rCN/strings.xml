@@ -59,12 +59,16 @@
     <!-- Settings -->
 
     <string name="pref_title__desktop">桌面</string>
+    <string name="pref_summary__desktop_default_home">如果没有设置成默认桌面，将启动插件轨迹主界面</string>
+    <string name="pref_title__desktop_default_home">检查是否是默认桌面</string>
     <string name="pref_title__dock">托盘</string>
     <string name="pref_title__app_drawer">应用抽屉</string>
     <string name="pref_title__gestures">手势</string>
     <string name="pref_title__icons">图标</string>
     <string name="pref_title__miscellaneous">杂项</string>
     <string name="pref_title__about">关于</string>
+    <string name="pref_title__desktop_widget">桌面插件</string>
+
 
     <string name="pref_title__size">尺寸</string>
     <string name="pref_title__style">样式</string>
@@ -202,8 +206,8 @@
     <string name="widget">小部件</string>
 
     <!-- Toasts -->
-
     <string name="toast_not_enough_space">空间不足</string>
+    <string name="toast_widget_add_failed">桌面部件添加失败！</string>
     <string name="toast_app_uninstalled">卸载完成</string>
 
     <!-- Intro -->

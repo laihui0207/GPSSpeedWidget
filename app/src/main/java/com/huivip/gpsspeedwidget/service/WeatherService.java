@@ -25,6 +25,7 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.NightNowEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
+import com.huivip.gpsspeedwidget.beans.WeatherEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.DateUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
@@ -115,9 +116,9 @@ public class WeatherService extends Service implements AMapLocationListener {
     }
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void searchEvent(SearchWeatherEvent event){
-        searchWeather();
+        searchWeather(event.isSpeak());
     }
-    public void searchWeather(){
+    private void searchWeather(boolean speak){
         if(TextUtils.isEmpty(adCode)){
             return;
         }
@@ -137,9 +138,12 @@ public class WeatherService extends Service implements AMapLocationListener {
                                     ",气温:" + cityWeather.getString("temperature") + "°,"
                                     + cityWeather.getString("winddirection") + "风" + cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
-                            if (AppSettings.get().isPlayWeather()) {
+                            if (AppSettings.get().isPlayWeather() && speak) {
                                 handler.post(runnableUi);
                             }
+                            WeatherEvent weatherEvent=new WeatherEvent(cityWeather.getString("city"),gpsUtil.getAltitude(),
+                                    cityWeather.getString("weather"),cityWeather.getString("temperature"));
+                            EventBus.getDefault().post(weatherEvent);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -196,7 +200,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                     if(TextUtils.isEmpty(pre_adCode)){
                         pre_adCode =adCode;
                     } else if (!adCode.equalsIgnoreCase(pre_adCode)){
-                        searchWeather();
+                        searchWeather(true);
                         pre_adCode =adCode;
                     }
                 }

@@ -27,6 +27,7 @@ public class AppObject extends Application {
         _instance = this;
         mContext = getApplicationContext();
         x.Ext.init(this);
+      //  xcrash.XCrash.init(this);
         EventBus.builder()
                 .logNoSubscriberMessages(false)
                 .sendNoSubscriberEvent(false)

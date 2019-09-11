@@ -7,7 +7,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -15,17 +14,11 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
-import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
-import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
-import com.huivip.gpsspeedwidget.widget.GpsSpeedNumberWidget;
-import com.huivip.gpsspeedwidget.widget.GpsSpeedWidget;
+import com.huivip.gpsspeedwidget.widget.GpsSpeedMeterWidget;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 import org.xutils.x;
 
 import java.util.Timer;
@@ -34,27 +27,22 @@ import java.util.TimerTask;
 /**
  * @author sunlaihui
  */
-public class GpsSpeedService extends Service {
+public class GpsSpeedMeterService extends Service {
     static final int MAX_VELOCITA_NUMBER = 140;
     public static final String EXTRA_AUTOBOOT = "com.huivip.gpsspeedwidget.EXTRA_AUTOBOOT";
     GpsUtil gpsUtil;
     AppWidgetManager manager;
     AppWidgetHost appWidgetHost;
     RemoteViews remoteViews;
-    RemoteViews numberRemoteViews;
     TimerTask locationScanTask;
-    boolean tempMute=false;
     boolean serviceStoped = true;
-    boolean aimlessNaviStarted=false;
     Timer locationTimer = new Timer();
     ComponentName thisWidget;
-    ComponentName numberWidget;
 
     @Override
     public void onCreate() {
         gpsUtil = GpsUtil.getInstance(getApplicationContext());
-        this.thisWidget = new ComponentName(this, GpsSpeedWidget.class);
-        this.numberWidget = new ComponentName(this, GpsSpeedNumberWidget.class);
+        this.thisWidget = new ComponentName(this, GpsSpeedMeterWidget.class);
         this.manager = AppWidgetManager.getInstance(this);
         this.locationScanTask = new TimerTask() {
             @Override
@@ -62,7 +50,7 @@ public class GpsSpeedService extends Service {
                 x.task().autoPost(new Runnable() {
                     @Override
                     public void run() {
-                        GpsSpeedService.this.checkLocationData();
+                        GpsSpeedMeterService.this.checkLocationData();
                     }
                 });
             }
@@ -70,14 +58,12 @@ public class GpsSpeedService extends Service {
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         CrashHandler.getInstance().init(getApplicationContext());
         this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-        EventBus.getDefault().register(this);
         super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedmeterwidget);
-        this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         if (intent != null) {
             if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
                 if (serviceStoped) {
@@ -85,13 +71,6 @@ public class GpsSpeedService extends Service {
                     this.remoteViews.setTextViewText(R.id.textView1_watch_speed, "...");
                     this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
                     this.remoteViews = null;
-                    this.numberRemoteViews.setTextViewText(R.id.number_speed, "...");
-                    this.numberRemoteViews.setTextViewText(R.id.number_limit, "...");
-                    this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, 0, false);
-                /*    this.numberRemoteViews.setViewVisibility(R.id.image_home,View.INVISIBLE);
-                    this.numberRemoteViews.setViewVisibility(R.id.image_company,View.INVISIBLE);*/
-                    this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
-                    this.numberRemoteViews = null;
                     gpsUtil.startLocationService();
                     PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                     if(PrefUtils.isUserManualClosedService(getApplicationContext())) {
@@ -106,11 +85,6 @@ public class GpsSpeedService extends Service {
                 this.remoteViews.setImageViewResource(R.id.ifreccia_all, R.drawable.alt_0);
                 this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
                 this.remoteViews = null;
-
-                this.numberRemoteViews.setTextViewText(R.id.number_speed, "关");
-                this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, 0, false);
-                this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
-                this.numberRemoteViews = null;
 
                 gpsUtil.stopLocationService(true);
                 if (this.locationTimer != null) {
@@ -140,9 +114,6 @@ public class GpsSpeedService extends Service {
         if(gpsUtil!=null){
             gpsUtil.destory();
         }
-        if(EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().unregister(this);
-        }
         super.onDestroy();
     }
 
@@ -156,30 +127,6 @@ public class GpsSpeedService extends Service {
                 computeAndShowData();
             }
         }
-        this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
-        if(aimlessNaviStarted){
-            this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.ic_xunhang_enable);
-            if(tempMute){
-                this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.ic_xunhang_mute);
-
-            }
-        } else {
-            this.numberRemoteViews.setImageViewResource(R.id.image_xunhang_switch,R.drawable.ic_xunhang_disable);
-        }
-        if(AppSettings.get().isLyricEnable()){
-            this.numberRemoteViews.setImageViewResource(R.id.image_gas_station,R.drawable.lyric);
-        } else {
-            this.numberRemoteViews.setImageViewResource(R.id.image_gas_station,R.drawable.lyric_disabled);
-        }
-        this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
-    }
-    @Subscribe
-    public void updateAimessStatus(AimlessStatusUpdateEvent event){
-        aimlessNaviStarted=event.isStarted();
-    }
-    @Subscribe
-    public void setTempMute(AudioTempMuteEvent event){
-        this.tempMute = event.isMute();
     }
     @Override
     public void onLowMemory() {
@@ -195,12 +142,10 @@ public class GpsSpeedService extends Service {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_dark;
         int color = ContextCompat.getColor(this, colorRes);
         this.remoteViews.setTextColor(R.id.textView1_watch_speed, color);
-        this.numberRemoteViews.setTextColor(R.id.number_speed, color);
     }
 
     void computeAndShowData() {
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedmeterwidget);
-        this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         int mphNumber = gpsUtil.getMphSpeed().intValue();
         setSpeeding(gpsUtil.isHasLimited());
         this.remoteViews.setTextViewText(R.id.textView1_watch_speed, gpsUtil.getKmhSpeedStr() + "");
@@ -520,10 +465,8 @@ public class GpsSpeedService extends Service {
                 break;
         }
         if (gpsUtil.getCameraType() > -1) {
-            this.numberRemoteViews.setTextViewText(R.id.textView_limit_label, gpsUtil.getCameraTypeName());
             this.remoteViews.setTextViewText(R.id.textView_watch_limit_label, gpsUtil.getCameraTypeName());
         } else {
-            this.numberRemoteViews.setTextViewText(R.id.textView_limit_label, "限速");
             this.remoteViews.setTextViewText(R.id.textView_watch_limit_label, "限速");
         }
 
@@ -537,25 +480,5 @@ public class GpsSpeedService extends Service {
         }
         this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
         this.remoteViews = null;
-
-        this.numberRemoteViews.setTextViewText(R.id.textView_direction, gpsUtil.getDirection() + "");
-        if (gpsUtil.getLimitDistance() > 0) {
-            this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getLimitDistance() + "米");
-        } else {
-            this.numberRemoteViews.setTextViewText(R.id.textView_distance, gpsUtil.getDistance() + "");
-        }
-
-        if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
-            this.numberRemoteViews.setTextViewText(R.id.textView_unit, "km/h");
-        } else {
-            this.numberRemoteViews.setTextViewText(R.id.textView_unit, gpsUtil.getCurrentRoadName());
-        }
-
-        this.numberRemoteViews.setProgressBar(R.id.progressBarLimit, 100, gpsUtil.getLimitDistancePercentage(), false);
-        this.numberRemoteViews.setProgressBar(R.id.progressBar, 125, gpsUtil.getSpeedometerPercentage(), false);
-        this.numberRemoteViews.setTextViewText(R.id.number_speed, gpsUtil.getKmhSpeedStr() + "");
-        this.numberRemoteViews.setTextViewText(R.id.number_limit, gpsUtil.getLimitSpeed() + "");
-        this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
-        this.numberRemoteViews = null;
     }
 }

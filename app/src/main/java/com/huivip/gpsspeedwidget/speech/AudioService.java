@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -16,7 +15,6 @@ import org.greenrobot.eventbus.Subscribe;
 
 public class AudioService extends Service {
     TTS tts;
-    private boolean tempMute=false;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -43,13 +41,9 @@ public class AudioService extends Service {
         if(tts==null){
             tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(AppSettings.get().getAudioEngine());
         }
-        if(AppSettings.get().isEnableAudio() && (event.isForce() ||!tempMute)) {
+        if(AppSettings.get().isEnableAudio()) {
             tts.speak(event.getText(), event.isForce());
         }
-    }
-    @Subscribe
-    public void setTempMute(AudioTempMuteEvent event){
-        this.tempMute = event.isMute();
     }
     @Subscribe
     public void changeTTSEngine(TTSEngineChangeEvent engineChangeEvent){

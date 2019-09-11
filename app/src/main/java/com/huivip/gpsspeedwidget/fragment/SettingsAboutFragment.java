@@ -30,7 +30,6 @@ import android.view.View;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.SettingsActivity;
-import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -239,7 +238,7 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                             JSONObject data= (JSONObject) updateInfo.get("data");
                             String updateUrl=data.getString("updateurl");
                             String appName=data.getString("appname");
-                            HttpUtils.downLoadApk(getContext(),updateUrl,appName);
+                            HttpUtils.downLoadApk(getActivity(),updateUrl,appName);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -259,7 +258,7 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                     mDialog.setPositiveButton("更新", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            HttpUtils.downLoadApk(Setup.appContext(),updateUrl,appName);
+                            HttpUtils.downLoadApk(getActivity(),updateUrl,appName);
                         }
                     }).setNegativeButton("不用了", new DialogInterface.OnClickListener() {
                         @Override

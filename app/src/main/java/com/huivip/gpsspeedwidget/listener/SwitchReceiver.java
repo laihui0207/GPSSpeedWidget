@@ -26,14 +26,14 @@ public class SwitchReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String target=intent.getStringExtra("TARGET");
         if(SWITCH_TARGET_XUNHANG.equalsIgnoreCase(target)) {
-            Intent xunhangService=new Intent(context, AutoXunHangService.class);
+            Intent xunHangService=new Intent(context, AutoXunHangService.class);
             if (Utils.isServiceRunning(context,AutoXunHangService.class.getName())) {
-                xunhangService.putExtra(AutoXunHangService.EXTRA_CLOSE,true);
+                xunHangService.putExtra(AutoXunHangService.EXTRA_CLOSE,true);
                 Toast.makeText(context, " 关闭智能巡航", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(context, "开启智能巡航", Toast.LENGTH_SHORT).show();
             }
-            context.startService(xunhangService);
+            context.startService(xunHangService);
         }
         if(SWITCH_TARGET_MAPFLOATING.equalsIgnoreCase(target)){
             Intent floatingMapIntent = new Intent(context, MapFloatingService.class);

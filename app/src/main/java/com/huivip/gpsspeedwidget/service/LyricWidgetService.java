@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget.widget;
+package com.huivip.gpsspeedwidget.service;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -19,6 +19,7 @@ import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
+import com.huivip.gpsspeedwidget.widget.LyricWidget;
 
 import java.util.List;
 import java.util.Timer;
@@ -55,7 +56,7 @@ public class LyricWidgetService extends Service {
     public void onCreate() {
         this.manager = AppWidgetManager.getInstance(this);
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-        this.lyricWidget = new ComponentName(this, LyricWidgetProvider.class);
+        this.lyricWidget = new ComponentName(this, LyricWidget.class);
         gPaint = new Paint();
         gPaint.setAntiAlias(true);
         gPaint.setColor(R.color.blue);

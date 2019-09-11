@@ -7,9 +7,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
+
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.service.BootStartService;
-import com.huivip.gpsspeedwidget.service.GpsSpeedService;
+import com.huivip.gpsspeedwidget.service.GpsSpeedMeterService;
+import com.huivip.gpsspeedwidget.service.GpsSpeedNumberService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -17,20 +18,19 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 /**
  * @author sunlaihui
  */
-public class GpsSpeedWidget extends AppWidgetProvider {
+public class GpsSpeedMeterWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent paramIntent) {
         super.onReceive(context, paramIntent);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.speedmeterwidget);
-        Intent service = new Intent(context, GpsSpeedService.class);
+        Intent service = new Intent(context, GpsSpeedMeterService.class);
         views.setOnClickPendingIntent(R.id.ifreccia_all, PendingIntent.getService(context, 0,
                 service, 0));
-        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
-            Intent bootService=new Intent(context,BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
+        if(!Utils.isServiceRunning(context, GpsSpeedMeterService.class.getName())){
+            Intent bootService=new Intent(context, GpsSpeedNumberService.class);
             context.startService(bootService);
         }
-        ComponentName localComponentName = new ComponentName(context, GpsSpeedWidget.class);
+        ComponentName localComponentName = new ComponentName(context, GpsSpeedMeterWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
 
@@ -43,7 +43,7 @@ public class GpsSpeedWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         PrefUtils.setWidgetActived(context,false);
         PrefUtils.setEnabledWatchWidget(context,false);
-        context.stopService(new Intent(context,GpsSpeedService.class));
+        context.stopService(new Intent(context, GpsSpeedMeterService.class));
         super.onDeleted(context, appWidgetIds);
     }
 
