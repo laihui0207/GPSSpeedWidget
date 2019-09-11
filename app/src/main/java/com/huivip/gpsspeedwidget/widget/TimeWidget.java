@@ -25,6 +25,7 @@ public class TimeWidget extends AppWidgetProvider {
             context.startService(widgetService);
         }
         views.setOnClickPendingIntent(R.id.v_time_base,null);
+
         ComponentName localComponentName = new ComponentName(context, TimeWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
