@@ -12,6 +12,13 @@
             app:lightnessSlider="true"
             app:alphaSlider="true"
             />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/items_widget_font_size"
+            android:entryValues="@array/items_widget_font_size"
+            android:key="@string/pref_key__widget_time_font_size"
+            android:summary="调整时间字体大小"
+            android:title="时间字体大小" />
         <com.flask.colorpicker.ColorPickerPreference
             android:defaultValue="@color/white"
             android:key="@string/pref_key__widget_time_other_font_color"
@@ -19,5 +26,12 @@
             app:lightnessSlider="true"
             app:alphaSlider="true"
             />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/items_widget_font_size"
+            android:entryValues="@array/items_widget_font_size"
+            android:key="@string/pref_key__widget_time_other_font_size"
+            android:summary="调整其它字体大小"
+            android:title="其它字体大小" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -60,8 +60,14 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public int getTimeWidgetTimeTextColor(){
         return getInt(R.string.pref_key__widget_time_font_color,R.color.white);
     }
+    public String getTimeWidgetTimeTextSize(){
+        return getString(R.string.pref_key__widget_time_font_size,"0");
+    }
     public int getTimeWidgetOtherTextColor(){
         return getInt(R.string.pref_key__widget_time_other_font_color,R.color.white);
+    }
+    public String getTimeWidgetOtherTextSize(){
+        return getString(R.string.pref_key__widget_time_other_font_size,"0");
     }
     public boolean isEnableXunHang(){
         return getBool(R.string.pref_key__XunHang_enable,false);
@@ -90,8 +96,8 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public void setRoadLineFixed(boolean value){
         setBool(R.string.pref_key__road_line_fixed,value);
     }
-    public boolean isDetectDefaultHomeDesktop(){
-        return getBool(R.string.pref_key__desktop_default_home,true);
+    public boolean isEnableDesktopFunction(){
+        return getBool(R.string.pref_key__desktop_default_home,false);
     }
     public boolean isShowAmapWidgetContent(){
         return getBool(R.string.pref_key__Amap_widget_content,false);

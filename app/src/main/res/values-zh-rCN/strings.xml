@@ -59,8 +59,8 @@
     <!-- Settings -->
 
     <string name="pref_title__desktop">桌面</string>
-    <string name="pref_summary__desktop_default_home">如果没有设置成默认桌面，将启动插件轨迹主界面</string>
-    <string name="pref_title__desktop_default_home">检查是否是默认桌面</string>
+    <string name="pref_summary__desktop_default_home">使用插件的桌面功能，如果不启用，将只使用插件功能，不进入插件桌面</string>
+    <string name="pref_title__desktop_default_home">启用桌面功能</string>
     <string name="pref_title__dock">托盘</string>
     <string name="pref_title__app_drawer">应用抽屉</string>
     <string name="pref_title__gestures">手势</string>

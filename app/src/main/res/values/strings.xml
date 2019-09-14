@@ -160,8 +160,8 @@
     <!-- Settings -->
     <string name="pref_title__settings">Settings</string>
     <string name="pref_title__desktop">Desktop</string>
-    <string name="pref_summary__desktop_default_home">if not as default desktop, then open plugin main page</string>
-    <string name="pref_title__desktop_default_home">Detect default Home launcher</string>
+    <string name="pref_summary__desktop_default_home">Enable desktop,Use default Launcher</string>
+    <string name="pref_title__desktop_default_home">Enable Desktop</string>
     <string name="pref_title__dock">Dock</string>
     <string name="pref_title__gps_plugin">GPS Plugin</string>
     <string name="pref_title__app_drawer">App Drawer</string>

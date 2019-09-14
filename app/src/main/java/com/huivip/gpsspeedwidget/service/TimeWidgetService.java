@@ -9,10 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
@@ -24,6 +24,7 @@ import com.huivip.gpsspeedwidget.beans.WeatherEvent;
 import com.huivip.gpsspeedwidget.model.WeatherItem;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.ChinaDateUtil;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.DigtalView;
 import com.huivip.gpsspeedwidget.widget.TimeWidget;
 
@@ -40,11 +41,12 @@ public class TimeWidgetService extends Service {
     public static final String EXTRA_CLOSE="lyric.widget.close";
     DateFormat timeFormat=new SimpleDateFormat("HH:mm", Locale.CHINA);
     DateFormat weekFormat=new SimpleDateFormat("EEEE", Locale.CHINA);
-    DateFormat dateFormat=new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
+    DateFormat dateFormat=new SimpleDateFormat("MM月dd号", Locale.CHINA);
     AppWidgetManager manager;
     ComponentName thisWidget;
     GpsUtil gpsUtil;
-
+    long updateTime;
+    boolean weatherUpdated=false;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -59,6 +61,12 @@ public class TimeWidgetService extends Service {
         this.thisWidget = new ComponentName(this, TimeWidget.class);
         EventBus.getDefault().register(this);
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
+        if(!Utils.isServiceRunning(getApplicationContext(),WeatherService.class.getName())){
+           Intent weatherService=new Intent(getApplicationContext(),WeatherService.class);
+           startService(weatherService);
+           Log.d("huivip","Widget Luanch weather service");
+           EventBus.getDefault().post(new SearchWeatherEvent(false));
+        }
         super.onCreate();
     }
 
@@ -89,29 +97,50 @@ public class TimeWidgetService extends Service {
     public void updateWeather(WeatherEvent event){
        RemoteViews weatherView = new RemoteViews(getPackageName(), R.layout.time_weather_widget);
        weatherView.setImageViewResource(R.id.image_weather, WeatherItem.getWeatherResId(event.getWeather()));
+        int textSize=15+Integer.parseInt(AppSettings.get().getTimeWidgetOtherTextSize());
 
-       weatherView.setTextViewText(R.id.text_city,event.getCity()+"   "+event.getWeather());
+       weatherView.setTextViewText(R.id.text_city,event.getCity());
        weatherView.setTextColor(R.id.text_city,AppSettings.get().getTimeWidgetOtherTextColor());
-       weatherView.setTextViewText(R.id.text_temperature,"温度:"+event.getTemperature()+"\u2103  ");
+       weatherView.setTextViewTextSize(R.id.text_city, TypedValue.COMPLEX_UNIT_SP,textSize);
+
+       weatherView.setTextViewText(R.id.text_temperature,event.getWeather()+"/"+event.getTemperature()+"\u2103  ");
         weatherView.setTextColor(R.id.text_temperature,AppSettings.get().getTimeWidgetOtherTextColor());
+        weatherView.setTextViewTextSize(R.id.text_temperature, TypedValue.COMPLEX_UNIT_SP,textSize);
+
        weatherView.setTextViewText(R.id.text_altitude,"海拔:"+event.getAltitude()+"米");
         weatherView.setTextColor(R.id.text_altitude,AppSettings.get().getTimeWidgetOtherTextColor());
+        weatherView.setTextViewTextSize(R.id.text_altitude, TypedValue.COMPLEX_UNIT_SP,textSize);
+
        manager.updateAppWidget(thisWidget,weatherView);
+       updateTime=System.currentTimeMillis();
+       weatherUpdated=true;
     }
     private void updateView(){
         Date date=new Date();
        RemoteViews timeView = new RemoteViews(getPackageName(), R.layout.time_weather_widget);
         timeView.setImageViewBitmap(R.id.image_time, getBitmap(timeFormat.format(date)));
-        timeView.setInt(R.layout.time_weather_widget,"setBackgroundColor", Color.GREEN);
+
+        int textSize=15+Integer.parseInt(AppSettings.get().getTimeWidgetOtherTextSize());
         timeView.setTextViewText(R.id.text_day,dateFormat.format(date));
         timeView.setTextColor(R.id.text_day,AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_day,TypedValue.COMPLEX_UNIT_SP,textSize);
+
         timeView.setTextViewText(R.id.text_week,weekFormat.format(date));
         timeView.setTextColor(R.id.text_week,AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_week,TypedValue.COMPLEX_UNIT_SP,textSize);
+
         timeView.setTextViewText(R.id.text_chinaDate, new ChinaDateUtil(Calendar.getInstance()).toString());
         timeView.setTextColor(R.id.text_chinaDate,AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_chinaDate,TypedValue.COMPLEX_UNIT_SP,textSize);
+
         timeView.setTextViewText(R.id.text_altitude,"海拔:"+gpsUtil.getAltitude()+"米");
         timeView.setTextColor(R.id.text_altitude,AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_altitude,TypedValue.COMPLEX_UNIT_SP,textSize);
+
         manager.updateAppWidget(thisWidget,timeView);
+        if(!weatherUpdated || System.currentTimeMillis()-updateTime > 10*60*1000 ){
+            EventBus.getDefault().post(new SearchWeatherEvent(false));
+        }
     }
     private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
 
@@ -129,6 +158,7 @@ public class TimeWidgetService extends Service {
         DigtalView timeView=view.findViewById(R.id.v_widget_time);
         timeView.setText(text);
         timeView.setTextColor(AppSettings.get().getTimeWidgetTimeTextColor());
+        timeView.setTextSize(TypedValue.COMPLEX_UNIT_SP,50+Integer.parseInt(AppSettings.get().getTimeWidgetTimeTextSize()));
         view.measure(view.getMeasuredWidth(),view.getMeasuredHeight());
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());;
         view.buildDrawingCache();
