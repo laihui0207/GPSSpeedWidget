@@ -32,39 +32,38 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight="0.1"
                 android:orientation="horizontal">
-
                 <TextView
                     android:id="@+id/text_day"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.1"
                     android:gravity="center"
-                    android:text="2019-09-09"
+                    android:text="09-09"
                     android:textColor="@color/white"
-                    android:textSize="20sp" />
-
+                    android:textSize="15sp" />
                 <TextView
-                    android:id="@+id/text_week"
+                    android:id="@+id/text_chinaDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.1"
                     android:gravity="center"
-                    android:text="星期二"
+                    android:text="八月初八"
                     android:textColor="@color/white"
-                    android:textSize="20sp" />
-            </LinearLayout>
+                    android:textSize="15sp" />
 
+            </LinearLayout>
             <TextView
-                android:id="@+id/text_chinaDate"
+                android:id="@+id/text_week"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.1"
                 android:gravity="center"
-                android:text="八月初八"
+                android:text="星期二"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="15sp" />
+
         </LinearLayout>
     </LinearLayout>
 
@@ -92,7 +91,7 @@
                 tools:ignore="HardcodedText" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="match_parent" android:layout_weight="0.1"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
@@ -102,9 +101,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.1"
                     android:gravity="center"
-                    android:text="合肥 晴"
+                    android:text="合肥"
                     android:textColor="@color/white"
-                    android:textSize="20sp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/text_temperature"
@@ -112,9 +111,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.1"
                     android:gravity="center"
-                    android:text="32 \u2103"
+                    android:text="晴/32\u2103"
                     android:textColor="@color/white"
-                    android:textSize="20sp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <TextView
@@ -125,7 +124,7 @@
                 android:gravity="center"
                 android:text="海拔：100 米"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="15sp" />
 
         </LinearLayout>
     </LinearLayout>

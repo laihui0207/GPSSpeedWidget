@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:title="@string/pref_title__desktop">
     <CheckBoxPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="@string/pref_key__desktop_default_home"
         android:summary="@string/pref_summary__desktop_default_home"
         android:title="@string/pref_title__desktop_default_home" />

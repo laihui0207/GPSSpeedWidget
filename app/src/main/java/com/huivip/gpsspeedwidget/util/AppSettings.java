@@ -96,8 +96,8 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public void setRoadLineFixed(boolean value){
         setBool(R.string.pref_key__road_line_fixed,value);
     }
-    public boolean isDetectDefaultHomeDesktop(){
-        return getBool(R.string.pref_key__desktop_default_home,true);
+    public boolean isEnableDesktopFunction(){
+        return getBool(R.string.pref_key__desktop_default_home,false);
     }
     public boolean isShowAmapWidgetContent(){
         return getBool(R.string.pref_key__Amap_widget_content,false);
