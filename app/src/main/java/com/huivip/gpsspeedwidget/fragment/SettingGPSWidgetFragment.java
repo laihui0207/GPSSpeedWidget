@@ -23,6 +23,7 @@ import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
 import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.RealTimeFloatingService;
+import com.huivip.gpsspeedwidget.service.RoadLineService;
 import com.huivip.gpsspeedwidget.speech.AudioService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -128,6 +129,10 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                 Utils.startFloatingWindows(getContext(), false);
             }
         }
+        if (key.equals(getString(R.string.pref_key__Road_line_enable))) {
+            Intent roadLineService = new Intent(getContext(), RoadLineService.class);
+            getContext().startService(roadLineService);
+        }
         if(key.equalsIgnoreCase(getString(R.string.pref_key__auto_start_wifi_hotpot))) {
             autoLaunchChanged(AppSettings.get().isEnableWifiHotpot());
         }
@@ -227,12 +232,12 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         Preference dateTimeFontColor=findPreference(getString(R.string.pref_key__time_window_font_color));
         if(AppSettings.get().isEnableTimeWindow()) {
             dateTimeFontColor.setVisible(true);
-            dateTimeFormat.setVisible(true);
+            //dateTimeFormat.setVisible(true);
             DateFormat sdf = new SimpleDateFormat(AppSettings.get().getTimeWindowDateFormat());
             dateTimeFormat.setSummary(sdf.format(new Date()));
         } else {
             dateTimeFontColor.setVisible(false);
-            dateTimeFormat.setVisible(false);
+            //dateTimeFormat.setVisible(false);
         }
         Preference aMapPlugin=findPreference(getString(R.string.pref_key__Road_line_plugin_select));
         if(AppSettings.get().getAmapPluginId()!=-1){

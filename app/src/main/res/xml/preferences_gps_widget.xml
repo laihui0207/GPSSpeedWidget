@@ -30,7 +30,7 @@
             android:summary="显示时间悬浮窗口"
             android:title="时间悬浮窗" />
         <ListPreference
-            android:defaultValue="0"
+            android:defaultValue="HH:mm EEE"
             android:entries="@array/entries__date_format"
             android:entryValues="@array/values__date_format"
             android:key="@string/pref_key__auto_start_time_window_dateFormat"

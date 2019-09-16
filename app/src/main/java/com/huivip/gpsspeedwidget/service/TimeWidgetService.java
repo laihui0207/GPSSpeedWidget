@@ -41,7 +41,7 @@ public class TimeWidgetService extends Service {
     public static final String EXTRA_CLOSE="lyric.widget.close";
     DateFormat timeFormat=new SimpleDateFormat("HH:mm", Locale.CHINA);
     DateFormat weekFormat=new SimpleDateFormat("EEEE", Locale.CHINA);
-    DateFormat dateFormat=new SimpleDateFormat("MM月dd号", Locale.CHINA);
+    DateFormat dateFormat=new SimpleDateFormat("MM月dd日", Locale.CHINA);
     AppWidgetManager manager;
     ComponentName thisWidget;
     GpsUtil gpsUtil;
@@ -153,9 +153,9 @@ public class TimeWidgetService extends Service {
     };
     private Bitmap getBitmap(String text) {
         Bitmap bitmap = null;
-        View view = View.inflate(getApplicationContext(),R.layout.view_widget_time, null);
+        View view = View.inflate(getApplicationContext(),R.layout.view_widget_number, null);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        DigtalView timeView=view.findViewById(R.id.v_widget_time);
+        DigtalView timeView=view.findViewById(R.id.v_widget_number);
         timeView.setText(text);
         timeView.setTextColor(AppSettings.get().getTimeWidgetTimeTextColor());
         timeView.setTextSize(TypedValue.COMPLEX_UNIT_SP,50+Integer.parseInt(AppSettings.get().getTimeWidgetTimeTextSize()));

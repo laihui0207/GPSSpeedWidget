@@ -53,6 +53,7 @@ import com.huivip.gpsspeedwidget.util.Definitions.ItemPosition;
 import com.huivip.gpsspeedwidget.util.LauncherAction;
 import com.huivip.gpsspeedwidget.util.LauncherAction.Action;
 import com.huivip.gpsspeedwidget.util.Tool;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.viewutil.DialogHelper;
 import com.huivip.gpsspeedwidget.viewutil.MinibarAdapter;
@@ -181,7 +182,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         initPermission();
-        startBootService(true);
+        //startBootService(true);
         Companion.setLauncher(this);
         AppSettings appSettings = AppSettings.get();
 
@@ -195,6 +196,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         _db = Setup.dataManager();
 
         setContentView(getLayoutInflater().inflate(R.layout.activity_home, null));
+        CrashHandler.getInstance().init(getApplicationContext());
 
         // transparent status and navigation
         if (VERSION.SDK_INT >= 21) {

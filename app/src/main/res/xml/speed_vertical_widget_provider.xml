@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider android:minWidth="50.0dip" android:minHeight="60.0dip" android:updatePeriodMillis="0"
+    android:minResizeHeight="5dip" android:minResizeWidth="5dip"
+                    android:initialLayout="@layout/speed_number_vertical_widget"
+                    android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"
+                    xmlns:android="http://schemas.android.com/apk/res/android"/>

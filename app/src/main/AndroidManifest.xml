@@ -83,7 +83,7 @@
         <receiver
                 android:name=".widget.GpsSpeedMeterWidget"
                 android:icon="@drawable/icon"
-                android:label="GPS速度插件 仪表样式">
+                android:label="GPS速度插件仪表">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="GPS_WIDGET_UPDATE"/>
@@ -95,8 +95,7 @@
         </receiver>
         <receiver
                 android:name=".widget.GpsSpeedNumberWidget"
-                android:icon="@drawable/icon_number"
-                android:label="GPS速度插件 双圈样式">
+                android:label="GPS速度插件双圈横版">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="GPS_WIDGET_UPDATE"/>
@@ -105,6 +104,18 @@
             <meta-data
                     android:name="android.appwidget.provider"
                     android:resource="@xml/number_widget_provider"/>
+        </receiver>
+        <receiver
+            android:name=".widget.SpeedNumberVerticalWidget"
+            android:label="GPS速度插件速度竖版">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="GPS_WIDGET_UPDATE"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/speed_vertical_widget_provider"/>
         </receiver>
         <receiver
                 android:name=".widget.LyricWidget"
@@ -312,6 +323,7 @@
         </service>
         <service android:name=".speech.AudioService" />
         <service android:name=".service.SearchTrafficService" />
+        <service android:name=".service.SpeedNumberVerticalService" />
 
         <activity
                 android:name=".activity.AudioTestActivity"

@@ -500,7 +500,7 @@ public class DefaultFloatingService extends Service {
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
-                       /* if (fadeAnimator != null && fadeAnimator.isStarted()) {
+                       /* if (fadeAnimator != null && fadeAnimator.isaMapstarted()) {
                             fadeAnimator.cancel();
                             params.alpha = initialAlpha;
                             try {
