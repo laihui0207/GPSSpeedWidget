@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -15,11 +16,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.amap.api.maps.offlinemap.OfflineMapActivity;
+import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.HomeActivity;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
+import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.RealTimeFloatingService;
@@ -42,6 +46,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class SettingGPSWidgetFragment extends SettingsBaseFragment {
     @Override
@@ -78,18 +84,28 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                 break;
             case R.string.pref_key__download_offline_map:
                 startActivity(new Intent(getActivity(),
-                        com.amap.api.maps.offlinemap.OfflineMapActivity.class));
+                        OfflineMapActivity.class));
                 break;
             case R.string.pref_key__wifi_hotpot_setting:
                 setWifiConfig();
                 break;
             case R.string.pref_key__overdraw_permission:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
+                }
+                break;
+            case R.string.pref_key__accessibility_permission:
                 startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                 break;
         }
         return false;
     }
-
+    private void openSettings(String settingsAction, String packageName) {
+        Intent intent = new Intent(settingsAction);
+        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse("package:" + packageName));
+        startActivity(intent);
+    }
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         super.onSharedPreferenceChanged(sharedPreferences, key);
@@ -145,7 +161,13 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         boolean overlayEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(getContext());
         if(overlayEnabled){
             overLayPermission.setSummary("权限已附");
-            overLayPermission.setEnabled(false);
+           // overLayPermission.setEnabled(false);
+        }
+        Preference accessibilityPermission=findPreference(getString(R.string.pref_key__accessibility_permission));
+        boolean serviceEnabled = Utils.isAccessibilityServiceEnabled(getContext(), AppDetectionService.class);
+        if(serviceEnabled){
+            accessibilityPermission.setSummary("权限已附");
+           // accessibilityPermission.setEnabled(false);
         }
         Preference pre_delay_time=findPreference(getString(R.string.pref_key__auto_start_launch_other_app_delay_time));
         Preference pre_selectApps=findPreference(getString(R.string.pref_key__auto_start_launch_select_other_apps));

@@ -171,6 +171,8 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             .setCameraSpeed(intent.getIntExtra(Constant.NaviInfoConstant.CAMERA_SPEED, -1))
                             .setLimitDistance(intent.getIntExtra(Constant.NaviInfoConstant.CAMERA_DIST,-1))
                             .setLimitType(intent.getIntExtra(Constant.NaviInfoConstant.CAMERA_TYPE,-1));
+                    EventBus.getDefault().post(naviInfoUpdateEvent);
+
                     String currentRoadName = intent.getStringExtra("CUR_ROAD_NAME");
                     if (!TextUtils.isEmpty(currentRoadName)) {
                         gpsUtil.setCurrentRoadName(currentRoadName);
@@ -244,7 +246,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             gpsUtil.setCameraSpeed(cameraSpeed);
                         }*/
                     //}
-                    EventBus.getDefault().post(naviInfoUpdateEvent);
                     break;
                 case 13011:
                     String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");

@@ -18,7 +18,6 @@ import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.SearchTrafficEvent;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.service.AutoXunHangService;
-import com.huivip.gpsspeedwidget.service.RecordGpsHistoryService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CycleQueue;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -160,13 +159,13 @@ public class GpsUtil {
             }
         };
         Toast.makeText(context, "GPS服务开启", Toast.LENGTH_SHORT).show();
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
        if(!Utils.isServiceRunning(context,AutoXunHangService.class.getName())) {
            Intent xunhangService = new Intent(context, AutoXunHangService.class);
            context.startService(xunhangService);
        }
-        Intent recordService = new Intent(context, RecordGpsHistoryService.class);
-        context.startService(recordService);
+       /* Intent recordService = new Intent(context, RecordGpsHistoryService.class);
+        context.startService(recordService);*/
         serviceStarted = true;
     }
     public void stopLocationService(boolean stop) {
@@ -178,9 +177,9 @@ public class GpsUtil {
             Intent xunhangService=new Intent(context, AutoXunHangService.class);
             xunhangService.putExtra(AutoXunHangService.EXTRA_CLOSE,true);
             context.startService(xunhangService);
-            Intent recordService = new Intent(context, RecordGpsHistoryService.class);
+          /*  Intent recordService = new Intent(context, RecordGpsHistoryService.class);
             recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
-            context.startService(recordService);
+            context.startService(recordService);*/
             serviceStarted = false;
         }
 
@@ -330,7 +329,7 @@ public class GpsUtil {
             if (localLocation != null) {
                 updateLocationData(localLocation);
             }
-            locationManager.requestLocationUpdates(this.providerId, 1L, 1.0F, this.locationListener);
+            locationManager.requestLocationUpdates(this.providerId, 500L, 1.0F, this.locationListener);
         } catch (SecurityException e) {
            // Toast.makeText(context, "GPS widget 需要GPS权限!", Toast.LENGTH_SHORT).show();
         }
@@ -410,11 +409,11 @@ public class GpsUtil {
         this.cityName = cityName;
     }
 
-    public String getMphSpeedStr() {
+  /*  public String getMphSpeedStr() {
         localNumberFormat.setMaximumFractionDigits(1);
         mphSpeedStr = localNumberFormat.format(mphSpeed);
         return mphSpeedStr;
-    }
+    }*/
 
     public String getKmhSpeedStr() {
         localNumberFormat.setMaximumFractionDigits(1);

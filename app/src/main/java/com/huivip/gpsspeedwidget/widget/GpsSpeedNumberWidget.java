@@ -29,10 +29,10 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.number_speed, PendingIntent.getService(context, 0,
                 service, 0));
         views.setOnClickPendingIntent(R.id.widget_number_base,null);
-/*        Intent mapFloatingService=new Intent(context, MapFloatingService.class);*/
+        /*        Intent mapFloatingService=new Intent(context, MapFloatingService.class);*/
         PendingIntent launchMapFloatingService=sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_MAPFLOATING,302);//PendingIntent.getService(context,1,mapFloatingService,PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.number_limit, launchMapFloatingService);
-        if(!Utils.isServiceRunning(context, GpsSpeedNumberService.class.getName())){
+        if(PrefUtils.isSpeedNumberHWidgetEnable(context) && !Utils.isServiceRunning(context, GpsSpeedNumberService.class.getName())){
             Intent widgetService=new Intent(context, GpsSpeedNumberService.class);
             context.startService(widgetService);
         }
@@ -57,6 +57,7 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+
     }
 
     @Override
@@ -69,6 +70,7 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
+        PrefUtils.setSpeedNumberHWidgetEnable(context,true);
         PrefUtils.setUserManualClosedServer(context,false);
         PrefUtils.setEnabledNumberWidget(context,true);
         PrefUtils.setWidgetActived(context,true);
@@ -77,9 +79,15 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
 
     @Override
     public void onDisabled(Context context) {
+        PrefUtils.setSpeedNumberHWidgetEnable(context,false);
         PrefUtils.setUserManualClosedServer(context,false);
         PrefUtils.setEnabledNumberWidget(context,false);
         PrefUtils.setWidgetActived(context,false);
+        if(Utils.isServiceRunning(context, GpsSpeedNumberService.class.getName())){
+            Intent widgetService=new Intent(context, GpsSpeedNumberService.class);
+            widgetService.putExtra(GpsSpeedNumberService.EXTRA_CLOSE,true);
+            context.startService(widgetService);
+        }
         super.onDisabled(context);
     }
     private PendingIntent sendAutoBroadCast(Context context, int key, int type){

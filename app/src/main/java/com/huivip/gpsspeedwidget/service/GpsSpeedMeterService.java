@@ -30,6 +30,7 @@ import java.util.TimerTask;
 public class GpsSpeedMeterService extends Service {
     static final int MAX_VELOCITA_NUMBER = 140;
     public static final String EXTRA_AUTOBOOT = "com.huivip.gpsspeedwidget.EXTRA_AUTOBOOT";
+    public static final String EXTRA_CLOSE= "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     GpsUtil gpsUtil;
     AppWidgetManager manager;
     AppWidgetHost appWidgetHost;
@@ -65,6 +66,10 @@ public class GpsSpeedMeterService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedmeterwidget);
         if (intent != null) {
+            if(intent.getBooleanExtra(EXTRA_CLOSE,false)){
+                stopSelf();
+                return super.onStartCommand(intent,Service.START_FLAG_REDELIVERY,startId);
+            }
             if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
                 if (serviceStoped) {
                     serviceStoped = false;

@@ -38,12 +38,12 @@ import java.util.Date;
 import java.util.Locale;
 
 public class TimeWidgetService extends Service {
-    public static final String EXTRA_CLOSE="lyric.widget.close";
+    public static final String EXTRA_CLOSE="Time.widget.close";
     DateFormat timeFormat=new SimpleDateFormat("HH:mm", Locale.CHINA);
     DateFormat weekFormat=new SimpleDateFormat("EEEE", Locale.CHINA);
     DateFormat dateFormat=new SimpleDateFormat("MM月dd日", Locale.CHINA);
     AppWidgetManager manager;
-    ComponentName thisWidget;
+    ComponentName timeWidget_h;
     GpsUtil gpsUtil;
     long updateTime;
     boolean weatherUpdated=false;
@@ -58,13 +58,12 @@ public class TimeWidgetService extends Service {
     public void onCreate() {
         this.manager = AppWidgetManager.getInstance(this);
         getApplicationContext().registerReceiver(myBroadcastReceiver,new IntentFilter(Intent.ACTION_TIME_TICK));
-        this.thisWidget = new ComponentName(this, TimeWidget.class);
+        this.timeWidget_h = new ComponentName(this, TimeWidget.class);
         EventBus.getDefault().register(this);
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         if(!Utils.isServiceRunning(getApplicationContext(),WeatherService.class.getName())){
            Intent weatherService=new Intent(getApplicationContext(),WeatherService.class);
            startService(weatherService);
-           Log.d("huivip","Widget Luanch weather service");
            EventBus.getDefault().post(new SearchWeatherEvent(false));
         }
         super.onCreate();
@@ -111,7 +110,7 @@ public class TimeWidgetService extends Service {
         weatherView.setTextColor(R.id.text_altitude,AppSettings.get().getTimeWidgetOtherTextColor());
         weatherView.setTextViewTextSize(R.id.text_altitude, TypedValue.COMPLEX_UNIT_SP,textSize);
 
-       manager.updateAppWidget(thisWidget,weatherView);
+       manager.updateAppWidget(timeWidget_h,weatherView);
        updateTime=System.currentTimeMillis();
        weatherUpdated=true;
     }
@@ -137,7 +136,7 @@ public class TimeWidgetService extends Service {
         timeView.setTextColor(R.id.text_altitude,AppSettings.get().getTimeWidgetOtherTextColor());
         timeView.setTextViewTextSize(R.id.text_altitude,TypedValue.COMPLEX_UNIT_SP,textSize);
 
-        manager.updateAppWidget(thisWidget,timeView);
+        manager.updateAppWidget(timeWidget_h,timeView);
         if(!weatherUpdated || System.currentTimeMillis()-updateTime > 10*60*1000 ){
             EventBus.getDefault().post(new SearchWeatherEvent(false));
         }

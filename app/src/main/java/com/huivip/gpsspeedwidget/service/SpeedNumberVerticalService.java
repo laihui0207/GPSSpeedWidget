@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ import com.huivip.gpsspeedwidget.widget.SpeedNumberVerticalWidget;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.x;
 
 import java.text.DecimalFormat;
@@ -42,6 +40,7 @@ import java.util.TimerTask;
  */
 public class SpeedNumberVerticalService extends Service {
     public static final String EXTRA_AUTOBOOT = "com.huivip.gpsspeedwidget.EXTRA_AUTOBOOT";
+    public static final String EXTRA_CLOSE= "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     GpsUtil gpsUtil;
     AppWidgetManager manager;
     AppWidgetHost appWidgetHost;
@@ -75,7 +74,7 @@ public class SpeedNumberVerticalService extends Service {
         };
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         CrashHandler.getInstance().init(getApplicationContext());
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
         EventBus.getDefault().register(this);
         super.onCreate();
     }
@@ -83,8 +82,13 @@ public class SpeedNumberVerticalService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //gpsUtil.startLocationService();
+        if(intent!=null && intent.getBooleanExtra(EXTRA_CLOSE,false)){
+            stopSelf();
+            return super.onStartCommand(intent,flags,startId);
+        }
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
         this.numberRemoteViews.setImageViewBitmap(R.id.image_speed_v,getBitmap("0"));
+
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
         return Service.START_REDELIVER_INTENT;
     }
@@ -142,8 +146,14 @@ public class SpeedNumberVerticalService extends Service {
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
         if (event.getLimitDistance()> 0) {
             this.numberRemoteViews.setTextViewText(R.id.textView_distance_v,event.getLimitDistance()+"米" );
+            int limitDistancePercentage=0;
+            if (event.getLimitDistance()<300 && event.getLimitDistance()>0) {
+                limitDistancePercentage = Math.round((300F -event.getLimitDistance() ) / 300 * 100);
+            }
+            this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, limitDistancePercentage, false);
         } else {
             this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance() + "");
+            this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, 0, false);
         }
 
         if (TextUtils.isEmpty(event.getCurRoadName())) {
@@ -151,16 +161,16 @@ public class SpeedNumberVerticalService extends Service {
         } else {
             this.numberRemoteViews.setTextViewText(R.id.v_current_road_name_v, event.getCurRoadName());
         }
-
-        //this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, gpsUtil.getLimitDistancePercentage(), false);
-        this.numberRemoteViews.setTextViewText(R.id.number_limit_v, gpsUtil.getLimitSpeed() + "");
+        if(event.getCameraSpeed()>0) {
+            this.numberRemoteViews.setTextViewText(R.id.number_limit_v, event.getCameraSpeed() + "");
+        }
         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started){
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.VISIBLE);
             this.numberRemoteViews.setTextViewText(R.id.textView_nextRoadName_v,event.getNextRoadName());
-            String distance=event.getSegRemainDis()+"米 后";
+            String distance=event.getSegRemainDis()+"米后";
             if(event.getSegRemainDis()>1000){
                 if(event.getSegRemainDis()>1000){
-                    distance= decimalFormat.format((float)event.getSegRemainDis()/1000)+ "公里 后";
+                    distance= decimalFormat.format((float)event.getSegRemainDis()/1000)+ "公里后";
                 }
             }
             this.numberRemoteViews.setTextViewText(R.id.textView_nextdistance_v,distance);
@@ -169,16 +179,6 @@ public class SpeedNumberVerticalService extends Service {
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.GONE);
         }
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
-       // this.numberRemoteViews = null;
-    }
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-    }
-
-    @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
     }
 
     public void setSpeeding(boolean speeding) {
@@ -190,50 +190,24 @@ public class SpeedNumberVerticalService extends Service {
     void computeAndShowData() {
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
         setSpeeding(gpsUtil.isHasLimited());
-       /* if (gpsUtil.getLimitDistance() > 0) {
-            this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getLimitDistance() + "米");
+        this.numberRemoteViews.setTextViewText(R.id.v_current_road_name_v,gpsUtil.getCurrentRoadName());
+        if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started){
+            numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.VISIBLE);
         } else {
+            numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.GONE);
             this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance() + "");
-        }
-
-        if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
-            this.numberRemoteViews.setTextViewText(R.id.v_current_road_name_v, "");
-        } else {
-            this.numberRemoteViews.setTextViewText(R.id.v_current_road_name_v, gpsUtil.getCurrentRoadName());
-        }
-
-        //this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, gpsUtil.getLimitDistancePercentage(), false);
-        this.numberRemoteViews.setTextViewText(R.id.number_limit_v, gpsUtil.getLimitSpeed() + "");
-        if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started){
-            numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.VISIBLE);
-            this.numberRemoteViews.setTextViewText(R.id.textView_nextRoadName_v,gpsUtil.getNextRoadName());
-            this.numberRemoteViews.setTextViewText(R.id.textView_nextdistance_v,gpsUtil.getNextRoadDistance());
-            this.numberRemoteViews.setImageViewResource(R.id.imageView_turnicon_v,getTurnIcon(gpsUtil.getNavi_turn_icon()));
-        } else {
-            numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.GONE);
-        }*/
-        if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started){
-            numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.VISIBLE);
-        } else {
-            numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.GONE);
+            this.numberRemoteViews.setTextViewText(R.id.number_limit_v, gpsUtil.getLimitSpeed()+ "");
         }
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
-        //this.numberRemoteViews = null;
     }
-    @Subscribe(threadMode= ThreadMode.MAIN)
+    @Subscribe
     public void showRoadLine(RoadLineEvent event) {
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
-        Log.d("huivip","get RoadLine:"+event.isShowed());
         if (event.isShowed()) {
             View vv = event.getRoadLineView();
-            if (vv != null) {
-                this.numberRemoteViews.setImageViewBitmap(R.id.image_roadLine_v,vv.getDrawingCache());
-                this.numberRemoteViews.setViewVisibility(R.id.image_roadLine_v,View.VISIBLE);
-            } else {
-                this.numberRemoteViews.setViewVisibility(R.id.image_roadLine_v,View.GONE);
-            }
+            this.numberRemoteViews.setImageViewBitmap(R.id.image_roadLine_v, vv.getDrawingCache());
         } else {
-            this.numberRemoteViews.setViewVisibility(R.id.image_roadLine_v,View.GONE);
+            this.numberRemoteViews.setImageViewBitmap(R.id.image_roadLine_v, null);
         }
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
     }

@@ -70,9 +70,6 @@ public class RealTimeFloatingService extends Service{
                 return super.onStartCommand(intent, flags, startId);
             }
         }
-        /*timeThread.running=true;
-        timeThread.setContext(getApplicationContext());
-        timeThread.start();*/
         return Service.START_REDELIVER_INTENT;
     }
 
@@ -88,8 +85,6 @@ public class RealTimeFloatingService extends Service{
         if(mFloatingView!=null && mWindowManager!=null){
             mWindowManager.removeView(mFloatingView);
         }
-
-       // timeThread.running=false;
     }
 
     @Override

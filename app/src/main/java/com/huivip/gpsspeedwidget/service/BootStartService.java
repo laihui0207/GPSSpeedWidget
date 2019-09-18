@@ -51,12 +51,10 @@ public class BootStartService extends Service {
         boolean start = AppSettings.get().getAutoStart();
         Log.d("huivip","Auto Start: "+start);
         if (start) {
-                  /*  PendingIntent thirdIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), ThirdSoftLaunchReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                    alarm.setExact(AlarmManager.RTC_WAKEUP, + 100L, thirdIntent);*/
             String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
             if (AppSettings.get().isEnableLaunchOtherApp() && !TextUtils.isEmpty(apps)) {
                 String[] autoApps = apps.split(",");
-                if (autoApps != null || autoApps.length > 0) {
+                if (autoApps.length > 0) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -90,11 +88,6 @@ public class BootStartService extends Service {
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
                 }
             }
-
-           /* TimeThread timeThread = new TimeThread(null);
-            timeThread.setContext(getApplicationContext());
-            timeThread.start();*/
-
             PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                     new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
@@ -131,16 +124,8 @@ public class BootStartService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         boolean start = AppSettings.get().getAutoStart();
         if (intent != null) {
-            if (start) {
+            if (start && !started) {
                 started = true;
-              /*  if (PrefUtils.isWidgetActived(getApplicationContext())) {
-                    if (!Utils.isServiceRunning(getApplicationContext(), GpsSpeedMeterService.class.getName())) {
-                        Intent service = new Intent(getApplicationContext(), GpsSpeedMeterService.class);
-                        service.putExtra(GpsSpeedMeterService.EXTRA_AUTOBOOT, true);
-                        startService(service);
-                    }
-                }*/
-
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                 if (AppSettings.get().isEnableTimeWindow()) {
                     if (!Utils.isServiceRunning(getApplicationContext(), RealTimeFloatingService.class.getName())) {
@@ -148,11 +133,6 @@ public class BootStartService extends Service {
                         startService(timeFloating);
                     }
                 }
-                //GpsUtil.getInstance(getApplicationContext()).startLocationService();
-
-                /*if(!PrefUtils.isWidgetActived(getApplicationContext()) && !PrefUtils.isEnableFlatingWindow(getApplicationContext())){
-                    GpsUtil.getInstance(getApplicationContext()).startLocationService();
-                }*/
                 if(AppSettings.get().isEnableRoadLine()){
                     Intent roadLineFloatingService=new Intent(getApplicationContext(),RoadLineFloatingService.class);
                     getApplicationContext().startService(roadLineFloatingService);

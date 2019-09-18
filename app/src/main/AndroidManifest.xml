@@ -283,7 +283,7 @@
             </intent-filter>
         </service>
         <service android:name=".service.TimeWidgetService"/>
-        <service android:name=".service.TimeWidgetVService"/>
+        <service android:name=".service.TimeWidgetVerticalService"/>
         <service android:name=".service.GpsSpeedNumberService"/>
         <service android:name=".service.DefaultFloatingService"/>
         <service android:name=".service.RecordGpsHistoryService"/>

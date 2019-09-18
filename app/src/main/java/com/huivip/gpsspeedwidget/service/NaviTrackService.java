@@ -52,7 +52,7 @@ public class NaviTrackService extends Service {
         serviceId = Long.parseLong(PrefUtils.getAmapTrackServiceID(getApplicationContext()));
         TERMINAL_NAME = "Track_" + PrefUtils.getShortDeviceId(getApplicationContext());
         aMapTrackClient = new AMapTrackClient(getApplicationContext());
-        aMapTrackClient.setInterval(1  , 20);
+        //aMapTrackClient.setInterval(5  , 20);
         super.onCreate();
     }
 

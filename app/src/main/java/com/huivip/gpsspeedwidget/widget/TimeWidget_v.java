@@ -8,7 +8,8 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.service.TimeWidgetVService;
+import com.huivip.gpsspeedwidget.service.TimeWidgetVerticalService;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 
@@ -20,8 +21,8 @@ public class TimeWidget_v extends AppWidgetProvider {
     public void onReceive(Context context, Intent paramIntent) {
         super.onReceive(context, paramIntent);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.time_weather_v_widget);
-        if(!Utils.isServiceRunning(context, TimeWidgetVService.class.getName())){
-            Intent widgetService=new Intent(context,TimeWidgetVService.class);
+        if(PrefUtils.isTimeVWidgetEnable(context) && !Utils.isServiceRunning(context, TimeWidgetVerticalService.class.getName())){
+            Intent widgetService=new Intent(context, TimeWidgetVerticalService.class);
             context.startService(widgetService);
         }
         views.setOnClickPendingIntent(R.id.v_time_base_v,null);
@@ -33,6 +34,7 @@ public class TimeWidget_v extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+
     }
 
     @Override
@@ -42,11 +44,18 @@ public class TimeWidget_v extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
+        PrefUtils.setTimeVWidgetEnable(context,true);
         super.onEnabled(context);
     }
 
     @Override
     public void onDisabled(Context context) {
+        if(Utils.isServiceRunning(context, TimeWidgetVerticalService.class.getName())){
+            Intent widgetService=new Intent(context, TimeWidgetVerticalService.class);
+            widgetService.putExtra(TimeWidgetVerticalService.EXTRA_CLOSE,true);
+            context.startService(widgetService);
+        }
+        PrefUtils.setTimeVWidgetEnable(context,false);
         super.onDisabled(context);
     }
 

@@ -99,11 +99,8 @@ public class DefaultFloatingService extends Service {
    /* @BindView(R.id.floating_close)
     ImageView closeImage;*/
     TimerTask locationScanTask;
-    TimerTask roadLineTask;
     Timer locationTimer = new Timer();
-    Timer roadLineTimer = new Timer();
     final Handler locationHandler = new Handler();
-    final Handler roadLineHandler = new Handler();
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -220,7 +217,6 @@ public class DefaultFloatingService extends Service {
         mLimitArcView.setTextColor(ContextCompat.getColor(this, android.R.color.transparent));
         mLimitArcView.setInterpolator(new FastOutSlowInInterpolator());
         mLimitArcView.setModels(limitModels);
-        //setLimit(30);
         this.locationScanTask = new TimerTask()
         {
             @Override
@@ -232,26 +228,11 @@ public class DefaultFloatingService extends Service {
                     public void run()
                     {
                         DefaultFloatingService.this.checkLocationData();
-                        //showRoadLine();
                     }
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-     /*   mServiceConnection=new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                roadLineBinder= (RoadLineService.RoadLineBinder) service;
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        };
-        if(PrefUtils.isEnableSpeedRoadLine(getApplicationContext())) {
-            getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
-        }*/
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
         EventBus.getDefault().register(this);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
@@ -280,7 +261,6 @@ public class DefaultFloatingService extends Service {
 
     void checkLocationData() {
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
-            //if(gpsUtil.isGpsLocationChanged()){
             setSpeed(gpsUtil.getKmhSpeedStr(), gpsUtil.getSpeedometerPercentage());
             mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
             setSpeeding(gpsUtil.isHasLimited());
@@ -304,17 +284,6 @@ public class DefaultFloatingService extends Service {
         }
     }
 
-/*    private void showRoadLine() {
-      if(roadLineBinder!=null){
-          View vv=roadLineBinder.getRoadLineView();
-          if(vv!=null){
-              daoHang_roadLine.setImageDrawable(((ImageView)vv).getDrawable());
-              daoHang_roadLine.setVisibility(View.VISIBLE);
-          } else {
-              daoHang_roadLine.setVisibility(View.INVISIBLE);
-          }
-      }
-    }*/
     @Subscribe(threadMode= ThreadMode.MAIN)
     public void showRoadLine(RoadLineEvent event) {
         if (AppSettings.get().isShowRoadLineOnSpeed() && event.isShowed()) {

@@ -15,6 +15,7 @@ import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.service.LyricWidgetService;
 
@@ -139,7 +140,7 @@ public class LyricServiceLowVersion extends Service  {
              lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
          }
          startService(lycFloatingService);
-        if (!Utils.isServiceRunning(getApplicationContext(), LyricWidgetService.class.getName())) {
+        if (PrefUtils.isLyricWidgetEnable(getApplicationContext()) &&  !Utils.isServiceRunning(getApplicationContext(), LyricWidgetService.class.getName())) {
             Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
            /* widgetService.putExtra(LyricWidgetService.DURATION, duration);
             widgetService.putExtra(LyricWidgetService.LYRIC_CONTENT, lyricContent);

@@ -90,6 +90,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isShowRoadLineOnSpeed(){
         return getBool(R.string.pref_key__speed_road_line_show,false);
     }
+    public boolean isSpeedWiddowNotShowOnDesktop(){
+        return getBool(R.string.pref_key__speed_not_on_desktop_show,false);
+    }
     public boolean isRoadLineFixed(){
         return getBool(R.string.pref_key__road_line_fixed,false);
     }

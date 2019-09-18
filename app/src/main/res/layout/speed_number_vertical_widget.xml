@@ -1,131 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/v_speed_base_v"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/speed_border"
-    android:orientation="vertical">
-
-    <ImageView
-        android:id="@+id/image_roadLine_v"
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:layout_gravity="center"
-        android:contentDescription="road line text"
-        tools:ignore="HardcodedText" />
-
-    <ImageView
-        android:id="@+id/image_speed_v"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_margin="5dp"
-        android:layout_weight="0.3"
-        android:contentDescription="speed text"
-        tools:ignore="HardcodedText" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
-
-        <FrameLayout
-            android:id="@+id/limitLayout"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:background="@drawable/widget_limit_border"
-            android:gravity="center"
-            tools:ignore="NestedWeights">
-
-           <!-- <ProgressBar
-                android:id="@+id/progressBarLimit_v"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/speed_limit_border"
-                android:indeterminate="false"
-                android:max="100"
-                android:progress="0"
-                android:progressDrawable="@drawable/circle_limit_number" />-->
-
-            <TextView
-                android:id="@+id/textView_distance_v"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|center"
-                android:text="0米"
-                android:textColor="#fff"
-                android:textSize="20sp"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/number_limit_v"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                android:ellipsize="none"
-                android:fontFamily="sans-serif-thin"
-                android:gravity="center_vertical|center_horizontal"
-                android:includeFontPadding="false"
-                android:text="0"
-                android:textColor="#fff"
-                android:textSize="50sp"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/v_current_road_name_v"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_gravity="bottom|center"
-                android:gravity="top|center_vertical|center_horizontal"
-                android:text="长江西路"
-                android:textColor="#ffffffff"
-                android:textSize="20sp"
-                tools:ignore="HardcodedText" />
-        </FrameLayout>
-        <LinearLayout android:orientation="vertical"
-            android:layout_width="0dp"
-            android:visibility="gone"
-            android:layout_weight="1" android:id="@+id/v_navi_layout"
-            android:layout_height="match_parent" >
-            <TextView
-                android:id="@+id/textView_nextRoadName_v"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:gravity="center"
-                android:text="翡翠路"
-                android:textColor="#fff"
-                android:textSize="25dp" />
-            <ImageView
-                android:id="@+id/imageView_turnicon_v"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_gravity="top|center_vertical"
-                android:src="@drawable/sou20_night" />
-            <TextView
-                android:id="@+id/textView_nextdistance_v"
-                android:layout_width="match_parent"
-                android:gravity="center"
-                android:layout_height="wrap_content"
-                android:text="3.2公里 后" android:maxLines="1"
-                android:textColor="#fff"
-                android:textSize="30dp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal">
+    android:orientation="horizontal">
+<!--    <LinearLayout
+        android:layout_width="60dp" android:id="@+id/v_minibar"
+        android:layout_height="match_parent" android:visibility="gone"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/v_gohome"
@@ -153,5 +37,149 @@
             android:contentDescription="TODO"
             android:src="@drawable/gocompany"
             tools:ignore="ContentDescription,HardcodedText" />
+    </LinearLayout>-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/image_roadLine_v"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1" android:visibility="gone"
+            android:contentDescription="road line text"
+            android:src="@drawable/roadline_demo"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:id="@+id/image_speed_v"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_weight="5"
+            android:contentDescription="speed text"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/limitLayout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/widget_limit_border"
+                android:gravity="center"
+                tools:ignore="NestedWeights">
+
+                 <ProgressBar
+                     android:id="@+id/progressBarLimit_v"
+                     style="?android:attr/progressBarStyleHorizontal"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:background="@drawable/speed_limit_border"
+                     android:indeterminate="false"
+                     android:max="100"
+                     android:progress="0"
+                     android:progressDrawable="@drawable/circle_limit_number" />
+
+                <TextView
+                    android:id="@+id/textView_distance_v"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|center"
+                    android:text="0米"
+                    android:textColor="#fff"
+                    android:textSize="20sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/number_limit_v"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="--"
+                    android:textColor="#fff"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/v_current_road_name_v"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center"
+                    android:gravity="top|center_vertical|center_horizontal"
+                    android:text="---"
+                    android:textColor="#ffffffff"
+                    android:textSize="20sp"
+                    tools:ignore="HardcodedText" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/v_navi_layout"
+                android:layout_width="0dp"
+                android:visibility="gone"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+                <TextView
+                    android:id="@+id/textView_nextRoadName_v"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center"
+                    android:gravity="center"
+                    android:text="---"
+                    android:textColor="#fff"
+                    android:textSize="25dp" />
+                <ImageView
+                    android:id="@+id/imageView_turnicon_v"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="top|center_vertical"
+                    android:layout_weight="1"
+                    android:src="@drawable/sou20_night" />
+
+
+
+                <TextView
+                    android:id="@+id/textView_nextdistance_v"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="--米后"
+                    android:textColor="#fff"
+                    android:textSize="30dp" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+    <ImageView
+        android:id="@+id/v_gohome"
+        android:layout_width="70dp"
+        android:layout_height="60dp"
+        android:layout_gravity="top|left"
+        android:src="@drawable/gohome" />
+    <ImageView
+        android:id="@+id/v_gocompany"
+        android:layout_width="70dp"
+        android:layout_height="60dp"
+        android:layout_gravity="top|right"
+        android:src="@drawable/gocompany" />
+
+    <ImageView
+        android:id="@+id/v_gomap"
+        android:layout_width="70dp"
+        android:layout_height="60dp"
+        android:layout_gravity="top|center"
+        android:src="@drawable/autonavi_icon" />
+</FrameLayout>
+

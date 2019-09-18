@@ -37,8 +37,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class TimeWidgetVService extends Service {
-    public static final String EXTRA_CLOSE="lyric.widget.close";
+public class TimeWidgetVerticalService extends Service {
+    public static final String EXTRA_CLOSE="time.v.widget.close";
     DateFormat timeFormat=new SimpleDateFormat("HH:mm", Locale.CHINA);
     DateFormat weekFormat=new SimpleDateFormat("EEEE", Locale.CHINA);
     DateFormat dateFormat=new SimpleDateFormat("MM月dd日", Locale.CHINA);

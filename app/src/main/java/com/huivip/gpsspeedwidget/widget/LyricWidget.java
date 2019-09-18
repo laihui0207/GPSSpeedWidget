@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.service.GpsSpeedMeterService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 
@@ -32,25 +31,18 @@ public class LyricWidget extends AppWidgetProvider {
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
-        PrefUtils.setWidgetActived(context,false);
-        PrefUtils.setEnabledNumberWidget(context,false);
-        context.stopService(new Intent(context, GpsSpeedMeterService.class));
         super.onDeleted(context, appWidgetIds);
     }
 
     @Override
     public void onEnabled(Context context) {
-        PrefUtils.setUserManualClosedServer(context,false);
-        PrefUtils.setEnabledNumberWidget(context,true);
-        PrefUtils.setWidgetActived(context,true);
+        PrefUtils.setLyricWidgetEnable(context,true);
         super.onEnabled(context);
     }
 
     @Override
     public void onDisabled(Context context) {
-        PrefUtils.setUserManualClosedServer(context,false);
-        PrefUtils.setEnabledNumberWidget(context,false);
-        PrefUtils.setWidgetActived(context,false);
+        PrefUtils.setLyricWidgetEnable(context,false);
         super.onDisabled(context);
     }
 
