@@ -27,7 +27,7 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
         //Intent service = new Intent(context, SpeedNumberVerticalService.class);
         views.setOnClickPendingIntent(R.id.v_speed_base_v, null);
         PendingIntent launchMapFloatingService=sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_MAPFLOATING,302);//PendingIntent.getService(context,1,mapFloatingService,PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setOnClickPendingIntent(R.id.image_speed_v, launchMapFloatingService);
+        views.setOnClickPendingIntent(R.id.v_speed_layout, launchMapFloatingService);
         if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, SpeedNumberVerticalService.class.getName())){
             Intent widgetService=new Intent(context, SpeedNumberVerticalService.class);
             context.startService(widgetService);

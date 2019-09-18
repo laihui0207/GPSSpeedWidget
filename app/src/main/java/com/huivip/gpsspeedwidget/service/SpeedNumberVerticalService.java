@@ -87,7 +87,7 @@ public class SpeedNumberVerticalService extends Service {
             return super.onStartCommand(intent,flags,startId);
         }
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
-        this.numberRemoteViews.setImageViewBitmap(R.id.image_speed_v,getBitmap("0"));
+        this.numberRemoteViews.setImageViewBitmap(R.id.image_speed_v,getBitmap("0",AppSettings.get().getSpeedVerticalWidgetSpeedTextColor()));
 
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
         return Service.START_REDELIVER_INTENT;
@@ -182,7 +182,7 @@ public class SpeedNumberVerticalService extends Service {
     }
 
     public void setSpeeding(boolean speeding) {
-        int colorRes = speeding ? R.color.red500 : R.color.white;
+        int colorRes = speeding ? R.color.red500 : AppSettings.get().getSpeedVerticalWidgetSpeedTextColor();
         int color = ContextCompat.getColor(this, colorRes);
         this.numberRemoteViews.setImageViewBitmap(R.id.image_speed_v,getBitmap(gpsUtil.getKmhSpeedStr()+"",color));
     }
@@ -221,7 +221,7 @@ public class SpeedNumberVerticalService extends Service {
         DigtalView timeView = view.findViewById(R.id.v_widget_number);
         timeView.setText(text);
         timeView.setTextColor(color);
-        timeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60 + Integer.parseInt(AppSettings.get().getTimeWidgetTimeTextSize()));
+        timeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60 + Integer.parseInt(AppSettings.get().getSpeedVerticalWidgetSpeedTextSize()));
         view.measure(view.getMeasuredWidth(), view.getMeasuredHeight());
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         view.buildDrawingCache();

@@ -63,6 +63,12 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public String getTimeWidgetTimeTextSize(){
         return getString(R.string.pref_key__widget_time_font_size,"0");
     }
+    public int getSpeedVerticalWidgetSpeedTextColor(){
+        return getInt(R.string.pref_key__widget_speed_font_color,R.color.white);
+    }
+    public String getSpeedVerticalWidgetSpeedTextSize(){
+        return getString(R.string.pref_key__widget_speed_font_size,"0");
+    }
     public int getTimeWidgetOtherTextColor(){
         return getInt(R.string.pref_key__widget_time_other_font_color,R.color.white);
     }

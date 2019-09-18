@@ -113,7 +113,7 @@
     <string name="minibar_title__device_settings">Device Settings</string>
     <string name="minibar_summary__device_settings">Shortcut to device settings.</string>
     <string name="minibar_title__launcher_settings">Launcher Settings</string>
-    <string name="minibar_summary__launcher_settings">Shortcut to OpenLauncher settings.</string>
+    <string name="minibar_summary__launcher_settings">Shortcut toGPSPlugin settings.</string>
     <string name="minibar_title__volume_dialog">Volume Dialog</string>
     <string name="minibar_summary__volume_dialog">Display all available volume sliders.</string>
     <string name="minibar_title__app_drawer">Open App Drawer</string>
@@ -294,7 +294,7 @@
     <string name="please_wait">Searching for installed apps. Please wait.</string>
     <string name="are_you_sure">Are you sure? This action cannot be undone unless you have a backup.</string>
     <string name="device_admin_title">Device Admin Required</string>
-    <string name="device_admin_summary">OpenLauncher requires the Device Administration permission to lock your screen. Please enable it in the settings to use this feature.</string>
+    <string name="device_admin_summary">GPS插件 requires the Device Administration permission to lock your screen. Please enable it in the settings to use this feature.</string>
     <string name="select_app">Select App</string>
     <string name="select_wallpaper">Select Wallpaper</string>
     <string name="select_icon_pack">Select Icon Pack</string>
