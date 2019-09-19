@@ -111,7 +111,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:gravity="center_vertical|center_horizontal"
-                    android:text="--"
+                    android:text="0"
                     android:textColor="#fff"
                     android:textSize="30sp"
                     tools:ignore="HardcodedText" />

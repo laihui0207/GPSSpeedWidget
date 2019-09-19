@@ -208,14 +208,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }*/
                     int leftDistance = intent.getIntExtra("ROUTE_REMAIN_DIS", 0);
                     if (leftDistance > 0) {
-                        gpsUtil.setTotalLeftDistance(leftDistance);
+                        gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
+                        // gpsUtil.setTotalLeftDistance(leftDistance);
                         if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Ended && gpsUtil.getNaviFloatingStatus() == Constant.Navi_Floating_Disabled) {
-                            gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
                             startBackendNaviFloatingService(context);
                             gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
                         }
-                    } else {
-                        gpsUtil.setTotalLeftDistance(0);
                     }
                    /* int leftTime = intent.getIntExtra("ROUTE_REMAIN_TIME", -1);
                     if (leftTime > 0) {

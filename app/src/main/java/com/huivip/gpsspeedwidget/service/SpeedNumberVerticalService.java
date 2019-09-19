@@ -182,9 +182,9 @@ public class SpeedNumberVerticalService extends Service {
     }
 
     public void setSpeeding(boolean speeding) {
-        int colorRes = speeding ? R.color.red500 : AppSettings.get().getSpeedVerticalWidgetSpeedTextColor();
-        int color = ContextCompat.getColor(this, colorRes);
-        this.numberRemoteViews.setImageViewBitmap(R.id.image_speed_v,getBitmap(gpsUtil.getKmhSpeedStr()+"",color));
+        int colorRes = speeding ? ContextCompat.getColor(this, R.color.red500): AppSettings.get().getSpeedVerticalWidgetSpeedTextColor();
+       // int color = ContextCompat.getColor(this, colorRes);
+        this.numberRemoteViews.setImageViewBitmap(R.id.image_speed_v,getBitmap(gpsUtil.getKmhSpeedStr()+"",colorRes));
     }
 
     void computeAndShowData() {
