@@ -19,6 +19,7 @@ import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.widget.LyricWidget;
 
 import java.util.List;
@@ -85,25 +86,12 @@ public class LyricWidgetService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null && intent.getBooleanExtra(EXTRA_CLOSE, false)) {
+        if (!PrefUtils.isLyricWidgetEnable(getApplicationContext()) || (intent != null && intent.getBooleanExtra(EXTRA_CLOSE, false))) {
             onStop();
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
         }
         if (intent != null && !started) {
-
-           /* lyric_content = intent.getStringExtra(LYRIC_CONTENT);
-            Log.d("huivip","Lyric wiget:"+lyric_content);
-            if (!TextUtils.isEmpty(lyric_content)) {
-                list = LrcUtil.parseStr2List(lyric_content);
-            } else {
-                onStop();
-                stopSelf();
-                list=null;
-            }
-            duration = intent.getLongExtra(DURATION, 0);
-            position = intent.getLongExtra(POSITION, 0);
-            startTime=System.currentTimeMillis()-position;*/
             started=true;
             IntentFilter intentFilter = new IntentFilter( "com.huivip.widget.lyric.changed" );
             registerReceiver( myBroadcastReceiver , intentFilter);
@@ -112,26 +100,24 @@ public class LyricWidgetService extends Service {
         return Service.START_REDELIVER_INTENT;
     }
     private void calTime(){
-        if(!audioManager.isMusicActive()) return;
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.lyric_widget);
+        if(!audioManager.isMusicActive()){
+            onStop();
+            stopSelf();
+            return;
+        }
         playercurrentMillis=(int)(System.currentTimeMillis()-startTime);
         getCurrentPosition();
-        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.lyric_widget);
         if(list!=null && list.size()>0) {
             for (int i = 0; i < list.size(); i++) {
                 if (i == currentPosition) {
                     currentLyricContentString = list.get(i).getLrc();
-
-                }/* else {
-                canvas.drawText(list.get(i).getLrc(), width / 2, height / 2 + 80 * i, gPaint);
-            }*/
+                }
             }
-            //Log.d("huivip","calTime:"+currentLyricContentString);
             remoteViews.setTextViewText(R.id.textView_lyric, currentLyricContentString);
         }
-       /* else {
-            remoteViews.setTextViewText(R.id.textView_lyric, "");
-        }*/
         this.manager.updateAppWidget(this.lyricWidget, remoteViews);
+
     }
     @Override
     public void onDestroy() {
@@ -139,17 +125,11 @@ public class LyricWidgetService extends Service {
         super.onDestroy();
     }
     public void onStop(){
-       /* if(lyricTimer!=null){
-            lyricTimer.cancel();
-        }
-        if(lyricTask!=null){
-            lyricTask.cancel();
-        }
-        list=null;*/
        started=false;
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.lyric_widget);
         remoteViews.setTextViewText(R.id.textView_lyric,"");
         this.manager.updateAppWidget(this.lyricWidget,remoteViews);
+        unregisterReceiver(myBroadcastReceiver);
     }
     private void getCurrentPosition() {
         try {

@@ -8,25 +8,33 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.service.TimeWidgetVerticalService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 
 /**
  * @author sunlaihui
  */
-public class LyricWidget extends AppWidgetProvider {
+public class TimeWidget_v extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent paramIntent) {
         super.onReceive(context, paramIntent);
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.lyric_widget);
-        ComponentName localComponentName = new ComponentName(context, LyricWidget.class);
-        views.setOnClickPendingIntent(R.id.lyric_widget,null);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.time_weather_v_widget);
+        if(PrefUtils.isTimeVWidgetEnable(context) && !Utils.isServiceRunning(context, TimeWidgetVerticalService.class.getName())){
+            Intent widgetService=new Intent(context, TimeWidgetVerticalService.class);
+            context.startService(widgetService);
+        }
+        views.setOnClickPendingIntent(R.id.v_time_base_v,null);
+
+        ComponentName localComponentName = new ComponentName(context, TimeWidget_v.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+
     }
 
     @Override
@@ -36,13 +44,18 @@ public class LyricWidget extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
-        PrefUtils.setLyricWidgetEnable(context,true);
+        PrefUtils.setTimeVWidgetEnable(context,true);
         super.onEnabled(context);
     }
 
     @Override
     public void onDisabled(Context context) {
-        PrefUtils.setLyricWidgetEnable(context,false);
+        if(Utils.isServiceRunning(context, TimeWidgetVerticalService.class.getName())){
+            Intent widgetService=new Intent(context, TimeWidgetVerticalService.class);
+            widgetService.putExtra(TimeWidgetVerticalService.EXTRA_CLOSE,true);
+            context.startService(widgetService);
+        }
+        PrefUtils.setTimeVWidgetEnable(context,false);
         super.onDisabled(context);
     }
 

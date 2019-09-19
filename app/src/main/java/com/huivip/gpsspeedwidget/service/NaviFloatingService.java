@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
@@ -48,6 +49,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.x;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +106,9 @@ public class NaviFloatingService extends Service {
     ImageView closeButton;
     @BindView(R.id.segmentView)
     TmcSegmentView tmcSegmentView;
-/*
+    DecimalFormat decimalFormat=new DecimalFormat("0.0");
+
+    /*
     int count = 0;
 */
    /* RoadLineService.RoadLineBinder roadLineBinder;
@@ -214,32 +218,35 @@ public class NaviFloatingService extends Service {
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
-    //@Subscribe
-    @SuppressLint("DefaultLocale")
-    public void checkLocationData() {
-        if(!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
-            currentRoadTextView.setText(String.format("%s", gpsUtil.getCurrentRoadName()));
+    @Subscribe
+    public void updateNaviInfo(NaviInfoUpdateEvent event){
+        if(!TextUtils.isEmpty(event.getNextRoadName())){
+            nextRoadNameTextView.setText(event.getNextRoadName());
         }
-        if(!TextUtils.isEmpty(gpsUtil.getNextRoadName())){
-            nextRoadNameTextView.setText(gpsUtil.getNextRoadName());
+        String distance=event.getSegRemainDis()+"米 后";
+        if(event.getSegRemainDis()>1000){
+            if(event.getSegRemainDis()>1000){
+                distance= decimalFormat.format((float)event.getSegRemainDis()/1000)+ "公里 后";
+            }
         }
-        nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
-        naviLeftTextView.setText(String.format("%s/%s", gpsUtil.getTotalLeftDistance(), gpsUtil.getTotalLeftTime()));
-        if(gpsUtil.getNavi_turn_icon()>0) {
-            naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
+        nextRoadDistanceTextView.setText(distance);
+
+        naviLeftTextView.setText(String.format("%s/%s", event.getRouteRemainDis(), event.getRouteRemainTime()));
+        if(event.getIcon()>0) {
+            naveIconImageView.setImageResource(getTurnIcon(event.getIcon()));
         }
 
-        if(gpsUtil.getCameraType()!=-1){
+        if(event.getLimitType()!=-1){
             cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
-            if(gpsUtil.getCameraDistance()>0){
-                navicameraDistanceTextView.setText(String.format("%d米", gpsUtil.getCameraDistance()));
+            if(event.getLimitDistance()>0){
+                navicameraDistanceTextView.setText(String.format("%d米", event.getLimitDistance()));
                 //limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
             }
             else {
                 navicameraDistanceTextView.setText("0米");
             }
-            if(gpsUtil.getCameraSpeed()>0){
-                navicameraSpeedTextView.setText(String.format("%d", gpsUtil.getCameraSpeed()));
+            if(event.getCameraSpeed()>0){
+                navicameraSpeedTextView.setText(String.format("%d", event.getCameraSpeed()));
             }
             else {
                 navicameraSpeedTextView.setText("0");
@@ -248,6 +255,13 @@ public class NaviFloatingService extends Service {
         }
         else {
             naviCameraView.setVisibility(View.GONE);
+        }
+    }
+    //@Subscribe
+    @SuppressLint("DefaultLocale")
+    public void checkLocationData() {
+        if(!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
+            currentRoadTextView.setText(String.format("%s", gpsUtil.getCurrentRoadName()));
         }
         speedTextView.setText(gpsUtil.getKmhSpeedStr());
         int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;

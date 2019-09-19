@@ -53,7 +53,9 @@ import com.huivip.gpsspeedwidget.util.Definitions.ItemPosition;
 import com.huivip.gpsspeedwidget.util.LauncherAction;
 import com.huivip.gpsspeedwidget.util.LauncherAction.Action;
 import com.huivip.gpsspeedwidget.util.Tool;
+import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.viewutil.DialogHelper;
 import com.huivip.gpsspeedwidget.viewutil.MinibarAdapter;
 import com.huivip.gpsspeedwidget.viewutil.WidgetHost;
@@ -76,6 +78,7 @@ import net.gsantner.opoc.util.PermissionChecker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public final class HomeActivity extends Activity implements OnDesktopEditListener, DesktopOptionViewListener {
     public static final Companion Companion = new Companion();
@@ -181,7 +184,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         initPermission();
-        startBootService(true);
+        //startBootService(true);
         Companion.setLauncher(this);
         AppSettings appSettings = AppSettings.get();
 
@@ -195,6 +198,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         _db = Setup.dataManager();
 
         setContentView(getLayoutInflater().inflate(R.layout.activity_home, null));
+        CrashHandler.getInstance().init(getApplicationContext());
 
         // transparent status and navigation
         if (VERSION.SDK_INT >= 21) {
@@ -317,7 +321,8 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     public final void initSettings() {
         updateHomeLayout();
-
+        Set<String> desktopPackages= Utils.getDesktopPackageName(getApplicationContext());
+        PrefUtils.setApps(getApplicationContext(),desktopPackages);
         AppSettings appSettings = Setup.appSettings();
         if (appSettings.getDesktopFullscreen()) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);

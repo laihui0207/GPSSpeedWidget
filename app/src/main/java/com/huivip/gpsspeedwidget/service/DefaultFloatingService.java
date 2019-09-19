@@ -90,10 +90,14 @@ public class DefaultFloatingService extends Service {
     TextView textViewAltitude;
     @BindView(R.id.textView_currentRoadName)
     TextView textViewCurrentRoadName;
+    @BindView(R.id.imageView_default_xunhang_roadLIne)
+    ImageView xunHang_roadLine;
     @BindView(R.id.imageView_default_daohang_roadLIne)
     ImageView daoHang_roadLine;
     private ServiceConnection mServiceConnection;
     RoadLineService.RoadLineBinder roadLineBinder;
+   /* @BindView(R.id.floating_close)
+    ImageView closeImage;*/
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
@@ -130,6 +134,9 @@ public class DefaultFloatingService extends Service {
             locationTimer.cancel();
             locationTimer.purge();
         }
+       /* if(gpsUtil!= null) {
+            gpsUtil.stopLocationService(false);
+        }*/
     }
 
     @Override
@@ -210,7 +217,6 @@ public class DefaultFloatingService extends Service {
         mLimitArcView.setTextColor(ContextCompat.getColor(this, android.R.color.transparent));
         mLimitArcView.setInterpolator(new FastOutSlowInInterpolator());
         mLimitArcView.setModels(limitModels);
-        //setLimit(30);
         this.locationScanTask = new TimerTask()
         {
             @Override
@@ -222,26 +228,11 @@ public class DefaultFloatingService extends Service {
                     public void run()
                     {
                         DefaultFloatingService.this.checkLocationData();
-                        //showRoadLine();
                     }
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
-     /*   mServiceConnection=new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                roadLineBinder= (RoadLineService.RoadLineBinder) service;
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        };
-        if(PrefUtils.isEnableSpeedRoadLine(getApplicationContext())) {
-            getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
-        }*/
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
         EventBus.getDefault().register(this);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
@@ -270,7 +261,6 @@ public class DefaultFloatingService extends Service {
 
     void checkLocationData() {
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
-            //if(gpsUtil.isGpsLocationChanged()){
             setSpeed(gpsUtil.getKmhSpeedStr(), gpsUtil.getSpeedometerPercentage());
             mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
             setSpeeding(gpsUtil.isHasLimited());
@@ -294,17 +284,6 @@ public class DefaultFloatingService extends Service {
         }
     }
 
-/*    private void showRoadLine() {
-      if(roadLineBinder!=null){
-          View vv=roadLineBinder.getRoadLineView();
-          if(vv!=null){
-              daoHang_roadLine.setImageDrawable(((ImageView)vv).getDrawable());
-              daoHang_roadLine.setVisibility(View.VISIBLE);
-          } else {
-              daoHang_roadLine.setVisibility(View.INVISIBLE);
-          }
-      }
-    }*/
     @Subscribe(threadMode= ThreadMode.MAIN)
     public void showRoadLine(RoadLineEvent event) {
         if (AppSettings.get().isShowRoadLineOnSpeed() && event.isShowed()) {
@@ -423,8 +402,11 @@ public class DefaultFloatingService extends Service {
         private long mStartClickTime;
         private boolean mIsClick;
 
+        private AnimatorSet fadeAnimator;
+        private float initialAlpha;
         private ValueAnimator fadeOut;
         private ValueAnimator fadeIn;
+        private boolean tempMove=false;
         public FloatingOnTouchListener() {
             final WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
             fadeOut = ValueAnimator.ofFloat(params.alpha, 0.1F);
@@ -487,6 +469,20 @@ public class DefaultFloatingService extends Service {
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
+                       /* if (fadeAnimator != null && fadeAnimator.isaMapstarted()) {
+                            fadeAnimator.cancel();
+                            params.alpha = initialAlpha;
+                            try {
+                                mWindowManager.updateViewLayout(mFloatingView, params);
+                            } catch (IllegalArgumentException ignore) {
+                            }
+                        } else {
+                            initialAlpha = params.alpha;
+
+                            fadeAnimator = new AnimatorSet();
+                            fadeAnimator.play(fadeOut).before(fadeIn);
+                            fadeAnimator.start();
+                        }*/
                         if(!Utils.isServiceRunning(getApplicationContext(), MapFloatingService.class.getName())) {
                             Intent floatingMapIntent = new Intent(getApplicationContext(), MapFloatingService.class);
                             startService(floatingMapIntent);

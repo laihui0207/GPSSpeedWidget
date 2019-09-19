@@ -115,6 +115,12 @@ public abstract class PrefUtils {
     static final String ROADLINE_FLOATTING_FIXED_POSITION="com.huivip.roaldLine.fixed.position";
     static final String ROADLINE_FLOATTING="com.huivip.roaldLine.enabled";
     static final String ROADLINE_SPEED="com.huivip.roaldLine.speed.enabled";
+    static final String TIME_H_WIDGET_ENABLE="com.huivip.time.widget.h.enabled";
+    static final String TIME_V_WIDGET_ENABLE="com.huivip.time.widget.v.enabled";
+    static final String SPEED_NUMBER_V_WIDGET_ENABLE="com.huivip.time.widget.speed.number.v.enabled";
+    static final String SPEED_NUMBER_H_WIDGET_ENABLE="com.huivip.time.widget.speed.number.h.enabled";
+    static final String SPEED_METER_WIDGET_ENABLE="com.huivip.time.widget.speed.meter.enabled";
+    static final String LYRIC_WIDGET_ENABLE="com.huivip.time.widget.lyric.enabled";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -219,6 +225,42 @@ public abstract class PrefUtils {
     }
     public static void setEnableTimeFloatingWidow(Context context, boolean value){
         edit(context).putBoolean(ENABLE_TIME_FLOATING_WINDOW, value).apply();
+    }
+    public static void setTimeHWidgetEnable(Context context,boolean value){
+        edit(context).putBoolean(TIME_H_WIDGET_ENABLE,value).apply();
+    }
+    public static boolean isTimeHWidgetEnable(Context context){
+        return getSharedPreferences(context).getBoolean(TIME_H_WIDGET_ENABLE,false);
+    }
+    public static void setTimeVWidgetEnable(Context context,boolean value){
+        edit(context).putBoolean(TIME_V_WIDGET_ENABLE,value).apply();
+    }
+    public static boolean isTimeVWidgetEnable(Context context){
+        return getSharedPreferences(context).getBoolean(TIME_V_WIDGET_ENABLE,false);
+    }
+    public static void setSpeedNumberVWidgetEnable(Context context,boolean value){
+        edit(context).putBoolean(SPEED_NUMBER_V_WIDGET_ENABLE,value).apply();
+    }
+    public static boolean isSpeedNumberVWidgetEnable(Context context){
+        return getSharedPreferences(context).getBoolean(SPEED_NUMBER_V_WIDGET_ENABLE,false);
+    }
+    public static void setSpeedNumberHWidgetEnable(Context context,boolean value){
+        edit(context).putBoolean(SPEED_NUMBER_H_WIDGET_ENABLE,value).apply();
+    }
+    public static boolean isSpeedMeterWidgetEnable(Context context){
+        return getSharedPreferences(context).getBoolean(SPEED_METER_WIDGET_ENABLE,false);
+    }
+    public static void setSpeedMeterWidgetEnable(Context context,boolean value){
+        edit(context).putBoolean(SPEED_METER_WIDGET_ENABLE,value).apply();
+    }
+    public static boolean isSpeedNumberHWidgetEnable(Context context){
+        return getSharedPreferences(context).getBoolean(SPEED_NUMBER_H_WIDGET_ENABLE,false);
+    }
+    public static void setLyricWidgetEnable(Context context,boolean value){
+        edit(context).putBoolean(LYRIC_WIDGET_ENABLE,value).apply();
+    }
+    public static boolean isLyricWidgetEnable(Context context){
+        return getSharedPreferences(context).getBoolean(LYRIC_WIDGET_ENABLE,false);
     }
     public static boolean isEnableTimeFloatingWidow(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_TIME_FLOATING_WINDOW, false);

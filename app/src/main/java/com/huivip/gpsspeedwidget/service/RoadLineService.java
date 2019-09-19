@@ -57,7 +57,7 @@ public class RoadLineService extends Service {
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
         }
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_REDELIVER_INTENT;//super.onStartCommand(intent, flags, startId);
     }
 
     @Override

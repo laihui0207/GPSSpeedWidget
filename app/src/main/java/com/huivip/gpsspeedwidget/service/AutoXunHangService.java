@@ -178,7 +178,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     }
     @Subscribe
     public void updateAutoMapStatus(AutoMapStatusUpdateEvent event){
-        this.autoMapStarted = event.isStarted();
+        this.autoMapStarted = event.isaMapstarted();
     }
     @Override
     public void onGetNavigationText(String s) {

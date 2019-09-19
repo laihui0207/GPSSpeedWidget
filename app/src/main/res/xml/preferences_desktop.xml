@@ -41,7 +41,7 @@
             android:title="@string/minibar" />
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="@string/pref_key__desktop_rotate"
             android:summary="@string/pref_summary__desktop_rotate"
             android:title="@string/pref_title__desktop_rotate" />

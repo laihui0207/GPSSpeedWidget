@@ -34,6 +34,7 @@ import java.util.TimerTask;
  */
 public class GpsSpeedNumberService extends Service {
     public static final String EXTRA_AUTOBOOT = "com.huivip.gpsspeedwidget.EXTRA_AUTOBOOT";
+    public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     GpsUtil gpsUtil;
     AppWidgetManager manager;
     AppWidgetHost appWidgetHost;
@@ -72,6 +73,10 @@ public class GpsSpeedNumberService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speednumberwidget);
         if (intent != null) {
+            if(intent.getBooleanExtra(EXTRA_CLOSE,false)){
+                stopSelf();
+                return super.onStartCommand(intent,flags,startId);
+            }
             if (intent.getBooleanExtra(EXTRA_AUTOBOOT, false) || serviceStoped) {
                 if (serviceStoped) {
                     serviceStoped = false;

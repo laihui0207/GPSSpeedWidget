@@ -26,7 +26,7 @@ import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.ChinaDateUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.DigtalView;
-import com.huivip.gpsspeedwidget.widget.TimeWidget;
+import com.huivip.gpsspeedwidget.widget.TimeWidget_v;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,13 +37,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class TimeWidgetService extends Service {
-    public static final String EXTRA_CLOSE="Time.widget.close";
+public class TimeWidgetVerticalService extends Service {
+    public static final String EXTRA_CLOSE="time.v.widget.close";
     DateFormat timeFormat=new SimpleDateFormat("HH:mm", Locale.CHINA);
     DateFormat weekFormat=new SimpleDateFormat("EEEE", Locale.CHINA);
     DateFormat dateFormat=new SimpleDateFormat("MM月dd日", Locale.CHINA);
     AppWidgetManager manager;
-    ComponentName timeWidget_h;
+    ComponentName thisWidget;
     GpsUtil gpsUtil;
     long updateTime;
     boolean weatherUpdated=false;
@@ -58,12 +58,13 @@ public class TimeWidgetService extends Service {
     public void onCreate() {
         this.manager = AppWidgetManager.getInstance(this);
         getApplicationContext().registerReceiver(myBroadcastReceiver,new IntentFilter(Intent.ACTION_TIME_TICK));
-        this.timeWidget_h = new ComponentName(this, TimeWidget.class);
+        this.thisWidget = new ComponentName(this, TimeWidget_v.class);
         EventBus.getDefault().register(this);
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         if(!Utils.isServiceRunning(getApplicationContext(),WeatherService.class.getName())){
            Intent weatherService=new Intent(getApplicationContext(),WeatherService.class);
            startService(weatherService);
+           Log.d("huivip","Widget Luanch weather service");
            EventBus.getDefault().post(new SearchWeatherEvent(false));
         }
         super.onCreate();
@@ -94,49 +95,49 @@ public class TimeWidgetService extends Service {
     }
     @Subscribe
     public void updateWeather(WeatherEvent event){
-       RemoteViews weatherView = new RemoteViews(getPackageName(), R.layout.time_weather_widget);
-       weatherView.setImageViewResource(R.id.image_weather, WeatherItem.getWeatherResId(event.getWeather()));
+       RemoteViews weatherView = new RemoteViews(getPackageName(), R.layout.time_weather_v_widget);
+       weatherView.setImageViewResource(R.id.image_weather_v, WeatherItem.getWeatherResId(event.getWeather()));
         int textSize=15+Integer.parseInt(AppSettings.get().getTimeWidgetOtherTextSize());
 
-       weatherView.setTextViewText(R.id.text_city,event.getCity());
-       weatherView.setTextColor(R.id.text_city,AppSettings.get().getTimeWidgetOtherTextColor());
-       weatherView.setTextViewTextSize(R.id.text_city, TypedValue.COMPLEX_UNIT_SP,textSize);
+       weatherView.setTextViewText(R.id.text_city_v,event.getCity());
+       weatherView.setTextColor(R.id.text_city_v,AppSettings.get().getTimeWidgetOtherTextColor());
+       weatherView.setTextViewTextSize(R.id.text_city_v, TypedValue.COMPLEX_UNIT_SP,textSize);
 
-       weatherView.setTextViewText(R.id.text_temperature,event.getWeather()+"/"+event.getTemperature()+"\u2103  ");
-        weatherView.setTextColor(R.id.text_temperature,AppSettings.get().getTimeWidgetOtherTextColor());
-        weatherView.setTextViewTextSize(R.id.text_temperature, TypedValue.COMPLEX_UNIT_SP,textSize);
+       weatherView.setTextViewText(R.id.text_temperature_v,event.getWeather()+"/"+event.getTemperature()+"\u2103  ");
+        weatherView.setTextColor(R.id.text_temperature_v,AppSettings.get().getTimeWidgetOtherTextColor());
+        weatherView.setTextViewTextSize(R.id.text_temperature_v, TypedValue.COMPLEX_UNIT_SP,textSize);
 
-       weatherView.setTextViewText(R.id.text_altitude,"海拔:"+event.getAltitude()+"米");
-        weatherView.setTextColor(R.id.text_altitude,AppSettings.get().getTimeWidgetOtherTextColor());
-        weatherView.setTextViewTextSize(R.id.text_altitude, TypedValue.COMPLEX_UNIT_SP,textSize);
+       weatherView.setTextViewText(R.id.text_altitude_v,"海拔:"+event.getAltitude()+"米");
+        weatherView.setTextColor(R.id.text_altitude_v,AppSettings.get().getTimeWidgetOtherTextColor());
+        weatherView.setTextViewTextSize(R.id.text_altitude_v, TypedValue.COMPLEX_UNIT_SP,textSize);
 
-       manager.updateAppWidget(timeWidget_h,weatherView);
+       manager.updateAppWidget(thisWidget,weatherView);
        updateTime=System.currentTimeMillis();
        weatherUpdated=true;
     }
     private void updateView(){
         Date date=new Date();
-       RemoteViews timeView = new RemoteViews(getPackageName(), R.layout.time_weather_widget);
-        timeView.setImageViewBitmap(R.id.image_time, getBitmap(timeFormat.format(date)));
+       RemoteViews timeView = new RemoteViews(getPackageName(), R.layout.time_weather_v_widget);
+        timeView.setImageViewBitmap(R.id.image_time_v, getBitmap(timeFormat.format(date)));
 
         int textSize=15+Integer.parseInt(AppSettings.get().getTimeWidgetOtherTextSize());
-        timeView.setTextViewText(R.id.text_day,dateFormat.format(date));
-        timeView.setTextColor(R.id.text_day,AppSettings.get().getTimeWidgetOtherTextColor());
-        timeView.setTextViewTextSize(R.id.text_day,TypedValue.COMPLEX_UNIT_SP,textSize);
+        timeView.setTextViewText(R.id.text_day_v,dateFormat.format(date));
+        timeView.setTextColor(R.id.text_day_v,AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_day_v,TypedValue.COMPLEX_UNIT_SP,textSize);
 
-        timeView.setTextViewText(R.id.text_week,weekFormat.format(date));
-        timeView.setTextColor(R.id.text_week,AppSettings.get().getTimeWidgetOtherTextColor());
-        timeView.setTextViewTextSize(R.id.text_week,TypedValue.COMPLEX_UNIT_SP,textSize);
+        timeView.setTextViewText(R.id.text_week_v,weekFormat.format(date));
+        timeView.setTextColor(R.id.text_week_v,AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_week_v,TypedValue.COMPLEX_UNIT_SP,textSize);
 
-        timeView.setTextViewText(R.id.text_chinaDate, new ChinaDateUtil(Calendar.getInstance()).toString());
-        timeView.setTextColor(R.id.text_chinaDate,AppSettings.get().getTimeWidgetOtherTextColor());
-        timeView.setTextViewTextSize(R.id.text_chinaDate,TypedValue.COMPLEX_UNIT_SP,textSize);
+        timeView.setTextViewText(R.id.text_chinaDate_v, new ChinaDateUtil(Calendar.getInstance()).toString());
+        timeView.setTextColor(R.id.text_chinaDate_v,AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_chinaDate_v,TypedValue.COMPLEX_UNIT_SP,textSize);
 
-        timeView.setTextViewText(R.id.text_altitude,"海拔:"+gpsUtil.getAltitude()+"米");
-        timeView.setTextColor(R.id.text_altitude,AppSettings.get().getTimeWidgetOtherTextColor());
-        timeView.setTextViewTextSize(R.id.text_altitude,TypedValue.COMPLEX_UNIT_SP,textSize);
+        timeView.setTextViewText(R.id.text_altitude_v,"海拔:"+gpsUtil.getAltitude()+"米");
+        timeView.setTextColor(R.id.text_altitude_v,AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_altitude_v,TypedValue.COMPLEX_UNIT_SP,textSize);
 
-        manager.updateAppWidget(timeWidget_h,timeView);
+        manager.updateAppWidget(thisWidget,timeView);
         if(!weatherUpdated || System.currentTimeMillis()-updateTime > 10*60*1000 ){
             EventBus.getDefault().post(new SearchWeatherEvent(false));
         }

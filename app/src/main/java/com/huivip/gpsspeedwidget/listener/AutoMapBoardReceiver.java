@@ -79,11 +79,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             }*/
                             //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                             break;
-                        /*case 24:  // xun hang started
-                            break;*/
+                        case 24:  // xun hang started
+                            break;
                         case 8: // start navi
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
-                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
+                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setDaoHangStarted(true));
                             EventBus.getDefault().post(new AudioTempMuteEvent(true));
                             //PrefUtils.setEnableTempAudioService(context, false);
                             launchSpeedFloatingWindows(context, true);
@@ -104,14 +104,14 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             if (PrefUtils.isHideFloatingWidowOnNaviApp(context)) {
                                 Utils.startFloatingWindows(context.getApplicationContext(), true);
                             }
-                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(false));
                             EventBus.getDefault().post(new AudioTempMuteEvent(false));
                             gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
                         case 25:  // xunhang end
                            // gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
                         case 9:  // navi end
                             //gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
-                        case 12:
+                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setDaoHangStarted(false));
+                        case 12:  // simulate navi end
                             stopBackendNaviFloatingService(context, true);
                             stopDriveWayFloatingService(context, true);
                             launchSpeedFloatingWindows(context, false);
@@ -156,22 +156,39 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }
                     break;
                 case 10001:
+                    NaviInfoUpdateEvent naviInfoUpdateEvent = new NaviInfoUpdateEvent()
+                            .setRoadType(intent.getIntExtra(Constant.NaviInfoConstant.ROAD_TYPE, -1))
+                            .setType(intent.getIntExtra(Constant.NaviInfoConstant.TYPE, -1))
+                            .setSegRemainDis(intent.getIntExtra(Constant.NaviInfoConstant.SEG_REMAIN_DIS, -1))
+                            .setIcon(intent.getIntExtra(Constant.NaviInfoConstant.ICON, -1))
+                            .setNextRoadName(intent.getStringExtra(Constant.NaviInfoConstant.NEXT_ROAD_NAME))
+                            .setCurRoadName(intent.getStringExtra(Constant.NaviInfoConstant.CUR_ROAD_NAME))
+                            .setRouteRemainDis(intent.getIntExtra(Constant.NaviInfoConstant.ROUTE_REMAIN_DIS, -1))
+                            .setRouteRemainTime(intent.getIntExtra(Constant.NaviInfoConstant.ROUTE_REMAIN_TIME, -1))
+                            .setRouteAllDis(intent.getIntExtra(Constant.NaviInfoConstant.ROUTE_ALL_DIS, -1))
+                            .setRouteAllTime(intent.getIntExtra(Constant.NaviInfoConstant.ROUTE_ALL_TIME, -1))
+                            .setCurSpeed(intent.getIntExtra(Constant.NaviInfoConstant.CUR_SPEED, -1))
+                            .setCameraSpeed(intent.getIntExtra(Constant.NaviInfoConstant.CAMERA_SPEED, -1))
+                            .setLimitDistance(intent.getIntExtra(Constant.NaviInfoConstant.CAMERA_DIST,-1))
+                            .setLimitType(intent.getIntExtra(Constant.NaviInfoConstant.CAMERA_TYPE,-1));
+                    EventBus.getDefault().post(naviInfoUpdateEvent);
+
                     String currentRoadName = intent.getStringExtra("CUR_ROAD_NAME");
                     if (!TextUtils.isEmpty(currentRoadName)) {
                         gpsUtil.setCurrentRoadName(currentRoadName);
                     } else {
                         gpsUtil.setCurrentRoadName("");
                     }
-                    int limitSpeed = intent.getIntExtra("LIMITED_SPEED", 0);
+                   /* int limitSpeed = intent.getIntExtra("LIMITED_SPEED", 0);
                     if (limitSpeed > 0) {
                         gpsUtil.setLimitSpeed(limitSpeed);
                     }
                     int roadType = intent.getIntExtra("ROAD_TYPE", -1);
                     if (roadType != -1) {
                         gpsUtil.setRoadType(roadType);
-                    }
+                    }*/
 
-                    String nextRoadName = intent.getStringExtra("NEXT_ROAD_NAME");
+                   /* String nextRoadName = intent.getStringExtra("NEXT_ROAD_NAME");
                     if (!TextUtils.isEmpty(nextRoadName)) {
                         gpsUtil.setNextRoadName(nextRoadName);
                     } else {
@@ -182,27 +199,23 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setNextRoadDistance(nextRoadDistance);
                     } else {
                         gpsUtil.setNextRoadDistance(0);
-                    }
-                    int naviIcon = intent.getIntExtra("ICON", -1);
+                    }*/
+                   /* int naviIcon = intent.getIntExtra("ICON", -1);
                     if (naviIcon >= 0) {
-                        // 导航状态下 关闭插件巡航
-                       // gpsUtil.stopAimlessNavi();
                         gpsUtil.setNavi_turn_icon(naviIcon);
                     } else {
                         gpsUtil.setNavi_turn_icon(0);
-                    }
+                    }*/
                     int leftDistance = intent.getIntExtra("ROUTE_REMAIN_DIS", 0);
                     if (leftDistance > 0) {
-                        gpsUtil.setTotalLeftDistance(leftDistance);
+                        gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
+                        // gpsUtil.setTotalLeftDistance(leftDistance);
                         if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Ended && gpsUtil.getNaviFloatingStatus() == Constant.Navi_Floating_Disabled) {
-                            gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
                             startBackendNaviFloatingService(context);
                             gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
                         }
-                    } else {
-                        gpsUtil.setTotalLeftDistance(0);
                     }
-                    int leftTime = intent.getIntExtra("ROUTE_REMAIN_TIME", -1);
+                   /* int leftTime = intent.getIntExtra("ROUTE_REMAIN_TIME", -1);
                     if (leftTime > 0) {
                         gpsUtil.setTotalLeftTime(leftTime);
                     } else {
@@ -212,9 +225,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     if (roadLimitSpeed > 0) {
                         gpsUtil.setLimitSpeed(roadLimitSpeed);
                         gpsUtil.setCameraType(9999);
-                    }
+                    }*/
                     //if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
-                        int cameraType = intent.getIntExtra("CAMERA_TYPE", -1);
+                       /* int cameraType = intent.getIntExtra("CAMERA_TYPE", -1);
                         if (cameraType > -1) {
                             gpsUtil.setCameraType(cameraType);
                         } else {
@@ -229,9 +242,8 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         int cameraSpeed = intent.getIntExtra("CAMERA_SPEED", 0);
                         if (cameraSpeed > 0) {
                             gpsUtil.setCameraSpeed(cameraSpeed);
-                        }
+                        }*/
                     //}
-                    EventBus.getDefault().post(new NaviInfoUpdateEvent());
                     break;
                 case 13011:
                     String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");

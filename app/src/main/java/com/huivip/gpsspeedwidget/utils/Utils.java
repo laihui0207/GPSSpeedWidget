@@ -174,10 +174,10 @@ public abstract class Utils {
         }
         List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         for(ResolveInfo resolveInfo : list){
-            Log.d("huivip","Launcher:"+resolveInfo.activityInfo.packageName);
-            if(!"com.huivip.gpsspeedwidget".equalsIgnoreCase(resolveInfo.activityInfo.packageName)) {
+            //Log.d("huivip","Launcher:"+resolveInfo.activityInfo.packageName);
+            //if(!"com.huivip.gpsspeedwidget".equalsIgnoreCase(resolveInfo.activityInfo.packageName)) {
                 names.add(resolveInfo.activityInfo.packageName);
-            }
+           // }
         }
         if(names!=null && names.size()>0) {
             PrefUtils.setDefaultLaunchApp(context,names.get(0));
@@ -362,26 +362,26 @@ public abstract class Utils {
                 needClose=true;
             }
 
-            if(PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_NO_DESKTOP) && onDesktop){
+            if(AppSettings.get().isSpeedWiddowNotShowOnDesktop() && onDesktop){
                 defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 needClose=true;
             }
 
-            if(!onDesktop && PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
+           /* if(!onDesktop && PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_DESKTOP)){
                 defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 needClose=true;
-            }
-            if (PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
+            }*/
+           /* if (PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI) &&
                     !gpsUtil.isAutoNavi_on_Frontend()){
                 defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 autoNaviFloatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
                 needClose=true;
-            }
+            }*/
             String floatingStyle=AppSettings.get().getSpeedFlattingStyle();
             if(floatingStyle.equalsIgnoreCase(PrefUtils.FLOATING_DEFAULT)){
                 if(Utils.isServiceRunning(context,MeterFloatingService.class.getName())){
