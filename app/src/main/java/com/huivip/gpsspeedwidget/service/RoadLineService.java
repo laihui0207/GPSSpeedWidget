@@ -16,7 +16,6 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
-import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -97,7 +96,7 @@ public class RoadLineService extends Service {
     }
 
     private View getRoadLineView(){
-        int id = PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+        int id =AppSettings.get().getAmapPluginId();// PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
         if (id != -1) {
                 AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
                 final View amapView = appWidgetHost.createView(this, id, appWidgetInfo);

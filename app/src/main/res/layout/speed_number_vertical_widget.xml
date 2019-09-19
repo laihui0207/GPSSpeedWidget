@@ -6,38 +6,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/speed_border"
     android:orientation="horizontal">
-<!--    <LinearLayout
-        android:layout_width="60dp" android:id="@+id/v_minibar"
-        android:layout_height="match_parent" android:visibility="gone"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/v_gohome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:contentDescription="TODO"
-            android:src="@drawable/gohome"
-            tools:ignore="ContentDescription,HardcodedText" />
-
-        <ImageView
-            android:id="@+id/v_gomap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:contentDescription="TODO"
-            android:src="@drawable/autonavi_icon"
-            tools:ignore="ContentDescription,HardcodedText" />
-
-        <ImageView
-            android:id="@+id/v_gocompany"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:contentDescription="TODO"
-            android:src="@drawable/gocompany"
-            tools:ignore="ContentDescription,HardcodedText" />
-    </LinearLayout>-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -83,7 +51,15 @@
                 android:background="@drawable/widget_limit_border"
                 android:gravity="center"
                 tools:ignore="NestedWeights">
-
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="top|left"
+                    android:layout_height="match_parent" android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="wrap_content" android:id="@+id/v_edog_camera" android:visibility="gone"
+                        android:layout_height="wrap_content" android:src="@drawable/widget_drawable_auto_ic_edog_camera_loading"
+                        android:contentDescription="edog camera" />
+                </LinearLayout>
                  <ProgressBar
                      android:id="@+id/progressBarLimit_v"
                      style="?android:attr/progressBarStyleHorizontal"
