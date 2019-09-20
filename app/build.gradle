@@ -81,7 +81,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "GPS速度插件_v${variant.versionName}_${variant.versionCode}_debug.apk"
+            outputFileName = "GPS速度插件_v${variant.versionName}_${variant.versionCode}.apk"
         }
     }
 }
