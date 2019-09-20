@@ -148,6 +148,7 @@ public class SpeedNumberVerticalService extends Service {
     }
     @Subscribe
     public void updateNaviInfo(NaviInfoUpdateEvent event){
+        if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) return;
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
         if (event.getLimitDistance()> 0) {
             this.numberRemoteViews.setTextViewText(R.id.textView_distance_v,event.getLimitDistance()+"米" );
@@ -156,19 +157,17 @@ public class SpeedNumberVerticalService extends Service {
                 limitDistancePercentage = Math.round((300F -event.getLimitDistance() ) / 300 * 100);
             }
             this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, limitDistancePercentage, false);
-        }/* else {
-           // this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance() + "");
+        } else {
+            this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance() + "");
             this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, 0, false);
-        }*/
+        }
 
         if (TextUtils.isEmpty(event.getCurRoadName())) {
             this.numberRemoteViews.setTextViewText(R.id.v_current_road_name_v, "");
         } else {
             this.numberRemoteViews.setTextViewText(R.id.v_current_road_name_v, event.getCurRoadName());
         }
-        if(event.getCameraSpeed()>0) {
-            this.numberRemoteViews.setTextViewText(R.id.number_limit_v, event.getCameraSpeed() + "");
-        }
+        this.numberRemoteViews.setTextViewText(R.id.number_limit_v, event.getCameraSpeed() + "");
         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started){
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.VISIBLE);
             this.numberRemoteViews.setTextViewText(R.id.textView_nextRoadName_v,event.getNextRoadName());
@@ -201,7 +200,7 @@ public class SpeedNumberVerticalService extends Service {
         } else {
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.GONE);
             if(gpsUtil.getLimitDistance()>0){
-                this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getLimitDistance() + "");
+                this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getLimitDistance() + "米");
                 this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, gpsUtil.getLimitDistancePercentage(), false);
                 this.numberRemoteViews.setViewVisibility(R.id.v_edog_camera,View.VISIBLE);
             } else {
