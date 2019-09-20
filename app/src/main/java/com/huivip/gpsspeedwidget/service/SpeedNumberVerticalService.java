@@ -167,7 +167,11 @@ public class SpeedNumberVerticalService extends Service {
         } else {
             this.numberRemoteViews.setTextViewText(R.id.v_current_road_name_v, event.getCurRoadName());
         }
-        this.numberRemoteViews.setTextViewText(R.id.number_limit_v, event.getCameraSpeed() + "");
+        if(event.getCameraSpeed()>0) {
+            this.numberRemoteViews.setTextViewText(R.id.number_limit_v, event.getCameraSpeed() + "");
+        } else {
+            this.numberRemoteViews.setTextViewText(R.id.number_limit_v, "0");
+        }
         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started){
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.VISIBLE);
             this.numberRemoteViews.setTextViewText(R.id.textView_nextRoadName_v,event.getNextRoadName());
