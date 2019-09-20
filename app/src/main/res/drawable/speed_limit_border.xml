@@ -3,10 +3,10 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:shape="ring"
         android:thickness="3dp"
-        android:innerRadius="50dp"
+        android:innerRadius="45dp"
         android:useLevel="false">
     <size
-            android:width="110dp"
-            android:height="110dp" />
+            android:width="100dp"
+            android:height="100dp" />
     <solid android:color="#BC363D" />
 </shape>

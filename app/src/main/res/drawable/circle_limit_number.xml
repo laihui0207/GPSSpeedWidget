@@ -4,7 +4,7 @@
         android:toDegrees="90"
         >
     <shape
-            android:innerRadius="50dp"
+            android:innerRadius="45dp"
             android:shape="ring"
             android:thickness="3dp"
             android:useLevel="true"><!-- this line fixes the issue for lollipop api 21 -->
