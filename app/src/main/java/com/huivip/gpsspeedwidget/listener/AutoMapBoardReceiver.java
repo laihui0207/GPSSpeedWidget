@@ -163,12 +163,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             .setIcon(intent.getIntExtra(Constant.NaviInfoConstant.ICON, -1))
                             .setNextRoadName(intent.getStringExtra(Constant.NaviInfoConstant.NEXT_ROAD_NAME))
                             .setCurRoadName(intent.getStringExtra(Constant.NaviInfoConstant.CUR_ROAD_NAME))
-                            .setRouteRemainDis(intent.getIntExtra(Constant.NaviInfoConstant.ROUTE_REMAIN_DIS, -1))
+                            .setRouteRemainDis(intent.getIntExtra(Constant.NaviInfoConstant.ROUTE_REMAIN_DIS, 0))
                             .setRouteRemainTime(intent.getIntExtra(Constant.NaviInfoConstant.ROUTE_REMAIN_TIME, -1))
                             .setRouteAllDis(intent.getIntExtra(Constant.NaviInfoConstant.ROUTE_ALL_DIS, -1))
                             .setRouteAllTime(intent.getIntExtra(Constant.NaviInfoConstant.ROUTE_ALL_TIME, -1))
                             .setCurSpeed(intent.getIntExtra(Constant.NaviInfoConstant.CUR_SPEED, -1))
-                            .setCameraSpeed(intent.getIntExtra(Constant.NaviInfoConstant.CAMERA_SPEED, -1))
+                            .setCameraSpeed(intent.getIntExtra(Constant.NaviInfoConstant.CAMERA_SPEED, 0))
                             .setLimitDistance(intent.getIntExtra(Constant.NaviInfoConstant.CAMERA_DIST,-1))
                             .setLimitType(intent.getIntExtra(Constant.NaviInfoConstant.CAMERA_TYPE,-1));
                     EventBus.getDefault().post(naviInfoUpdateEvent);

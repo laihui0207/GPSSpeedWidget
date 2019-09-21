@@ -24,7 +24,7 @@
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" android:visibility="gone">
+                android:layout_height="match_parent" >
             <Button
                     android:text="上一首"
                     android:layout_width="wrap_content"

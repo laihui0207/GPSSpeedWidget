@@ -2,7 +2,6 @@ package com.huivip.gpsspeedwidget.activity;
 
 import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,8 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.ImageView;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
@@ -93,14 +90,14 @@ public class SettingsActivity extends ThemeActivity implements SettingsBaseFragm
                     int id = data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
                     boolean check = false;
                     if (id > 0) {
-                        AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+                       /* AppWidgetProviderInfo popupWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
                         final View amapView = appWidgetHost.createView(this, id, popupWidgetInfo);
                         View vv = com.huivip.gpsspeedwidget.utils.Utils.getViewByIds(amapView, new Object[]{"widget_container", "daohang_container", 0, "gongban_daohang_right_blank_container", "daohang_widget_image"});
                         if (vv instanceof ImageView) {
                             check = true;
                         }
                     }
-                    if (check) {
+                    if (check) {*/
                         AppSettings.get().setAmapPluginId(id);
                     } else {
                         AppSettings.get().setAmapPluginId(-1);

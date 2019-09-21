@@ -6,12 +6,18 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.Constant;
@@ -88,7 +94,6 @@ public class SpeedNumberVerticalService extends Service {
         }
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
         this.numberRemoteViews.setImageViewBitmap(R.id.image_speed_v,getBitmap("0",AppSettings.get().getSpeedVerticalWidgetSpeedTextColor()));
-
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
         return Service.START_REDELIVER_INTENT;
     }
@@ -143,6 +148,7 @@ public class SpeedNumberVerticalService extends Service {
     }
     @Subscribe
     public void updateNaviInfo(NaviInfoUpdateEvent event){
+        if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) return;
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
         if (event.getLimitDistance()> 0) {
             this.numberRemoteViews.setTextViewText(R.id.textView_distance_v,event.getLimitDistance()+"米" );
@@ -163,6 +169,8 @@ public class SpeedNumberVerticalService extends Service {
         }
         if(event.getCameraSpeed()>0) {
             this.numberRemoteViews.setTextViewText(R.id.number_limit_v, event.getCameraSpeed() + "");
+        } else {
+            this.numberRemoteViews.setTextViewText(R.id.number_limit_v, "0");
         }
         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started){
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.VISIBLE);
@@ -195,7 +203,15 @@ public class SpeedNumberVerticalService extends Service {
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.VISIBLE);
         } else {
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.GONE);
-            this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance() + "");
+            if(gpsUtil.getLimitDistance()>0){
+                this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getLimitDistance() + "米");
+                this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, gpsUtil.getLimitDistancePercentage(), false);
+                this.numberRemoteViews.setViewVisibility(R.id.v_edog_camera,View.VISIBLE);
+            } else {
+                this.numberRemoteViews.setViewVisibility(R.id.v_edog_camera,View.GONE);
+                this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance() + "");
+                this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, 0, false);
+            }
             this.numberRemoteViews.setTextViewText(R.id.number_limit_v, gpsUtil.getLimitSpeed()+ "");
         }
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
@@ -204,12 +220,31 @@ public class SpeedNumberVerticalService extends Service {
     public void showRoadLine(RoadLineEvent event) {
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
         if (event.isShowed()) {
-            View vv = event.getRoadLineView();
-            this.numberRemoteViews.setImageViewBitmap(R.id.image_roadLine_v, vv.getDrawingCache());
+            ImageView vv = (ImageView) event.getRoadLineView();
+            this.numberRemoteViews.setImageViewBitmap(R.id.image_roadLine_v, drawable2Bitmap(vv.getDrawable()));
         } else {
             this.numberRemoteViews.setImageViewBitmap(R.id.image_roadLine_v, null);
         }
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
+    }
+    Bitmap drawable2Bitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else if (drawable instanceof NinePatchDrawable) {
+            Bitmap bitmap = Bitmap
+                    .createBitmap(
+                            drawable.getIntrinsicWidth(),
+                            drawable.getIntrinsicHeight(),
+                            drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                                    : Bitmap.Config.RGB_565);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight());
+            drawable.draw(canvas);
+            return bitmap;
+        } else {
+            return null;
+        }
     }
     private Bitmap getBitmap(String text){
        return getBitmap(text,getResources().getColor(R.color.white));
