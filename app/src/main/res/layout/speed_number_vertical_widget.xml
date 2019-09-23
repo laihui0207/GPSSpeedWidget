@@ -48,7 +48,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:background="@drawable/widget_limit_border"
+                android:background="@drawable/vertical_widget_limit_border"
                 android:gravity="center"
                 tools:ignore="NestedWeights">
                 <LinearLayout
@@ -67,11 +67,11 @@
                      style="?android:attr/progressBarStyleHorizontal"
                      android:layout_width="match_parent"
                      android:layout_height="match_parent"
-                     android:background="@drawable/speed_limit_border"
+                     android:background="@drawable/vertical_speed_limit_border"
                      android:indeterminate="false"
                      android:max="100"
                      android:progress="0"
-                     android:progressDrawable="@drawable/circle_limit_number" />
+                     android:progressDrawable="@drawable/vertical_circle_limit_number" />
 
                 <TextView
                     android:id="@+id/textView_distance_v"

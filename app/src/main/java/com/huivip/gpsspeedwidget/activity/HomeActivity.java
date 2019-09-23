@@ -212,7 +212,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     private void startBootService(boolean enabled) {
         Intent bootStartService = new Intent(getApplicationContext(), BootStartService.class);
-        startService(bootStartService);
+        Utils.startService(getApplicationContext(),bootStartService);
     }
 
     private void init() {

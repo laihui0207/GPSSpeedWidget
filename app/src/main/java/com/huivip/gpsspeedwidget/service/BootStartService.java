@@ -1,10 +1,15 @@
 package com.huivip.gpsspeedwidget.service;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.IBinder;
@@ -34,6 +39,9 @@ public class BootStartService extends Service {
     boolean started = false;
     AlarmManager alarm;
     String deviceId;
+    private static final String NOTIFICATION_CHANNEL_NAME = "BackgroundLocation";
+    private NotificationManager notificationManager = null;
+    boolean isCreateChannel = false;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -51,6 +59,14 @@ public class BootStartService extends Service {
         boolean start = AppSettings.get().getAutoStart();
         Log.d("huivip","Auto Start: "+start);
         if (start) {
+            /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationChannel channel = null;
+                channel = new NotificationChannel(NOTIFICATION_CHANNEL_NAME, getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
+                notificationManager.createNotificationChannel(channel);
+                Notification notification = new Notification.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_NAME).build();*/
+                startForeground(1, buildNotification());
+           // }
             String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
             if (AppSettings.get().isEnableLaunchOtherApp() && !TextUtils.isEmpty(apps)) {
                 String[] autoApps = apps.split(",");
@@ -94,7 +110,7 @@ public class BootStartService extends Service {
 
             if (AppSettings.get().isPlayTime()|| AppSettings.get().isPlayWeather() || AppSettings.get().isPlayAddressOnStop()) {
                 Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
-                getApplicationContext().startService(weatherService);
+                Utils.startService(getApplicationContext(),weatherService);
 
                 PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                         new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -126,21 +142,22 @@ public class BootStartService extends Service {
         if (intent != null) {
             if (start && !started) {
                 started = true;
+                buildNotification();
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                 if (AppSettings.get().isEnableTimeWindow()) {
                     if (!Utils.isServiceRunning(getApplicationContext(), RealTimeFloatingService.class.getName())) {
                         Intent timeFloating = new Intent(getApplicationContext(), RealTimeFloatingService.class);
-                        startService(timeFloating);
+                        Utils.startService(getApplicationContext(),timeFloating);
                     }
                 }
                 if(AppSettings.get().isEnableRoadLine()){
                     if(!Utils.isServiceRunning(getApplicationContext(),RoadLineService.class.getName())) {
                         Intent roadLineService = new Intent(getApplicationContext(), RoadLineService.class);
-                        getApplicationContext().startService(roadLineService);
+                       Utils.startService(getApplicationContext(),roadLineService);
                     }
                     if(!Utils.isServiceRunning(getApplicationContext(),RoadLineFloatingService.class.getName())) {
                         Intent roadLineFloatingService = new Intent(getApplicationContext(), RoadLineFloatingService.class);
-                        getApplicationContext().startService(roadLineFloatingService);
+                        Utils.startService(getApplicationContext(),roadLineFloatingService);
                     }
                 }
                 if(AppSettings.get().isEnableSpeed()) {
@@ -148,16 +165,16 @@ public class BootStartService extends Service {
                 }
                 if(AppSettings.get().isEnableAudio() &&  !Utils.isServiceRunning(getApplicationContext(), AudioService.class.getName())){
                     Intent audioService=new Intent(getApplicationContext(),AudioService.class);
-                    startService(audioService);
+                    Utils.startService(getApplicationContext(),audioService);
                 }
                 if(Utils.isNetworkConnected(getApplicationContext())) {
                     if (AppSettings.get().isEnableXunHang() && !Utils.isServiceRunning(getApplicationContext(), AutoXunHangService.class.getName())) {
                         Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
-                        startService(xunHangService);
+                        Utils.startService(getApplicationContext(),xunHangService);
                     }
                     if (AppSettings.get().isEnableTracker() && !Utils.isServiceRunning(getApplicationContext(),NaviTrackService.class.getName())) {
                         Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
-                        startService(trackService);
+                        Utils.startService(getApplicationContext(),trackService);
                     }
                 } else {
                     IntentFilter intentFilter = new IntentFilter();
@@ -172,5 +189,41 @@ public class BootStartService extends Service {
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void registSelf(RegistEvent event){
 
+    }
+    private Notification buildNotification() {
+
+        Notification.Builder builder = null;
+        Notification notification = null;
+        if(android.os.Build.VERSION.SDK_INT >= 26) {
+            //Android O上对Notification进行了修改，如果设置的targetSDKVersion>=26建议使用此种方式创建通知栏
+            if (null == notificationManager) {
+                notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            }
+            String channelId = getApplicationContext().getPackageName();
+            if(!isCreateChannel) {
+                NotificationChannel notificationChannel = new NotificationChannel(channelId,
+                        NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.enableLights(true);//是否在桌面icon右上角展示小圆点
+                notificationChannel.setLightColor(Color.BLUE); //小圆点颜色
+                notificationChannel.setShowBadge(true); //是否在久按桌面图标时显示此渠道的通知
+                notificationManager.createNotificationChannel(notificationChannel);
+                isCreateChannel = true;
+            }
+            builder = new Notification.Builder(getApplicationContext(), channelId);
+        } else {
+            builder = new Notification.Builder(getApplicationContext());
+        }
+        builder.setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle("GPS速度插件")
+                .setSmallIcon(R.drawable.ic_speedometer_notif)
+                .setContentText("正在后台运行")
+                .setWhen(System.currentTimeMillis());
+
+        if (android.os.Build.VERSION.SDK_INT >= 16) {
+            notification = builder.build();
+        } else {
+            return builder.getNotification();
+        }
+        return notification;
     }
 }

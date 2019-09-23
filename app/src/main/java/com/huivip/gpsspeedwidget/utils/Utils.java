@@ -456,6 +456,14 @@ public abstract class Utils {
             }
         }
     }
+
+    public static void startService(Context context, Intent intent) {
+       /* if (Build.VERSION.SDK_INT >= 26) {
+            context.startForegroundService(intent);
+        } else {*/
+            context.startService(intent);
+       // }
+    }
     public static  String longToTimeString(long time){
         long totalSecond=time/1000;
         long hour=totalSecond/3600;
