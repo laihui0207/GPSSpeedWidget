@@ -67,6 +67,7 @@ public class Constant {
     public static final String TTS_BACK_RES_ZHILING_MD5 = "zhilingf_common_back_ce_local.v2.1.0.bin.md5sum";
     public static final String TTS_BACK_RES_XIJUN = "xijunm_common_back_ce_local.v2.1.0.bin";
     public static final String TTS_BACK_RES_XIJUN_MD5 = "xijunm_common_back_ce_local.v2.1.0.bin.md5sum";
+    public static final String MUSICPLAYER = "huivip.select.musicplayer";
 
     public static class NaviInfoConstant {
         //导航类型，对应的值为int类型

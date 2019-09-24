@@ -11,13 +11,11 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
-import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
 import com.huivip.gpsspeedwidget.beans.WeatherEvent;
@@ -44,7 +42,6 @@ public class TimeWidgetService extends Service {
     DateFormat dateFormat=new SimpleDateFormat("MM月dd日", Locale.CHINA);
     AppWidgetManager manager;
     ComponentName timeWidget_h;
-    GpsUtil gpsUtil;
     long updateTime;
     boolean weatherUpdated=false;
     @Nullable
@@ -60,7 +57,6 @@ public class TimeWidgetService extends Service {
         getApplicationContext().registerReceiver(myBroadcastReceiver,new IntentFilter(Intent.ACTION_TIME_TICK));
         this.timeWidget_h = new ComponentName(this, TimeWidget.class);
         EventBus.getDefault().register(this);
-        gpsUtil=GpsUtil.getInstance(getApplicationContext());
         if(!Utils.isServiceRunning(getApplicationContext(),WeatherService.class.getName())){
            Intent weatherService=new Intent(getApplicationContext(),WeatherService.class);
            startService(weatherService);
@@ -132,7 +128,6 @@ public class TimeWidgetService extends Service {
         timeView.setTextColor(R.id.text_chinaDate,AppSettings.get().getTimeWidgetOtherTextColor());
         timeView.setTextViewTextSize(R.id.text_chinaDate,TypedValue.COMPLEX_UNIT_SP,textSize);
 
-        timeView.setTextViewText(R.id.text_altitude,"海拔:"+gpsUtil.getAltitude()+"米");
         timeView.setTextColor(R.id.text_altitude,AppSettings.get().getTimeWidgetOtherTextColor());
         timeView.setTextViewTextSize(R.id.text_altitude,TypedValue.COMPLEX_UNIT_SP,textSize);
 
@@ -146,7 +141,6 @@ public class TimeWidgetService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
            updateView();
-            Log.d("huivip","update Time View");
         }
 
     };

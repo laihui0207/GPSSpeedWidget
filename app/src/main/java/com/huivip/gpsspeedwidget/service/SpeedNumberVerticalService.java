@@ -6,11 +6,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -29,6 +24,7 @@ import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
+import com.huivip.gpsspeedwidget.util.Tool;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.view.DigtalView;
 import com.huivip.gpsspeedwidget.widget.SpeedNumberVerticalWidget;
@@ -172,6 +168,11 @@ public class SpeedNumberVerticalService extends Service {
         } else {
             this.numberRemoteViews.setTextViewText(R.id.number_limit_v, "0");
         }
+        if(tempMute){
+            this.numberRemoteViews.setViewVisibility(R.id.v_edog_mute,View.VISIBLE);
+        } else {
+            this.numberRemoteViews.setViewVisibility(R.id.v_edog_mute,View.GONE);
+        }
         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started){
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.VISIBLE);
             this.numberRemoteViews.setTextViewText(R.id.textView_nextRoadName_v,event.getNextRoadName());
@@ -221,13 +222,13 @@ public class SpeedNumberVerticalService extends Service {
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
         if (event.isShowed()) {
             ImageView vv = (ImageView) event.getRoadLineView();
-            this.numberRemoteViews.setImageViewBitmap(R.id.image_roadLine_v, drawable2Bitmap(vv.getDrawable()));
+            this.numberRemoteViews.setImageViewBitmap(R.id.image_roadLine_v, Tool.drawableToBitmap(vv.getDrawable()));
         } else {
             this.numberRemoteViews.setImageViewBitmap(R.id.image_roadLine_v, null);
         }
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
     }
-    Bitmap drawable2Bitmap(Drawable drawable) {
+   /* Bitmap drawable2Bitmap(Drawable drawable) {
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getBitmap();
         } else if (drawable instanceof NinePatchDrawable) {
@@ -245,7 +246,7 @@ public class SpeedNumberVerticalService extends Service {
         } else {
             return null;
         }
-    }
+    }*/
     private Bitmap getBitmap(String text){
        return getBitmap(text,getResources().getColor(R.color.white));
     }

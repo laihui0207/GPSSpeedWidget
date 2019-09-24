@@ -121,6 +121,9 @@ public abstract class PrefUtils {
     static final String SPEED_NUMBER_H_WIDGET_ENABLE="com.huivip.time.widget.speed.number.h.enabled";
     static final String SPEED_METER_WIDGET_ENABLE="com.huivip.time.widget.speed.meter.enabled";
     static final String LYRIC_WIDGET_ENABLE="com.huivip.time.widget.lyric.enabled";
+    static final String MUSIC_WIDGET_ENABLE="com.huivip.time.widget.music.enabled";
+    static final String MUSIC_PLAYER = "com.huivip.select.musicplayer";
+
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -261,6 +264,18 @@ public abstract class PrefUtils {
     }
     public static boolean isLyricWidgetEnable(Context context){
         return getSharedPreferences(context).getBoolean(LYRIC_WIDGET_ENABLE,false);
+    }
+    public static void setMusicWidgetEnable(Context context,boolean value){
+        edit(context).putBoolean(MUSIC_WIDGET_ENABLE,value).apply();
+    }
+    public static boolean isMusicWidgetEnable(Context context){
+        return getSharedPreferences(context).getBoolean(MUSIC_WIDGET_ENABLE,false);
+    }
+    public static void setSelectMusicPlayer(Context context,String musicPackage){
+        edit(context).putString(MUSIC_PLAYER,musicPackage).apply();
+    }
+    public static String getSelectMusicPlayer(Context context){
+        return getSharedPreferences(context).getString(MUSIC_PLAYER,null);
     }
     public static boolean isEnableTimeFloatingWidow(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_TIME_FLOATING_WINDOW, false);

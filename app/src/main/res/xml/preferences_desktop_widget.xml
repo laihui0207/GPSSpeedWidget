@@ -50,4 +50,11 @@
             android:summary="调整速度字体大小"
             android:title="速度字体大小" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="音乐插件">
+        <Preference
+            android:defaultValue="0"
+            android:key="@string/pref_key__music_select_player"
+            android:title="选择播放器" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -39,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.NumberFormat;
 import java.util.Date;
 
 public class WeatherService extends Service implements AMapLocationListener {
@@ -50,6 +51,7 @@ public class WeatherService extends Service implements AMapLocationListener {
     String pre_address;
     String deviceId;
     String resultText;
+    String altitude="0";
     boolean isNight =false;
     AMapLocationClient mLocationClient = null;
     GpsUtil gpsUtil;
@@ -60,6 +62,7 @@ public class WeatherService extends Service implements AMapLocationListener {
     boolean isCreateChannel = false;
     AMapLocation lastedLocation;
     boolean running=false;
+    NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
 
     @Override
     public void onCreate() {
@@ -141,7 +144,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                             if (AppSettings.get().isPlayWeather() && speak) {
                                 handler.post(runnableUi);
                             }
-                            WeatherEvent weatherEvent=new WeatherEvent(cityWeather.getString("city"),gpsUtil.getAltitude(),
+                            WeatherEvent weatherEvent=new WeatherEvent(cityWeather.getString("city"),altitude,
                                     cityWeather.getString("weather"),cityWeather.getString("temperature"));
                             EventBus.getDefault().post(weatherEvent);
                         }
@@ -195,6 +198,8 @@ public class WeatherService extends Service implements AMapLocationListener {
                     //Toast.makeText(getApplicationContext(),cityName+ adCode,Toast.LENGTH_SHORT).show();
                 }
                 gpsUtil.setCityCode(cityCode);
+                localNumberFormat.setMaximumFractionDigits(1);
+                altitude=localNumberFormat.format(aMapLocation.getAltitude());
                 if(!TextUtils.isEmpty(aMapLocation.getAdCode())){
                     //district=aMapLocation.getDistrict();
                     if(TextUtils.isEmpty(pre_adCode)){

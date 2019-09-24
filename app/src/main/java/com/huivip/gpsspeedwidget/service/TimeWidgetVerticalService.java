@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
-import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
 import com.huivip.gpsspeedwidget.beans.WeatherEvent;
@@ -44,7 +43,6 @@ public class TimeWidgetVerticalService extends Service {
     DateFormat dateFormat=new SimpleDateFormat("MM月dd日", Locale.CHINA);
     AppWidgetManager manager;
     ComponentName thisWidget;
-    GpsUtil gpsUtil;
     long updateTime;
     boolean weatherUpdated=false;
     @Nullable
@@ -60,7 +58,6 @@ public class TimeWidgetVerticalService extends Service {
         getApplicationContext().registerReceiver(myBroadcastReceiver,new IntentFilter(Intent.ACTION_TIME_TICK));
         this.thisWidget = new ComponentName(this, TimeWidget_v.class);
         EventBus.getDefault().register(this);
-        gpsUtil=GpsUtil.getInstance(getApplicationContext());
         if(!Utils.isServiceRunning(getApplicationContext(),WeatherService.class.getName())){
            Intent weatherService=new Intent(getApplicationContext(),WeatherService.class);
            startService(weatherService);
@@ -133,7 +130,6 @@ public class TimeWidgetVerticalService extends Service {
         timeView.setTextColor(R.id.text_chinaDate_v,AppSettings.get().getTimeWidgetOtherTextColor());
         timeView.setTextViewTextSize(R.id.text_chinaDate_v,TypedValue.COMPLEX_UNIT_SP,textSize);
 
-        timeView.setTextViewText(R.id.text_altitude_v,"海拔:"+gpsUtil.getAltitude()+"米");
         timeView.setTextColor(R.id.text_altitude_v,AppSettings.get().getTimeWidgetOtherTextColor());
         timeView.setTextViewTextSize(R.id.text_altitude_v,TypedValue.COMPLEX_UNIT_SP,textSize);
 
@@ -147,7 +143,6 @@ public class TimeWidgetVerticalService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
            updateView();
-            Log.d("huivip","update Time View");
         }
 
     };

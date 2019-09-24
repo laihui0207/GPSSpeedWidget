@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.model.App;
@@ -75,7 +74,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         itemValues.put(COLUMN_X_POS, item.getX());
         itemValues.put(COLUMN_Y_POS, item.getY());
 
-        Setup.logger().log(this, Log.INFO, null, "createItem: %s (ID: %d)", item != null ? item.getLabel() : "NULL", item != null ? item.getId() : -1);
+       // Setup.logger().log(this, Log.INFO, null, "createItem: %s (ID: %d)", item != null ? item.getLabel() : "NULL", item != null ? item.getId() : -1);
 
         String concat = "";
         switch (item.getType()) {
@@ -195,7 +194,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // update data attribute for an item
     public void updateItem(Item item) {
-        Setup.logger().log(this, Log.INFO, null, "updateItem: %s %d", item != null ? item.getLabel() : "NULL", item != null ? item.getId() : -1);
+        //Setup.logger().log(this, Log.INFO, null, "updateItem: %s %d", item != null ? item.getLabel() : "NULL", item != null ? item.getId() : -1);
         ContentValues itemValues = new ContentValues();
         itemValues.put(COLUMN_LABEL, item.getLabel());
         itemValues.put(COLUMN_X_POS, item.getX());
@@ -230,14 +229,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // update the state of an item
     public void updateItem(Item item, Definitions.ItemState state) {
         ContentValues itemValues = new ContentValues();
-        Setup.logger().log(this, Log.INFO, null, "updateItem: %s %d", item != null ? item.getLabel() : "NULL", item != null ? item.getId() : -1);
+        //Setup.logger().log(this, Log.INFO, null, "updateItem: %s %d", item != null ? item.getLabel() : "NULL", item != null ? item.getId() : -1);
         itemValues.put(COLUMN_STATE, state.ordinal());
         _db.update(TABLE_HOME, itemValues, COLUMN_TIME + " = " + item.getId(), null);
     }
 
     // update the fields only used by the database
     public void updateItem(Item item, int page, Definitions.ItemPosition itemPosition) {
-        Setup.logger().log(this, Log.INFO, null, "updateItem: %s %d", item != null ? item.getLabel() : "NULL", item != null ? item.getId() : -1);
+        //Setup.logger().log(this, Log.INFO, null, "updateItem: %s %d", item != null ? item.getLabel() : "NULL", item != null ? item.getId() : -1);
         deleteItem(item, false);
         createItem(item, page, itemPosition);
     }

@@ -1,19 +1,15 @@
 package com.huivip.gpsspeedwidget.lyric;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
-import android.media.MediaMetadataRetriever;
-import android.media.RemoteControlClient;
 import android.media.RemoteController;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -21,19 +17,23 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 
 import com.huivip.gpsspeedwidget.beans.LrcBean;
+import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
+import com.huivip.gpsspeedwidget.service.LyricWidgetService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
-import com.huivip.gpsspeedwidget.service.LyricWidgetService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-public class LyricService extends NotificationListenerService implements RemoteController.OnClientUpdateListener  {
+public class LyricService extends Service /*NotificationListenerService implements RemoteController.OnClientUpdateListener*/  {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     public static String SONGNAME="lyric.songName";
     public static String ARTIST="lyric.artist";
@@ -58,8 +58,8 @@ public class LyricService extends NotificationListenerService implements RemoteC
     @Override
     public void onCreate() {
         am= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mRemoteController = new WeakReference<>(new RemoteController(this, this));
-        boolean registered;
+        //mRemoteController = new WeakReference<>(new RemoteController(this, this));
+       /* boolean registered;
         try {
             registered = am.registerRemoteController(mRemoteController.get());
         } catch (NullPointerException | SecurityException e) {
@@ -72,7 +72,8 @@ public class LyricService extends NotificationListenerService implements RemoteC
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
+        EventBus.getDefault().register(this);
         super.onCreate();
         //得到实例,必须在Application里初始化
     }
@@ -80,8 +81,9 @@ public class LyricService extends NotificationListenerService implements RemoteC
     @Override
     public void onDestroy() {
         this.mBinder = null;
-        if (mRemoteController != null && mRemoteController.get() != null)
-            am.unregisterRemoteController(mRemoteController.get());
+        if(EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroy();
     }
 
@@ -139,7 +141,7 @@ public class LyricService extends NotificationListenerService implements RemoteC
         return lyricContent;
     }
 
-    @Override
+   /* @Override
 
     public void onNotificationRemoved(StatusBarNotification sbn) {
     }
@@ -154,7 +156,7 @@ public class LyricService extends NotificationListenerService implements RemoteC
 
     @Override
     public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
-        /*                onPlaybackStateUpdate(state);*/
+        *//*                onPlaybackStateUpdate(state);*//*
         if(!AppSettings.get().isLyricEnable()){
            return;
         }
@@ -180,6 +182,10 @@ public class LyricService extends NotificationListenerService implements RemoteC
         Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_compass);
         Bitmap bitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
         searchLyric(songName,artistName);
+    }*/
+    @Subscribe
+    public void updateSong(MusicEvent event){
+        searchLyric(event.getSongName(),event.getArtistName());
     }
     private void searchLyric(String inputSongName,String inputArtist){
         new Thread(new Runnable() {

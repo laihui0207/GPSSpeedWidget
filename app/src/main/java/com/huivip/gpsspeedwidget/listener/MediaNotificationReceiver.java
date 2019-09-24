@@ -10,10 +10,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.lyric.LyricServiceLowVersion;
 import com.huivip.gpsspeedwidget.service.TextFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class MediaNotificationReceiver extends BroadcastReceiver {
     private String preSongName;
@@ -79,6 +82,7 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         if(!TextUtils.isEmpty(artistName)){
             showString.append("歌手:"+artistName).append("\n");
         }
+        EventBus.getDefault().post(new MusicEvent(songName,artistName));
         /*if(!TextUtils.isEmpty(album)){
             showString.append("唱片:"+album).append("\n");
         }*/
