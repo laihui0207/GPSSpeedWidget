@@ -308,7 +308,6 @@
         <service android:name=".service.NaviTrackService"/>
         <service android:name=".speech.PlayAudioService"/>
         <service android:name=".service.RealTimeFloatingService"/>
-        <service android:name=".lyric.LyricServiceLowVersion"/>
         <service android:name=".service.RoadLineFloatingService"/>
         <service android:name=".service.RoadLineService"/>
         <service android:name=".service.WeatherService"/>

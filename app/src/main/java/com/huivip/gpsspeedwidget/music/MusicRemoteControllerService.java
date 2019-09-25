@@ -11,9 +11,11 @@ import android.media.RemoteControlClient;
 import android.media.RemoteController;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.huivip.gpsspeedwidget.R;
@@ -33,6 +35,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     String artistName;
     long currentPosition=0L;
     Long duration;
+    Bitmap coverBitmap;
     AudioManager am;
     private RCBinder mBinder = new RCBinder();
     private static WeakReference<RemoteController> mRemoteControllerPreference = new WeakReference<>(null);
@@ -49,7 +52,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         }
         if (registered) {
             try {
-                mRemoteControllerPreference.get().setArtworkConfiguration(600, 600);
+                mRemoteControllerPreference.get().setArtworkConfiguration(800, 800);
                 mRemoteControllerPreference.get().setSynchronizationMode(RemoteController.POSITION_SYNCHRONIZATION_CHECK);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
@@ -90,20 +93,12 @@ public class MusicRemoteControllerService extends NotificationListenerService im
 
     @Override
     public void onClientPlaybackStateUpdate(int state) {
-
+        launchLyricService(state,0L);
     }
     @Override
     public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
-        if (AppSettings.get().isLyricEnable()) {
-            if (state== RemoteControlClient.PLAYSTATE_PLAYING &&  !Utils.isServiceRunning(getApplicationContext(), LyricService.class.getName())) {
-                Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
-                Utils.startService(getApplicationContext(), lyricService);
-            } else if(state == RemoteControlClient.PLAYSTATE_PAUSED || state== RemoteControlClient.PLAYSTATE_STOPPED){
-                Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
-                lyricService.putExtra(LyricService.EXTRA_CLOSE,true);
-                Utils.startService(getApplicationContext(), lyricService);
-            }
-        }
+        Log.d("huivip","get update state:"+state+",postion:"+currentPosMs);
+        launchLyricService(state,currentPosMs);
         currentPosition=currentPosMs;
     }
 
@@ -111,7 +106,29 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     public void onClientTransportControlUpdate(int transportControlFlags) {
 
     }
-
+    private void launchLyricService(int state,long position){
+        if (AppSettings.get().isLyricEnable()) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (state== RemoteControlClient.PLAYSTATE_PLAYING) {
+                        Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
+                        Utils.startService(getApplicationContext(), lyricService);
+                        MusicEvent musicEvent=new MusicEvent(songName,artistName);
+                        Log.d("huivip","Launch lyric:"+songName+","+artistName);
+                        musicEvent.setCurrentPostion(position);
+                        musicEvent.setDuration(duration);
+                        musicEvent.setCover(coverBitmap);
+                        EventBus.getDefault().post(musicEvent);
+                    } else if(state == RemoteControlClient.PLAYSTATE_PAUSED || state== RemoteControlClient.PLAYSTATE_STOPPED){
+                        Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
+                        lyricService.putExtra(LyricService.EXTRA_CLOSE,true);
+                        Utils.startService(getApplicationContext(), lyricService);
+                    }
+                }
+            },1000);
+        }
+    }
     @Override
     public void onClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor) {
         artistName = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "null");
@@ -119,10 +136,11 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         songName = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
         duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
         Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.fenmian);
-        Bitmap bitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
+        coverBitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
+        launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,currentPosition);
         MusicEvent musicEvent=new MusicEvent(songName,artistName);
         musicEvent.setDuration(duration);
-        musicEvent.setCover(bitmap);
+        musicEvent.setCover(coverBitmap);
         EventBus.getDefault().post(musicEvent);
     }
     public class RCBinder extends Binder {

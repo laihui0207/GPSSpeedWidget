@@ -4,20 +4,21 @@
     android:id="@+id/v_music_base_v"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/speed_border"
+    android:background="@drawable/music_border"
     android:orientation="horizontal">
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <ImageView android:src="@drawable/fenmian"
             android:layout_width="match_parent" android:layout_gravity="fill" android:scaleType="fitXY"
             android:layout_height="match_parent" android:id="@+id/v_music_background"
-            android:contentDescription="Music Cover"
+            android:contentDescription="Music Cover" android:background="@drawable/music_border"
             tools:ignore="HardcodedText">
         </ImageView>
-        <LinearLayout android:layout_marginBottom="30dp" android:gravity="center"
+        <LinearLayout  android:gravity="center"
             android:layout_width="match_parent" android:layout_gravity="top|center"
             android:layout_height="wrap_content" android:orientation="vertical"
+            android:layout_marginTop="10dp"
             tools:ignore="UselessLeaf">
             <TextView android:id="@+id/v_music_songName"
                 android:layout_width="wrap_content" android:textSize="20sp" android:textColor="@color/white"

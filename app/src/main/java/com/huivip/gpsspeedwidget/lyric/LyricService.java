@@ -1,20 +1,15 @@
 package com.huivip.gpsspeedwidget.lyric;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.media.RemoteController;
-import android.os.Binder;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
@@ -29,11 +24,9 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
-@RequiresApi(api = Build.VERSION_CODES.KITKAT)
-public class LyricService extends Service /*NotificationListenerService implements RemoteController.OnClientUpdateListener*/  {
+public class LyricService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     public static String SONGNAME="lyric.songName";
     public static String ARTIST="lyric.artist";
@@ -46,41 +39,22 @@ public class LyricService extends Service /*NotificationListenerService implemen
     long currentPosition=0L;
     Long duration;
     String lyricContent;
-    private RCBinder mBinder = new RCBinder();
-    private static WeakReference<RemoteController> mRemoteController = new WeakReference<>(null);
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+        return null;
     }
 
     @Override
     public void onCreate() {
         am= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        //mRemoteController = new WeakReference<>(new RemoteController(this, this));
-       /* boolean registered;
-        try {
-            registered = am.registerRemoteController(mRemoteController.get());
-        } catch (NullPointerException | SecurityException e) {
-            registered = false;
-        }
-        if (registered) {
-            try {
-                mRemoteController.get().setArtworkConfiguration(100, 100);
-                mRemoteController.get().setSynchronizationMode(RemoteController.POSITION_SYNCHRONIZATION_CHECK);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-        }*/
         EventBus.getDefault().register(this);
         super.onCreate();
-        //得到实例,必须在Application里初始化
     }
 
     @Override
     public void onDestroy() {
-        this.mBinder = null;
         if(EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
@@ -89,10 +63,9 @@ public class LyricService extends Service /*NotificationListenerService implemen
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(intent!=null){
+       /* if(intent!=null){
             String inputSongName=intent.getStringExtra(SONGNAME);
             String inputArtist=intent.getStringExtra(ARTIST);
-            boolean isPlaying=intent.getBooleanExtra(STATUS,false);
             if(!am.isMusicActive()){
                 stopSelf();
             }
@@ -101,91 +74,18 @@ public class LyricService extends Service /*NotificationListenerService implemen
                 lyricContent=null;
                searchLyric(inputSongName,inputArtist);
             }
-        }
+        }*/
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    public RemoteController getmRemoteController(){
-        return mRemoteController.get();
-    }
-    public void onNotificationPosted(StatusBarNotification sbn) {
-    }
-    public boolean sendMusicKeyEvent(int keyCode) {
-        if (mRemoteController != null) {
-            KeyEvent keyEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
-            boolean down = mRemoteController.get().sendMediaKeyEvent(keyEvent);
-            keyEvent = new KeyEvent(KeyEvent.ACTION_UP, keyCode);
-            boolean up = mRemoteController.get().sendMediaKeyEvent(keyEvent);
-            return down && up;
-        }
-        return false;
-    }
-
-    public String getSongName() {
-        return songName;
-    }
-
-    public String getArtistName() {
-        return artistName;
-    }
-
-    public long getCurrentPosition() {
-        return currentPosition;
     }
 
     public Long getDuration() {
         return duration;
     }
 
-    public String getLyricContent() {
-        return lyricContent;
-    }
-
-   /* @Override
-
-    public void onNotificationRemoved(StatusBarNotification sbn) {
-    }
-    @Override
-    public void onClientChange(boolean clearing) {
-
-    }
-
-    @Override
-    public void onClientPlaybackStateUpdate(int state) {
-    }
-
-    @Override
-    public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
-        *//*                onPlaybackStateUpdate(state);*//*
-        if(!AppSettings.get().isLyricEnable()){
-           return;
-        }
-        if(state==RemoteControlClient.PLAYSTATE_PAUSED){
-            launchLrcFloationgWindows(false);
-        } else if(state== RemoteControlClient.PLAYSTATE_PLAYING){
-            currentPosition=currentPosMs;
-            searchLyric(songName,artistName);
-        }
-    }
-
-    @Override
-    public void onClientTransportControlUpdate(int transportControlFlags) {
-
-    }
-
-    @Override
-    public void onClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor) {
-        artistName = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "null");
-        String album = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ALBUM, "null");
-        songName = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
-        duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
-        Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_compass);
-        Bitmap bitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
-        searchLyric(songName,artistName);
-    }*/
     @Subscribe
     public void updateSong(MusicEvent event){
         searchLyric(event.getSongName(),event.getArtistName());
+        currentPosition=event.getCurrentPostion();
     }
     private void searchLyric(String inputSongName,String inputArtist){
         new Thread(new Runnable() {
@@ -196,7 +96,7 @@ public class LyricService extends Service /*NotificationListenerService implemen
                 if (TextUtils.isEmpty(lyricContent)) {
                     lyricContent = WangYiYunMusic.downloadLyric(inputSongName, inputArtist);
                 }
-                currentPosition=System.currentTimeMillis()-startedTime;
+                currentPosition+=System.currentTimeMillis()-startedTime;
                 songName = inputSongName;
                 artistName = inputArtist;
                 Message msg = new Message();
@@ -205,6 +105,7 @@ public class LyricService extends Service /*NotificationListenerService implemen
             }
         }).start();
     }
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -215,18 +116,18 @@ public class LyricService extends Service /*NotificationListenerService implemen
                 List<LrcBean> list= LrcUtil.parseStr2List(lyricContent);
                 if(list!=null && list.size()>0) {
                     FileUtil.saveLyric(getApplicationContext(), songName, artistName, lyricContent);
-                    launchLrcFloationgWindows(true);
+                    launchLrcFloatingWindows(true);
                 } else {
-                    launchLrcFloationgWindows(false);
+                    launchLrcFloatingWindows(false);
                     FileUtil.deleteLyric(getApplicationContext(),songName,artistName);
                 }
             } else {
-                launchLrcFloationgWindows(false);
+                launchLrcFloatingWindows(false);
             }
             super.handleMessage(msg);
         }
     };
-    private void launchLrcFloationgWindows(boolean start){
+    private void launchLrcFloatingWindows(boolean start){
         Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
         lycFloatingService.putExtra(LyricFloatingService.SONGNAME, songName);
         lycFloatingService.putExtra(LyricFloatingService.ARTIST, artistName);
@@ -249,10 +150,5 @@ public class LyricService extends Service /*NotificationListenerService implemen
         intent2.putExtra(LyricWidgetService.LYRIC_CONTENT, lyricContent);
         intent2.putExtra(LyricWidgetService.POSITION,currentPosition);
         sendBroadcast(intent2);
-    }
-    public class RCBinder extends Binder {
-        public LyricService getService() {
-            return LyricService.this;
-        }
     }
 }

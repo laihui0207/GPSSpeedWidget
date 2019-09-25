@@ -44,6 +44,8 @@ import java.util.Date;
 
 public class WeatherService extends Service implements AMapLocationListener {
     String cityName;
+    String weather="晴";
+    String temperature="28";
     String adCode;
     String cityCode;
     String address;
@@ -74,11 +76,18 @@ public class WeatherService extends Service implements AMapLocationListener {
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(this);
         deviceId=deviceUuidFactory.getDeviceUuid().toString();
         EventBus.getDefault().register(this);
+        cityName=PrefUtils.getWeatherCity(getApplicationContext());
+        weather=PrefUtils.getWeatherWeathre(getApplicationContext());
+        temperature=PrefUtils.getWeatherTemperature(getApplicationContext());
+        altitude=PrefUtils.getWeatherAltitude(getApplicationContext());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startLocation();
+        WeatherEvent weatherEvent=new WeatherEvent(cityName,altitude,
+                weather,temperature);
+        EventBus.getDefault().post(weatherEvent);
         return START_REDELIVER_INTENT;
     }
 
@@ -137,15 +146,21 @@ public class WeatherService extends Service implements AMapLocationListener {
                             JSONArray lives = resultObj.getJSONArray("lives");
                             //if(lives==null || lives.length()==0) return;
                             JSONObject cityWeather = lives.getJSONObject(0);
-                            resultText = "当前:" + cityWeather.getString("city") + ",天气：" + cityWeather.getString("weather") +
-                                    ",气温:" + cityWeather.getString("temperature") + "°,"
+                            cityName=cityWeather.getString("city");
+                            PrefUtils.setWeatherCity(getApplicationContext(),cityCode);
+                            weather=cityWeather.getString("weather");
+                            PrefUtils.setWeatherWeather(getApplicationContext(),weather);
+                            temperature=cityWeather.getString("temperature");
+                            PrefUtils.setWeatherTemperature(getApplicationContext(),temperature);
+                            resultText = "当前:" + cityWeather.getString("city") + ",天气：" + weather+
+                                    ",气温:" + temperature+ "°,"
                                     + cityWeather.getString("winddirection") + "风" + cityWeather.getString("windpower") + "级," +
                                     "湿度" + cityWeather.getString("humidity") + "%";
                             if (AppSettings.get().isPlayWeather() && speak) {
                                 handler.post(runnableUi);
                             }
-                            WeatherEvent weatherEvent=new WeatherEvent(cityWeather.getString("city"),altitude,
-                                    cityWeather.getString("weather"),cityWeather.getString("temperature"));
+                            WeatherEvent weatherEvent=new WeatherEvent(cityName,altitude,
+                                    weather,temperature);
                             EventBus.getDefault().post(weatherEvent);
                         }
                     } catch (JSONException e) {
@@ -200,6 +215,10 @@ public class WeatherService extends Service implements AMapLocationListener {
                 gpsUtil.setCityCode(cityCode);
                 localNumberFormat.setMaximumFractionDigits(1);
                 altitude=localNumberFormat.format(aMapLocation.getAltitude());
+                PrefUtils.setWeatherAltitude(getApplicationContext(),altitude);
+                WeatherEvent weatherEvent=new WeatherEvent(cityName,altitude,
+                        weather,temperature);
+                EventBus.getDefault().post(weatherEvent);
                 if(!TextUtils.isEmpty(aMapLocation.getAdCode())){
                     //district=aMapLocation.getDistrict();
                     if(TextUtils.isEmpty(pre_adCode)){

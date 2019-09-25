@@ -1,8 +1,8 @@
 package com.huivip.gpsspeedwidget.music;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +15,8 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
 
 /**
  * Created by baina on 18-1-3.
@@ -41,7 +43,7 @@ public class AllSupportMusicAppActivity extends Activity {
         super.onResume();
         //耳机控制播放器的intent action
         Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-        List<ResolveInfo> infoList = getPackageManager().queryBroadcastReceivers(intent, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT);
+        @SuppressLint("WrongConstant") List<ResolveInfo> infoList = getPackageManager().queryBroadcastReceivers(intent, COMPONENT_ENABLED_STATE_DEFAULT);
         if (infoList.size() > 0) {
             mMusicAppInfoList.clear();
             for (ResolveInfo resolveInfo : infoList) {
@@ -64,6 +66,7 @@ public class AllSupportMusicAppActivity extends Activity {
                     MusicAppInfo MusicAppInfo = mMusicAppInfoList.get(position);
                     Log.d(TAG, "你选择了:" + MusicAppInfo.getAppLabel());
                     PrefUtils.setSelectMusicPlayer(getApplicationContext(),MusicAppInfo.getAppPkg());
+                    PrefUtils.setSelectMusicPlayerName(getApplicationContext(),MusicAppInfo.getAppLabel());
                 }
             });
         }

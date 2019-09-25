@@ -274,7 +274,9 @@ public class CellContainer extends ViewGroup {
         }
         try {
             SimpleFingerGestures simpleFingerGestures = _gestures;
-            simpleFingerGestures.onTouch(this, event);
+            if(simpleFingerGestures!=null) {
+                simpleFingerGestures.onTouch(this, event);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return super.onTouchEvent(event);

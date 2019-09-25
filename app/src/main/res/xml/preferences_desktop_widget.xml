@@ -54,7 +54,22 @@
         <Preference
             android:defaultValue="0"
             android:key="@string/pref_key__music_select_player"
+            android:summary="选择默认使用的音乐播放器"
             android:title="选择播放器" />
+        <com.flask.colorpicker.ColorPickerPreference
+            android:defaultValue="@color/white"
+            android:key="@string/pref_key__widget_music_font_color"
+            android:title="字体颜色"
+            app:lightnessSlider="true"
+            app:alphaSlider="true"
+            />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/items_widget_font_size"
+            android:entryValues="@array/items_widget_font_size"
+            android:key="@string/pref_key__widget_music_font_size"
+            android:summary="调整字体大小"
+            android:title="字体大小" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -18,9 +18,7 @@ import android.media.RemoteController;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -148,21 +146,6 @@ public class AudioTestActivity extends Activity {
                 }
             };
         }
-        mServiceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                LyricService.RCBinder rcBinder = (LyricService.RCBinder) service;
-                lyricService = rcBinder.getService();
-                //lyricService.registerRemoteController();
-                //lyricService.setExternalClientUpdateListener(mOnClientUpdateListener);
-                mRemoteController=lyricService.getmRemoteController();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        };
        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
              getApplicationContext().bindService(new Intent(getApplicationContext(), MusicNotificationListenerService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         }*/
@@ -174,32 +157,6 @@ public class AudioTestActivity extends Activity {
             }
         });
         Button buttonPlay=findViewById(R.id.button_play);
-        buttonPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(lyricService!=null){
-                    lyricService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
-                }
-            }
-        });
-        Button buttonPre=findViewById(R.id.button_prev);
-        buttonPre.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(lyricService!=null){
-                    lyricService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
-                }
-            }
-        });
-        Button buttonNext=findViewById(R.id.button_next);
-        buttonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(lyricService!=null){
-                    lyricService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_NEXT);
-                }
-            }
-        });
         Button buttonRing=findViewById(R.id.button_ring);
         buttonRing.setOnClickListener(new View.OnClickListener() {
             @Override
