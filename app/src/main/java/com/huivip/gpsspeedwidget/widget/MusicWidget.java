@@ -6,13 +6,17 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.KeyEvent;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.service.MusicControllerService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import java.util.Set;
 
 
 /**
@@ -47,10 +51,17 @@ public class MusicWidget extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
+        if(!isNotificationListenerServiceEnabled(context)){
+            context.startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+            Toast.makeText(context, "请授予通知使用权限", Toast.LENGTH_SHORT).show();
+        }
         PrefUtils.setMusicWidgetEnable(context,true);
         super.onEnabled(context);
     }
-
+    private boolean isNotificationListenerServiceEnabled(Context context) {
+        Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(context);
+        return packageNames.contains(context.getPackageName());
+    }
     @Override
     public void onDisabled(Context context) {
         PrefUtils.setMusicWidgetEnable(context,false);
