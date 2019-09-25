@@ -10,10 +10,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
-import com.huivip.gpsspeedwidget.lyric.LyricServiceLowVersion;
 import com.huivip.gpsspeedwidget.service.TextFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
+import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class MediaNotificationReceiver extends BroadcastReceiver {
     private static final String KW_PLAYER_STATUS = "cn.kuwo.kwmusicauto.action.PLAYER_STATUS";
@@ -119,22 +122,11 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
                 textFloat.putExtra(TextFloatingService.SHOW_TIME, 10);
                 context.startService(textFloat);
             }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if(!Utils.isServiceRunning(context,LyricService.class.getName())) {
                 Intent lycService = new Intent(context, LyricService.class);
-                lycService.putExtra(LyricService.SONGNAME, songName);
-                lycService.putExtra(LyricService.ARTIST, artistName);
-                lycService.putExtra(LyricService.STATUS, isPlaying);
-                lycService.putExtra(LyricService.DURATION, duration);
                 context.startService(lycService);
-            } else {
-                Intent lycServiceLowVersion = new Intent(context, LyricServiceLowVersion.class);
-                lycServiceLowVersion.putExtra(LyricServiceLowVersion.SONGNAME, songName);
-                lycServiceLowVersion.putExtra(LyricServiceLowVersion.ARTIST, artistName);
-                lycServiceLowVersion.putExtra(LyricServiceLowVersion.STATUS, isPlaying);
-                lycServiceLowVersion.putExtra(LyricServiceLowVersion.DURATION, duration);
-                context.startService(lycServiceLowVersion);
             }
         }
+        EventBus.getDefault().post(new MusicEvent(songName,artistName));
     }
 }

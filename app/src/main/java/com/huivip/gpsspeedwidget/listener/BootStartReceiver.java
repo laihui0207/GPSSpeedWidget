@@ -15,7 +15,12 @@ public class BootStartReceiver extends BroadcastReceiver {
             Utils.getDesktopPackageName(context);
             Intent bootService=new Intent(context,BootStartService.class);
             bootService.putExtra(BootStartService.START_BOOT,true);
-            context.startService(bootService);
+            Utils.startService(context,bootService);
+           /* if(Build.VERSION.SDK_INT >= 26){
+                context.startForegroundService(bootService);
+            } else {
+                context.startService(bootService);
+            }*/
         }
     }
 }

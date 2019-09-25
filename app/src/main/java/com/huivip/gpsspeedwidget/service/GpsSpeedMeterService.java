@@ -133,15 +133,6 @@ public class GpsSpeedMeterService extends Service {
             }
         }
     }
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-    }
-
-    @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
-    }
 
     public void setSpeeding(boolean speeding) {
         int colorRes = speeding ? R.color.red500 : R.color.primary_text_default_material_dark;

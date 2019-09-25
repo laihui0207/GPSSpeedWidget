@@ -212,7 +212,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     private void startBootService(boolean enabled) {
         Intent bootStartService = new Intent(getApplicationContext(), BootStartService.class);
-        startService(bootStartService);
+        Utils.startService(getApplicationContext(),bootStartService);
     }
 
     private void init() {
@@ -655,7 +655,11 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-
+        if(!Utils.isServiceRunning(getApplicationContext(),BootStartService.class.getName())){
+            Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);
+            bootStartService.putExtra(BootStartService.START_BOOT,true);
+            Utils.startService(getApplicationContext(),bootStartService);
+        }
         handleLauncherResume();
     }
 

@@ -34,7 +34,7 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.number_limit, launchMapFloatingService);
         if(PrefUtils.isSpeedNumberHWidgetEnable(context) && !Utils.isServiceRunning(context, GpsSpeedNumberService.class.getName())){
             Intent widgetService=new Intent(context, GpsSpeedNumberService.class);
-            context.startService(widgetService);
+            Utils.startService(context,widgetService);
         }
         Intent configureActivity=new Intent(context, MainActivity.class);
         PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,configureActivity,0);

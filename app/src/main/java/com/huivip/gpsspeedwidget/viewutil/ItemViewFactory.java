@@ -110,7 +110,7 @@ public class ItemViewFactory {
             }
         };
 
-        widgetContainer.postDelayed(action, 2000);
+        widgetContainer.postDelayed(action, 5000);
         // TODO move this to standard DragHandler.getLongClick() method
         // needs to be set on widgetView but use widgetContainer inside
         widgetView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -134,7 +134,7 @@ public class ItemViewFactory {
                 item.setSpanY(item.getSpanY() + 1);
                 scaleWidget(widgetContainer, item);
                 widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 2000);
+                widgetContainer.postDelayed(action, 5000);
             }
         });
         he.setOnClickListener(new View.OnClickListener() {
@@ -144,7 +144,7 @@ public class ItemViewFactory {
                 item.setSpanX(item.getSpanX() + 1);
                 scaleWidget(widgetContainer, item);
                 widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 2000);
+                widgetContainer.postDelayed(action, 5000);
             }
         });
         vl.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +154,7 @@ public class ItemViewFactory {
                 item.setSpanY(item.getSpanY() - 1);
                 scaleWidget(widgetContainer, item);
                 widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 2000);
+                widgetContainer.postDelayed(action, 5000);
             }
         });
         hl.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +164,7 @@ public class ItemViewFactory {
                 item.setSpanX(item.getSpanX() - 1);
                 scaleWidget(widgetContainer, item);
                 widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 2000);
+                widgetContainer.postDelayed(action, 5000);
             }
         });
         return widgetContainer;

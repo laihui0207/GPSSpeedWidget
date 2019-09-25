@@ -202,7 +202,7 @@ public class NaviFloatingService extends Service {
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
        /* mServiceConnection=new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -220,9 +220,7 @@ public class NaviFloatingService extends Service {
     }
     @Subscribe
     public void updateNaviInfo(NaviInfoUpdateEvent event){
-        if(!TextUtils.isEmpty(event.getNextRoadName())){
-            nextRoadNameTextView.setText(event.getNextRoadName());
-        }
+        nextRoadNameTextView.setText(event.getNextRoadName());
         String distance=event.getSegRemainDis()+"米 后";
         if(event.getSegRemainDis()>1000){
             if(event.getSegRemainDis()>1000){
@@ -237,10 +235,15 @@ public class NaviFloatingService extends Service {
         }
 
         if(event.getLimitType()!=-1){
+            gpsUtil.setCameraType(event.getLimitType());
             cameraTypeNameTextView.setText(gpsUtil.getCameraTypeName());
             if(event.getLimitDistance()>0){
                 navicameraDistanceTextView.setText(String.format("%d米", event.getLimitDistance()));
-                //limitDistanceProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
+                int limitDistancePercentage=0;
+                if (event.getLimitDistance()<300 && event.getLimitDistance()>0) {
+                    limitDistancePercentage = Math.round((300F -event.getLimitDistance() ) / 300 * 100);
+                }
+                limitDistanceProgressBar.setProgress(limitDistancePercentage);
             }
             else {
                 navicameraDistanceTextView.setText("0米");

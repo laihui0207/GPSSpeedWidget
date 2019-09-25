@@ -121,6 +121,14 @@ public abstract class PrefUtils {
     static final String SPEED_NUMBER_H_WIDGET_ENABLE="com.huivip.time.widget.speed.number.h.enabled";
     static final String SPEED_METER_WIDGET_ENABLE="com.huivip.time.widget.speed.meter.enabled";
     static final String LYRIC_WIDGET_ENABLE="com.huivip.time.widget.lyric.enabled";
+    static final String MUSIC_WIDGET_ENABLE="com.huivip.time.widget.music.enabled";
+    static final String MUSIC_PLAYER = "com.huivip.select.musicplayer";
+    static final String MUSIC_PLAYER_NAME = "com.huivip.select.musicplayer.name";
+    static final String WEATHER_CITY= "com.huivip.weather.current.city";
+    static final String WEATHER_WEATHRE= "com.huivip.weather.current.weather";
+    static final String WEATHER_TEMPERATURE= "com.huivip.weather.current.temperature";
+    static final String WEATHER_ALTITUDE= "com.huivip.weather.current.altitude";
+
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -261,6 +269,24 @@ public abstract class PrefUtils {
     }
     public static boolean isLyricWidgetEnable(Context context){
         return getSharedPreferences(context).getBoolean(LYRIC_WIDGET_ENABLE,false);
+    }
+    public static void setMusicWidgetEnable(Context context,boolean value){
+        edit(context).putBoolean(MUSIC_WIDGET_ENABLE,value).apply();
+    }
+    public static boolean isMusicWidgetEnable(Context context){
+        return getSharedPreferences(context).getBoolean(MUSIC_WIDGET_ENABLE,false);
+    }
+    public static void setSelectMusicPlayer(Context context,String musicPackage){
+        edit(context).putString(MUSIC_PLAYER,musicPackage).apply();
+    }
+    public static String getSelectMusicPlayer(Context context){
+        return getSharedPreferences(context).getString(MUSIC_PLAYER,null);
+    }
+    public static void setSelectMusicPlayerName(Context context,String musicPackage){
+        edit(context).putString(MUSIC_PLAYER_NAME,musicPackage).apply();
+    }
+    public static String getSelectMusicPlayerName(Context context){
+        return getSharedPreferences(context).getString(MUSIC_PLAYER_NAME,null);
     }
     public static boolean isEnableTimeFloatingWidow(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_TIME_FLOATING_WINDOW, false);
@@ -458,7 +484,30 @@ public abstract class PrefUtils {
     public static void setSpeedAdjust(Context context, int value) {
         edit(context).putInt(PREF_GPS_SPEED_ADJUST, value).apply();
     }
-
+    public static void setWeatherCity(Context context,String value){
+        edit(context).putString(WEATHER_CITY,value).apply();
+    }
+    public static String getWeatherCity(Context context){
+        return getSharedPreferences(context).getString(WEATHER_CITY,"");
+    }
+    public static void setWeatherWeather(Context context,String value){
+        edit(context).putString(WEATHER_WEATHRE,value).apply();
+    }
+    public static String getWeatherWeathre(Context context){
+        return getSharedPreferences(context).getString(WEATHER_WEATHRE,"28");
+    }
+    public static void setWeatherTemperature(Context context,String value){
+        edit(context).putString(WEATHER_TEMPERATURE,value).apply();
+    }
+    public static String getWeatherTemperature(Context context){
+        return getSharedPreferences(context).getString(WEATHER_TEMPERATURE,"");
+    }
+    public static void setWeatherAltitude(Context context,String value){
+        edit(context).putString(WEATHER_ALTITUDE,value).apply();
+    }
+    public static String getWeatherAltitude(Context context){
+        return getSharedPreferences(context).getString(WEATHER_ALTITUDE,"0");
+    }
     public static int getSpeedAdjust(Context context) {
         return getSharedPreferences(context).getInt(PREF_GPS_SPEED_ADJUST, 0);
     }

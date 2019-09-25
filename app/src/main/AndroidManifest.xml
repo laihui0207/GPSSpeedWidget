@@ -49,7 +49,7 @@
             android:sharedUserId="android.uid.system"
             android:supportsRtl="true"
         android:theme="@style/Home.Light"
-            >
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <meta-data
                 android:name="com.amap.api.v2.apikey"
                 android:value="6d91e53ca05dee32ec58c9d257224e7b"/>
@@ -149,6 +149,16 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/time_widget_v_provider"/>
+        </receiver>
+        <receiver
+            android:name=".widget.MusicWidget"
+            android:label="GPS速度插件 音乐插件">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/music_vertical_widget_provider"/>
         </receiver>
         <receiver android:name=".listener.UploadRoadDataReceiver">
             <intent-filter>
@@ -298,7 +308,6 @@
         <service android:name=".service.NaviTrackService"/>
         <service android:name=".speech.PlayAudioService"/>
         <service android:name=".service.RealTimeFloatingService"/>
-        <service android:name=".lyric.LyricServiceLowVersion"/>
         <service android:name=".service.RoadLineFloatingService"/>
         <service android:name=".service.RoadLineService"/>
         <service android:name=".service.WeatherService"/>
@@ -314,16 +323,17 @@
                     android:name="android.accessibilityservice"
                     android:resource="@xml/accessibility_service"/>
         </service>
-        <service
-                android:name=".lyric.LyricService"
-                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+        <service android:name=".lyric.LyricService" />
+        <service android:name=".speech.AudioService" />
+        <service android:name=".service.SearchTrafficService" />
+        <service android:name=".service.SpeedNumberVerticalService" />
+        <service android:name=".service.MusicControllerService" />
+        <service android:name=".music.MusicRemoteControllerService"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService"/>
             </intent-filter>
         </service>
-        <service android:name=".speech.AudioService" />
-        <service android:name=".service.SearchTrafficService" />
-        <service android:name=".service.SpeedNumberVerticalService" />
 
         <activity
                 android:name=".activity.AudioTestActivity"
@@ -414,6 +424,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".music.AllSupportMusicAppActivity" />
 
         <receiver
             android:name="com.huivip.gpsspeedwidget.receivers.DeviceAdminReceiver"

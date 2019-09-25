@@ -23,7 +23,7 @@ public class TimeWidget_v extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.time_weather_v_widget);
         if(PrefUtils.isTimeVWidgetEnable(context) && !Utils.isServiceRunning(context, TimeWidgetVerticalService.class.getName())){
             Intent widgetService=new Intent(context, TimeWidgetVerticalService.class);
-            context.startService(widgetService);
+            Utils.startService(context,widgetService);
         }
         views.setOnClickPendingIntent(R.id.v_time_base_v,null);
 
@@ -53,7 +53,7 @@ public class TimeWidget_v extends AppWidgetProvider {
         if(Utils.isServiceRunning(context, TimeWidgetVerticalService.class.getName())){
             Intent widgetService=new Intent(context, TimeWidgetVerticalService.class);
             widgetService.putExtra(TimeWidgetVerticalService.EXTRA_CLOSE,true);
-            context.startService(widgetService);
+            Utils.startService(context,widgetService);
         }
         PrefUtils.setTimeVWidgetEnable(context,false);
         super.onDisabled(context);

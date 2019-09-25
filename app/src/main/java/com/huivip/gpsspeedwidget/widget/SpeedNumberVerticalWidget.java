@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
@@ -30,7 +31,7 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.v_speed_layout, launchMapFloatingService);
         if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, SpeedNumberVerticalService.class.getName())){
             Intent widgetService=new Intent(context, SpeedNumberVerticalService.class);
-            context.startService(widgetService);
+            Utils.startService(context,widgetService);
         }
         if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, RoadLineService.class.getName())){
             Intent roadLineService=new Intent(context, RoadLineService.class);
@@ -75,7 +76,11 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
         if(Utils.isServiceRunning(context, SpeedNumberVerticalService.class.getName())){
             Intent widgetService=new Intent(context, SpeedNumberVerticalService.class);
             widgetService.putExtra(SpeedNumberVerticalService.EXTRA_CLOSE,true);
-            context.startService(widgetService);
+            if(Build.VERSION.SDK_INT >= 26){
+                context.startForegroundService(widgetService);
+            } else {
+                context.startService(widgetService);
+            }
         }
         PrefUtils.setSpeedNumberVWidgetEnable(context,false);
         super.onDisabled(context);
