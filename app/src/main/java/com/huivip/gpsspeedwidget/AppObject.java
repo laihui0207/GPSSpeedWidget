@@ -9,8 +9,11 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
 import org.xutils.x;
 
+import cn.kuwo.autosdk.api.KWAPI;
+
 public class AppObject extends Application {
     private static AppObject _instance;
+    public KWAPI mKwapi;
     private static Context mContext;
     @Override
     protected void attachBaseContext(Context base) {
@@ -33,6 +36,7 @@ public class AppObject extends Application {
                 .sendNoSubscriberEvent(false)
                 .build();
         Utils.getDesktopPackageName(getApplicationContext());
+        mKwapi = KWAPI.createKWAPI(this, "auto");
     }
     public static Context getContext() {
         return mContext;

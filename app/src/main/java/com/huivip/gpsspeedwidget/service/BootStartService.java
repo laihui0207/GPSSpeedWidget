@@ -92,7 +92,7 @@ public class BootStartService extends Service {
                                 AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
                                 PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                                         new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
-                                alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
+                                alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, gotoHomeIntent);
                             }
 
                         }
@@ -101,7 +101,7 @@ public class BootStartService extends Service {
                     AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
                     PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                             new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
-                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
+                    alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, gotoHomeIntent);
                 }
             }
             PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,

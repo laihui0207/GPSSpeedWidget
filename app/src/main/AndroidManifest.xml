@@ -269,6 +269,7 @@
                 <action android:name="update.widget.playbtnstate"/>
                 <action android:name="com.ijidou.card.music"/>
                 <action android:name="com.ijidou.action.UPDATE_PROGRESS"/>
+                <action android:name="com.tencent.qqmusiccar.action.PLAY_COMMAND_SEND_FOR_THIRD"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".listener.DelayTaskReceiver">

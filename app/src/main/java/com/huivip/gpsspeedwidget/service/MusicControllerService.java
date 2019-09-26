@@ -82,7 +82,7 @@ public class MusicControllerService extends Service {
                                                 }
                                             }, 1000);
                                         }
-                                    },2000);
+                                    },10000);
                                 } else {
                                     musicRemoteControllerService.sendMusicKeyEvent(key);
                                     new Handler().postDelayed(new Runnable() {
@@ -103,6 +103,9 @@ public class MusicControllerService extends Service {
             public void onServiceConnected(ComponentName name, IBinder service) {
                 MusicRemoteControllerService.RCBinder binder = (MusicRemoteControllerService.RCBinder) service;
                 musicRemoteControllerService = binder.getService();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    musicRemoteControllerService.registerRemoteController();
+                }
             }
             @Override
             public void onServiceDisconnected(ComponentName name) {
@@ -151,17 +154,20 @@ public class MusicControllerService extends Service {
         remoteViews.setTextColor(R.id.v_music_songName, AppSettings.get().getMusicWidgetFontColor());
         int textSize = Integer.parseInt(AppSettings.get().getMusicWidgetFontSize());
         remoteViews.setTextViewTextSize(R.id.v_music_songName, TypedValue.COMPLEX_UNIT_SP, 20 + textSize);
-        appStarted=true;
+        //appStarted=true;
         remoteViews.setTextViewText(R.id.v_music_artistName, event.getArtistName());
         remoteViews.setTextColor(R.id.v_music_artistName, AppSettings.get().getMusicWidgetFontColor());
         remoteViews.setTextViewTextSize(R.id.v_music_artistName, TypedValue.COMPLEX_UNIT_SP, 10 + textSize);
-        remoteViews.setImageViewBitmap(R.id.v_music_background, getRoundedCornerBitmap(event.getCover(),20));
+        if(event.getCover()!=null) {
+            remoteViews.setImageViewBitmap(R.id.v_music_background, getRoundedCornerBitmap(event.getCover(), 20));
+        }
         this.manager.updateAppWidget(this.musicWidget, this.remoteViews);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             updatePlayButton(musicRemoteControllerService.isPlaying());
         }
     }
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+        if(bitmap==null) return null;
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
                 .getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
