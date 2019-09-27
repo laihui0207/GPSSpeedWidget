@@ -10,13 +10,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.service.TextFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;
-
-import org.greenrobot.eventbus.EventBus;
 
 public class MediaNotificationReceiver extends BroadcastReceiver {
     private String preSongName;
@@ -129,6 +126,6 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
                 context.startService(lycService);
             }
         }
-        EventBus.getDefault().post(new MusicEvent(songName,artistName));
+        //EventBus.getDefault().post(new MusicEvent(songName,artistName));
     }
 }

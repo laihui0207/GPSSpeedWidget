@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.service.notification.NotificationListenerService;
-import android.service.notification.StatusBarNotification;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -64,6 +63,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                    @Override
                    public void sendSyncNotice_HeadPicFinished(Music music, Bitmap bitmap) {
                        coverBitmap=bitmap;
+                       currentPosition=mKwapi.getCurrentPos()+2000;
                        launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,currentPosition);
                        MusicEvent musicEvent=new MusicEvent(songName,artistName);
                        musicEvent.setDuration(music.duration);
@@ -193,15 +193,6 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     public boolean isPlaying(){
         return am.isMusicActive();
     }
-
-    @Override
-    public void onNotificationPosted(StatusBarNotification sbn) {
-        Log.d(TAG, "onNotificationPosted...");
-        if (sbn.getPackageName().contains("music")) {
-            Log.d(TAG, "音乐软件正在播放...");
-            Log.d(TAG, sbn.getPackageName());
-        }
-    }
     @Override
     public void onClientChange(boolean clearing) {
 
@@ -209,18 +200,34 @@ public class MusicRemoteControllerService extends NotificationListenerService im
 
     @Override
     public void onClientPlaybackStateUpdate(int state) {
-        launchLyricService(state,0L);
     }
     @Override
     public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
         Log.d("huivip","get update state:"+state+",postion:"+currentPosMs);
-        launchLyricService(state,currentPosMs);
+        launchLyricService(state,currentPosMs+2000);
         currentPosition=currentPosMs;
     }
 
     @Override
     public void onClientTransportControlUpdate(int transportControlFlags) {
 
+    }
+
+    @Override
+    public void onClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor) {
+        artistName = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "null");
+        String album = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ALBUM, "null");
+        songName = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
+        duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
+        Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.fenmian);
+        coverBitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
+        Log.d("huivip","get Song:"+songName+",artist:"+artistName);
+        launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,2000);
+       /* MusicEvent musicEvent=new MusicEvent(songName,artistName);
+        musicEvent.setDuration(duration==null ? 0L:duration);
+        musicEvent.setCover(coverBitmap);
+        musicEvent.setCurrentPostion(2000);
+        EventBus.getDefault().post(musicEvent);*/
     }
     private void launchLyricService(int state,long position){
         if (AppSettings.get().isLyricEnable()) {
@@ -243,20 +250,6 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                 }
             },1000);
         }
-    }
-    @Override
-    public void onClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor) {
-        artistName = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "null");
-        String album = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ALBUM, "null");
-        songName = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
-        duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
-        Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.fenmian);
-        coverBitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
-        launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,currentPosition);
-        MusicEvent musicEvent=new MusicEvent(songName,artistName);
-        musicEvent.setDuration(duration==null ? 0L:duration);
-        musicEvent.setCover(coverBitmap);
-        EventBus.getDefault().post(musicEvent);
     }
     public class RCBinder extends Binder {
         public MusicRemoteControllerService getService() {

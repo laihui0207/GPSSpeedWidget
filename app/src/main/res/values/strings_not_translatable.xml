@@ -33,6 +33,7 @@
     <string name="pref_key__time_window_font_color" translatable="false">pref_key__time_window_font_color</string>
     <!-- music lyric -->
     <string name="pref_key__lyric_enable" translatable="false">pref_key__lyric_enable</string>
+    <string name="pref_key__lyric_floating_window_enable" translatable="false">pref_key__lyric_floating_window_enable</string>
     <string name="pref_key__lyric_fixed" translatable="false">pref_key__lyric_fixed</string>
     <string name="pref_key__lyric_path" translatable="false">pref_key__lyric_path</string>
     <string name="pref_key__lyric_font_color" translatable="false">pref_key__lyric_font_color</string>

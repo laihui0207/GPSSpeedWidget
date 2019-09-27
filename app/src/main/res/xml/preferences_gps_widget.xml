@@ -259,11 +259,15 @@
             android:defaultValue="false"
             android:key="@string/pref_key__lyric_enable"
             android:title="启用歌词服务" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__lyric_floating_window_enable"
+            android:title="悬浮歌词窗口" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key__lyric_fixed"
             android:summary="歌词悬浮窗位置固定，点击透穿"
-            android:title="歌词位置固定" />
+            android:title="悬浮歌词窗口位置固定" />
         <Preference
             android:defaultValue=""
             android:key="@string/pref_key__lyric_path"

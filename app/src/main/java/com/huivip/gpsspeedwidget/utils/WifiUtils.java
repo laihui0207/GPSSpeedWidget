@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 public class WifiUtils {
     public static boolean switchWifiHotspot(Context context, String WIFI_HOTSPOT_SSID, String password,boolean enable) {
         WifiManager wifiManager= (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        if(!checkMobileAvalible(context)) return false;
+        //if(!checkMobileAvalible(context)) return false;
         if (wifiManager.isWifiEnabled() && enable) {
             //如果wifi处于打开状态，则关闭wifi,
             wifiManager.setWifiEnabled(false);

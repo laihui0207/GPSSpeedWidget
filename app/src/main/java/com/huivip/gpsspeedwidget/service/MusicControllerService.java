@@ -16,26 +16,34 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.util.TypedValue;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.MusicAlbumUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.music.AllSupportMusicAppActivity;
 import com.huivip.gpsspeedwidget.music.MusicRemoteControllerService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
+import com.huivip.gpsspeedwidget.util.Tool;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.widget.MusicWidget;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.xutils.common.Callback;
+import org.xutils.image.ImageOptions;
+import org.xutils.x;
 
 public class MusicControllerService extends Service {
     public static String INTENT_ACTION = "com.huivip.widget.music.controller";
@@ -164,6 +172,61 @@ public class MusicControllerService extends Service {
         this.manager.updateAppWidget(this.musicWidget, this.remoteViews);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             updatePlayButton(musicRemoteControllerService.isPlaying());
+        }
+    }
+    @Subscribe
+    public void updateAlubm(MusicAlbumUpdateEvent event){
+        Log.d("huivip","Get Update Album event");
+        if(event.getPicUrl()!=null){
+            Log.d("huivip","get piculr:"+event.getPicUrl());
+           ImageOptions imageOptions = new ImageOptions.Builder()
+                    //.setSize(300,600)
+                    .setRadius(20)
+                    // 如果ImageView的大小不是定义为wrap_content, 不要crop.
+                    .setCrop(true)
+                    // 加载中或错误图片的ScaleType
+                    //.setPlaceholderScaleType(ImageView.ScaleType.MATRIX)
+                    .setImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                    //设置加载过程中的图片
+                    .setLoadingDrawableId(R.drawable.fenmian)
+                    //设置加载失败后的图片
+                    .setFailureDrawableId(R.drawable.fenmian)
+                    //设置使用缓存
+                    .setUseMemCache(true)
+                    //设置支持gif
+                    .setIgnoreGif(false)
+                    //设置显示圆形图片
+                    .setCircular(false)
+                    .setSquare(true)
+                    .build();
+            x.image().loadDrawable(event.getPicUrl(), imageOptions, new Callback.CommonCallback<Drawable>() {
+                @Override
+                public void onSuccess(Drawable result) {
+                    remoteViews = new RemoteViews(getPackageName(), R.layout.music_vertical_widget);
+                    remoteViews.setImageViewBitmap(R.id.v_music_background, getRoundedCornerBitmap(Tool.drawableToBitmap(result), 20));
+                    manager.updateAppWidget(musicWidget, remoteViews);
+                }
+
+                @Override
+                public void onError(Throwable ex, boolean isOnCallback) {
+
+                }
+
+                @Override
+                public void onCancelled(CancelledException cex) {
+
+                }
+
+                @Override
+                public void onFinished() {
+
+                }
+            });
+
+        } else if(event.getCover()!=null){
+            this.remoteViews = new RemoteViews(getPackageName(), R.layout.music_vertical_widget);
+            remoteViews.setImageViewBitmap(R.id.v_music_background, getRoundedCornerBitmap(event.getCover(), 20));
+            this.manager.updateAppWidget(this.musicWidget, this.remoteViews);
         }
     }
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {

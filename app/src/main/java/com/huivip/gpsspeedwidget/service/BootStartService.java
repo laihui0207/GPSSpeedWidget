@@ -59,14 +59,7 @@ public class BootStartService extends Service {
         boolean start = AppSettings.get().getAutoStart();
         Log.d("huivip","Auto Start: "+start);
         if (start) {
-            /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                NotificationChannel channel = null;
-                channel = new NotificationChannel(NOTIFICATION_CHANNEL_NAME, getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
-                notificationManager.createNotificationChannel(channel);
-                Notification notification = new Notification.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_NAME).build();*/
-                startForeground(1, buildNotification());
-           // }
+            startForeground(1, buildNotification());
             String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
             if (AppSettings.get().isEnableLaunchOtherApp() && !TextUtils.isEmpty(apps)) {
                 String[] autoApps = apps.split(",");

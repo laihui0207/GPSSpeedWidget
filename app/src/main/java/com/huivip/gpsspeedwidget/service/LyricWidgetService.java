@@ -3,11 +3,9 @@ package com.huivip.gpsspeedwidget.service;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Paint;
 import android.media.AudioManager;
 import android.os.Handler;
@@ -18,9 +16,13 @@ import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
+import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
 import com.huivip.gpsspeedwidget.utils.LrcUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.widget.LyricWidget;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 import java.util.Timer;
@@ -58,16 +60,6 @@ public class LyricWidgetService extends Service {
         this.manager = AppWidgetManager.getInstance(this);
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         this.lyricWidget = new ComponentName(this, LyricWidget.class);
-        gPaint = new Paint();
-        gPaint.setAntiAlias(true);
-        gPaint.setColor(R.color.blue);
-        gPaint.setTextSize(45);
-        gPaint.setTextAlign(Paint.Align.CENTER);
-        hPaint = new Paint();
-        hPaint.setAntiAlias(true);
-        hPaint.setColor(R.color.green);
-        hPaint.setTextSize(45);
-        hPaint.setTextAlign(Paint.Align.CENTER);
         lyricTimer = new Timer();
         this.lyricTask = new TimerTask() {
             @Override
@@ -80,7 +72,8 @@ public class LyricWidgetService extends Service {
                 });
             }
         };
-        this.lyricTimer.schedule(this.lyricTask, 0L, 500L);
+        this.lyricTimer.schedule(this.lyricTask, 0L, 1000L);
+        EventBus.getDefault().register(this);
         super.onCreate();
     }
 
@@ -91,12 +84,6 @@ public class LyricWidgetService extends Service {
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
         }
-        if (intent != null && !started) {
-            started=true;
-            IntentFilter intentFilter = new IntentFilter( "com.huivip.widget.lyric.changed" );
-            registerReceiver( myBroadcastReceiver , intentFilter);
-        }
-
         return Service.START_REDELIVER_INTENT;
     }
     private void calTime(){
@@ -121,15 +108,15 @@ public class LyricWidgetService extends Service {
     }
     @Override
     public void onDestroy() {
-        started=false;
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroy();
     }
     public void onStop(){
-       started=false;
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.lyric_widget);
         remoteViews.setTextViewText(R.id.textView_lyric,"");
         this.manager.updateAppWidget(this.lyricWidget,remoteViews);
-        unregisterReceiver(myBroadcastReceiver);
     }
     private void getCurrentPosition() {
         try {
@@ -156,21 +143,15 @@ public class LyricWidgetService extends Service {
         } catch (Exception e) {
         }
     }
-    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent!=null && intent.getAction().equalsIgnoreCase("com.huivip.widget.lyric.changed")){
-                lyric_content = intent.getStringExtra(LYRIC_CONTENT);
-                if (!TextUtils.isEmpty(lyric_content)) {
-                    list = LrcUtil.parseStr2List(lyric_content);
-                } else {
-                    list=null;
-                }
-                position = intent.getLongExtra(POSITION, 0);
-                startTime=System.currentTimeMillis()-position;
-            }
+    @Subscribe
+    public void updateSong(LyricContentEvent event){
+        lyric_content=event.getContent();
+        position=event.getPosition();
+        if (!TextUtils.isEmpty(lyric_content)) {
+            list = LrcUtil.parseStr2List(lyric_content);
+        } else {
+            list=null;
         }
-
-    };
+        startTime=System.currentTimeMillis()-position;
+    }
 }

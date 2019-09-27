@@ -10,6 +10,7 @@ public class MusicEvent {
     long duration;
     long currentPostion;
     Bitmap cover;
+    String lyricContent;
 
     public MusicEvent(String songName, String artistName) {
         this.songName = songName;
@@ -62,6 +63,14 @@ public class MusicEvent {
 
     public void setCurrentPostion(long currentPostion) {
         this.currentPostion = currentPostion;
+    }
+
+    public String getLyricContent() {
+        return lyricContent;
+    }
+
+    public void setLyricContent(String lyricContent) {
+        this.lyricContent = lyricContent;
     }
 
     public Bitmap getCover() {
