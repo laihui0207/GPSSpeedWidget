@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.RemoteControlClient;
@@ -19,7 +18,6 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -219,8 +217,8 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         String album = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ALBUM, "null");
         songName = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
         duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
-        Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.fenmian);
-        coverBitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
+        //Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.fenmian);
+        coverBitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, null);
         Log.d("huivip","get Song:"+songName+",artist:"+artistName);
         launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,2000);
        /* MusicEvent musicEvent=new MusicEvent(songName,artistName);

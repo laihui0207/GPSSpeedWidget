@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget.beans;
 import android.graphics.Bitmap;
 
 public class MusicAlbumUpdateEvent {
+    String songName;
     String picUrl;
     Bitmap cover;
 
@@ -23,5 +24,13 @@ public class MusicAlbumUpdateEvent {
 
     public void setCover(Bitmap cover) {
         this.cover = cover;
+    }
+
+    public String getSongName() {
+        return songName;
+    }
+
+    public void setSongName(String songName) {
+        this.songName = songName;
     }
 }

@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -95,14 +96,16 @@ public class TimeWidgetVerticalService extends Service {
        RemoteViews weatherView = new RemoteViews(getPackageName(), R.layout.time_weather_v_widget);
        weatherView.setImageViewResource(R.id.image_weather_v, WeatherItem.getWeatherResId(event.getWeather()));
         int textSize=15+Integer.parseInt(AppSettings.get().getTimeWidgetOtherTextSize());
-
-       weatherView.setTextViewText(R.id.text_city_v,event.getCity());
-       weatherView.setTextColor(R.id.text_city_v,AppSettings.get().getTimeWidgetOtherTextColor());
-       weatherView.setTextViewTextSize(R.id.text_city_v, TypedValue.COMPLEX_UNIT_SP,textSize);
-
-       weatherView.setTextViewText(R.id.text_temperature_v,event.getWeather()+"/"+event.getTemperature()+"\u2103  ");
-        weatherView.setTextColor(R.id.text_temperature_v,AppSettings.get().getTimeWidgetOtherTextColor());
-        weatherView.setTextViewTextSize(R.id.text_temperature_v, TypedValue.COMPLEX_UNIT_SP,textSize);
+        if(!TextUtils.isEmpty(event.getCity())) {
+            weatherView.setTextViewText(R.id.text_city_v, event.getCity());
+            weatherView.setTextColor(R.id.text_city_v, AppSettings.get().getTimeWidgetOtherTextColor());
+            weatherView.setTextViewTextSize(R.id.text_city_v, TypedValue.COMPLEX_UNIT_SP, textSize);
+        }
+        if(!TextUtils.isEmpty(event.getWeather())) {
+            weatherView.setTextViewText(R.id.text_temperature_v, event.getWeather() + "/" + event.getTemperature() + "\u2103  ");
+            weatherView.setTextColor(R.id.text_temperature_v, AppSettings.get().getTimeWidgetOtherTextColor());
+            weatherView.setTextViewTextSize(R.id.text_temperature_v, TypedValue.COMPLEX_UNIT_SP, textSize);
+        }
 
        weatherView.setTextViewText(R.id.text_altitude_v,"海拔:"+event.getAltitude()+"米");
         weatherView.setTextColor(R.id.text_altitude_v,AppSettings.get().getTimeWidgetOtherTextColor());

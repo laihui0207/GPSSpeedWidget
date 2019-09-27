@@ -54,6 +54,7 @@ public class MusicControllerService extends Service {
     ComponentName musicWidget;
     RemoteViews remoteViews;
     boolean appStarted=false;
+    String currentSongName=null;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -90,7 +91,7 @@ public class MusicControllerService extends Service {
                                                 }
                                             }, 1000);
                                         }
-                                    },10000);
+                                    },5000);
                                 } else {
                                     musicRemoteControllerService.sendMusicKeyEvent(key);
                                     new Handler().postDelayed(new Runnable() {
@@ -157,6 +158,7 @@ public class MusicControllerService extends Service {
     }
     @Subscribe
     public void updateMusic(MusicEvent event) {
+        currentSongName=event.getSongName();
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.music_vertical_widget);
         remoteViews.setTextViewText(R.id.v_music_songName, event.getSongName());
         remoteViews.setTextColor(R.id.v_music_songName, AppSettings.get().getMusicWidgetFontColor());
@@ -176,7 +178,10 @@ public class MusicControllerService extends Service {
     }
     @Subscribe
     public void updateAlubm(MusicAlbumUpdateEvent event){
-        Log.d("huivip","Get Update Album event");
+        Log.d("huivip","Get Update Album event,picurl:"+event.getPicUrl());
+        if(!event.getSongName().equalsIgnoreCase(currentSongName)){
+            return;
+        }
         if(event.getPicUrl()!=null){
             Log.d("huivip","get piculr:"+event.getPicUrl());
            ImageOptions imageOptions = new ImageOptions.Builder()

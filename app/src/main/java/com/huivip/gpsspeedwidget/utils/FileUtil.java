@@ -226,7 +226,7 @@ public class FileUtil {
         String picileName=path+fileName;
         File picFile=new File(picileName);
         if (picFile.exists()){
-            postAlbumUpdateEvent(picFile);
+            //postAlbumUpdateEvent(picFile);
             return;
         }
         RequestParams params = new RequestParams(picUrl);

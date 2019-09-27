@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
@@ -41,6 +43,7 @@ public class LyricService extends Service {
     long currentPosition=0L;
     Long duration;
     String lyricContent;
+    Bitmap musicCover;
 
     @Nullable
     @Override
@@ -78,8 +81,9 @@ public class LyricService extends Service {
 
     @Subscribe
     public void updateSong(MusicEvent event){
-        searchLyric(event.getSongName(),event.getArtistName());
+        musicCover=event.getCover();
         currentPosition=event.getCurrentPostion();
+        searchLyric(event.getSongName(),event.getArtistName());
     }
     private void searchLyric(String inputSongName,String inputArtist){
         new Thread(new Runnable() {
@@ -87,17 +91,23 @@ public class LyricService extends Service {
             public void run() {
                 long startedTime=System.currentTimeMillis();
                 lyricContent = FileUtil.loadLyric(inputSongName, inputArtist);
-                String cover=FileUtil.loadAlbum(inputSongName,inputArtist);
-                if(cover!=null){
-                    MusicAlbumUpdateEvent event=new MusicAlbumUpdateEvent();
-                    event.setPicUrl(cover);
-                    EventBus.getDefault().post(event);
+                String cover=null;
+                if (musicCover == null) {
+                    Log.d("huivip","from music cover is null");
+                    cover = FileUtil.loadAlbum(inputSongName, inputArtist);
+                    if (cover != null) {
+                        MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
+                        event.setSongName(inputSongName);
+                        event.setPicUrl(cover);
+                        EventBus.getDefault().post(event);
+                    }
                 }
-                if (TextUtils.isEmpty(lyricContent) || cover==null) {
+                if (TextUtils.isEmpty(lyricContent) || (cover==null && musicCover==null)) {
                     MusicEvent res= WangYiYunMusic.downloadLyric(inputSongName, inputArtist);
                     lyricContent=res.getLyricContent();
-                    if(res.getMusicCover()!=null && cover==null){
+                    if(res.getMusicCover()!=null && cover==null && musicCover==null){
                         MusicAlbumUpdateEvent event=new MusicAlbumUpdateEvent();
+                        event.setSongName(inputSongName);
                         event.setPicUrl(res.getMusicCover());
                         EventBus.getDefault().post(event);
                         FileUtil.saveAlbum(getApplicationContext(),inputSongName,inputArtist,res.getMusicCover());

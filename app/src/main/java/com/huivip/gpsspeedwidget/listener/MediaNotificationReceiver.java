@@ -10,10 +10,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.service.TextFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class MediaNotificationReceiver extends BroadcastReceiver {
     private String preSongName;
@@ -49,12 +52,13 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         String songName=intent.getStringExtra("track");
         String artistName=intent.getStringExtra("artist");
         String album=intent.getStringExtra("album");
-        if(intent.getAction().equalsIgnoreCase(KW_PLAYER_STATUS)){
+      /*  if(intent.getAction().equalsIgnoreCase(KW_PLAYER_STATUS)){
             songName=intent.getStringExtra("play_music_name");
             artistName=intent.getStringExtra("play_music_artist");
             album=intent.getStringExtra("play_music_album");
 
-        }
+        }*/
+        // zx music
         if(intent.getAction().equalsIgnoreCase("update.widget.update_proBar")){
             songName = intent.getStringExtra("curplaysong");
             position = intent.getIntExtra("proBarvalue", 0);
@@ -126,6 +130,6 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
                 context.startService(lycService);
             }
         }
-        //EventBus.getDefault().post(new MusicEvent(songName,artistName));
+        EventBus.getDefault().post(new MusicEvent(songName,artistName));
     }
 }
