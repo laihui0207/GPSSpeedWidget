@@ -63,11 +63,16 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                        coverBitmap=bitmap;
                        currentPosition=mKwapi.getCurrentPos()+2000;
                        launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,currentPosition);
-                       MusicEvent musicEvent=new MusicEvent(songName,artistName);
+                       MusicEvent musicEvent=new MusicEvent(music.name,music.artist);
                        musicEvent.setDuration(music.duration);
                        musicEvent.setCurrentPostion(mKwapi.getCurrentPos());
                        musicEvent.setCover(coverBitmap);
                        EventBus.getDefault().post(musicEvent);
+                       if(coverBitmap!=null) {
+                           new Thread(() -> {
+                               FileUtil.saveImg(coverBitmap, songName, artistName);
+                           }).start();
+                       }
                    }
                    @Override
                    public void sendSyncNotice_HeadPicFailed(Music music) {
@@ -83,8 +88,12 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                    }
 
                    @Override
-                   public void sendSyncNotice_LyricsFinished(Music music, String s) {
-                       FileUtil.saveLyric(getApplicationContext(),music.name,music.artist,s);
+                   public void sendSyncNotice_LyricsFinished(Music music, String lyricContent) {
+                       new Thread(()->{
+                           FileUtil.saveLyric(music.name,music.artist,lyricContent);
+                       }).start();
+                       //LyricContentEvent event=new LyricContentEvent(music.name,lyricContent,mKwapi.getCurrentPos());
+                       //EventBus.getDefault().post(event);
                    }
 
                    @Override
@@ -202,7 +211,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     @Override
     public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
         Log.d("huivip","get update state:"+state+",postion:"+currentPosMs);
-        launchLyricService(state,currentPosMs+2000);
+        launchLyricService(state,currentPosMs+1000);
         currentPosition=currentPosMs;
     }
 
@@ -220,12 +229,12 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         //Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.fenmian);
         coverBitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, null);
         Log.d("huivip","get Song:"+songName+",artist:"+artistName);
-        launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,2000);
-       /* MusicEvent musicEvent=new MusicEvent(songName,artistName);
+        launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,1000);
+        MusicEvent musicEvent=new MusicEvent(songName,artistName);
         musicEvent.setDuration(duration==null ? 0L:duration);
         musicEvent.setCover(coverBitmap);
-        musicEvent.setCurrentPostion(2000);
-        EventBus.getDefault().post(musicEvent);*/
+        musicEvent.setCurrentPostion(1000);
+        EventBus.getDefault().post(musicEvent);
     }
     private void launchLyricService(int state,long position){
         if (AppSettings.get().isLyricEnable()) {

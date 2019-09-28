@@ -21,7 +21,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
@@ -41,6 +41,7 @@ import com.huivip.gpsspeedwidget.widget.MusicWidget;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.common.Callback;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
@@ -91,7 +92,7 @@ public class MusicControllerService extends Service {
                                                 }
                                             }, 1000);
                                         }
-                                    },5000);
+                                    },3000);
                                 } else {
                                     musicRemoteControllerService.sendMusicKeyEvent(key);
                                     new Handler().postDelayed(new Runnable() {
@@ -128,7 +129,9 @@ public class MusicControllerService extends Service {
         this.manager = AppWidgetManager.getInstance(this);
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         this.musicWidget = new ComponentName(this, MusicWidget.class);
-
+        this.remoteViews = new RemoteViews(getPackageName(), R.layout.music_vertical_widget);
+        remoteViews.setImageViewResource(R.id.v_music_background,R.drawable.fenmian);
+        this.manager.updateAppWidget(this.musicWidget, this.remoteViews);
     }
     private void startApp(String appPkg) {
         try {
@@ -156,34 +159,34 @@ public class MusicControllerService extends Service {
         }
         this.manager.updateAppWidget(this.musicWidget, this.remoteViews);
     }
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void updateMusic(MusicEvent event) {
         currentSongName=event.getSongName();
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.music_vertical_widget);
-        remoteViews.setTextViewText(R.id.v_music_songName, event.getSongName());
-        remoteViews.setTextColor(R.id.v_music_songName, AppSettings.get().getMusicWidgetFontColor());
-        int textSize = Integer.parseInt(AppSettings.get().getMusicWidgetFontSize());
-        remoteViews.setTextViewTextSize(R.id.v_music_songName, TypedValue.COMPLEX_UNIT_SP, 20 + textSize);
-        //appStarted=true;
-        remoteViews.setTextViewText(R.id.v_music_artistName, event.getArtistName());
-        remoteViews.setTextColor(R.id.v_music_artistName, AppSettings.get().getMusicWidgetFontColor());
-        remoteViews.setTextViewTextSize(R.id.v_music_artistName, TypedValue.COMPLEX_UNIT_SP, 10 + textSize);
+        if(!TextUtils.isEmpty(event.getSongName())) {
+            remoteViews.setTextViewText(R.id.v_music_songName, event.getSongName());
+            remoteViews.setTextColor(R.id.v_music_songName, AppSettings.get().getMusicWidgetFontColor());
+            int textSize = Integer.parseInt(AppSettings.get().getMusicWidgetFontSize());
+            remoteViews.setTextViewTextSize(R.id.v_music_songName, TypedValue.COMPLEX_UNIT_SP, 20 + textSize);
+            //appStarted=true;
+            remoteViews.setTextViewText(R.id.v_music_artistName, event.getArtistName());
+            remoteViews.setTextColor(R.id.v_music_artistName, AppSettings.get().getMusicWidgetFontColor());
+            remoteViews.setTextViewTextSize(R.id.v_music_artistName, TypedValue.COMPLEX_UNIT_SP, 10 + textSize);
+        }
         if(event.getCover()!=null) {
-            remoteViews.setImageViewBitmap(R.id.v_music_background, getRoundedCornerBitmap(event.getCover(), 20));
+            remoteViews.setImageViewBitmap(R.id.v_music_background, getRoundedCornerBitmap(event.getCover(), Tool.dp2px(20)));
         }
         this.manager.updateAppWidget(this.musicWidget, this.remoteViews);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             updatePlayButton(musicRemoteControllerService.isPlaying());
         }
     }
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void updateAlubm(MusicAlbumUpdateEvent event){
-        Log.d("huivip","Get Update Album event,picurl:"+event.getPicUrl());
         if(!event.getSongName().equalsIgnoreCase(currentSongName)){
             return;
         }
         if(event.getPicUrl()!=null){
-            Log.d("huivip","get piculr:"+event.getPicUrl());
            ImageOptions imageOptions = new ImageOptions.Builder()
                     //.setSize(300,600)
                     .setRadius(20)
@@ -208,7 +211,7 @@ public class MusicControllerService extends Service {
                 @Override
                 public void onSuccess(Drawable result) {
                     remoteViews = new RemoteViews(getPackageName(), R.layout.music_vertical_widget);
-                    remoteViews.setImageViewBitmap(R.id.v_music_background, getRoundedCornerBitmap(Tool.drawableToBitmap(result), 20));
+                    remoteViews.setImageViewBitmap(R.id.v_music_background, getRoundedCornerBitmap(Tool.drawableToBitmap(result),Tool.dp2px(20)));
                     manager.updateAppWidget(musicWidget, remoteViews);
                 }
 
@@ -230,7 +233,7 @@ public class MusicControllerService extends Service {
 
         } else if(event.getCover()!=null){
             this.remoteViews = new RemoteViews(getPackageName(), R.layout.music_vertical_widget);
-            remoteViews.setImageViewBitmap(R.id.v_music_background, getRoundedCornerBitmap(event.getCover(), 20));
+            remoteViews.setImageViewBitmap(R.id.v_music_background, getRoundedCornerBitmap(event.getCover(), Tool.dp2px(20)));
             this.manager.updateAppWidget(this.musicWidget, this.remoteViews);
         }
     }

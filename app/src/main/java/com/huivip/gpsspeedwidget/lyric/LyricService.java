@@ -6,12 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
@@ -27,6 +27,7 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -38,12 +39,7 @@ public class LyricService extends Service {
     public static String STATUS="lyric.status";
     public final String TAG="huivip";
     AudioManager am;
-    String songName;
-    String artistName;
-    long currentPosition=0L;
     Long duration;
-    String lyricContent;
-    Bitmap musicCover;
 
     @Nullable
     @Override
@@ -79,49 +75,46 @@ public class LyricService extends Service {
         return duration;
     }
 
-    @Subscribe
-    public void updateSong(MusicEvent event){
-        musicCover=event.getCover();
-        currentPosition=event.getCurrentPostion();
-        searchLyric(event.getSongName(),event.getArtistName());
-    }
-    private void searchLyric(String inputSongName,String inputArtist){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                long startedTime=System.currentTimeMillis();
-                lyricContent = FileUtil.loadLyric(inputSongName, inputArtist);
-                String cover=null;
-                if (musicCover == null) {
-                    Log.d("huivip","from music cover is null");
-                    cover = FileUtil.loadAlbum(inputSongName, inputArtist);
-                    if (cover != null) {
-                        MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
-                        event.setSongName(inputSongName);
-                        event.setPicUrl(cover);
-                        EventBus.getDefault().post(event);
-                    }
-                }
-                if (TextUtils.isEmpty(lyricContent) || (cover==null && musicCover==null)) {
-                    MusicEvent res= WangYiYunMusic.downloadLyric(inputSongName, inputArtist);
-                    lyricContent=res.getLyricContent();
-                    if(res.getMusicCover()!=null && cover==null && musicCover==null){
-                        MusicAlbumUpdateEvent event=new MusicAlbumUpdateEvent();
-                        event.setSongName(inputSongName);
-                        event.setPicUrl(res.getMusicCover());
-                        EventBus.getDefault().post(event);
-                        FileUtil.saveAlbum(getApplicationContext(),inputSongName,inputArtist,res.getMusicCover());
-                   }
-                }
-
-                currentPosition+=System.currentTimeMillis()-startedTime;
-                songName = inputSongName;
-                artistName = inputArtist;
-                Message msg = new Message();
-                mHandler.sendMessage(msg);
-
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void searchLyric(MusicEvent musicEvent) {
+        long startedTime = System.currentTimeMillis();
+        String inputSongName=musicEvent.getSongName();
+        String inputArtist=musicEvent.getArtistName();
+        long currentPosition=musicEvent.getCurrentPostion();
+        String lyricContent = FileUtil.loadLyric(inputSongName, inputArtist);
+        String cover = null;
+        Bitmap musicCover=musicEvent.getCover();
+        if (musicCover == null) {
+            cover = FileUtil.loadAlbum(inputSongName, inputArtist);
+            if (cover != null) {
+                MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
+                event.setSongName(inputSongName);
+                event.setPicUrl(cover);
+                EventBus.getDefault().post(event);
             }
-        }).start();
+        }
+        if (TextUtils.isEmpty(lyricContent) || (cover == null && musicCover == null)) {
+            MusicEvent res = WangYiYunMusic.downloadLyric(inputSongName, inputArtist);
+            lyricContent = res.getLyricContent();
+            if (res.getMusicCover() != null && cover == null && musicCover == null) {
+                MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
+                event.setSongName(inputSongName);
+                event.setPicUrl(res.getMusicCover());
+                EventBus.getDefault().post(event);
+                FileUtil.saveAlbum(getApplicationContext(), inputSongName, inputArtist, res.getMusicCover());
+            }
+        }
+
+       currentPosition += System.currentTimeMillis() - startedTime;
+        Message msg = new Message();
+        Bundle bundle=new Bundle();
+        bundle.putString("songName",inputSongName);
+        bundle.putString("artistName",inputArtist);
+        bundle.putString("lyricContent",lyricContent);
+        bundle.putLong("currentPosition",currentPosition);
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
+
     }
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -130,41 +123,54 @@ public class LyricService extends Service {
             if(!AppSettings.get().isLyricEnable()){
                 return;
             }
+            Bundle data=msg.getData();
+            String lyricContent=data.getString("lyricContent");
+            String songName=data.getString("songName");
+            String artistName=data.getString("artistName");
+            Long currentPosition=data.getLong("currentPosition");
             if(!TextUtils.isEmpty(lyricContent)) {
                 List<LrcBean> list= LrcUtil.parseStr2List(lyricContent);
                 if(list!=null && list.size()>0) {
-                    FileUtil.saveLyric(getApplicationContext(), songName, artistName, lyricContent);
-                    launchLrcFloatingWindows(true);
+                    new Thread(()->{
+                        FileUtil.saveLyric(songName, artistName, lyricContent);
+                    }).start();
+                    launchLrcFloatingWindows(songName,artistName,lyricContent,currentPosition);
                 } else {
-                    launchLrcFloatingWindows(false);
+                    stopLyric(songName);
                     FileUtil.deleteLyric(getApplicationContext(),songName,artistName);
                 }
             } else {
-                launchLrcFloatingWindows(false);
+                stopLyric(songName);
             }
             super.handleMessage(msg);
         }
     };
-    private void launchLrcFloatingWindows(boolean start){
-         if(AppSettings.get().isLyricFloattingWidownEnable()) {
-             Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
-             lycFloatingService.putExtra(LyricFloatingService.SONGNAME, songName);
-             lycFloatingService.putExtra(LyricFloatingService.ARTIST, artistName);
-             if (currentPosition>0) {
-                 lycFloatingService.putExtra(LyricFloatingService.POSITION, currentPosition);
-             }
-             lycFloatingService.putExtra(LyricFloatingService.LYRIC_CONTENT,lyricContent);
-             lycFloatingService.putExtra(LyricFloatingService.DURATION, duration);
-             if(!start){
-                 lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
-             }
-             startService(lycFloatingService);
-         }
+    private void stopLyric(String songName) {
+        if (AppSettings.get().isLyricFloattingWidownEnable()) {
+            Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
+            lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
+            startService(lycFloatingService);
+        }
+        EventBus.getDefault().post(new LyricContentEvent(songName, null, 0));
+    }
+
+    private void launchLrcFloatingWindows(String songName, String artistName, String lyricContent, long currentPosition) {
+        if (AppSettings.get().isLyricFloattingWidownEnable()) {
+            Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
+            lycFloatingService.putExtra(LyricFloatingService.SONGNAME, songName);
+            lycFloatingService.putExtra(LyricFloatingService.ARTIST, artistName);
+            if (currentPosition > 0) {
+                lycFloatingService.putExtra(LyricFloatingService.POSITION, currentPosition);
+            }
+            lycFloatingService.putExtra(LyricFloatingService.LYRIC_CONTENT, lyricContent);
+            lycFloatingService.putExtra(LyricFloatingService.DURATION, duration);
+            startService(lycFloatingService);
+        }
         if (PrefUtils.isLyricWidgetEnable(getApplicationContext())
                 && !Utils.isServiceRunning(getApplicationContext(), LyricWidgetService.class.getName())) {
             Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
             startService(widgetService);
-            EventBus.getDefault().post(new LyricContentEvent(lyricContent,currentPosition));
+            EventBus.getDefault().post(new LyricContentEvent(songName, lyricContent, currentPosition));
         }
     }
 }

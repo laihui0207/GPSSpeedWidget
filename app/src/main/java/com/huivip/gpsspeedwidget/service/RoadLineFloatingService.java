@@ -24,11 +24,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.amap.api.services.traffic.TrafficSearch;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.beans.SearchTrafficEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -176,11 +174,11 @@ public class RoadLineFloatingService extends Service{
                 roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
                 roadLineView.setVisibility(View.VISIBLE);
                 if(!isShowing && !TextUtils.isEmpty(gpsUtil.getLatitude()) && !TextUtils.isEmpty(gpsUtil.getLongitude())) {
-                    EventBus.getDefault().post(
+               /*     EventBus.getDefault().post(
                             new SearchTrafficEvent(Double.parseDouble(gpsUtil.getLatitude()),
                                     Double.parseDouble(gpsUtil.getLongitude()),
                                     2000, TrafficSearch.ROAD_LEVEL_NONAME_WAY));
-                }
+                */}
                 isShowing=true;
             } else {
                 roadLineView.setVisibility(View.INVISIBLE);

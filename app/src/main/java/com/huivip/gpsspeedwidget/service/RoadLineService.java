@@ -34,7 +34,6 @@ public class RoadLineService extends Service {
     View roadLineView = null;
     View preRoadLineView=null;
     View widgetView=null;
-    View amapView=null;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -54,15 +53,6 @@ public class RoadLineService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(!AppSettings.get().isEnableRoadLine()){
-            stopSelf();
-            return super.onStartCommand(intent, flags, startId);
-        }
-        int id =AppSettings.get().getAmapPluginId();
-        if (id != -1) {
-            AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-            amapView = appWidgetHost.createView(this, id, appWidgetInfo);
-            widgetView=amapView;
-        } else {
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
         }
@@ -105,17 +95,24 @@ public class RoadLineService extends Service {
         super.onDestroy();
     }
 
-    private View getRoadLineView() {
-        View roladLineImage = null;
-        if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
-            roladLineImage = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
-        } else {
-            roladLineImage = Utils.findlayoutViewById(amapView, "road_line");
+    private View getRoadLineView(){
+        int id =AppSettings.get().getAmapPluginId();// PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+        if (id != -1) {
+                AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+                final View amapView = appWidgetHost.createView(this, id, appWidgetInfo);
+                widgetView = amapView;
+                View roladLineImage=null;
+                if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
+                    roladLineImage = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
+                } else {
+                    roladLineImage = Utils.findlayoutViewById(amapView, "road_line");
+                }
+                if (roladLineImage != null && roladLineImage instanceof ImageView) {
+                    return roladLineImage;
+                } else {
+                    return null;
+                }
         }
-        if (roladLineImage != null && roladLineImage instanceof ImageView) {
-            return roladLineImage;
-        } else {
-            return null;
-        }
+        return null;
     }
 }

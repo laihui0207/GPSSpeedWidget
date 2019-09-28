@@ -158,7 +158,11 @@ public class FileUtil {
             lrcFile.delete();
         }
     }
-    public static void saveLyric(Context context, String songName, String artist, String content){
+    public static void saveLyric(String songName, String artist, String content){
+        if(TextUtils.isEmpty(songName)) {
+            Log.d("huivip","Save lyric file, but songName is empty");
+            return;
+        }
         String path = AppSettings.get().getLyricPath();
         File dir=new File(path);
         if(!dir.exists()){
@@ -212,6 +216,36 @@ public class FileUtil {
         }
         return bitmap;*/
     }
+
+    public static boolean saveImg(Bitmap bitmap, String songName, String artist) {
+        try {
+            String path = AppSettings.get().getLyricPath();
+            File dir = new File(path);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            String fileName = songName.trim().replace("/", "_");
+            if (!TextUtils.isEmpty(artist)) {
+                fileName += "_" + artist.trim().replace("/", "_");
+            }
+            fileName += ".jpg";
+            File mFile = new File(dir + fileName);                        //将要保存的图片文件
+            if (mFile.exists()) {
+                return true;
+            }
+            FileOutputStream outputStream = new FileOutputStream(mFile);     //构建输出流
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);  //compress到输出outputStream
+            outputStream.flush();
+            outputStream.close();
+            Log.d("huivip","bitmap save finish,"+fileName);
+            return true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void saveAlbum(Context context,String songName,String artist,String picUrl){
         String path = AppSettings.get().getLyricPath();
         File dir=new File(path);

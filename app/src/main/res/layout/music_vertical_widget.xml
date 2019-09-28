@@ -9,7 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <ImageView android:src="@drawable/fenmian"
+        <ImageView
             android:layout_width="match_parent" android:layout_gravity="fill" android:scaleType="fitXY"
             android:layout_height="match_parent" android:id="@+id/v_music_background"
             android:contentDescription="Music Cover" android:background="@drawable/music_border"
@@ -18,13 +18,14 @@
         <LinearLayout  android:gravity="center"
             android:layout_width="match_parent" android:layout_gravity="top|center"
             android:layout_height="wrap_content" android:orientation="vertical"
-            android:layout_marginTop="10dp"
+             android:background="@drawable/music_border"
             tools:ignore="UselessLeaf">
-            <TextView android:id="@+id/v_music_songName"
+            <TextView android:id="@+id/v_music_songName"  android:singleLine="true"
+                android:ellipsize="marquee" android:focusable="true"
                 android:layout_width="wrap_content" android:textSize="20sp" android:textColor="@color/white"
                 android:layout_height="wrap_content" android:text="歌曲名称"/>
-            <TextView android:id="@+id/v_music_artistName"
-                android:layout_width="wrap_content" android:textSize="10sp" android:textColor="@color/white"
+            <TextView android:id="@+id/v_music_artistName" android:layout_marginTop="10dp"
+                android:layout_width="wrap_content" android:textSize="15sp" android:textColor="@color/white"
                 android:layout_height="wrap_content" android:text="歌手姓名"/>
         </LinearLayout>
     </FrameLayout>

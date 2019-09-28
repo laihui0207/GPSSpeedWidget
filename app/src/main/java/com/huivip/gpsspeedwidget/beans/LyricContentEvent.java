@@ -1,12 +1,22 @@
 package com.huivip.gpsspeedwidget.beans;
 
 public class LyricContentEvent {
+    String songName;
     String content;
     long position;
 
-    public LyricContentEvent(String content, long position) {
+    public LyricContentEvent(String songName,String content, long position) {
+        this.songName=songName;
         this.content = content;
         this.position = position;
+    }
+
+    public String getSongName() {
+        return songName;
+    }
+
+    public void setSongName(String songName) {
+        this.songName = songName;
     }
 
     public String getContent() {

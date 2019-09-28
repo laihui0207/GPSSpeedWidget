@@ -24,12 +24,15 @@ import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.LrcView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.xutils.x;
 
 import java.util.Timer;
@@ -175,6 +178,9 @@ public class LyricFloatingService extends Service{
 
     @Override
     public void onDestroy() {
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroy();
     }
 
@@ -211,7 +217,14 @@ public class LyricFloatingService extends Service{
         initMonitorPosition();
         CrashHandler.getInstance().init(getApplicationContext());
         lyricTimer = new Timer();
+        EventBus.getDefault().register(this);
         super.onCreate();
+    }
+    @Subscribe
+    public void updateLyricContent(LyricContentEvent event){
+        //lrcView.setLrc(event.getContent());
+        //startTime=System.currentTimeMillis()-event.getPosition();
+        //lrcView.setPlayercurrentMillis((int) event.getPosition());
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?

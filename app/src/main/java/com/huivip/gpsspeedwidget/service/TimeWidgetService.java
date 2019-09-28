@@ -28,6 +28,7 @@ import com.huivip.gpsspeedwidget.widget.TimeWidget;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -91,7 +92,7 @@ public class TimeWidgetService extends Service {
 
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void updateWeather(WeatherEvent event) {
         RemoteViews weatherView = new RemoteViews(getPackageName(), R.layout.time_weather_widget);
         weatherView.setImageViewResource(R.id.image_weather, WeatherItem.getWeatherResId(event.getWeather()));
