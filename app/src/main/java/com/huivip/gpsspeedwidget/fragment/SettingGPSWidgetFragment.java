@@ -20,7 +20,6 @@ import com.amap.api.maps.offlinemap.OfflineMapActivity;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.activity.HomeActivity;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
@@ -59,8 +58,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
     }
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-        HomeActivity homeActivity = HomeActivity._launcher;
-        int key = new ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.getKey());
+        int key = new ContextUtils(getContext()).getResId(ContextUtils.ResType.STRING, preference.getKey());
         switch (key) {
             case R.string.pref_key__auto_start_launch_select_other_apps:
                 LauncherAction.RunAction(LauncherAction.Action.SelectApps, getActivity());

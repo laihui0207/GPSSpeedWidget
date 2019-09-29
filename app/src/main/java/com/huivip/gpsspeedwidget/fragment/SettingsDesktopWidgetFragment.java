@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.preference.Preference;
 
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.activity.HomeActivity;
 import com.huivip.gpsspeedwidget.music.AllSupportMusicAppActivity;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -28,8 +27,7 @@ public class SettingsDesktopWidgetFragment extends SettingsBaseFragment {
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-        HomeActivity homeActivity = HomeActivity._launcher;
-        int key = new ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.getKey());
+        int key = new ContextUtils(getContext()).getResId(ContextUtils.ResType.STRING, preference.getKey());
         switch (key){
             case R.string.pref_key__music_select_player:
                 Intent selectMusicPlayer=new Intent(getContext(), AllSupportMusicAppActivity.class);

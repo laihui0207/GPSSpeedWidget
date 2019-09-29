@@ -51,8 +51,7 @@ public class SettingsMiscellaneousFragment extends SettingsBaseFragment {
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-        HomeActivity homeActivity = HomeActivity._launcher;
-        int key = new ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.getKey());
+        int key = new ContextUtils(getContext()).getResId(ContextUtils.ResType.STRING, preference.getKey());
         switch (key) {
             case R.string.pref_key__backup:
                 if (new PermissionChecker(getActivity()).doIfExtStoragePermissionGranted()) {
@@ -101,7 +100,6 @@ public class SettingsMiscellaneousFragment extends SettingsBaseFragment {
                 });
                 return true;
             case R.string.pref_key__restart:
-                homeActivity.recreate();
                 getActivity().finish();
                 return true;
         }

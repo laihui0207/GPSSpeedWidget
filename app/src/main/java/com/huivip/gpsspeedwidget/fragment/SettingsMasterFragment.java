@@ -25,7 +25,6 @@ public class SettingsMasterFragment extends SettingsBaseFragment {
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
         super.onPreferenceTreeClick(preference);
-        //HomeActivity homeActivity = HomeActivity._launcher;
         int key = new ContextUtils(getContext()).getResId(ContextUtils.ResType.STRING, preference.getKey());
         if (key == R.string.pref_key__about) {
             startActivity(new Intent(getActivity(), MoreInfoActivity.class));
