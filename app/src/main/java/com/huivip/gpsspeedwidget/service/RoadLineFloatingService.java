@@ -2,18 +2,14 @@ package com.huivip.gpsspeedwidget.service;
 
 import android.app.Service;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,20 +20,18 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.amap.api.services.traffic.TrafficSearch;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.beans.SearchTrafficEvent;
+import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.x;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,17 +48,11 @@ public class RoadLineFloatingService extends Service{
     public static final String EXTRA_Fixed = "com.huivip.gpsspeedwidget.EXTRA_FIXED";
     private WindowManager mWindowManager;
     private View mFloatingView;
-    TimerTask locationScanTask;
-    Timer locationTimer = new Timer();
-    final Handler roadLineHandler = new Handler();
-    boolean isShowing=false;
     @BindView(R.id.roadline_control)
     View controlView;
     GpsUtil gpsUtil;
     @BindView(R.id.imageView_floating_roadLine)
     ImageView roadLineView;
-    private ServiceConnection mServiceConnection;
-    RoadLineService.RoadLineBinder roadLineBinder;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -100,42 +88,14 @@ public class RoadLineFloatingService extends Service{
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         initMonitorPosition();
-        this.locationScanTask = new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                roadLineHandler.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        showRoadLine();
-                    }
-                });
-            }
-        };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
+        EventBus.getDefault().register(this);
         CrashHandler.getInstance().init(getApplicationContext());
-        mServiceConnection=new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                roadLineBinder= (RoadLineService.RoadLineBinder) service;
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        };
-        getApplicationContext().bindService(new Intent(getApplicationContext(), RoadLineService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         super.onCreate();
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         if(intent!=null){
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !AppSettings.get().isEnableRoadLine()) {
+            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !AppSettings.get().isEnableRoadLineFloatingWindow()) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
@@ -168,24 +128,32 @@ public class RoadLineFloatingService extends Service{
             }
         }
     }
-
-    private void showRoadLine() {
+   /* @Subscribe
+    private void showRoadLine(RoadLineEvent event) {
         if (roadLineBinder != null && roadLineView != null) {
             View vv = roadLineBinder.getRoadLineView();
             if (vv != null && !gpsUtil.isAutoNavi_on_Frontend()) {
                 roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
                 roadLineView.setVisibility(View.VISIBLE);
-                if(!isShowing && !TextUtils.isEmpty(gpsUtil.getLatitude()) && !TextUtils.isEmpty(gpsUtil.getLongitude())) {
-                    EventBus.getDefault().post(
-                            new SearchTrafficEvent(Double.parseDouble(gpsUtil.getLatitude()),
-                                    Double.parseDouble(gpsUtil.getLongitude()),
-                                    2000, TrafficSearch.ROAD_LEVEL_NONAME_WAY));
-                }
                 isShowing=true;
             } else {
                 roadLineView.setVisibility(View.INVISIBLE);
                 isShowing=false;
+                onStop();
+                stopSelf();
             }
+        }
+    }*/
+    @Subscribe(threadMode= ThreadMode.MAIN)
+    public void showRoadLine(RoadLineEvent event) {
+        if (event.isShowed()) {
+            View vv = event.getRoadLineView();
+            if (vv != null) {
+                roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
+                roadLineView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            roadLineView.setVisibility(View.INVISIBLE);
         }
     }
     @OnClick(value = {R.id.imageView_roadLine_floating_fixed,R.id.imageView_roadLine_floating_close})

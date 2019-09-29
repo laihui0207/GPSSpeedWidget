@@ -22,9 +22,7 @@
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission
-            android:name="android.permission.WRITE_SETTINGS"
-            tools:ignore="ProtectedPermissions"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -53,7 +51,34 @@
         <meta-data
                 android:name="com.amap.api.v2.apikey"
                 android:value="6d91e53ca05dee32ec58c9d257224e7b"/>
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1" />
 
+        <activity
+            android:name="com.huivip.gpsspeedwidget.activity.OnBoardActivity"
+            android:clearTaskOnLaunch="true"
+            android:label="@string/app_name"
+            android:theme="@style/IntroTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.huivip.gpsspeedwidget.activity.HomeActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:clearTaskOnLaunch="true"
+            android:stateNotNeeded="true"
+            android:taskAffinity=""
+            android:windowSoftInputMode="adjustNothing">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
                 android:name=".activity.MainActivity"
                 android:excludeFromRecents="true"
@@ -269,6 +294,7 @@
                 <action android:name="update.widget.playbtnstate"/>
                 <action android:name="com.ijidou.card.music"/>
                 <action android:name="com.ijidou.action.UPDATE_PROGRESS"/>
+                <action android:name="com.tencent.qqmusiccar.action.PLAY_COMMAND_SEND_FOR_THIRD"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".listener.DelayTaskReceiver">
@@ -362,34 +388,7 @@
         </receiver>
 
 
-        <meta-data
-            android:name="android.max_aspect"
-            android:value="2.1" />
 
-        <activity
-            android:name="com.huivip.gpsspeedwidget.activity.OnBoardActivity"
-            android:clearTaskOnLaunch="true"
-            android:label="@string/app_name"
-            android:theme="@style/IntroTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.huivip.gpsspeedwidget.activity.HomeActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:clearTaskOnLaunch="true"
-            android:stateNotNeeded="true"
-            android:taskAffinity=""
-            android:windowSoftInputMode="adjustNothing">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity
             android:name="com.huivip.gpsspeedwidget.activity.AutoFinishActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />

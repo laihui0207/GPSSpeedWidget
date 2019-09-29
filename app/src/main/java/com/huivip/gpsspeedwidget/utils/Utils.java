@@ -228,7 +228,7 @@ public abstract class Utils {
                       }
               }
           }
-      } else if(view.toString().endsWith("id/"+id+"}")){
+      } else if( view!=null && view.toString().endsWith("id/"+id+"}")){
           return view;
       }
       return null;

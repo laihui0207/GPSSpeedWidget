@@ -2,12 +2,20 @@ package com.huivip.gpsspeedwidget.utils;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.amap.api.trace.TraceLocation;
+import com.huivip.gpsspeedwidget.beans.MusicAlbumUpdateEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
+
+import org.greenrobot.eventbus.EventBus;
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -88,7 +96,7 @@ public class FileUtil {
     public static void uploadCrashLog(String logPath,String deviceId){
 
     }
-    public static String loadLyric(Context context, String songName, String artist){
+    public static String loadLyric(String songName, String artist){
         String content="";
         if(TextUtils.isEmpty(songName)) return content;
         String path = AppSettings.get().getLyricPath();
@@ -147,7 +155,11 @@ public class FileUtil {
             lrcFile.delete();
         }
     }
-    public static void saveLyric(Context context, String songName, String artist, String content){
+    public static void saveLyric(String songName, String artist, String content){
+        if(TextUtils.isEmpty(songName)) {
+            Log.d("huivip","Save lyric file, but songName is empty");
+            return;
+        }
         String path = AppSettings.get().getLyricPath();
         File dir=new File(path);
         if(!dir.exists()){
@@ -174,6 +186,128 @@ public class FileUtil {
         } catch (IOException e) {
             //Toast.makeText(context,"File create Error:"+e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
         }
+    }
+    public static String loadAlbum(String songName,String artist){
+        if(TextUtils.isEmpty(songName)) return null;
+        String path = AppSettings.get().getLyricPath();
+        File dir=new File(path);
+        if(!dir.exists()){
+            return null;
+        }
+        String fileName=songName.trim().replace("/","_");
+        if(!TextUtils.isEmpty(artist)){
+            fileName+="_"+artist.trim().replace("/","_");
+        }
+        fileName+=".jpg";
+        String lrcFileName=path+fileName;
+        File picFile=new File(lrcFileName);
+        if(!picFile.exists()){
+            return null;
+        }
+        return lrcFileName;
+       /* Bitmap bitmap= null;
+        try {
+            bitmap = BitmapFactory.decodeFile(lrcFileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;*/
+    }
+
+    public static boolean saveImg(Bitmap bitmap, String songName, String artist) {
+        try {
+            String path = AppSettings.get().getLyricPath();
+            File dir = new File(path);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            String fileName = songName.trim().replace("/", "_");
+            if (!TextUtils.isEmpty(artist)) {
+                fileName += "_" + artist.trim().replace("/", "_");
+            }
+            fileName += ".jpg";
+            File mFile = new File(dir + fileName);                        //将要保存的图片文件
+            if (mFile.exists()) {
+                return true;
+            }
+            FileOutputStream outputStream = new FileOutputStream(mFile);     //构建输出流
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);  //compress到输出outputStream
+            outputStream.flush();
+            outputStream.close();
+            Log.d("huivip","bitmap save finish,"+fileName);
+            return true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void saveAlbum(String songName,String artist,String picUrl){
+        String path = AppSettings.get().getLyricPath();
+        File dir=new File(path);
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        String fileName=songName.trim().replace("/","_");
+        if(!TextUtils.isEmpty(artist)){
+            fileName+="_"+artist.trim().replace("/","_");;
+        }
+        fileName+=".jpg";
+        String picFileName=path+fileName;
+        File picFile=new File(picFileName);
+        if (picFile.exists()){
+            //postAlbumUpdateEvent(picFile);
+            return;
+        }
+        RequestParams params = new RequestParams(picUrl);
+        params.setSaveFilePath(picFileName);
+        params.setAutoRename(true);
+        params.setAutoResume(true);
+        x.http().get(params, new Callback.ProgressCallback<File>() {
+            @Override
+            public void onSuccess(File result) {
+                Log.d("huivip","Download file:"+result.getAbsolutePath());
+                result.renameTo(picFile);
+                postAlbumUpdateEvent(picFileName,songName);
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d("huivip","Download album have Error,ex:"+ex.getLocalizedMessage());
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                Log.d("huivip","album download finished!");
+            }
+
+            @Override
+            public void onWaiting() {
+                Log.d("huivip","Wait album download");
+            }
+
+            @Override
+            public void onStarted() {
+
+            }
+
+            @Override
+            public void onLoading(long total, long current, boolean isDownloading) {
+                Log.d("huivip","total:"+total+",crrurent:"+current+",downloading:"+isDownloading);
+            }
+        });
+    }
+    private static void postAlbumUpdateEvent(String picFile,String songName){
+            MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
+            event.setSongName(songName);
+            event.setPicUrl(picFile);
+            EventBus.getDefault().post(event);
     }
     public static String createGPXFile(List<TraceLocation> data, String selectDate,Context context){
         if(data==null && data.size()==0){

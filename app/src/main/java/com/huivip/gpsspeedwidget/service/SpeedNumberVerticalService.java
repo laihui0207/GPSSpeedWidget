@@ -152,8 +152,10 @@ public class SpeedNumberVerticalService extends Service {
             if (event.getLimitDistance()<300 && event.getLimitDistance()>0) {
                 limitDistancePercentage = Math.round((300F -event.getLimitDistance() ) / 300 * 100);
             }
+            this.numberRemoteViews.setViewVisibility(R.id.v_edog_camera,View.VISIBLE);
             this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, limitDistancePercentage, false);
         } else {
+            this.numberRemoteViews.setViewVisibility(R.id.v_edog_camera,View.GONE);
             this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance() + "");
             this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, 0, false);
         }

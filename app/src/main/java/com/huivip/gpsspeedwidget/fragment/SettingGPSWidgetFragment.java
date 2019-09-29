@@ -20,13 +20,13 @@ import com.amap.api.maps.offlinemap.OfflineMapActivity;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.activity.HomeActivity;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.RealTimeFloatingService;
+import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.service.RoadLineService;
 import com.huivip.gpsspeedwidget.speech.AudioService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
@@ -58,8 +58,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
     }
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-        HomeActivity homeActivity = HomeActivity._launcher;
-        int key = new ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.getKey());
+        int key = new ContextUtils(getContext()).getResId(ContextUtils.ResType.STRING, preference.getKey());
         switch (key) {
             case R.string.pref_key__auto_start_launch_select_other_apps:
                 LauncherAction.RunAction(LauncherAction.Action.SelectApps, getActivity());
@@ -97,6 +96,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             case R.string.pref_key__accessibility_permission:
                 startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                 break;
+
         }
         return false;
     }
@@ -147,6 +147,10 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         }
         if (key.equals(getString(R.string.pref_key__Road_line_enable))) {
             Intent roadLineService = new Intent(getContext(), RoadLineService.class);
+            getContext().startService(roadLineService);
+        }
+        if(key.equalsIgnoreCase(getString(R.string.pref_key__Road_line_floating_window_enable))){
+            Intent roadLineService = new Intent(getContext(), RoadLineFloatingService.class);
             getContext().startService(roadLineService);
         }
         if(key.equalsIgnoreCase(getString(R.string.pref_key__auto_start_wifi_hotpot))) {

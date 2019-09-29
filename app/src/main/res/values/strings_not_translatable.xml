@@ -33,6 +33,7 @@
     <string name="pref_key__time_window_font_color" translatable="false">pref_key__time_window_font_color</string>
     <!-- music lyric -->
     <string name="pref_key__lyric_enable" translatable="false">pref_key__lyric_enable</string>
+    <string name="pref_key__lyric_floating_window_enable" translatable="false">pref_key__lyric_floating_window_enable</string>
     <string name="pref_key__lyric_fixed" translatable="false">pref_key__lyric_fixed</string>
     <string name="pref_key__lyric_path" translatable="false">pref_key__lyric_path</string>
     <string name="pref_key__lyric_font_color" translatable="false">pref_key__lyric_font_color</string>
@@ -59,6 +60,7 @@
     <string name="pref_key__Tracker_enable" translatable="false">pref_key__Tracker_enable</string>
     <string name="pref_key__DaoHang_enable" translatable="false">pref_key__DaoHang_enable</string>
     <string name="pref_key__Road_line_enable" translatable="false">pref_key__Road_line_enable</string>
+    <string name="pref_key__Road_line_floating_window_enable" translatable="false">pref_key__Road_line_enable</string>
     <string name="pref_key__Road_line_plugin_select" translatable="false">pref_key__Road_line_plugin_select</string>
     <string name="pref_key__speed_road_line_show" translatable="false">pref_key__speed_road_line_show</string>
     <string name="pref_key__road_line_fixed" translatable="false">pref_key__road_line_fixed</string>

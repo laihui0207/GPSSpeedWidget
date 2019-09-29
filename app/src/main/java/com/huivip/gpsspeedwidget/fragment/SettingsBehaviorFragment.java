@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.activity.HomeActivity;
 import com.huivip.gpsspeedwidget.model.App;
 import com.huivip.gpsspeedwidget.util.AppManager;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -31,8 +30,7 @@ public class SettingsBehaviorFragment extends SettingsBaseFragment {
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-        HomeActivity homeActivity = HomeActivity._launcher;
-        int key = new ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.getKey());
+        int key = new ContextUtils(getContext()).getResId(ContextUtils.ResType.STRING, preference.getKey());
         switch (key) {
             case R.string.pref_key__gesture_double_tap:
             case R.string.pref_key__gesture_swipe_up:

@@ -126,7 +126,7 @@ public class WeatherService extends Service implements AMapLocationListener {
         Toast.makeText(getApplicationContext(),"当前所在:"+cityName,Toast.LENGTH_SHORT).show();
         //searchWeather();
     }
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void searchEvent(SearchWeatherEvent event){
         searchWeather(event.isSpeak());
     }
@@ -147,7 +147,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                             //if(lives==null || lives.length()==0) return;
                             JSONObject cityWeather = lives.getJSONObject(0);
                             cityName=cityWeather.getString("city");
-                            PrefUtils.setWeatherCity(getApplicationContext(),cityCode);
+                            PrefUtils.setWeatherCity(getApplicationContext(),cityName);
                             weather=cityWeather.getString("weather");
                             PrefUtils.setWeatherWeather(getApplicationContext(),weather);
                             temperature=cityWeather.getString("temperature");
@@ -205,7 +205,7 @@ public class WeatherService extends Service implements AMapLocationListener {
         if (aMapLocation != null) {
             if (aMapLocation.getErrorCode() == 0) {
                 if(!TextUtils.isEmpty(aMapLocation.getCity())) {
-                    cityName=aMapLocation.getCity();
+                    //cityName=aMapLocation.getCity();
                     cityCode=aMapLocation.getCityCode();
                     adCode =aMapLocation.getAdCode();
                     gpsUtil.setCityName(cityName);

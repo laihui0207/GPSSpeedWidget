@@ -59,14 +59,7 @@ public class BootStartService extends Service {
         boolean start = AppSettings.get().getAutoStart();
         Log.d("huivip","Auto Start: "+start);
         if (start) {
-            /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                NotificationChannel channel = null;
-                channel = new NotificationChannel(NOTIFICATION_CHANNEL_NAME, getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
-                notificationManager.createNotificationChannel(channel);
-                Notification notification = new Notification.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_NAME).build();*/
-                startForeground(1, buildNotification());
-           // }
+            startForeground(1, buildNotification());
             String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
             if (AppSettings.get().isEnableLaunchOtherApp() && !TextUtils.isEmpty(apps)) {
                 String[] autoApps = apps.split(",");
@@ -92,7 +85,7 @@ public class BootStartService extends Service {
                                 AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
                                 PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                                         new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
-                                alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
+                                alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, gotoHomeIntent);
                             }
 
                         }
@@ -101,7 +94,7 @@ public class BootStartService extends Service {
                     AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
                     PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                             new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
-                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
+                    alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, gotoHomeIntent);
                 }
             }
             PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
@@ -155,7 +148,8 @@ public class BootStartService extends Service {
                         Intent roadLineService = new Intent(getApplicationContext(), RoadLineService.class);
                        Utils.startService(getApplicationContext(),roadLineService);
                     }
-                    if(!Utils.isServiceRunning(getApplicationContext(),RoadLineFloatingService.class.getName())) {
+                    if(AppSettings.get().isEnableRoadLineFloatingWindow() &&
+                            !Utils.isServiceRunning(getApplicationContext(),RoadLineFloatingService.class.getName())) {
                         Intent roadLineFloatingService = new Intent(getApplicationContext(), RoadLineFloatingService.class);
                         Utils.startService(getApplicationContext(),roadLineFloatingService);
                     }

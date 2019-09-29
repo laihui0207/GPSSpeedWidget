@@ -1,17 +1,29 @@
 package com.huivip.gpsspeedwidget.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.provider.Settings;
 
 import java.lang.reflect.Method;
 
 public class WifiUtils {
     public static boolean switchWifiHotspot(Context context, String WIFI_HOTSPOT_SSID, String password,boolean enable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!Settings.System.canWrite(context)){
+                Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                        Uri.parse("package:" + context.getPackageName()));
+                intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intentWriteSetting );
+            }
+        }
         WifiManager wifiManager= (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        if(!checkMobileAvalible(context)) return false;
+        //if(!checkMobileAvalible(context)) return false;
         if (wifiManager.isWifiEnabled() && enable) {
             //如果wifi处于打开状态，则关闭wifi,
             wifiManager.setWifiEnabled(false);

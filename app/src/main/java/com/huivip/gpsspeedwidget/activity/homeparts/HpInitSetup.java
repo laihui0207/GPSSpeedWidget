@@ -1,17 +1,15 @@
 package com.huivip.gpsspeedwidget.activity.homeparts;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.huivip.gpsspeedwidget.AppObject;
-import com.huivip.gpsspeedwidget.activity.HomeActivity;
 import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.util.AppManager;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.DatabaseHelper;
 import com.huivip.gpsspeedwidget.viewutil.DesktopGestureListener.DesktopGestureCallback;
-
-import android.support.annotation.NonNull;
 
 public final class HpInitSetup extends Setup {
     private final AppManager _appLoader;
@@ -21,11 +19,11 @@ public final class HpInitSetup extends Setup {
     private final Logger _logger;
     private final AppSettings _appSettings;
 
-    public HpInitSetup(HomeActivity homeActivity) {
+    public HpInitSetup(Context context) {
         _appSettings = AppSettings.get();
         _desktopGestureCallback = new HpGestureCallback(_appSettings);
-        _dataManager = new DatabaseHelper(homeActivity);
-        _appLoader = AppManager.getInstance(homeActivity);
+        _dataManager = new DatabaseHelper(context);
+        _appLoader = AppManager.getInstance(context);
         _eventHandler = new HpEventHandler();
 
         _logger = new Logger() {
