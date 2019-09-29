@@ -92,7 +92,7 @@ public class TimeWidgetVerticalService extends Service {
     public void onStop(){
 
     }
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void updateWeather(WeatherEvent event){
        RemoteViews weatherView = new RemoteViews(getPackageName(), R.layout.time_weather_v_widget);
        weatherView.setImageViewResource(R.id.image_weather_v, WeatherItem.getWeatherResId(event.getWeather()));

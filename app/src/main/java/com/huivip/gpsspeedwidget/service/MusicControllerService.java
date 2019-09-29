@@ -159,7 +159,7 @@ public class MusicControllerService extends Service {
         }
         this.manager.updateAppWidget(this.musicWidget, this.remoteViews);
     }
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void updateMusic(MusicEvent event) {
         currentSongName=event.getSongName();
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.music_vertical_widget);
@@ -181,24 +181,24 @@ public class MusicControllerService extends Service {
             updatePlayButton(musicRemoteControllerService.isPlaying());
         }
     }
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void updateAlubm(MusicAlbumUpdateEvent event){
         if(!event.getSongName().equalsIgnoreCase(currentSongName)){
             return;
         }
         if(event.getPicUrl()!=null){
            ImageOptions imageOptions = new ImageOptions.Builder()
-                    //.setSize(300,600)
-                    .setRadius(20)
+                    .setSize(300,300)
+                    .setRadius(Tool.dp2px(20))
                     // 如果ImageView的大小不是定义为wrap_content, 不要crop.
                     .setCrop(true)
                     // 加载中或错误图片的ScaleType
                     //.setPlaceholderScaleType(ImageView.ScaleType.MATRIX)
                     .setImageScaleType(ImageView.ScaleType.CENTER_CROP)
                     //设置加载过程中的图片
-                    .setLoadingDrawableId(R.drawable.fenmian)
+                    //.setLoadingDrawableId(R.drawable.fenmian)
                     //设置加载失败后的图片
-                    .setFailureDrawableId(R.drawable.fenmian)
+                    //.setFailureDrawableId(R.drawable.fenmian)
                     //设置使用缓存
                     .setUseMemCache(true)
                     //设置支持gif

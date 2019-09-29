@@ -3,7 +3,6 @@ package com.huivip.gpsspeedwidget.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,8 +20,6 @@ import org.xutils.x;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -246,7 +243,7 @@ public class FileUtil {
         return false;
     }
 
-    public static void saveAlbum(Context context,String songName,String artist,String picUrl){
+    public static void saveAlbum(String songName,String artist,String picUrl){
         String path = AppSettings.get().getLyricPath();
         File dir=new File(path);
         if(!dir.exists()){
@@ -257,14 +254,14 @@ public class FileUtil {
             fileName+="_"+artist.trim().replace("/","_");;
         }
         fileName+=".jpg";
-        String picileName=path+fileName;
-        File picFile=new File(picileName);
+        String picFileName=path+fileName;
+        File picFile=new File(picFileName);
         if (picFile.exists()){
             //postAlbumUpdateEvent(picFile);
             return;
         }
         RequestParams params = new RequestParams(picUrl);
-        params.setSaveFilePath(picileName);
+        params.setSaveFilePath(picFileName);
         params.setAutoRename(true);
         params.setAutoResume(true);
         x.http().get(params, new Callback.ProgressCallback<File>() {
@@ -272,7 +269,7 @@ public class FileUtil {
             public void onSuccess(File result) {
                 Log.d("huivip","Download file:"+result.getAbsolutePath());
                 result.renameTo(picFile);
-               // postAlbumUpdateEvent(picFile);
+                postAlbumUpdateEvent(picFileName,songName);
             }
 
             @Override
@@ -306,18 +303,11 @@ public class FileUtil {
             }
         });
     }
-    private static void postAlbumUpdateEvent(File picFile){
-        Bitmap bitmap= null;
-        try {
-            bitmap = BitmapFactory.decodeStream(new FileInputStream(picFile));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        if(bitmap!= null) {
+    private static void postAlbumUpdateEvent(String picFile,String songName){
             MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
-            event.setCover(bitmap);
+            event.setSongName(songName);
+            event.setPicUrl(picFile);
             EventBus.getDefault().post(event);
-        }
     }
     public static String createGPXFile(List<TraceLocation> data, String selectDate,Context context){
         if(data==null && data.size()==0){

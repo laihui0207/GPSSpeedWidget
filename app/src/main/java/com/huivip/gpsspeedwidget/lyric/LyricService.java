@@ -75,7 +75,7 @@ public class LyricService extends Service {
         return duration;
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void searchLyric(MusicEvent musicEvent) {
         long startedTime = System.currentTimeMillis();
         String inputSongName=musicEvent.getSongName();
@@ -101,7 +101,9 @@ public class LyricService extends Service {
                 event.setSongName(inputSongName);
                 event.setPicUrl(res.getMusicCover());
                 EventBus.getDefault().post(event);
-                FileUtil.saveAlbum(getApplicationContext(), inputSongName, inputArtist, res.getMusicCover());
+                new Thread(()->{
+                    FileUtil.saveAlbum(inputSongName, inputArtist, res.getMusicCover());
+                }).start();
             }
         }
 

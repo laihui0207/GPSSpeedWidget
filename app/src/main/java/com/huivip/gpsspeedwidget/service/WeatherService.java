@@ -126,7 +126,7 @@ public class WeatherService extends Service implements AMapLocationListener {
         Toast.makeText(getApplicationContext(),"当前所在:"+cityName,Toast.LENGTH_SHORT).show();
         //searchWeather();
     }
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void searchEvent(SearchWeatherEvent event){
         searchWeather(event.isSpeak());
     }
