@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.huivip.gpsspeedwidget.beans.KuWoStatusEvent;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.service.TextFloatingService;
@@ -52,12 +53,12 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         String songName=intent.getStringExtra("track");
         String artistName=intent.getStringExtra("artist");
         String album=intent.getStringExtra("album");
-      /*  if(intent.getAction().equalsIgnoreCase(KW_PLAYER_STATUS)){
+        if(intent.getAction().equalsIgnoreCase(KW_PLAYER_STATUS)){
             songName=intent.getStringExtra("play_music_name");
             artistName=intent.getStringExtra("play_music_artist");
             album=intent.getStringExtra("play_music_album");
-
-        }*/
+            EventBus.getDefault().post(new KuWoStatusEvent(true));
+        }
         // zx music
         if(intent.getAction().equalsIgnoreCase("update.widget.update_proBar")){
             songName = intent.getStringExtra("curplaysong");

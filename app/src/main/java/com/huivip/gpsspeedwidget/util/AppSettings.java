@@ -87,6 +87,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isEnableRoadLine(){
         return getBool(R.string.pref_key__Road_line_enable,false);
     }
+    public boolean isEnableRoadLineFloatingWindow(){
+        return getBool(R.string.pref_key__Road_line_floating_window_enable,false);
+    }
     public int getAmapPluginId(){
         return getInt(R.string.pref_key__Road_line_plugin_select,-1);
     }

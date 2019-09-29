@@ -248,6 +248,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.ACCESS_WIFI_STATE,
                 Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.CHANGE_NETWORK_STATE,
         };
 
         ArrayList<String> toApplyList = new ArrayList<String>();
@@ -666,10 +667,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     protected void onStart() {
         _appWidgetHost.startListening();
         _launcher = this;
-        if(!AppSettings.get().isEnableDesktopFunction()){
-            Intent mainActivity=new Intent(getApplicationContext(),MainActivity.class);
-            startActivity(mainActivity);
-        }
+
         super.onStart();
     }
 

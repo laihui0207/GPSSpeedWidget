@@ -87,7 +87,6 @@ public class RoadLineService extends Service {
         };
         scanTimer.schedule(scanTask,0,1000L);
     }
-
     @Override
     public void onDestroy() {
         scanTimer.cancel();

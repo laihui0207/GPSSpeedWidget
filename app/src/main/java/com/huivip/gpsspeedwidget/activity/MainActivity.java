@@ -54,7 +54,9 @@ import com.amap.api.track.query.model.QueryTrackResponse;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.activity.homeparts.HpInitSetup;
 import com.huivip.gpsspeedwidget.beans.LocationVO;
+import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.utils.DBUtil;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
@@ -133,6 +135,9 @@ public class MainActivity extends Activity implements TraceListener {
         aMap = mMapView.getMap();
         mTraceClient = LBSTraceClient.getInstance(this.getApplicationContext());
         initPermission();
+        if (!Setup.wasInitialised()) {
+            Setup.init(new HpInitSetup(this));
+        }
         serviceId= Long.parseLong(PrefUtils.getAmapTrackServiceID(getApplicationContext()));
         TERMINAL_NAME = "Track_"+PrefUtils.getShortDeviceId(getApplicationContext());
         aMapTrackClient = new AMapTrackClient(getApplicationContext());

@@ -18,6 +18,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.KeyEvent;
 
+import com.huivip.gpsspeedwidget.beans.KuWoStatusEvent;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -25,10 +26,13 @@ import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
 
 import cn.kuwo.autosdk.api.KWAPI;
+import cn.kuwo.autosdk.api.OnExitListener;
 import cn.kuwo.autosdk.api.OnGetLyricsListener;
 import cn.kuwo.autosdk.api.OnGetSongImgListener;
 import cn.kuwo.autosdk.api.OnPlayerStatusListener;
@@ -46,7 +50,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     Long duration;
     Bitmap coverBitmap;
     AudioManager am;
-    KWAPI mKwapi;
+    KWAPI mKwapi=null;
     OnPlayerStatusListener kwPlayStatusListener=new OnPlayerStatusListener() {
         @Override
         public void onPlayerStatus(PlayerStatus playerStatus, Music music) {
@@ -115,9 +119,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     @Override
     public void onCreate() {
         registerRemoteController();
-        mKwapi = KWAPI.getKWAPI();
-        mKwapi.bindAutoSdkService(this);
-        mKwapi.registerPlayerStatusListener(kwPlayStatusListener);
+        EventBus.getDefault().register(this);
         super.onCreate();
     }
     public void registerRemoteController(){
@@ -142,18 +144,38 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void KuwoStatusUpdate(KuWoStatusEvent event){
+        if(event.isStarted()){
+            mKwapi = KWAPI.getKWAPI();
+            mKwapi.bindAutoSdkService(this);
+            mKwapi.registerPlayerStatusListener(kwPlayStatusListener);
+            mKwapi.registerExitListener(new OnExitListener() {
+                @Override
+                public void onExit() {
+                    releaseKuWo();
+                }
+            });
+        }
+    }
 
+    private void releaseKuWo() {
+        mKwapi.unbindAutoSdkService(this);
+        mKwapi.unBindKuWoApp();
+        //mKwapi.unRegisterPlayerStatusListener(this);
+        //mKwapi.unRegisterExitListener(this);
+        mKwapi = null;
+    }
     @Override
     public void onDestroy() {
         this.mBinder = null;
         if (mRemoteControllerPreference != null && mRemoteControllerPreference.get() != null)
             am.unregisterRemoteController(mRemoteControllerPreference.get());
-        mKwapi.unbindAutoSdkService(this);
-        mKwapi.unRegisterPlayerStatusListener(this);
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
     public void sendMusicKeyEvent(int keyCode) {
-        if(mKwapi.isKuwoRunning()){
+        if(mKwapi!=null && mKwapi.isKuwoRunning()){
             kwController(keyCode);
         } else {
            defaultController(keyCode);
@@ -173,6 +195,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         }
     }
     private void kwController(int keyCode){
+        if(mKwapi==null) return;
         switch (keyCode){
             case KeyEvent.KEYCODE_MEDIA_NEXT:
                 mKwapi.setPlayState(PlayState.STATE_NEXT);

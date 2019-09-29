@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.preference.Preference;
 
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.activity.HomeActivity;
 import com.huivip.gpsspeedwidget.activity.MoreInfoActivity;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 
@@ -13,8 +12,8 @@ import net.gsantner.opoc.util.ContextUtils;
 
 import java.util.Locale;
 
-import static com.huivip.gpsspeedwidget.widget.AppDrawerController.Mode.PAGE;
 import static com.huivip.gpsspeedwidget.widget.AppDrawerController.Mode.GRID;
+import static com.huivip.gpsspeedwidget.widget.AppDrawerController.Mode.PAGE;
 
 public class SettingsMasterFragment extends SettingsBaseFragment {
     @Override
@@ -26,8 +25,8 @@ public class SettingsMasterFragment extends SettingsBaseFragment {
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
         super.onPreferenceTreeClick(preference);
-        HomeActivity homeActivity = HomeActivity._launcher;
-        int key = new ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.getKey());
+        //HomeActivity homeActivity = HomeActivity._launcher;
+        int key = new ContextUtils(getContext()).getResId(ContextUtils.ResType.STRING, preference.getKey());
         if (key == R.string.pref_key__about) {
             startActivity(new Intent(getActivity(), MoreInfoActivity.class));
             return true;

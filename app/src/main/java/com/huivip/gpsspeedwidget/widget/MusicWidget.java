@@ -52,7 +52,9 @@ public class MusicWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         if(!isNotificationListenerServiceEnabled(context)){
-            context.startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+            Intent settingIntent=new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+            settingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(settingIntent);
             Toast.makeText(context, "请授予通知使用权限", Toast.LENGTH_SHORT).show();
         }
         PrefUtils.setMusicWidgetEnable(context,true);

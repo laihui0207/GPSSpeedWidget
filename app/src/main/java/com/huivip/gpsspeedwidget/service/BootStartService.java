@@ -148,7 +148,8 @@ public class BootStartService extends Service {
                         Intent roadLineService = new Intent(getApplicationContext(), RoadLineService.class);
                        Utils.startService(getApplicationContext(),roadLineService);
                     }
-                    if(!Utils.isServiceRunning(getApplicationContext(),RoadLineFloatingService.class.getName())) {
+                    if(AppSettings.get().isEnableRoadLineFloatingWindow() &&
+                            !Utils.isServiceRunning(getApplicationContext(),RoadLineFloatingService.class.getName())) {
                         Intent roadLineFloatingService = new Intent(getApplicationContext(), RoadLineFloatingService.class);
                         Utils.startService(getApplicationContext(),roadLineFloatingService);
                     }

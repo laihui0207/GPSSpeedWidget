@@ -171,22 +171,29 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="@string/pref_key__Road_line_enable"
-            android:title="启用车道窗口" />
+            android:summary="启用后台读取车道服务"
+            android:title="启用车道服务" />
         <Preference
             android:defaultValue="-1"
             android:key="@string/pref_key__Road_line_plugin_select"
             android:summary="选择高德车机版桌面小部件"
             android:title="选择高德插件(4*3)" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
-            android:key="@string/pref_key__speed_road_line_show"
-            android:summary="在速度悬浮窗显示车道信息"
-            android:title="速度悬浮窗口车道" />
+            android:key="@string/pref_key__Road_line_floating_window_enable"
+            android:summary="在独立悬浮窗口显示车道信息"
+            android:title="独立车道悬浮窗口" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key__road_line_fixed"
             android:summary="车道悬浮窗位置固定，点击透穿"
             android:title="车道窗口位置固定" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__speed_road_line_show"
+            android:summary="在速度悬浮窗显示车道信息"
+            android:title="速度悬浮窗口车道" />
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key__Amap_widget_content"

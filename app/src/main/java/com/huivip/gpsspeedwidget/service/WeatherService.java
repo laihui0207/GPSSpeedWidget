@@ -147,7 +147,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                             //if(lives==null || lives.length()==0) return;
                             JSONObject cityWeather = lives.getJSONObject(0);
                             cityName=cityWeather.getString("city");
-                            PrefUtils.setWeatherCity(getApplicationContext(),cityCode);
+                            PrefUtils.setWeatherCity(getApplicationContext(),cityName);
                             weather=cityWeather.getString("weather");
                             PrefUtils.setWeatherWeather(getApplicationContext(),weather);
                             temperature=cityWeather.getString("temperature");
