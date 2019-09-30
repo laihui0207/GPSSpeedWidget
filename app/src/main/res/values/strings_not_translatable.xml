@@ -38,6 +38,7 @@
     <string name="pref_key__lyric_path" translatable="false">pref_key__lyric_path</string>
     <string name="pref_key__lyric_font_color" translatable="false">pref_key__lyric_font_color</string>
     <string name="pref_key__music_select_player" translatable="false">pref_key__music_select_player</string>
+    <string name="pref_key__music_show_kuwo_album" translatable="false">pref_key__music_show_kuwo_album</string>
     <string name="pref_key__widget_music_font_color" translatable="false">pref_key__widget_music_font_color</string>
     <string name="pref_key__widget_music_font_size" translatable="false">pref_key__widget_music_font_size</string>
     <!-- Auto map  -->
@@ -60,7 +61,7 @@
     <string name="pref_key__Tracker_enable" translatable="false">pref_key__Tracker_enable</string>
     <string name="pref_key__DaoHang_enable" translatable="false">pref_key__DaoHang_enable</string>
     <string name="pref_key__Road_line_enable" translatable="false">pref_key__Road_line_enable</string>
-    <string name="pref_key__Road_line_floating_window_enable" translatable="false">pref_key__Road_line_enable</string>
+    <string name="pref_key__Road_line_floating_window_enable" translatable="false">pref_key__Road_line_floating_window_enable</string>
     <string name="pref_key__Road_line_plugin_select" translatable="false">pref_key__Road_line_plugin_select</string>
     <string name="pref_key__speed_road_line_show" translatable="false">pref_key__speed_road_line_show</string>
     <string name="pref_key__road_line_fixed" translatable="false">pref_key__road_line_fixed</string>

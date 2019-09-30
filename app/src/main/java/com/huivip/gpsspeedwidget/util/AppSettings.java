@@ -177,6 +177,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public int getLyricFontColor(){
         return getInt(R.string.pref_key__lyric_font_color,R.color.blue);
     }
+    public boolean isShowKuwoAlbum(){
+        return getBool(R.string.pref_key__music_show_kuwo_album,true);
+    }
     public int getMusicWidgetFontColor(){
         return getInt(R.string.pref_key__widget_music_font_color,R.color.white);
     }

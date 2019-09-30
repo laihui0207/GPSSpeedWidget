@@ -48,9 +48,10 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     String artistName;
     long currentPosition=0L;
     Long duration;
-    Bitmap coverBitmap;
+    //Bitmap coverBitmap;
     AudioManager am;
     KWAPI mKwapi=null;
+    boolean kuWoStarted=false;
     OnPlayerStatusListener kwPlayStatusListener=new OnPlayerStatusListener() {
         @Override
         public void onPlayerStatus(PlayerStatus playerStatus, Music music) {
@@ -64,20 +65,23 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                    }
                    @Override
                    public void sendSyncNotice_HeadPicFinished(Music music, Bitmap bitmap) {
-                       coverBitmap=bitmap;
+                      // Bitmap coverBitmap=bitmap;
                        currentPosition=mKwapi.getCurrentPos()+2000;
                        launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,currentPosition);
                        MusicEvent musicEvent=new MusicEvent(music.name,music.artist);
                        musicEvent.setDuration(music.duration);
                        musicEvent.setCurrentPostion(mKwapi.getCurrentPos());
-                       musicEvent.setCover(coverBitmap);
+                       if(AppSettings.get().isShowKuwoAlbum()) {
+                           if(bitmap!=null) {
+                               musicEvent.setCover(bitmap);
+                               new Thread(() -> {
+                                   FileUtil.saveAblumImage(bitmap, songName, artistName);
+                               }).start();
+                           }
+                       }
                        EventBus.getDefault().post(musicEvent);
                        // for kuwo have album bug
-                      /* if(coverBitmap!=null) {
-                           new Thread(() -> {
-                               FileUtil.saveAblumImage(coverBitmap, songName, artistName);
-                           }).start();
-                       }*/
+
                    }
                    @Override
                    public void sendSyncNotice_HeadPicFailed(Music music) {
@@ -148,6 +152,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void KuwoStatusUpdate(KuWoStatusEvent event){
         if(event.isStarted()){
+            kuWoStarted=event.isStarted();
             mKwapi = KWAPI.getKWAPI();
             mKwapi.bindAutoSdkService(this);
             mKwapi.registerPlayerStatusListener(kwPlayStatusListener);
@@ -166,6 +171,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         //mKwapi.unRegisterPlayerStatusListener(this);
         //mKwapi.unRegisterExitListener(this);
         mKwapi = null;
+        kuWoStarted=false;
     }
     @Override
     public void onDestroy() {
@@ -251,14 +257,23 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         songName = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
         duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
         //Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.fenmian);
-        coverBitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, null);
+       Bitmap coverBitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, null);
         Log.d("huivip","get Song:"+songName+",artist:"+artistName);
         launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,1000);
         MusicEvent musicEvent=new MusicEvent(songName,artistName);
         musicEvent.setDuration(duration==null ? 0L:duration);
         musicEvent.setCover(coverBitmap);
+        if(kuWoStarted && !AppSettings.get().isShowKuwoAlbum()) {
+            musicEvent.setCover(null);
+        }
+        if (musicEvent.getCover() != null) {
+            new Thread(() -> {
+                FileUtil.saveAblumImage(musicEvent.getCover(), songName, artistName);
+            }).start();
+        }
         musicEvent.setCurrentPostion(1000);
         EventBus.getDefault().post(musicEvent);
+
     }
     private void launchLyricService(int state,long position){
         if (AppSettings.get().isLyricEnable()) {
@@ -271,7 +286,6 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                         MusicEvent musicEvent=new MusicEvent(songName,artistName);
                         musicEvent.setCurrentPostion(position);
                         musicEvent.setDuration(duration==null ? 0: duration);
-                        musicEvent.setCover(coverBitmap);
                         EventBus.getDefault().post(musicEvent);
                     } else if(state == RemoteControlClient.PLAYSTATE_PAUSED || state== RemoteControlClient.PLAYSTATE_STOPPED){
                         Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
