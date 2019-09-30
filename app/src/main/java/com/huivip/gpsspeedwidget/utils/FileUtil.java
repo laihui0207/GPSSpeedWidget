@@ -214,7 +214,7 @@ public class FileUtil {
         return bitmap;*/
     }
 
-    public static boolean saveImg(Bitmap bitmap, String songName, String artist) {
+    public static boolean saveAblumImage(Bitmap bitmap, String songName, String artist) {
         try {
             String path = AppSettings.get().getLyricPath();
             File dir = new File(path);
@@ -226,7 +226,7 @@ public class FileUtil {
                 fileName += "_" + artist.trim().replace("/", "_");
             }
             fileName += ".jpg";
-            File mFile = new File(dir + fileName);                        //将要保存的图片文件
+            File mFile = new File(path + fileName);                        //将要保存的图片文件
             if (mFile.exists()) {
                 return true;
             }

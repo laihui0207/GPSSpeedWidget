@@ -72,11 +72,12 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                        musicEvent.setCurrentPostion(mKwapi.getCurrentPos());
                        musicEvent.setCover(coverBitmap);
                        EventBus.getDefault().post(musicEvent);
-                       if(coverBitmap!=null) {
+                       // for kuwo have album bug
+                      /* if(coverBitmap!=null) {
                            new Thread(() -> {
-                               FileUtil.saveImg(coverBitmap, songName, artistName);
+                               FileUtil.saveAblumImage(coverBitmap, songName, artistName);
                            }).start();
-                       }
+                       }*/
                    }
                    @Override
                    public void sendSyncNotice_HeadPicFailed(Music music) {

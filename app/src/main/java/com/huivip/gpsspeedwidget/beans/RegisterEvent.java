@@ -1,4 +1,4 @@
 package com.huivip.gpsspeedwidget.beans;
 
-public class RegistEvent {
+public class RegisterEvent {
 }

@@ -61,11 +61,11 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         int key = new ContextUtils(getContext()).getResId(ContextUtils.ResType.STRING, preference.getKey());
         switch (key) {
             case R.string.pref_key__auto_start_launch_select_other_apps:
-                LauncherAction.RunAction(LauncherAction.Action.SelectApps, getActivity());
+                LauncherAction.RunAction(LauncherAction.Action.SelectApps, getContext());
                 return true;
             case R.string.pref_key__lyric_path:
                 if (new PermissionChecker(getActivity()).doIfExtStoragePermissionGranted()) {
-                    Intent i = new Intent(getActivity(), FilePickerActivity.class)
+                    Intent i = new Intent(getContext(), FilePickerActivity.class)
                             .putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true)
                             .putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
                     getActivity().startActivityForResult(i, Definitions.INTENT_LYRIC_PATH);

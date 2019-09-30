@@ -19,7 +19,7 @@ import android.util.Log;
 
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.beans.RegistEvent;
+import com.huivip.gpsspeedwidget.beans.RegisterEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
 import com.huivip.gpsspeedwidget.listener.NetWorkConnectChangedReceiver;
@@ -181,7 +181,7 @@ public class BootStartService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void registSelf(RegistEvent event){
+    public void registSelf(RegisterEvent event){
 
     }
     private Notification buildNotification() {

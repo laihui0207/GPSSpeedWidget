@@ -83,16 +83,10 @@
                 android:name=".activity.MainActivity"
                 android:excludeFromRecents="true"
                 android:windowSoftInputMode="stateHidden|stateUnchanged">
-        </activity>
-        <!--
-        <activity android:name=".GPSLauncher">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        -->
         <activity
                 android:name=".activity.ConfigurationActivity"
                 android:windowSoftInputMode="stateHidden|stateUnchanged">
@@ -100,9 +94,6 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
-<!--
-        <activity android:name="com.amap.api.maps.offlinemap.OfflineMapActivity"/>
--->
         <activity android:name="com.amap.api.maps.offlinemap.OfflineMapActivity"
             android:screenOrientation="landscape"  />
         <receiver
