@@ -458,11 +458,11 @@ public abstract class Utils {
     }
 
     public static void startService(Context context, Intent intent) {
-       /* if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= 26) {
             context.startForegroundService(intent);
-        } else {*/
+        } else {
             context.startService(intent);
-       // }
+        }
     }
     public static  String longToTimeString(long time){
         long totalSecond=time/1000;

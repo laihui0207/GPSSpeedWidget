@@ -11,7 +11,7 @@
         android:layout_height="match_parent">
         <ImageView
             android:layout_width="match_parent" android:layout_gravity="fill" android:scaleType="fitXY"
-            android:layout_height="match_parent" android:id="@+id/v_music_background"
+            android:layout_height="match_parent" android:id="@+id/v_music_background" android:src="@drawable/fenmian"
             android:contentDescription="Music Cover" android:background="@drawable/music_border"
             tools:ignore="HardcodedText">
         </ImageView>
