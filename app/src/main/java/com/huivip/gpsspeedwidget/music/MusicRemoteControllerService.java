@@ -9,12 +9,11 @@ import android.media.MediaMetadataRetriever;
 import android.media.RemoteControlClient;
 import android.media.RemoteController;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.service.notification.NotificationListenerService;
-import android.support.annotation.RequiresApi;
+import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -40,8 +39,7 @@ import cn.kuwo.autosdk.api.PlayState;
 import cn.kuwo.autosdk.api.PlayerStatus;
 import cn.kuwo.base.bean.Music;
 
-@SuppressLint({"OverrideAbstract", "NewApi"})
-@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+@SuppressLint({"NewApi", "OverrideAbstract"})
 public class MusicRemoteControllerService extends NotificationListenerService implements RemoteController.OnClientUpdateListener  {
     private String TAG="huivip";
     String songName;
@@ -125,6 +123,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     public void onCreate() {
         registerRemoteController();
         EventBus.getDefault().register(this);
+        //kuwoStatusUpdate(new KuWoStatusEvent(true));
         super.onCreate();
     }
     public void registerRemoteController(){
@@ -145,13 +144,20 @@ public class MusicRemoteControllerService extends NotificationListenerService im
             }
         }
     }
+
+    @Override
+    public void onNotificationPosted(StatusBarNotification sbn) {
+        Log.d("huivip","Get Notification post");
+        super.onNotificationPosted(sbn);
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
-    @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void KuwoStatusUpdate(KuWoStatusEvent event){
-        if(event.isStarted()){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void kuwoStatusUpdate(KuWoStatusEvent event){
+        if(event.isStarted() && mKwapi==null){
             kuWoStarted=event.isStarted();
             mKwapi = KWAPI.getKWAPI();
             mKwapi.bindAutoSdkService(this);
@@ -166,12 +172,14 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     }
 
     private void releaseKuWo() {
-        mKwapi.unbindAutoSdkService(this);
-        mKwapi.unBindKuWoApp();
-        //mKwapi.unRegisterPlayerStatusListener(this);
-        //mKwapi.unRegisterExitListener(this);
-        mKwapi = null;
-        kuWoStarted=false;
+        if(mKwapi!=null) {
+            mKwapi.unbindAutoSdkService(this);
+            mKwapi.unBindKuWoApp();
+            //mKwapi.unRegisterPlayerStatusListener(this);
+            //mKwapi.unRegisterExitListener(this);
+            mKwapi = null;
+            kuWoStarted = false;
+        }
     }
     @Override
     public void onDestroy() {
@@ -179,10 +187,11 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         if (mRemoteControllerPreference != null && mRemoteControllerPreference.get() != null)
             am.unregisterRemoteController(mRemoteControllerPreference.get());
         EventBus.getDefault().unregister(this);
+        releaseKuWo();
         super.onDestroy();
     }
     public void sendMusicKeyEvent(int keyCode) {
-        if(mKwapi!=null && mKwapi.isKuwoRunning()){
+        if(mKwapi!=null){
             kwController(keyCode);
         } else {
            defaultController(keyCode);
@@ -283,10 +292,10 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                     if (state== RemoteControlClient.PLAYSTATE_PLAYING) {
                         Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
                         Utils.startService(getApplicationContext(), lyricService);
-                        MusicEvent musicEvent=new MusicEvent(songName,artistName);
+                        /*MusicEvent musicEvent=new MusicEvent(songName,artistName);
                         musicEvent.setCurrentPostion(position);
                         musicEvent.setDuration(duration==null ? 0: duration);
-                        EventBus.getDefault().post(musicEvent);
+                        EventBus.getDefault().post(musicEvent);*/
                     } else if(state == RemoteControlClient.PLAYSTATE_PAUSED || state== RemoteControlClient.PLAYSTATE_STOPPED){
                         Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
                         lyricService.putExtra(LyricService.EXTRA_CLOSE,true);

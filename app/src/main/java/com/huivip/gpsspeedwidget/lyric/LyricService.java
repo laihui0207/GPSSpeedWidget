@@ -93,14 +93,14 @@ public class LyricService extends Service {
                 EventBus.getDefault().post(event);
             }
         }
-        if (TextUtils.isEmpty(lyricContent) || (cover == null && musicCover == null)) {
+        if (TextUtils.isEmpty(lyricContent)) {
             MusicEvent res = WangYiYunMusic.downloadLyric(inputSongName, inputArtist);
             lyricContent = res.getLyricContent();
             if (res.getMusicCover() != null && cover == null && musicCover == null) {
-                MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
+               /* MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
                 event.setSongName(inputSongName);
                 event.setPicUrl(res.getMusicCover());
-                EventBus.getDefault().post(event);
+                EventBus.getDefault().post(event);*/
                 new Thread(()->{
                     FileUtil.saveAlbum(inputSongName, inputArtist, res.getMusicCover());
                 }).start();
@@ -151,7 +151,7 @@ public class LyricService extends Service {
         if (AppSettings.get().isLyricFloattingWidownEnable()) {
             Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
             lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
-            startService(lycFloatingService);
+            Utils.startService(getApplicationContext(),lycFloatingService);
         }
         EventBus.getDefault().post(new LyricContentEvent(songName, null, 0));
     }
@@ -166,12 +166,14 @@ public class LyricService extends Service {
             }
             lycFloatingService.putExtra(LyricFloatingService.LYRIC_CONTENT, lyricContent);
             lycFloatingService.putExtra(LyricFloatingService.DURATION, duration);
-            startService(lycFloatingService);
+            Utils.startService(getApplicationContext(),lycFloatingService);
         }
-        if (PrefUtils.isLyricWidgetEnable(getApplicationContext())
-                && !Utils.isServiceRunning(getApplicationContext(), LyricWidgetService.class.getName())) {
-            Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
-            startService(widgetService);
+        if (PrefUtils.isLyricWidgetEnable(getApplicationContext())) {
+            if (!Utils.isServiceRunning(getApplicationContext(), LyricWidgetService.class.getName()))
+            {
+                Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
+                Utils.startService(getApplicationContext(),widgetService);
+            }
             EventBus.getDefault().post(new LyricContentEvent(songName, lyricContent, currentPosition));
         }
     }

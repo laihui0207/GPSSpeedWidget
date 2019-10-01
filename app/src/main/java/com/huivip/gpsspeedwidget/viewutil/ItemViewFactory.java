@@ -1,6 +1,5 @@
 package com.huivip.gpsspeedwidget.viewutil;
 
-import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
 import android.graphics.Color;
@@ -14,8 +13,8 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.HomeActivity;
 import com.huivip.gpsspeedwidget.manager.Setup;
-import com.huivip.gpsspeedwidget.model.Item;
 import com.huivip.gpsspeedwidget.model.App;
+import com.huivip.gpsspeedwidget.model.Item;
 import com.huivip.gpsspeedwidget.util.DragAction;
 import com.huivip.gpsspeedwidget.util.DragHandler;
 import com.huivip.gpsspeedwidget.util.Tool;
@@ -76,12 +75,12 @@ public class ItemViewFactory {
         final WidgetView widgetView = (WidgetView) HomeActivity._appWidgetHost.createView(context, item.getWidgetValue(), appWidgetInfo);
 
         widgetView.setAppWidget(item.getWidgetValue(), appWidgetInfo);
-        widgetView.post(new Runnable() {
+        /*widgetView.post(new Runnable() {
             @Override
-            public void run() {
+            public void run() {*/
                 updateWidgetOption(item);
-            }
-        });
+          /*  }
+        });*/
 
         final FrameLayout widgetContainer = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.view_widget_container, null);
         widgetContainer.addView(widgetView);
@@ -199,10 +198,10 @@ public class ItemViewFactory {
 
     private static void updateWidgetOption(Item item) {
         Bundle newOps = new Bundle();
-        newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, item.getSpanX() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellWidth());
+       /* newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, item.getSpanX() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellWidth());
         newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, item.getSpanX() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellWidth());
         newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, item.getSpanY() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellHeight());
-        newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, item.getSpanY() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellHeight());
+        newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, item.getSpanY() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellHeight());*/
         HomeActivity._appWidgetManager.updateAppWidgetOptions(item.getWidgetValue(), newOps);
     }
 }

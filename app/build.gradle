@@ -123,6 +123,7 @@ dependencies {
     implementation 'commons-net:commons-net:3.6'
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
     implementation 'com.squareup.okio:okio:1.13.0'
+    implementation 'com.github.zhangliangming:HPLyrics:v1.36'
 
     // Support libraries
     implementation "com.android.support:recyclerview-v7:${version_library_appcompat}"

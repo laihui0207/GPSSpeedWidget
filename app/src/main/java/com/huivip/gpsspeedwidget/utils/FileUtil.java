@@ -13,9 +13,6 @@ import com.huivip.gpsspeedwidget.beans.MusicAlbumUpdateEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 
 import org.greenrobot.eventbus.EventBus;
-import org.xutils.common.Callback;
-import org.xutils.http.RequestParams;
-import org.xutils.x;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -260,7 +257,16 @@ public class FileUtil {
             //postAlbumUpdateEvent(picFile);
             return;
         }
-        RequestParams params = new RequestParams(picUrl);
+        try {
+            File downloadFile=HttpUtils.downloadImage(picUrl,picFileName);
+            if(downloadFile!=null){
+                Log.d("huivip","Download file:"+downloadFile.getAbsolutePath());
+                postAlbumUpdateEvent(picFileName,songName);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+       /* RequestParams params = new RequestParams(picUrl);
         params.setSaveFilePath(picFileName);
         params.setAutoRename(true);
         params.setAutoResume(true);
@@ -301,7 +307,7 @@ public class FileUtil {
             public void onLoading(long total, long current, boolean isDownloading) {
                 Log.d("huivip","total:"+total+",crrurent:"+current+",downloading:"+isDownloading);
             }
-        });
+        });*/
     }
     private static void postAlbumUpdateEvent(String picFile,String songName){
             MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();

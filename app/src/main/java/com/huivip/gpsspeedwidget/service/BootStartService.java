@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -22,6 +23,7 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.RegisterEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
+import com.huivip.gpsspeedwidget.listener.MediaNotificationReceiver;
 import com.huivip.gpsspeedwidget.listener.NetWorkConnectChangedReceiver;
 import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
 import com.huivip.gpsspeedwidget.speech.AudioService;
@@ -125,6 +127,9 @@ public class BootStartService extends Service {
                     mPlayer.start();
                 }
             }
+            if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.O){
+                registerBoardCast(getApplicationContext());
+            }
         }
         super.onCreate();
     }
@@ -219,5 +224,33 @@ public class BootStartService extends Service {
             return builder.getNotification();
         }
         return notification;
+    }
+    private void registerBoardCast(Context context){
+        String[] actions=new String[]{"com.android.music.metachanged",
+                "com.android.music.statuschanged",
+                "com.android.music.musicservicecommand",
+                "com.android.music.updateprogress",
+                "com.kugou.android.music.metachanged",
+                "com.tencent.qqmusic.widgetupdate",
+                "cn.flyaudio.media.action.TRACK_DETAILS",
+                "cn.kuwo.kwmusicauto.action.PLAYER_STATUS",
+                "cn.kuwo.kwmusicauto.action.OPEN_DESKLYRIC",
+                "com.miui.player.metachanged",
+                "com.android.music.playstatechanged",
+                "com.android.music.playbackcomplete",
+                "com.android.music.queuechanged",
+                "fm.last.android.metachanged",
+                "com.nullsoft.winamp.playstatechanged",
+                "update.widget.update_proBar",
+                "update.widget.playbtnstate",
+                "com.ijidou.card.music",
+                "com.ijidou.action.UPDATE_PROGRESS",
+                "com.tencent.qqmusiccar.action.PLAY_COMMAND_SEND_FOR_THIRD"
+        };
+       IntentFilter intentFilter=new IntentFilter();
+       for(String action:actions){
+           intentFilter.addAction(action);
+       }
+       context.registerReceiver(new MediaNotificationReceiver(),intentFilter);
     }
 }

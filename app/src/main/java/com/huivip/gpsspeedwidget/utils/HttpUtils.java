@@ -123,6 +123,30 @@ public class HttpUtils {
             throw new IOException("未发现有SD卡");
         }*/
     }
+    public static File downloadImage(String urlPath,String localFile) throws IOException {
+        URL url= new URL(urlPath);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setConnectTimeout(5000);
+        // 获取到文件的大小
+        InputStream is = conn.getInputStream();
+        File file = new File(localFile);
+        // 目录不存在创建目录
+        if (!file.getParentFile().exists())
+            file.getParentFile().mkdirs();
+        FileOutputStream fos = new FileOutputStream(file);
+        BufferedInputStream bis = new BufferedInputStream(is);
+        byte[] buffer = new byte[1024];
+        int len;
+        int total = 0;
+        while ((len = bis.read(buffer)) != -1) {
+            fos.write(buffer, 0, len);
+            total += len;
+        }
+        fos.close();
+        bis.close();
+        is.close();
+        return file;
+    }
     public static void downLoadApk(final Context mContext,final String downURL,final String appName ) {
 
         final ProgressDialog pd; // 进度条对话框

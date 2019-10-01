@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,10 +14,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -31,7 +28,6 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -79,7 +75,6 @@ import com.huivip.gpsspeedwidget.widget.PagerIndicator;
 import com.huivip.gpsspeedwidget.widget.SearchBar;
 
 import net.gsantner.opoc.util.ContextUtils;
-import net.gsantner.opoc.util.PermissionChecker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -263,7 +258,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(!Settings.System.canWrite(this)){
                 Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
                         Uri.parse("package:" + getPackageName()));
@@ -278,7 +273,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                 openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
             } catch (ActivityNotFoundException ignored) {
             }
-        }
+        }*/
     }
 
     private void openSettings(String settingsAction, String packageName) {

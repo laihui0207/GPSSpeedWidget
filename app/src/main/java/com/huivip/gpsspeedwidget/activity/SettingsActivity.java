@@ -10,12 +10,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.fragment.SettingsBaseFragment;
 import com.huivip.gpsspeedwidget.fragment.SettingsMasterFragment;
-import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.BackupHelper;
 import com.huivip.gpsspeedwidget.util.Definitions;
@@ -82,7 +82,8 @@ public class SettingsActivity extends ThemeActivity implements SettingsBaseFragm
                     System.exit(0);
                     break;
                 case Definitions.INTENT_LYRIC_PATH:
-                    Setup.appSettings().setLyricPath(files.get(0).getPath());
+                    AppSettings.get().setLyricPath(Utils.getFileForUri(files.get(0)).getAbsolutePath() +"/");
+                    Log.d("huivip",AppSettings.get().getLyricPath());
                     break;
                 case Constant.SELECT_AMAP_PLUGIN_REQUEST_CODE:
                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
