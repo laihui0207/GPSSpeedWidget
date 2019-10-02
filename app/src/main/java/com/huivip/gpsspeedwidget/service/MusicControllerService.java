@@ -92,7 +92,7 @@ public class MusicControllerService extends Service {
                                                 }
                                             }, 1000);
                                         }
-                                    },3000);
+                                    },5000);
                                 } else {
                                     musicRemoteControllerService.sendMusicKeyEvent(key);
                                     new Handler().postDelayed(new Runnable() {
