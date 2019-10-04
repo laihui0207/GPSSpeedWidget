@@ -152,10 +152,10 @@ public class FileUtil {
             lrcFile.delete();
         }
     }
-    public static void saveLyric(String songName, String artist, String content){
+    public static String getLyricFile(String songName,String artist){
         if(TextUtils.isEmpty(songName)) {
             Log.d("huivip","Save lyric file, but songName is empty");
-            return;
+            return null;
         }
         String path = AppSettings.get().getLyricPath();
         File dir=new File(path);
@@ -170,6 +170,27 @@ public class FileUtil {
         String lrcFileName=path+fileName;
         File lrcFile=new File(lrcFileName);
         if(lrcFile.exists()){
+            return lrcFileName;
+        }
+        return null;
+    }
+    public static void saveLyric(String songName, String artist, String content,boolean overWrite){
+        if(TextUtils.isEmpty(songName)) {
+            return;
+        }
+        String path = AppSettings.get().getLyricPath();
+        File dir=new File(path);
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        String fileName=songName.replace("/","_");
+        if(!TextUtils.isEmpty(artist)){
+            fileName+="_"+artist.replace("/","_");;
+        }
+        fileName+=".lrc";
+        String lrcFileName=path+fileName;
+        File lrcFile=new File(lrcFileName);
+        if(lrcFile.exists() && overWrite){
             lrcFile.delete();
         }
         if(TextUtils.isEmpty(content)){
@@ -183,6 +204,7 @@ public class FileUtil {
         } catch (IOException e) {
             //Toast.makeText(context,"File create Error:"+e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
         }
+        Log.d("huivip","save lyric File:"+lrcFileName);
     }
     public static String loadAlbum(String songName,String artist){
         if(TextUtils.isEmpty(songName)) return null;

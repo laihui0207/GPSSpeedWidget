@@ -18,8 +18,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 
 import com.huivip.gpsspeedwidget.beans.KuWoStatusEvent;
+import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
+import com.huivip.gpsspeedwidget.lyrics.utils.StringUtils;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -88,33 +90,33 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                    public void sendSyncNotice_HeadPicNone(Music music) {
                    }
                });
-               mKwapi.getLyrics(music, new OnGetLyricsListener() {
-                   @Override
-                   public void sendSyncNotice_LyricsStart(Music music) {
 
-                   }
-
-                   @Override
-                   public void sendSyncNotice_LyricsFinished(Music music, String lyricContent) {
-                       new Thread(()->{
-                           FileUtil.saveLyric(music.name,music.artist,lyricContent);
-                       }).start();
-                       //LyricContentEvent event=new LyricContentEvent(music.name,lyricContent,mKwapi.getCurrentPos());
-                       //EventBus.getDefault().post(event);
-                   }
-
-                   @Override
-                   public void sendSyncNotice_LyricsFailed(Music music) {
-
-                   }
-
-                   @Override
-                   public void sendSyncNotice_LyricsNone(Music music) {
-
-                   }
-               });
 
            }
+            mKwapi.getLyrics(music, new OnGetLyricsListener() {
+                @Override
+                public void sendSyncNotice_LyricsStart(Music music) {
+
+                }
+
+                @Override
+                public void sendSyncNotice_LyricsFinished(Music music, String lyricContent) {
+                   // Log.d("huivip","Get Lyric content from kuwu:"+lyricContent);
+                    if (StringUtils.isNotBlank(lyricContent)) {
+                        FileUtil.saveLyric(music.name, music.artist, lyricContent, true);
+                        EventBus.getDefault().post(new LyricContentEvent(music.name, music.artist, lyricContent, mKwapi.getCurrentPos()));
+                    }
+                }
+
+                @Override
+                public void sendSyncNotice_LyricsFailed(Music music) {
+                }
+
+                @Override
+                public void sendSyncNotice_LyricsNone(Music music) {
+
+                }
+            });
         }
     };
     private RCBinder mBinder = new RCBinder();

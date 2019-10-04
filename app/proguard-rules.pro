@@ -164,6 +164,7 @@
 -keep public class com.jakewharton.** { *;}
 -keep public class io.reactivex.** { *;}
 -keep public class com.github.pluscubed.** { *;}
+-keep class com.zlm.hp.lyrics.** { *; }
 -keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
   **[] $VALUES;
   public *;

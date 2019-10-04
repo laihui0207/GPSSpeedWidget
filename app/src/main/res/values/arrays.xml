@@ -64,14 +64,26 @@
     </string-array>
     <string-array name="items__delay_return_desktop" translatable="false">
         <item>0秒</item>
+        <item>3秒</item>
         <item>5秒</item>
+        <item>6秒</item>
+        <item>7秒</item>
+        <item>8秒</item>
+        <item>9秒</item>
         <item>10秒</item>
+        <item>12秒</item>
         <item>15秒</item>
     </string-array>
     <string-array name="values__delay_return_desktop" translatable="false">
         <item>0</item>
+        <item>3</item>
         <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
         <item>10</item>
+        <item>12</item>
         <item>15</item>
     </string-array>
     <string-array name="values__zero_to_two" translatable="false">
@@ -141,6 +153,10 @@
         <item>3</item>
         <item>4</item>
         <item>5</item>
+        <item>7</item>
+        <item>9</item>
+        <item>11</item>
+        <item>15</item>
     </string-array>
 
 </resources>

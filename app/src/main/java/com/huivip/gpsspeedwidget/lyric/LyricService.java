@@ -134,7 +134,8 @@ public class LyricService extends Service {
                 List<LrcBean> list= LrcUtil.parseStr2List(lyricContent);
                 if(list!=null && list.size()>0) {
                     new Thread(()->{
-                        FileUtil.saveLyric(songName, artistName, lyricContent);
+                        FileUtil.saveLyric(songName, artistName, lyricContent,false);
+                        EventBus.getDefault().post(new LyricContentEvent(songName, artistName, lyricContent, currentPosition));
                     }).start();
                     launchLrcFloatingWindows(songName,artistName,lyricContent,currentPosition);
                 } else {
@@ -153,7 +154,7 @@ public class LyricService extends Service {
             lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
             Utils.startService(getApplicationContext(),lycFloatingService);
         }
-        EventBus.getDefault().post(new LyricContentEvent(songName, null, 0));
+        EventBus.getDefault().post(new LyricContentEvent(songName));
     }
 
     private void launchLrcFloatingWindows(String songName, String artistName, String lyricContent, long currentPosition) {
@@ -174,7 +175,7 @@ public class LyricService extends Service {
                 Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
                 Utils.startService(getApplicationContext(),widgetService);
             }
-            EventBus.getDefault().post(new LyricContentEvent(songName, lyricContent, currentPosition));
+            EventBus.getDefault().post(new LyricContentEvent(songName, artistName,lyricContent, currentPosition));
         }
     }
 }
