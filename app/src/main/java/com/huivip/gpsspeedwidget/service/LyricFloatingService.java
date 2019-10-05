@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
@@ -248,11 +247,6 @@ public class LyricFloatingService extends Service{
                 ColorUtils.parserColor("#03e9fc")
         };
         mFloatLyricsView.setPaintHLColor(paintHLColors);
-
-        //设置字体文件
-        Typeface typeFace = Typeface.createFromAsset(getAssets(),
-                "fonts/weiruanyahei14M.ttf");
-        mFloatLyricsView.setTypeFace(typeFace);
         super.onCreate();
     }
     private void updateContent(String songName,String artistName,long position){

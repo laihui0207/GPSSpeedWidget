@@ -282,7 +282,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                 FileUtil.saveAblumImage(musicEvent.getCover(), songName, artistName);
             }).start();
         }
-        musicEvent.setCurrentPostion(1000);
+        musicEvent.setCurrentPostion(0);
         EventBus.getDefault().post(musicEvent);
 
     }
