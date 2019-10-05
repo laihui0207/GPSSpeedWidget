@@ -20,6 +20,7 @@ import android.view.KeyEvent;
 import com.huivip.gpsspeedwidget.beans.KuWoStatusEvent;
 import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
+import com.huivip.gpsspeedwidget.beans.MusicStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.lyric.LyricService;
 import com.huivip.gpsspeedwidget.lyrics.utils.StringUtils;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -46,7 +47,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     private String TAG="huivip";
     String songName;
     String artistName;
-    long currentPosition=0L;
+    int currentPosition=0;
     Long duration;
     //Bitmap coverBitmap;
     AudioManager am;
@@ -59,6 +60,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                songName=music.name;
                artistName=music.artist;
                currentPosition = mKwapi.getCurrentPos();
+               EventBus.getDefault().post(new MusicStatusUpdateEvent(true,currentPosition));
                mKwapi.setMusicImg(music, new OnGetSongImgListener() {
                    @Override
                    public void sendSyncNotice_HeadPicStart(Music music) {
@@ -92,6 +94,8 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                });
 
 
+           } else if(playerStatus.name().equalsIgnoreCase(PlayerStatus.PAUSE.name()) || playerStatus.name().equalsIgnoreCase(PlayerStatus.STOP.name())){
+               EventBus.getDefault().post(new MusicStatusUpdateEvent(false));
            }
             mKwapi.getLyrics(music, new OnGetLyricsListener() {
                 @Override
@@ -252,8 +256,13 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     @Override
     public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
         Log.d("huivip","get update state:"+state+",postion:"+currentPosMs);
-        launchLyricService(state,currentPosMs+1000);
-        currentPosition=currentPosMs;
+        if(state==RemoteControlClient.PLAYSTATE_PLAYING) {
+            launchLyricService(state, currentPosMs + 1000);
+            currentPosition = (int) currentPosMs;
+            EventBus.getDefault().post(new MusicStatusUpdateEvent(true,currentPosition));
+        } else if(state== RemoteControlClient.PLAYSTATE_PAUSED || state==RemoteControlClient.PLAYSTATE_STOPPED){
+            EventBus.getDefault().post(new MusicStatusUpdateEvent(false));
+        }
     }
 
     @Override
@@ -269,7 +278,6 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
         //Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.fenmian);
        Bitmap coverBitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, null);
-        Log.d("huivip","get Song:"+songName+",artist:"+artistName);
         launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,1000);
         MusicEvent musicEvent=new MusicEvent(songName,artistName);
         musicEvent.setDuration(duration==null ? 0L:duration);
@@ -282,7 +290,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                 FileUtil.saveAblumImage(musicEvent.getCover(), songName, artistName);
             }).start();
         }
-        musicEvent.setCurrentPostion(0);
+        musicEvent.setCurrentPostion(1000);
         EventBus.getDefault().post(musicEvent);
 
     }

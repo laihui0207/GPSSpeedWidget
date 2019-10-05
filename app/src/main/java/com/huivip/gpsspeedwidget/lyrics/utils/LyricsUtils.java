@@ -468,38 +468,40 @@ public class LyricsUtils {
     public static int getLineNumber(int lyricsType, TreeMap<Integer, LyricsLineInfo> lyricsLineTreeMap, long curPlayingTime, long playOffset) {
 
         //添加歌词增量
-        long newPlayingTime = curPlayingTime + playOffset;
-        if (lyricsType == LyricsInfo.LRC) {
-            //lrc歌词
-            for (int i = 0; i < lyricsLineTreeMap.size(); i++) {
+        if(lyricsLineTreeMap!=null) {
+            long newPlayingTime = curPlayingTime + playOffset;
+            if (lyricsType == LyricsInfo.LRC) {
+                //lrc歌词
+                for (int i = 0; i < lyricsLineTreeMap.size(); i++) {
 
-                if (newPlayingTime < lyricsLineTreeMap.get(i).getStartTime()) return 0;
+                    if (newPlayingTime < lyricsLineTreeMap.get(i).getStartTime()) return 0;
 
-                if (newPlayingTime >= lyricsLineTreeMap.get(i).getStartTime()
-                        && i + 1 < lyricsLineTreeMap.size()
-                        && newPlayingTime <= lyricsLineTreeMap.get(i + 1).getStartTime()) {
-                    return i;
+                    if (newPlayingTime >= lyricsLineTreeMap.get(i).getStartTime()
+                            && i + 1 < lyricsLineTreeMap.size()
+                            && newPlayingTime <= lyricsLineTreeMap.get(i + 1).getStartTime()) {
+                        return i;
+                    }
                 }
-            }
-            if (lyricsLineTreeMap.size() > 0) {
-                return lyricsLineTreeMap.size() - 1;
-            }
-        } else if (lyricsType == LyricsInfo.DYNAMIC) {
-            //动感歌词
-            for (int i = 0; i < lyricsLineTreeMap.size(); i++) {
-                if (newPlayingTime >= lyricsLineTreeMap.get(i).getStartTime()
-                        && newPlayingTime <= lyricsLineTreeMap.get(i).getEndTime()) {
-                    return i;
+                if (lyricsLineTreeMap.size() > 0) {
+                    return lyricsLineTreeMap.size() - 1;
                 }
-                if (newPlayingTime > lyricsLineTreeMap.get(i).getEndTime()
-                        && i + 1 < lyricsLineTreeMap.size()
-                        && newPlayingTime <= lyricsLineTreeMap.get(i + 1).getStartTime()) {
-                    return i;
+            } else if (lyricsType == LyricsInfo.DYNAMIC) {
+                //动感歌词
+                for (int i = 0; i < lyricsLineTreeMap.size(); i++) {
+                    if (newPlayingTime >= lyricsLineTreeMap.get(i).getStartTime()
+                            && newPlayingTime <= lyricsLineTreeMap.get(i).getEndTime()) {
+                        return i;
+                    }
+                    if (newPlayingTime > lyricsLineTreeMap.get(i).getEndTime()
+                            && i + 1 < lyricsLineTreeMap.size()
+                            && newPlayingTime <= lyricsLineTreeMap.get(i + 1).getStartTime()) {
+                        return i;
+                    }
                 }
-            }
-            if (newPlayingTime >= lyricsLineTreeMap.get(lyricsLineTreeMap.size() - 1)
-                    .getEndTime()) {
-                return lyricsLineTreeMap.size() - 1;
+                if (newPlayingTime >= lyricsLineTreeMap.get(lyricsLineTreeMap.size() - 1)
+                        .getEndTime()) {
+                    return lyricsLineTreeMap.size() - 1;
+                }
             }
         }
         return 0;
@@ -964,6 +966,7 @@ public class LyricsUtils {
      * @return
      */
     public static int getSplitLrcLyricsLineNum(TreeMap<Integer, LyricsLineInfo> mLrcLineInfos, int mLyricsLineNum, long playProgress, long playOffset) {
+        if(mLrcLineInfos==null) return 0;
         LyricsLineInfo lyrLine = mLrcLineInfos.get(mLyricsLineNum);
         List<LyricsLineInfo> lyricsLineInfos = lyrLine.getSplitLyricsLineInfos();
         return getSplitLrcLyricsLineNum(lyricsLineInfos, playProgress, playOffset);
@@ -979,18 +982,20 @@ public class LyricsUtils {
      */
     private static int getSplitLrcLyricsLineNum(List<LyricsLineInfo> lyricsLineInfos, long playProgress, long playOffset) {
         //添加歌词增量
-        long curPlayingTime = playProgress + playOffset;
-        for (int i = 0; i < lyricsLineInfos.size(); i++) {
-            if (curPlayingTime < lyricsLineInfos.get(i).getStartTime()) return 0;
+        if(lyricsLineInfos!=null) {
+            long curPlayingTime = playProgress + playOffset;
+            for (int i = 0; i < lyricsLineInfos.size(); i++) {
+                if (curPlayingTime < lyricsLineInfos.get(i).getStartTime()) return 0;
 
-            if (curPlayingTime >= lyricsLineInfos.get(i).getStartTime()
-                    && i + 1 < lyricsLineInfos.size()
-                    && curPlayingTime <= lyricsLineInfos.get(i + 1).getStartTime()) {
-                return i;
+                if (curPlayingTime >= lyricsLineInfos.get(i).getStartTime()
+                        && i + 1 < lyricsLineInfos.size()
+                        && curPlayingTime <= lyricsLineInfos.get(i + 1).getStartTime()) {
+                    return i;
+                }
             }
-        }
-        if (lyricsLineInfos.size() > 0) {
-            return lyricsLineInfos.size() - 1;
+            if (lyricsLineInfos.size() > 0) {
+                return lyricsLineInfos.size() - 1;
+            }
         }
         return 0;
     }

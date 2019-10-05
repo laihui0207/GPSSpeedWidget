@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
+import com.huivip.gpsspeedwidget.beans.MusicStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.lyrics.LyricsReader;
 import com.huivip.gpsspeedwidget.lyrics.utils.ColorUtils;
 import com.huivip.gpsspeedwidget.lyrics.widget.AbstractLrcView;
@@ -261,19 +263,33 @@ public class LyricFloatingService extends Service{
                 lyricsReader.loadLrc(lrcFile);
                 mFloatLyricsView.setLyricsReader(lyricsReader);
                 mFloatLyricsView.play((int) position);
+                ViewGroup.LayoutParams layoutParams=lrcView.getLayoutParams();
+                layoutParams.height=90+Integer.parseInt(AppSettings.get().getMusicWidgetFontSize());
+                lyricView.setLayoutParams(layoutParams);
+                int fontSize = mFloatLyricsView.getHeight() / 3;
+                int spaceLineHeight = fontSize / 2;
+                mFloatLyricsView.setSpaceLineHeight(spaceLineHeight);
+                mFloatLyricsView.setExtraLrcSpaceLineHeight(spaceLineHeight);
+                //有歌词，则重新分割歌词
+                mFloatLyricsView.setSize(fontSize, fontSize,true);
+            } else {
 
             }
-            ViewGroup.LayoutParams layoutParams=lrcView.getLayoutParams();
-            layoutParams.height=90+Integer.parseInt(AppSettings.get().getMusicWidgetFontSize());
-            lyricView.setLayoutParams(layoutParams);
-            int fontSize = mFloatLyricsView.getHeight() / 3;
-            int spaceLineHeight = fontSize / 2;
-            mFloatLyricsView.setSpaceLineHeight(spaceLineHeight);
-            mFloatLyricsView.setExtraLrcSpaceLineHeight(spaceLineHeight);
-            //有歌词，则重新分割歌词
-            mFloatLyricsView.setSize(fontSize, fontSize,true);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateMusicStatus(MusicStatusUpdateEvent event){
+        Log.d("lyric","GEt music status update,"+event.isPlaying());
+        if (!event.isPlaying()) {
+            mFloatLyricsView.pause();
+            if (!audioManager.isMusicActive()) {
+                onStop();
+                stopSelf();
+            }
+        } else if (event.isPlaying()) {
+            mFloatLyricsView.play(event.getPosition());
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -458,7 +458,6 @@ public abstract class Utils {
     }
 
     public static void startService(Context context, Intent intent) {
-      Log.d("huivip",getDefaultDesktop(context)+"~~~~"+context.getPackageName());
         if (Build.VERSION.SDK_INT >= 26 && !getDefaultDesktop(context).equalsIgnoreCase(context.getPackageName())) {
             context.startForegroundService(intent);
         } else {

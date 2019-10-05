@@ -7,40 +7,39 @@
         android:id="@+id/vertexpand"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_gravity="bottom"
+        android:layout_gravity="bottom|center"
         android:background="@drawable/action_scale_widget"
         android:scaleX="0"
         android:scaleY="0"
         android:src="@drawable/ic_expand_more_black_24dp"
         android:tint="?android:textColorPrimary" />
-
-    <ImageButton
-        android:id="@+id/horiexpand"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="top"
-        android:background="@drawable/action_scale_widget"
-        android:scaleX="0"
-        android:scaleY="0"
-        android:src="@drawable/ic_chevron_right_black_24dp"
-        android:tint="?android:textColorPrimary" />
-
     <ImageButton
         android:id="@+id/vertless"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_gravity="right|bottom"
+        android:layout_marginStart="30dp"
+        android:layout_gravity="bottom|center"
         android:background="@drawable/action_scale_widget"
         android:scaleX="0"
         android:scaleY="0"
         android:src="@drawable/ic_expand_less_black_24dp"
         android:tint="?android:textColorPrimary" />
-
+    <ImageButton
+        android:id="@+id/horiexpand"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center|end"
+        android:background="@drawable/action_scale_widget"
+        android:scaleX="0"
+        android:scaleY="0"
+        android:src="@drawable/ic_chevron_right_black_24dp"
+        android:tint="?android:textColorPrimary" />
     <ImageButton
         android:id="@+id/horiless"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_gravity="right|top"
+        android:layout_gravity="end|center"
+        android:layout_marginTop="30dp"
         android:background="@drawable/action_scale_widget"
         android:scaleX="0"
         android:scaleY="0"

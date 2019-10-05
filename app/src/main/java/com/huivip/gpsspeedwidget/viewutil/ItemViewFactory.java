@@ -125,7 +125,50 @@ public class ItemViewFactory {
                 return true;
             }
         });
+       /* ve.setOnTouchListener(new View.OnTouchListener() {
+            private float mInitialTouchX;
+            private float mInitialTouchY;
+            private int mInitialX;
+            private int mInitialY;
+            private int movedX;
+            private int movedY;
+            private long mStartClickTime;
+            private boolean mIsClick;
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                //final ViewGroup.LayoutParams params = v.getLayoutParams();
 
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        mInitialTouchX = event.getRawX();
+                        mInitialTouchY = event.getRawY();
+                        mStartClickTime = System.currentTimeMillis();
+                        //mIsClick = true;
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        float dX = event.getRawX() - mInitialTouchX;
+                        float dY = event.getRawY() - mInitialTouchY;
+                       *//* if ((mIsClick && (Math.abs(dX) > 10 || Math.abs(dY) > 10))
+                                || System.currentTimeMillis() - mStartClickTime > ViewConfiguration.getLongPressTimeout()) {
+                            mIsClick = false;
+                        }*//*
+
+                        //if (!mIsClick) {
+                            movedX= (int) (dX + mInitialX);
+                            movedY = (int) (dY + mInitialY);
+                       // }
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                       //item.setSpanX(item.getSpanX()+movedX);
+                       item.setSpanY(item.getSpanY()+movedY);
+                        Log.d("huivip","move x:"+movedX+",y:"+movedY);
+                       scaleWidget(widgetContainer,item);
+                        return true;
+                }
+                return true;
+            }
+        });*/
         ve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,6 +179,45 @@ public class ItemViewFactory {
                 widgetContainer.postDelayed(action, 5000);
             }
         });
+        /*he.setOnTouchListener(new View.OnTouchListener() {
+            private float mInitialTouchX;
+            private float mInitialTouchY;
+            private float movedX;
+            private float movedY;
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        mInitialTouchX = event.getRawX();
+                        mInitialTouchY = event.getRawY();
+                        Log.d("huivip","donw, x:"+mInitialTouchX+",y:"+mInitialTouchY);
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        movedX = event.getRawX() - mInitialTouchX;
+                        movedY = event.getRawY() - mInitialTouchY;
+                        Log.d("huivip","move,x;"+event.getRawX()+",y:"+event.getRawY());
+                        //item.setSpanX((int) (item.getSpanX()+movedX));
+                        //item.setSpanY((int) (item.getSpanY()+movedY));
+                        if(movedX>0) {
+                            item.setSpanX((int) (item.getSpanX() + (movedX / HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellWidth()) + 1));
+                        }
+                        if(movedY>0) {
+                            item.setSpanY((int) (item.getSpanY() + movedY / HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellHeight() + 1));
+                        }
+                        Log.d("huivip","up x:"+movedX+",y:"+movedY);
+                        scaleWidget(widgetContainer,item);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        item.setSpanX((int) (item.getSpanX()+(movedX/HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellWidth())+1));
+                        item.setSpanY((int) (item.getSpanY()+movedY/HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellHeight()+1));
+                        Log.d("huivip","up x:"+movedX+",y:"+movedY);
+                        scaleWidget(widgetContainer,item);
+                        return true;
+                }
+                return false;
+            }
+        });*/
         he.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,6 +228,45 @@ public class ItemViewFactory {
                 widgetContainer.postDelayed(action, 5000);
             }
         });
+      /* vl.setOnTouchListener(new View.OnTouchListener() {
+           private float mInitialTouchX;
+           private float mInitialTouchY;
+           private int mInitialX;
+           private int mInitialY;
+           private int movedX;
+           private int movedY;
+           @SuppressLint("ClickableViewAccessibility")
+           @Override
+           public boolean onTouch(View v, MotionEvent event) {
+               switch (event.getAction()) {
+                   case MotionEvent.ACTION_DOWN:
+                       mInitialTouchX = event.getRawX();
+                       mInitialTouchY = event.getRawY();
+                       //mIsClick = true;
+                       return true;
+                   case MotionEvent.ACTION_MOVE:
+                       float dX = event.getRawX() - mInitialTouchX;
+                       float dY = event.getRawY() - mInitialTouchY;
+                       *//* if ((mIsClick && (Math.abs(dX) > 10 || Math.abs(dY) > 10))
+                                || System.currentTimeMillis() - mStartClickTime > ViewConfiguration.getLongPressTimeout()) {
+                            mIsClick = false;
+                        }*//*
+
+                       //if (!mIsClick) {
+                       movedX= (int) (dX + mInitialX);
+                       movedY = (int) (dY + mInitialY);
+                       // }
+                       return true;
+                   case MotionEvent.ACTION_UP:
+                       //item.setSpanX(item.getSpanX()+movedX);
+                       item.setSpanY(item.getSpanY()+movedY);
+                       Log.d("huivip","move x:"+movedX+",y:"+movedY);
+                       scaleWidget(widgetContainer,item);
+                       return true;
+               }
+               return false;
+           }
+       });*/
         vl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -156,6 +277,47 @@ public class ItemViewFactory {
                 widgetContainer.postDelayed(action, 5000);
             }
         });
+       /* hl.setOnTouchListener(new View.OnTouchListener() {
+            private float mInitialTouchX;
+            private float mInitialTouchY;
+            private int mInitialX;
+            private int mInitialY;
+            private int movedX;
+            private int movedY;
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        mInitialTouchX = event.getRawX();
+                        mInitialTouchY = event.getRawY();
+                        //mIsClick = true;
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        float dX = event.getRawX() - mInitialTouchX;
+                        float dY = event.getRawY() - mInitialTouchY;
+                       *//* if ((mIsClick && (Math.abs(dX) > 10 || Math.abs(dY) > 10))
+                                || System.currentTimeMillis() - mStartClickTime > ViewConfiguration.getLongPressTimeout()) {
+                            mIsClick = false;
+                        }*//*
+
+                        //if (!mIsClick) {
+                        movedX= (int) (dX + mInitialX);
+                        movedY = (int) (dY + mInitialY);
+                        // }
+                        item.setSpanY(item.getSpanY()+movedY);
+                        scaleWidget(widgetContainer,item);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        item.setSpanX(item.getSpanX()+movedX);
+                        //item.setSpanY(item.getSpanY()+movedY);
+                        Log.d("huivip","move x:"+movedX+",y:"+movedY);
+                        scaleWidget(widgetContainer,item);
+                        return true;
+                }
+                return false;
+            }
+        });*/
         hl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -192,7 +354,7 @@ public class ItemViewFactory {
             Toast.makeText(HomeActivity.Companion.getLauncher().getDesktop().getContext(), R.string.toast_not_enough_space, Toast.LENGTH_SHORT).show();
 
             // add the old layout params to the occupied array
-            HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().setOccupied(true, (CellContainer.LayoutParams) view.getLayoutParams());
+            //HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().setOccupied(true, (CellContainer.LayoutParams) view.getLayoutParams());
         }
     }
 

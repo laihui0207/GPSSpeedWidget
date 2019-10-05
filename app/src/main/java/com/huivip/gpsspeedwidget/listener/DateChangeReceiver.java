@@ -35,13 +35,8 @@ public class DateChangeReceiver extends BroadcastReceiver {
             else {
                 text="半点报时：当前时间:"+hour+"点"+min+"分";
             }
-            if(AppSettings.get().isPlayTime()){
-                try {
-                   //TTS tts= SpeechFactory.getInstance(context).getTTSEngine(PrefUtils.getTtsEngine(context));
-                EventBus.getDefault().post(new PlayAudioEvent(text,true));
-                } catch (Exception e){
-
-                }
+            if(AppSettings.get().isPlayTime()) {
+                EventBus.getDefault().post(new PlayAudioEvent(text, true));
             }
             EventBus.getDefault().post(new SearchWeatherEvent());
         }
