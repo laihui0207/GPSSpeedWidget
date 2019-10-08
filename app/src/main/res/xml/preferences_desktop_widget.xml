@@ -70,6 +70,11 @@
             android:key="@string/pref_key__widget_music_font_size"
             android:summary="调整字体大小"
             android:title="字体大小" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key__music_show_kuwo_album"
+            android:summary="同步显示酷我封面"
+            android:title="显示酷我封面" />
     </PreferenceCategory>
 
 </PreferenceScreen>

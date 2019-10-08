@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,6 +27,11 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
+import com.huivip.gpsspeedwidget.beans.MusicStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.lyrics.LyricsReader;
+import com.huivip.gpsspeedwidget.lyrics.utils.ColorUtils;
+import com.huivip.gpsspeedwidget.lyrics.widget.AbstractLrcView;
+import com.huivip.gpsspeedwidget.lyrics.widget.FloatLyricsView;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
@@ -33,8 +40,10 @@ import com.huivip.gpsspeedwidget.view.LrcView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.x;
 
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -82,6 +91,8 @@ public class LyricFloatingService extends Service{
     View controlView;
     @BindView(R.id.layout_lyric)
     ViewGroup lyricView;
+    @BindView(R.id.floatlyricsview)
+    FloatLyricsView mFloatLyricsView;
     WindowManager.LayoutParams params;
     @Nullable
     @Override
@@ -99,12 +110,16 @@ public class LyricFloatingService extends Service{
                 return super.onStartCommand(intent, flags, startId);
             }
             lyrcContent=intent.getStringExtra(LYRIC_CONTENT);//FileUtil.loadLyric(getApplicationContext(),inputSongName,inputArtistName);
+            songName=intent.getStringExtra(SONGNAME);
+            artistName=intent.getStringExtra(ARTIST);
             long position=intent.getLongExtra(POSITION,0L);
-            startTime=System.currentTimeMillis()-position;//-1000;
+          /*  startTime=System.currentTimeMillis()-position;//-1000;
             lrcView.setLrc(lyrcContent);
             lrcView.setHighLineColor(AppSettings.get().getLyricFontColor());
-            lrcView.init();
+            lrcView.init();*/
             isShowing = true;
+
+            updateContent(songName,artistName,position);
             if(!AppSettings.get().isLyricFixed()) {
                 hideControlView();
             } else {
@@ -123,7 +138,7 @@ public class LyricFloatingService extends Service{
                 });
             }
         };
-        this.lyricTimer.schedule(this.lyricTask, 0L, 1000L);
+        //this.lyricTimer.schedule(this.lyricTask, 0L, 1000L);
         return Service.START_REDELIVER_INTENT;
     }
 
@@ -218,13 +233,71 @@ public class LyricFloatingService extends Service{
         CrashHandler.getInstance().init(getApplicationContext());
         lyricTimer = new Timer();
         EventBus.getDefault().register(this);
+        mFloatLyricsView.setOrientation(FloatLyricsView.ORIENTATION_CENTER);
+        //默认颜色
+        int[] paintColors = new int[]{
+                ColorUtils.parserColor("#00348a"),
+                ColorUtils.parserColor("#0080c0"),
+                ColorUtils.parserColor("#03cafc")
+        };
+        mFloatLyricsView.setPaintColor(paintColors);
+
+        //高亮颜色
+        int[] paintHLColors = new int[]{
+                ColorUtils.parserColor("#82f7fd"),
+                ColorUtils.parserColor("#ffffff"),
+                ColorUtils.parserColor("#03e9fc")
+        };
+        mFloatLyricsView.setPaintHLColor(paintHLColors);
         super.onCreate();
     }
-    @Subscribe
+    private void updateContent(String songName,String artistName,long position){
+        mFloatLyricsView.initLrcData();
+        //加载中
+        mFloatLyricsView.setLrcStatus(AbstractLrcView.LRCSTATUS_LOADING);
+        LyricsReader lyricsReader = new LyricsReader();
+        try {
+            String lrcFileName=FileUtil.getLyricFile(songName,artistName);
+            if(!TextUtils.isEmpty(lrcFileName)){
+                File lrcFile=new File(lrcFileName);
+                lyricsReader.loadLrc(lrcFile);
+                mFloatLyricsView.setLyricsReader(lyricsReader);
+                mFloatLyricsView.play((int) position);
+                ViewGroup.LayoutParams layoutParams=lrcView.getLayoutParams();
+                layoutParams.height=90+Integer.parseInt(AppSettings.get().getMusicWidgetFontSize());
+                lyricView.setLayoutParams(layoutParams);
+                int fontSize = mFloatLyricsView.getHeight() / 3;
+                int spaceLineHeight = fontSize / 2;
+                mFloatLyricsView.setSpaceLineHeight(spaceLineHeight);
+                mFloatLyricsView.setExtraLrcSpaceLineHeight(spaceLineHeight);
+                //有歌词，则重新分割歌词
+                mFloatLyricsView.setSize(fontSize, fontSize,true);
+            } else {
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateMusicStatus(MusicStatusUpdateEvent event){
+        Log.d("lyric","GEt music status update,"+event.isPlaying());
+        if (!event.isPlaying()) {
+            mFloatLyricsView.pause();
+            new Handler().postDelayed(()->{
+                if (!audioManager.isMusicActive()) {
+                    onStop();
+                    stopSelf();
+                }
+            },5000);
+
+        } else if (event.isPlaying()) {
+            mFloatLyricsView.play(event.getPosition());
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateLyricContent(LyricContentEvent event){
-        //lrcView.setLrc(event.getContent());
-        //startTime=System.currentTimeMillis()-event.getPosition();
-        //lrcView.setPlayercurrentMillis((int) event.getPosition());
+        updateContent(event.getSongName(),event.getArtistName(),event.getPosition());
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?

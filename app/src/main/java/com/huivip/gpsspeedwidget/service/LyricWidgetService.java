@@ -106,6 +106,12 @@ public class LyricWidgetService extends Service {
         this.manager.updateAppWidget(this.lyricWidget, remoteViews);
 
     }
+    private void reset(){
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.lyric_widget);
+        remoteViews.setTextViewText(R.id.textView_lyric, currentLyricContentString);
+        this.manager.updateAppWidget(this.lyricWidget, remoteViews);
+
+    }
     @Override
     public void onDestroy() {
         if(EventBus.getDefault().isRegistered(this)){
@@ -114,6 +120,8 @@ public class LyricWidgetService extends Service {
         super.onDestroy();
     }
     public void onStop(){
+        lyricTimer.cancel();
+        lyricTimer.purge();
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.lyric_widget);
         remoteViews.setTextViewText(R.id.textView_lyric,"");
         this.manager.updateAppWidget(this.lyricWidget,remoteViews);
@@ -149,6 +157,7 @@ public class LyricWidgetService extends Service {
         position=event.getPosition();
         if (!TextUtils.isEmpty(lyric_content)) {
             list = LrcUtil.parseStr2List(lyric_content);
+            reset();
         } else {
             list=null;
         }

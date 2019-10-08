@@ -166,7 +166,9 @@
     <string name="default_icons">默认</string>
     <string name="pref_title__gps_plugin">GPS插件配置</string>
     <string name="pref_title__donate">捐助作者</string>
-
+    <string name="pref_title__drawer_fast_scroll_color">滚动条</string>
+    <string name="pref_title__drawer_label_font_size">标签字体大小</string>
+    <string name="pref_summary__gesture_feedback">长按桌面对象里时震动反馈</string>
     <!-- Dialogs -->
 
     <string name="please_wait">正在搜索已安装的应用, 请稍候</string>

@@ -93,14 +93,14 @@ public class LyricService extends Service {
                 EventBus.getDefault().post(event);
             }
         }
-        if (TextUtils.isEmpty(lyricContent) || (cover == null && musicCover == null)) {
+        if (TextUtils.isEmpty(lyricContent)) {
             MusicEvent res = WangYiYunMusic.downloadLyric(inputSongName, inputArtist);
             lyricContent = res.getLyricContent();
             if (res.getMusicCover() != null && cover == null && musicCover == null) {
-                MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
+               /* MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
                 event.setSongName(inputSongName);
                 event.setPicUrl(res.getMusicCover());
-                EventBus.getDefault().post(event);
+                EventBus.getDefault().post(event);*/
                 new Thread(()->{
                     FileUtil.saveAlbum(inputSongName, inputArtist, res.getMusicCover());
                 }).start();
@@ -134,7 +134,8 @@ public class LyricService extends Service {
                 List<LrcBean> list= LrcUtil.parseStr2List(lyricContent);
                 if(list!=null && list.size()>0) {
                     new Thread(()->{
-                        FileUtil.saveLyric(songName, artistName, lyricContent);
+                        FileUtil.saveLyric(songName, artistName, lyricContent,false);
+                        EventBus.getDefault().post(new LyricContentEvent(songName, artistName, lyricContent, currentPosition));
                     }).start();
                     launchLrcFloatingWindows(songName,artistName,lyricContent,currentPosition);
                 } else {
@@ -151,9 +152,9 @@ public class LyricService extends Service {
         if (AppSettings.get().isLyricFloattingWidownEnable()) {
             Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
             lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
-            startService(lycFloatingService);
+            Utils.startService(getApplicationContext(),lycFloatingService);
         }
-        EventBus.getDefault().post(new LyricContentEvent(songName, null, 0));
+        EventBus.getDefault().post(new LyricContentEvent(songName));
     }
 
     private void launchLrcFloatingWindows(String songName, String artistName, String lyricContent, long currentPosition) {
@@ -166,13 +167,15 @@ public class LyricService extends Service {
             }
             lycFloatingService.putExtra(LyricFloatingService.LYRIC_CONTENT, lyricContent);
             lycFloatingService.putExtra(LyricFloatingService.DURATION, duration);
-            startService(lycFloatingService);
+            Utils.startService(getApplicationContext(),lycFloatingService);
         }
-        if (PrefUtils.isLyricWidgetEnable(getApplicationContext())
-                && !Utils.isServiceRunning(getApplicationContext(), LyricWidgetService.class.getName())) {
-            Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
-            startService(widgetService);
-            EventBus.getDefault().post(new LyricContentEvent(songName, lyricContent, currentPosition));
+        if (PrefUtils.isLyricWidgetEnable(getApplicationContext())) {
+            if (!Utils.isServiceRunning(getApplicationContext(), LyricWidgetService.class.getName()))
+            {
+                Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
+                Utils.startService(getApplicationContext(),widgetService);
+            }
+            EventBus.getDefault().post(new LyricContentEvent(songName, artistName,lyricContent, currentPosition));
         }
     }
 }

@@ -13,9 +13,6 @@ import com.huivip.gpsspeedwidget.beans.MusicAlbumUpdateEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 
 import org.greenrobot.eventbus.EventBus;
-import org.xutils.common.Callback;
-import org.xutils.http.RequestParams;
-import org.xutils.x;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -155,10 +152,10 @@ public class FileUtil {
             lrcFile.delete();
         }
     }
-    public static void saveLyric(String songName, String artist, String content){
+    public static String getLyricFile(String songName,String artist){
         if(TextUtils.isEmpty(songName)) {
             Log.d("huivip","Save lyric file, but songName is empty");
-            return;
+            return null;
         }
         String path = AppSettings.get().getLyricPath();
         File dir=new File(path);
@@ -173,6 +170,27 @@ public class FileUtil {
         String lrcFileName=path+fileName;
         File lrcFile=new File(lrcFileName);
         if(lrcFile.exists()){
+            return lrcFileName;
+        }
+        return null;
+    }
+    public static void saveLyric(String songName, String artist, String content,boolean overWrite){
+        if(TextUtils.isEmpty(songName)) {
+            return;
+        }
+        String path = AppSettings.get().getLyricPath();
+        File dir=new File(path);
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        String fileName=songName.replace("/","_");
+        if(!TextUtils.isEmpty(artist)){
+            fileName+="_"+artist.replace("/","_");;
+        }
+        fileName+=".lrc";
+        String lrcFileName=path+fileName;
+        File lrcFile=new File(lrcFileName);
+        if(lrcFile.exists() && overWrite){
             lrcFile.delete();
         }
         if(TextUtils.isEmpty(content)){
@@ -186,6 +204,7 @@ public class FileUtil {
         } catch (IOException e) {
             //Toast.makeText(context,"File create Error:"+e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
         }
+        Log.d("huivip","save lyric File:"+lrcFileName);
     }
     public static String loadAlbum(String songName,String artist){
         if(TextUtils.isEmpty(songName)) return null;
@@ -214,7 +233,7 @@ public class FileUtil {
         return bitmap;*/
     }
 
-    public static boolean saveImg(Bitmap bitmap, String songName, String artist) {
+    public static boolean saveAblumImage(Bitmap bitmap, String songName, String artist) {
         try {
             String path = AppSettings.get().getLyricPath();
             File dir = new File(path);
@@ -226,7 +245,7 @@ public class FileUtil {
                 fileName += "_" + artist.trim().replace("/", "_");
             }
             fileName += ".jpg";
-            File mFile = new File(dir + fileName);                        //将要保存的图片文件
+            File mFile = new File(path + fileName);                        //将要保存的图片文件
             if (mFile.exists()) {
                 return true;
             }
@@ -260,7 +279,16 @@ public class FileUtil {
             //postAlbumUpdateEvent(picFile);
             return;
         }
-        RequestParams params = new RequestParams(picUrl);
+        try {
+            File downloadFile=HttpUtils.downloadImage(picUrl,picFileName);
+            if(downloadFile!=null){
+                Log.d("huivip","Download file:"+downloadFile.getAbsolutePath());
+                postAlbumUpdateEvent(picFileName,songName);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+       /* RequestParams params = new RequestParams(picUrl);
         params.setSaveFilePath(picFileName);
         params.setAutoRename(true);
         params.setAutoResume(true);
@@ -301,7 +329,7 @@ public class FileUtil {
             public void onLoading(long total, long current, boolean isDownloading) {
                 Log.d("huivip","total:"+total+",crrurent:"+current+",downloading:"+isDownloading);
             }
-        });
+        });*/
     }
     private static void postAlbumUpdateEvent(String picFile,String songName){
             MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
