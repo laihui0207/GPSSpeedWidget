@@ -23,6 +23,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -81,10 +82,14 @@ public class MusicControllerService extends Service {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                                 if(!appStarted && !Utils.isServiceRunning(getApplicationContext(),PrefUtils.getSelectMusicPlayer(getApplicationContext()))){
                                     startApp(PrefUtils.getSelectMusicPlayer(getApplicationContext()));
+                                    if(key == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE){
+                                        key=KeyEvent.KEYCODE_MEDIA_PLAY;
+                                    }
+                                    int finalMKey = key;
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            musicRemoteControllerService.sendMusicKeyEvent(key);
+                                            musicRemoteControllerService.sendMusicKeyEvent(finalMKey);
                                             new Handler().postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {

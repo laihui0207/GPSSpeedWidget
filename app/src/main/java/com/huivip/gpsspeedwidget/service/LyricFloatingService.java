@@ -284,10 +284,13 @@ public class LyricFloatingService extends Service{
         Log.d("lyric","GEt music status update,"+event.isPlaying());
         if (!event.isPlaying()) {
             mFloatLyricsView.pause();
-            if (!audioManager.isMusicActive()) {
-                onStop();
-                stopSelf();
-            }
+            new Handler().postDelayed(()->{
+                if (!audioManager.isMusicActive()) {
+                    onStop();
+                    stopSelf();
+                }
+            },5000);
+
         } else if (event.isPlaying()) {
             mFloatLyricsView.play(event.getPosition());
         }
