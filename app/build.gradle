@@ -7,7 +7,7 @@ android {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 253
+        versionCode 254
         versionName "3.0.3"
         flavorDimensions "versionCode"
         ndk {
@@ -15,13 +15,13 @@ android {
             abiFilters "armeabi-v7a"
         }
         multiDexEnabled true
-        javaCompileOptions {
+        /*javaCompileOptions {
             annotationProcessorOptions {
                 // 设置参数 eventBusIndex以指定要生成的索引的完全限定类
                 arguments = [eventBusIndex: 'com.huivip.gpsspeedwidget.EventBusIndex']
                 // 这里要修改为你项目的包名
             }
-        }
+        }*/
 
     }
     lintOptions {

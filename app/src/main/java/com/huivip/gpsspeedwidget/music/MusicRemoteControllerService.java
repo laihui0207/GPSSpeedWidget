@@ -21,7 +21,7 @@ import com.huivip.gpsspeedwidget.beans.KuWoStatusEvent;
 import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.beans.MusicStatusUpdateEvent;
-import com.huivip.gpsspeedwidget.lyric.LyricService;
+import com.huivip.gpsspeedwidget.lyrics.LyricService;
 import com.huivip.gpsspeedwidget.lyrics.utils.StringUtils;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
@@ -43,60 +43,63 @@ import cn.kuwo.autosdk.api.PlayerStatus;
 import cn.kuwo.base.bean.Music;
 
 @SuppressLint({"NewApi", "OverrideAbstract"})
-public class MusicRemoteControllerService extends NotificationListenerService implements RemoteController.OnClientUpdateListener  {
-    private String TAG="huivip";
+public class MusicRemoteControllerService extends NotificationListenerService implements RemoteController.OnClientUpdateListener {
+    private String TAG = "huivip";
     String songName;
     String artistName;
-    int currentPosition=0;
+    int currentPosition = 0;
     Long duration;
     //Bitmap coverBitmap;
     AudioManager am;
-    KWAPI mKwapi=null;
-    boolean kuWoStarted=false;
-    OnPlayerStatusListener kwPlayStatusListener=new OnPlayerStatusListener() {
+    KWAPI mKwapi = null;
+    boolean kuWoStarted = false;
+    OnPlayerStatusListener kwPlayStatusListener = new OnPlayerStatusListener() {
         @Override
         public void onPlayerStatus(PlayerStatus playerStatus, Music music) {
-           if(playerStatus.name().equalsIgnoreCase(PlayerStatus.PLAYING.name())){
-               songName=music.name;
-               artistName=music.artist;
-               currentPosition = mKwapi.getCurrentPos();
-               EventBus.getDefault().post(new MusicStatusUpdateEvent(true,currentPosition));
-               mKwapi.setMusicImg(music, new OnGetSongImgListener() {
-                   @Override
-                   public void sendSyncNotice_HeadPicStart(Music music) {
-                   }
-                   @Override
-                   public void sendSyncNotice_HeadPicFinished(Music music, Bitmap bitmap) {
-                      // Bitmap coverBitmap=bitmap;
-                       currentPosition=mKwapi.getCurrentPos()+2000;
-                       launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,currentPosition);
-                       MusicEvent musicEvent=new MusicEvent(music.name,music.artist);
-                       musicEvent.setDuration(music.duration);
-                       musicEvent.setCurrentPostion(mKwapi.getCurrentPos());
-                       if(AppSettings.get().isShowKuwoAlbum()) {
-                           if(bitmap!=null) {
-                               musicEvent.setCover(bitmap);
-                               new Thread(() -> {
-                                   FileUtil.saveAblumImage(bitmap, songName, artistName);
-                               }).start();
-                           }
-                       }
-                       EventBus.getDefault().post(musicEvent);
-                       // for kuwo have album bug
+            if (playerStatus.name().equalsIgnoreCase(PlayerStatus.PLAYING.name())) {
+                songName = music.name;
+                artistName = music.artist;
+                currentPosition = mKwapi.getCurrentPos();
+                EventBus.getDefault().post(new MusicStatusUpdateEvent(true, currentPosition));
+                mKwapi.setMusicImg(music, new OnGetSongImgListener() {
+                    @Override
+                    public void sendSyncNotice_HeadPicStart(Music music) {
+                    }
 
-                   }
-                   @Override
-                   public void sendSyncNotice_HeadPicFailed(Music music) {
-                   }
-                   @Override
-                   public void sendSyncNotice_HeadPicNone(Music music) {
-                   }
-               });
+                    @Override
+                    public void sendSyncNotice_HeadPicFinished(Music music, Bitmap bitmap) {
+                        // Bitmap coverBitmap=bitmap;
+                        currentPosition = mKwapi.getCurrentPos() + 2000;
+                        launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING, currentPosition);
+                        MusicEvent musicEvent = new MusicEvent(music.name, music.artist);
+                        musicEvent.setDuration(music.duration);
+                        musicEvent.setCurrentPostion(mKwapi.getCurrentPos());
+                        if (AppSettings.get().isShowKuwoAlbum()) {
+                            if (bitmap != null) {
+                                musicEvent.setCover(bitmap);
+                                new Thread(() -> {
+                                    FileUtil.saveAblumImage(bitmap, songName, artistName);
+                                }).start();
+                            }
+                        }
+                        EventBus.getDefault().post(musicEvent);
+                        // for kuwo have album bug
+
+                    }
+
+                    @Override
+                    public void sendSyncNotice_HeadPicFailed(Music music) {
+                    }
+
+                    @Override
+                    public void sendSyncNotice_HeadPicNone(Music music) {
+                    }
+                });
 
 
-           } else if(playerStatus.name().equalsIgnoreCase(PlayerStatus.PAUSE.name()) || playerStatus.name().equalsIgnoreCase(PlayerStatus.STOP.name())){
-               EventBus.getDefault().post(new MusicStatusUpdateEvent(false));
-           }
+            } else if (playerStatus.name().equalsIgnoreCase(PlayerStatus.PAUSE.name()) || playerStatus.name().equalsIgnoreCase(PlayerStatus.STOP.name())) {
+                EventBus.getDefault().post(new MusicStatusUpdateEvent(false));
+            }
             mKwapi.getLyrics(music, new OnGetLyricsListener() {
                 @Override
                 public void sendSyncNotice_LyricsStart(Music music) {
@@ -105,7 +108,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
 
                 @Override
                 public void sendSyncNotice_LyricsFinished(Music music, String lyricContent) {
-                   // Log.d("huivip","Get Lyric content from kuwu:"+lyricContent);
+                    // Log.d("huivip","Get Lyric content from kuwu:"+lyricContent);
                     if (StringUtils.isNotBlank(lyricContent)) {
                         FileUtil.saveLyric(music.name, music.artist, lyricContent, true);
                         EventBus.getDefault().post(new LyricContentEvent(music.name, music.artist, lyricContent, mKwapi.getCurrentPos()));
@@ -125,6 +128,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     };
     private RCBinder mBinder = new RCBinder();
     private static WeakReference<RemoteController> mRemoteControllerPreference = new WeakReference<>(null);
+
     @Override
     public void onCreate() {
         registerRemoteController();
@@ -132,8 +136,9 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         //kuwoStatusUpdate(new KuWoStatusEvent(true));
         super.onCreate();
     }
-    public void registerRemoteController(){
-        am= (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+    public void registerRemoteController() {
+        am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mRemoteControllerPreference = new WeakReference<>(new RemoteController(this, this));
         boolean registered;
         try {
@@ -153,7 +158,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        Log.d("huivip","Get Notification post");
+        Log.d("huivip", "Get Notification post");
         super.onNotificationPosted(sbn);
     }
 
@@ -161,10 +166,11 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void kuwoStatusUpdate(KuWoStatusEvent event){
-        if(event.isStarted() && mKwapi==null){
-            kuWoStarted=event.isStarted();
+    public void kuwoStatusUpdate(KuWoStatusEvent event) {
+        if (event.isStarted() && mKwapi == null) {
+            kuWoStarted = event.isStarted();
             mKwapi = KWAPI.getKWAPI();
             mKwapi.bindAutoSdkService(this);
             mKwapi.registerPlayerStatusListener(kwPlayStatusListener);
@@ -178,7 +184,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     }
 
     private void releaseKuWo() {
-        if(mKwapi!=null) {
+        if (mKwapi != null) {
             mKwapi.unbindAutoSdkService(this);
             mKwapi.unBindKuWoApp();
             //mKwapi.unRegisterPlayerStatusListener(this);
@@ -187,6 +193,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
             kuWoStarted = false;
         }
     }
+
     @Override
     public void onDestroy() {
         this.mBinder = null;
@@ -196,14 +203,16 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         releaseKuWo();
         super.onDestroy();
     }
+
     public void sendMusicKeyEvent(int keyCode) {
-        if(mKwapi!=null){
+        if (mKwapi != null) {
             kwController(keyCode);
         } else {
-           defaultController(keyCode);
+            defaultController(keyCode);
         }
     }
-    private void defaultController(int keyCode){
+
+    private void defaultController(int keyCode) {
         if (mRemoteControllerPreference != null && mRemoteControllerPreference.get() != null) {
             KeyEvent keyEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
             boolean down = mRemoteControllerPreference.get().sendMediaKeyEvent(keyEvent);
@@ -216,9 +225,10 @@ public class MusicRemoteControllerService extends NotificationListenerService im
             dispatchMediaKeyToAudioService(KeyEvent.changeAction(key, KeyEvent.ACTION_UP));
         }
     }
-    private void kwController(int keyCode){
-        if(mKwapi==null) return;
-        switch (keyCode){
+
+    private void kwController(int keyCode) {
+        if (mKwapi == null) return;
+        switch (keyCode) {
             case KeyEvent.KEYCODE_MEDIA_NEXT:
                 mKwapi.setPlayState(PlayState.STATE_NEXT);
                 break;
@@ -226,15 +236,16 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                 mKwapi.setPlayState(PlayState.STATE_PRE);
             case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
                 PlayerStatus status = mKwapi.getPlayerStatus();
-                if(status.name().equalsIgnoreCase("playing")){
+                if (status.name().equalsIgnoreCase("playing")) {
                     mKwapi.setPlayState(PlayState.STATE_PAUSE);
                 } else {
                     mKwapi.setPlayState(PlayState.STATE_PLAY);
                 }
         }
     }
+
     private void dispatchMediaKeyToAudioService(KeyEvent event) {
-        if (am!= null) {
+        if (am != null) {
             try {
                 am.dispatchMediaKeyEvent(event);
             } catch (Exception e) {
@@ -242,9 +253,11 @@ public class MusicRemoteControllerService extends NotificationListenerService im
             }
         }
     }
-    public boolean isPlaying(){
+
+    public boolean isPlaying() {
         return am.isMusicActive();
     }
+
     @Override
     public void onClientChange(boolean clearing) {
 
@@ -253,14 +266,15 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     @Override
     public void onClientPlaybackStateUpdate(int state) {
     }
+
     @Override
     public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
-        Log.d("huivip","get update state:"+state+",postion:"+currentPosMs);
-        if(state==RemoteControlClient.PLAYSTATE_PLAYING) {
+        Log.d("huivip", "get update state:" + state + ",postion:" + currentPosMs);
+        if (state == RemoteControlClient.PLAYSTATE_PLAYING) {
             launchLyricService(state, currentPosMs + 1000);
             currentPosition = (int) currentPosMs;
-            EventBus.getDefault().post(new MusicStatusUpdateEvent(true,currentPosition));
-        } else if(state== RemoteControlClient.PLAYSTATE_PAUSED || state==RemoteControlClient.PLAYSTATE_STOPPED){
+            EventBus.getDefault().post(new MusicStatusUpdateEvent(true, currentPosition));
+        } else if (state == RemoteControlClient.PLAYSTATE_PAUSED || state == RemoteControlClient.PLAYSTATE_STOPPED) {
             EventBus.getDefault().post(new MusicStatusUpdateEvent(false));
         }
     }
@@ -277,10 +291,10 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         songName = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
         duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
         //Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.fenmian);
-       Bitmap coverBitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, null);
-        launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING,1000);
-        MusicEvent musicEvent=new MusicEvent(songName,artistName);
-        musicEvent.setDuration(duration==null ? 0L:duration);
+        Bitmap coverBitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, null);
+        launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING, 1000);
+        MusicEvent musicEvent = new MusicEvent(songName, artistName);
+        musicEvent.setDuration(duration == null ? 0L : duration);
         musicEvent.setCover(coverBitmap);
         if(kuWoStarted && !AppSettings.get().isShowKuwoAlbum()) {
             musicEvent.setCover(null);
@@ -294,27 +308,25 @@ public class MusicRemoteControllerService extends NotificationListenerService im
         EventBus.getDefault().post(musicEvent);
 
     }
-    private void launchLyricService(int state,long position){
+
+    private void launchLyricService(int state, long position) {
         if (AppSettings.get().isLyricEnable()) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (state== RemoteControlClient.PLAYSTATE_PLAYING) {
+                    if (state == RemoteControlClient.PLAYSTATE_PLAYING) {
                         Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
                         Utils.startService(getApplicationContext(), lyricService);
-                        /*MusicEvent musicEvent=new MusicEvent(songName,artistName);
-                        musicEvent.setCurrentPostion(position);
-                        musicEvent.setDuration(duration==null ? 0: duration);
-                        EventBus.getDefault().post(musicEvent);*/
-                    } else if(state == RemoteControlClient.PLAYSTATE_PAUSED || state== RemoteControlClient.PLAYSTATE_STOPPED){
+                    } else if (state == RemoteControlClient.PLAYSTATE_PAUSED || state == RemoteControlClient.PLAYSTATE_STOPPED) {
                         Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
-                        lyricService.putExtra(LyricService.EXTRA_CLOSE,true);
+                        lyricService.putExtra(LyricService.EXTRA_CLOSE, true);
                         Utils.startService(getApplicationContext(), lyricService);
                     }
                 }
-            },1000);
+            }, 1000);
         }
     }
+
     public class RCBinder extends Binder {
         public MusicRemoteControllerService getService() {
             return MusicRemoteControllerService.this;

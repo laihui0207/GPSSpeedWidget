@@ -296,7 +296,7 @@
                     android:name="android.accessibilityservice"
                     android:resource="@xml/accessibility_service"/>
         </service>
-        <service android:name=".lyric.LyricService" />
+        <service android:name=".lyrics.LyricService" />
         <service android:name=".speech.AudioService" />
         <service android:name=".service.SearchTrafficService" />
         <service android:name=".service.SpeedNumberVerticalService" />

@@ -203,7 +203,7 @@ public class MusicControllerService extends Service {
                     //设置加载过程中的图片
                     //.setLoadingDrawableId(R.drawable.fenmian)
                     //设置加载失败后的图片
-                    //.setFailureDrawableId(R.drawable.fenmian)
+                    .setFailureDrawableId(R.drawable.fenmian)
                     //设置使用缓存
                     .setUseMemCache(true)
                     //设置支持gif

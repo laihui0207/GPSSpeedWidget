@@ -202,6 +202,7 @@ public class SpeedNumberVerticalService extends Service {
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
         setSpeeding(gpsUtil.isHasLimited());
         this.numberRemoteViews.setTextViewText(R.id.v_current_road_name_v,gpsUtil.getCurrentRoadName());
+        this.numberRemoteViews.setTextViewText(R.id.v_direction,"\u2191 "+gpsUtil.getDirection());
         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started){
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.VISIBLE);
         } else {
@@ -230,25 +231,6 @@ public class SpeedNumberVerticalService extends Service {
         }
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
     }
-   /* Bitmap drawable2Bitmap(Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        } else if (drawable instanceof NinePatchDrawable) {
-            Bitmap bitmap = Bitmap
-                    .createBitmap(
-                            drawable.getIntrinsicWidth(),
-                            drawable.getIntrinsicHeight(),
-                            drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
-                                    : Bitmap.Config.RGB_565);
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight());
-            drawable.draw(canvas);
-            return bitmap;
-        } else {
-            return null;
-        }
-    }*/
     private Bitmap getBitmap(String text){
        return getBitmap(text,getResources().getColor(R.color.white));
     }

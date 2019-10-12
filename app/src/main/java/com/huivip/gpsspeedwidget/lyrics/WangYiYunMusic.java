@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget.lyric;
+package com.huivip.gpsspeedwidget.lyrics;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
@@ -47,9 +47,11 @@ public class WangYiYunMusic {
                     String lyrcResponse=HttpUtils.getData(String.format(LYRC_URL, songId));
                     if(TextUtils.isEmpty(lyrcResponse)) return res;
                     JSONObject lyrcDetail=new JSONObject(lyrcResponse);
-                    JSONObject lyrcObject=lyrcDetail.getJSONObject("lrc");
-                    content=lyrcObject.getString("lyric");
-                    res.setLyricContent(content);
+                    if(!lyrcDetail.isNull("lrc")) {
+                        JSONObject lyrcObject = lyrcDetail.getJSONObject("lrc");
+                        content = lyrcObject.getString("lyric");
+                        res.setLyricContent(content);
+                    }
                 }
             }
         } catch (JSONException e) {
