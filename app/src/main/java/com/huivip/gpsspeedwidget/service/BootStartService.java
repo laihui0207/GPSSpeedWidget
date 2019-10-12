@@ -61,7 +61,7 @@ public class BootStartService extends Service {
         boolean start = AppSettings.get().getAutoStart();
         Log.d("huivip","Auto Start: "+start);
         if (start) {
-            startForeground(1, buildNotification());
+            //startForeground(1, buildNotification());
             String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
             if (AppSettings.get().isEnableLaunchOtherApp() && !TextUtils.isEmpty(apps)) {
                 String[] autoApps = apps.split(",");
@@ -140,7 +140,7 @@ public class BootStartService extends Service {
         if (intent != null) {
             if (start && !started) {
                 started = true;
-                buildNotification();
+                //buildNotification();
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                 if (AppSettings.get().isEnableTimeWindow()) {
                     if (!Utils.isServiceRunning(getApplicationContext(), RealTimeFloatingService.class.getName())) {
