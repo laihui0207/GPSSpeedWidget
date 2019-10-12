@@ -27,7 +27,7 @@ import android.widget.TextView;
 import com.amap.api.services.traffic.TrafficSearch;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.SearchTrafficEvent;
-import com.huivip.gpsspeedwidget.lyric.LyricService;
+import com.huivip.gpsspeedwidget.lyrics.LyricService;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.ToastUtil;

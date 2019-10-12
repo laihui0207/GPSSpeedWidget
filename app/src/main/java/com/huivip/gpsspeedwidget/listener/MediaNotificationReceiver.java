@@ -12,7 +12,7 @@ import android.text.TextUtils;
 
 import com.huivip.gpsspeedwidget.beans.KuWoStatusEvent;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
-import com.huivip.gpsspeedwidget.lyric.LyricService;
+import com.huivip.gpsspeedwidget.lyrics.LyricService;
 import com.huivip.gpsspeedwidget.service.TextFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;

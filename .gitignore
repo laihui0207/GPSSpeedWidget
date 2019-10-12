@@ -7,9 +7,8 @@
 /build
 /captures
 .externalNativeBuild
-app/proguardMapping.txt
+/app/proguardMapping.txt
 .idea
-app/proguardMapping.txt
 .idea/caches
 .idea/encodings.xml
 .idea/gradle.xml

@@ -1,4 +1,4 @@
-package com.huivip.gpsspeedwidget.lyric;
+package com.huivip.gpsspeedwidget.lyrics;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -81,9 +81,8 @@ public class LyricService extends Service {
         String inputSongName=musicEvent.getSongName();
         String inputArtist=musicEvent.getArtistName();
         long currentPosition=musicEvent.getCurrentPostion();
-        String lyricContent = FileUtil.loadLyric(inputSongName, inputArtist);
-        String cover = null;
         Bitmap musicCover=musicEvent.getCover();
+        String cover = null;
         if (musicCover == null) {
             cover = FileUtil.loadAlbum(inputSongName, inputArtist);
             if (cover != null) {
@@ -93,14 +92,11 @@ public class LyricService extends Service {
                 EventBus.getDefault().post(event);
             }
         }
-        if (TextUtils.isEmpty(lyricContent)) {
+        String lyricContent = FileUtil.loadLyric(inputSongName, inputArtist);
+        if (TextUtils.isEmpty(lyricContent) || (cover==null && musicCover==null)) {
             MusicEvent res = WangYiYunMusic.downloadLyric(inputSongName, inputArtist);
             lyricContent = res.getLyricContent();
             if (res.getMusicCover() != null && cover == null && musicCover == null) {
-               /* MusicAlbumUpdateEvent event = new MusicAlbumUpdateEvent();
-                event.setSongName(inputSongName);
-                event.setPicUrl(res.getMusicCover());
-                EventBus.getDefault().post(event);*/
                 new Thread(()->{
                     FileUtil.saveAlbum(inputSongName, inputArtist, res.getMusicCover());
                 }).start();

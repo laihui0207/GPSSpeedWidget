@@ -245,6 +245,7 @@ public class FileUtil {
                 fileName += "_" + artist.trim().replace("/", "_");
             }
             fileName += ".jpg";
+            String picFileName=path+fileName;
             File mFile = new File(path + fileName);                        //将要保存的图片文件
             if (mFile.exists()) {
                 return true;
@@ -254,6 +255,7 @@ public class FileUtil {
             outputStream.flush();
             outputStream.close();
             Log.d("huivip","bitmap save finish,"+fileName);
+            postAlbumUpdateEvent(picFileName,songName);
             return true;
 
         } catch (IOException e) {
