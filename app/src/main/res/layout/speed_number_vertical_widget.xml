@@ -30,9 +30,16 @@
                 android:layout_gravity="center|bottom"
                 android:contentDescription="road line text"
                 tools:ignore="HardcodedText" />
-            <TextView android:layout_gravity="right|center" android:layout_marginEnd="30dp" android:id="@+id/v_direction"
-                android:layout_width="wrap_content" android:textColor="@color/white" android:textSize="20sp"
-                android:layout_height="wrap_content" android:text="\u2191 北"
+
+            <TextView
+                android:id="@+id/v_direction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center"
+                android:layout_marginEnd="10dp"
+                android:text="\u2191 北"
+                android:textColor="@color/white"
+                android:textSize="20sp"
                 tools:ignore="HardcodedText,RtlHardcoded" />
 
 

@@ -33,6 +33,11 @@
             android:key="@string/pref_key__widget_time_other_font_size"
             android:summary="调整其它字体大小"
             android:title="其它字体大小" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key__time_format_24"
+            android:summary="显示24小时格式"
+            android:title="使用24小时制" />
     </PreferenceCategory>
     <PreferenceCategory android:title="速度巡航插件">
         <com.flask.colorpicker.ColorPickerPreference

@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -183,6 +184,12 @@ public class BootStartService extends Service {
                 }
             }
         }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                stopSelf();
+            }
+        }, 1000 * 60 * 5);
         return super.onStartCommand(intent, flags, startId);
     }
     @Subscribe(threadMode = ThreadMode.ASYNC)
@@ -252,5 +259,6 @@ public class BootStartService extends Service {
            intentFilter.addAction(action);
        }
        context.registerReceiver(new MediaNotificationReceiver(),intentFilter);
+
     }
 }

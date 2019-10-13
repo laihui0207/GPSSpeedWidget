@@ -64,6 +64,9 @@ public class TimeWidgetService extends Service {
             startService(weatherService);
             EventBus.getDefault().post(new SearchWeatherEvent(false));
         }
+        if(!AppSettings.get().isShow24TimeFormat()){
+            timeFormat=new SimpleDateFormat("hh:mm",Locale.CHINA);
+        }
         super.onCreate();
     }
 

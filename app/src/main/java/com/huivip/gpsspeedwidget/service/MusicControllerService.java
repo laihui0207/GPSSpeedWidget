@@ -110,6 +110,8 @@ public class MusicControllerService extends Service {
                             }
                         }
                     }
+                } else if(key==0){
+                    startApp(PrefUtils.getSelectMusicPlayer(getApplicationContext()));
                 }
             }
         };

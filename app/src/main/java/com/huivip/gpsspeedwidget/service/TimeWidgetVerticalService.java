@@ -66,6 +66,9 @@ public class TimeWidgetVerticalService extends Service {
            Log.d("huivip","Widget Luanch weather service");
            EventBus.getDefault().post(new SearchWeatherEvent(false));
         }
+        if(!AppSettings.get().isShow24TimeFormat()){
+            timeFormat=new SimpleDateFormat("hh:mm",Locale.CHINA);
+        }
         super.onCreate();
     }
 
@@ -108,7 +111,7 @@ public class TimeWidgetVerticalService extends Service {
             weatherView.setTextViewTextSize(R.id.text_temperature_v, TypedValue.COMPLEX_UNIT_SP, textSize);
         }
 
-       weatherView.setTextViewText(R.id.text_altitude_v,"海拔:"+event.getAltitude()+"米");
+       weatherView.setTextViewText(R.id.text_altitude_v,"\u2708 "+event.getAltitude()+"米");
         weatherView.setTextColor(R.id.text_altitude_v,AppSettings.get().getTimeWidgetOtherTextColor());
         weatherView.setTextViewTextSize(R.id.text_altitude_v, TypedValue.COMPLEX_UNIT_SP,textSize);
 
