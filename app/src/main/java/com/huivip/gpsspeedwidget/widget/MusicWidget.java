@@ -36,6 +36,7 @@ public class MusicWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.v_button_next,sendControllerBroadCast(context, KeyEvent.KEYCODE_MEDIA_NEXT,1));
         views.setOnClickPendingIntent(R.id.v_button_play,sendControllerBroadCast(context, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE,2));
         views.setOnClickPendingIntent(R.id.v_button_prev,sendControllerBroadCast(context, KeyEvent.KEYCODE_MEDIA_PREVIOUS,3));
+        views.setOnClickPendingIntent(R.id.v_music_background,sendControllerBroadCast(context,0,4));
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
 

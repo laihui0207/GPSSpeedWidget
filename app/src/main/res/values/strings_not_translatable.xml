@@ -88,6 +88,7 @@
     <string name="pref_key__widget_time_font_size" translatable="false">pref_key__widget_time_font_size</string>
     <string name="pref_key__widget_time_other_font_color" translatable="false">pref_key__widget_time_other_font_color</string>
     <string name="pref_key__widget_time_other_font_size" translatable="false">pref_key__widget_time_other_font_size</string>
+    <string name="pref_key__time_format_24" translatable="false">pref_key__time_format_24</string>
     <!-- speed widget Keys -->
     <string name="pref_key__widget_speed_font_color" translatable="false">pref_key__widget_speed_font_color</string>
     <string name="pref_key__widget_speed_font_size" translatable="false">pref_key__widget_time_font_size</string>
