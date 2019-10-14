@@ -180,12 +180,9 @@ public class WeatherService extends Service implements AMapLocationListener {
             if(!TextUtils.isEmpty(resultText)){
                 if(TextUtils.isEmpty(address)){
                     showStr= resultText;
-                } else {
+                } else if(!resultText.equalsIgnoreCase(showStr)) {
                     showStr+="\n\n"+ resultText;
                 }
-                /*SpeechFactory.getInstance(getApplicationContext())
-                        .getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()))
-                        .speak(resultText,true);*/
                 EventBus.getDefault().post(new PlayAudioEvent(resultText,true));
             }
             if(!TextUtils.isEmpty(showStr)) {
@@ -212,6 +209,7 @@ public class WeatherService extends Service implements AMapLocationListener {
 
                     //Toast.makeText(getApplicationContext(),cityName+ adCode,Toast.LENGTH_SHORT).show();
                 }
+                float speed=aMapLocation.getSpeed();
                 gpsUtil.setCityCode(cityCode);
                 localNumberFormat.setMaximumFractionDigits(1);
                 altitude=localNumberFormat.format(aMapLocation.getAltitude());
@@ -228,7 +226,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                         pre_adCode =adCode;
                     }
                 }
-                if(!running && gpsUtil.getKmhSpeed()>0){
+                if(!running && speed>0){
                     Utils.startFloatingWindows(getApplicationContext().getApplicationContext(),true);
                 }
                 if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>50){
@@ -239,15 +237,15 @@ public class WeatherService extends Service implements AMapLocationListener {
                 }
 
                 //Toast.makeText(getApplicationContext(),aMapLocation.toString(),Toast.LENGTH_SHORT).show();
-                if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getLocationType() == 1){
+              /*  if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getLocationType() == 1){
                     if(!gpsUtil.isAutoMapBackendProcessStarted() && !gpsUtil.isCatchRoadServiceStarted() &&
                             (TextUtils.isEmpty(gpsUtil.getCurrentRoadName()) ||
                                     !aMapLocation.getStreet().equalsIgnoreCase(gpsUtil.getCurrentRoadName()))){
                         gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
                     }
                     address=aMapLocation.getAddress();
-                }
-                if (gpsUtil.getSpeed() == 0 && running) {
+                }*/
+                if (speed == 0 && running) {
                     running = false;
                     if (AppSettings.get().isCloseFlattingOnStop()) {
                         Utils.startFloatingWindows(getApplicationContext().getApplicationContext(), false);
@@ -264,7 +262,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(gpsUtil.getSpeed()==0) {
+                                    if(aMapLocation.getSpeed() == 0 ) {
                                         resultText ="当前地址："+address;
                                         handler.post(runnableUi);
                                     }
