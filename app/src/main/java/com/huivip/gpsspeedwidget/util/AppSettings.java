@@ -189,6 +189,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public String getMusicWidgetFontSize(){
         return getString(R.string.pref_key__widget_music_font_size,"0");
     }
+    public String getMusicLyricFontSize(){
+        return getString(R.string.pref_key__lyric_music_font_size,"0");
+    }
     public boolean isEnableLaunchOtherApp(){
         return getBool(R.string.pref_key__auto_start_launch_other_app_enable,false);
     }

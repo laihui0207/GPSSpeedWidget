@@ -277,6 +277,8 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         } else {
             setWifi.setVisible(false);
         }
+        Preference floatLyricFontSize=findPreference(getString(R.string.pref_key__lyric_music_font_size));
+        floatLyricFontSize.setSummary("字体调整:"+AppSettings.get().getMusicLyricFontSize());
         super.updateSummaries();
     }
     private void setWifiConfig(){

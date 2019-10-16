@@ -2,12 +2,10 @@ package com.huivip.gpsspeedwidget.detection;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.ComponentName;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
 
-import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -45,11 +43,11 @@ public class AppDetectionService extends AccessibilityService {
         if (enabledApps == null) {
             updateDesktopApps();
         }
-        if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())){
+       /* if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())){
             Intent bootService=new Intent(getApplicationContext(),BootStartService.class);
             bootService.putExtra(BootStartService.START_BOOT,true);
             startService(bootService);
-        }
+        }*/
         if(!AppSettings.get().isEnableSpeed()){
             return ;
         }

@@ -286,6 +286,13 @@
             app:lightnessSlider="true"
             app:alphaSlider="true"
              />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/items_widget_font_size"
+            android:entryValues="@array/items_widget_font_size"
+            android:key="@string/pref_key__lyric_music_font_size"
+            android:summary="调整字体大小"
+            android:title="字体大小" />
     </PreferenceCategory>
 
    <!-- <PreferenceCategory android:title="@string/pref_title__color">
