@@ -121,12 +121,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             break;
                         case 40: // heart check
                             //Toast.makeText(context,"Heated Checked",Toast.LENGTH_SHORT).show();
-                            if (PrefUtils.isEnableAutoStart(context) && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
+                           /* if (PrefUtils.isEnableAutoStart(context) && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
                                 Intent service = new Intent(context, BootStartService.class);
                                 service.putExtra(BootStartService.START_BOOT, true);
                                 context.startService(service);
                                 gpsUtil.setAutoMapBackendProcessStarted(true);
-                            }
+                            }*/
                             break;
                         case 39:
                             stopBackendNaviFloatingService(context, true);
@@ -292,11 +292,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     //FileUtil.saveLogToFile(iformationJsonString);
                     break;*/
             }
-            if (!gpsUtil.serviceStarted && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
+       /*     if (!gpsUtil.serviceStarted && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
                 Intent service = new Intent(context, BootStartService.class);
                 service.putExtra(BootStartService.START_BOOT, true);
                 context.startService(service);
-            }
+            }*/
 
         }
 

@@ -156,7 +156,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
         }*/
         if (audioTrack == null)
             audioTrack = new AudioTrack(type,
-                    16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);
+                    16000, AudioFormat.CHANNEL_OUT_DEFAULT, AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM);
         //边读边播
         byte[] buffer = new byte[bufferSize];
         int volume = AppSettings.get().getAudioVolume();

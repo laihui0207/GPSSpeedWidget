@@ -262,10 +262,11 @@ public class LyricFloatingService extends Service{
                 File lrcFile=new File(lrcFileName);
                 lyricsReader.loadLrc(lrcFile);
                 mFloatLyricsView.setLyricsReader(lyricsReader);
+                //mFloatLyricsView.setFontSize(30+Float.parseFloat(AppSettings.get().getMusicLyricFontSize()),true);
                 mFloatLyricsView.play((int) position);
-                ViewGroup.LayoutParams layoutParams=lrcView.getLayoutParams();
-                layoutParams.height=90+Integer.parseInt(AppSettings.get().getMusicWidgetFontSize());
-                lyricView.setLayoutParams(layoutParams);
+                ViewGroup.LayoutParams layoutParams=mFloatLyricsView.getLayoutParams();
+                layoutParams.height=90+Integer.parseInt(AppSettings.get().getMusicLyricFontSize());
+                mFloatLyricsView.setLayoutParams(layoutParams);
                 int fontSize = mFloatLyricsView.getHeight() / 3;
                 int spaceLineHeight = fontSize / 2;
                 mFloatLyricsView.setSpaceLineHeight(spaceLineHeight);

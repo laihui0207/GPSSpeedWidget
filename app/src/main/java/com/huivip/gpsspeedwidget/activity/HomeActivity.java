@@ -88,6 +88,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     public static WidgetHost _appWidgetHost;
     public static AppWidgetManager _appWidgetManager;
     public static boolean ignoreResume;
+    public boolean started;
     public static float _itemTouchX;
     public static float _itemTouchY;
 
@@ -207,12 +208,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             decorView.setSystemUiVisibility(1536);
         }
         init();
-
-    }
-
-    private void startBootService(boolean enabled) {
-        Intent bootStartService = new Intent(getApplicationContext(), BootStartService.class);
-        Utils.startService(getApplicationContext(),bootStartService);
+        started =true;
     }
 
     private void init() {
@@ -398,7 +394,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             getDesktop().removeCurrentPage();
             return;
         }
-        DialogHelper.alertDialog(this, getString(R.string.remove), "This page is not empty. Those items will also be removed.", new MaterialDialog.SingleButtonCallback() {
+        DialogHelper.alertDialog(this, getString(R.string.remove), " 当前页面不是空的，清除将删除当前页面所有的小部件", new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                 getDesktop().removeCurrentPage();
@@ -686,7 +682,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        if(!Utils.isServiceRunning(getApplicationContext(),BootStartService.class.getName())){
+        if(!started && !Utils.isServiceRunning(getApplicationContext(),BootStartService.class.getName())){
             Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);
             bootStartService.putExtra(BootStartService.START_BOOT,true);
             Utils.startService(getApplicationContext(),bootStartService);
@@ -702,6 +698,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         unregisterReceiver(_appUpdateReceiver);
         unregisterReceiver(_shortcutReceiver);
         unregisterReceiver(_timeChangedReceiver);
+        started=false;
         super.onDestroy();
     }
 

@@ -8,7 +8,7 @@
     <FrameLayout
         android:id="@+id/layout_lyric"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/lyric_floating_border"
         android:orientation="horizontal">
         <LinearLayout

@@ -41,6 +41,7 @@
     <string name="pref_key__music_show_kuwo_album" translatable="false">pref_key__music_show_kuwo_album</string>
     <string name="pref_key__widget_music_font_color" translatable="false">pref_key__widget_music_font_color</string>
     <string name="pref_key__widget_music_font_size" translatable="false">pref_key__widget_music_font_size</string>
+    <string name="pref_key__lyric_music_font_size" translatable="false">pref_key__lyric_music_font_size</string>
     <!-- Auto map  -->
     <string name="pref_key__overdraw_permission" translatable="false">pref_key__overdraw_permission</string>
     <string name="pref_key__accessibility_permission" translatable="false">pref_key__accessibility_permission</string>
