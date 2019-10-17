@@ -176,6 +176,7 @@ public class BootStartService extends Service {
                         Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
                         Utils.startService(getApplicationContext(),trackService);
                     }
+                    new Thread(() -> Utils.registerSelf(getApplicationContext())).start();
                 } else {
                     IntentFilter intentFilter = new IntentFilter();
                     intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);

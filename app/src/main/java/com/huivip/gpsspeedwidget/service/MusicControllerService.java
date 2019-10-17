@@ -185,7 +185,9 @@ public class MusicControllerService extends Service {
         }
         this.manager.updateAppWidget(this.musicWidget, this.remoteViews);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            updatePlayButton(musicRemoteControllerService.isPlaying());
+            if(musicRemoteControllerService!=null) {
+                updatePlayButton(musicRemoteControllerService.isPlaying());
+            }
         }
     }
     @Subscribe(threadMode = ThreadMode.ASYNC)

@@ -34,6 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
@@ -45,9 +46,13 @@ import com.huivip.gpsspeedwidget.service.MeterFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 
@@ -154,6 +159,15 @@ public abstract class Utils {
             }
         }
         return false;
+    }
+    public static void registerSelf(Context context){
+          String deviceId= PrefUtils.getShortDeviceId(context);
+          String versionName=getLocalVersion(context);
+          int buildNumber=getLocalVersionCode(context);
+          DateFormat df=new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+          String registerUrl= Constant.LBSURL+String.format(Constant.LBSREGISTER,deviceId,df.format(new Date()),0,0,versionName,buildNumber);
+          String response=HttpUtils.getData(registerUrl);
+          Log.d("huivip","Register response:"+response);
     }
     public static String getDefaultDesktop(Context context){
         PackageManager packageManager = context.getPackageManager();

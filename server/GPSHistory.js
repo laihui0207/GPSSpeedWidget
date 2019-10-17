@@ -16,7 +16,7 @@ db.serialize(function () {
     db.run("create index IF NOT EXISTS deviceId_short_date on GPS(deviceId_short,createtime)");
     db.run("create index IF NOT EXISTS deviceId_short_date_lineId on GPS(deviceId_short,createtime,lineId)");
     db.run("CREATE TABLE IF NOT EXISTS feedback (id integer primary key autoincrement,name varchar(50),content varchar(500),createTime integer)");
-    db.run("CREATE TABLE IF NOT EXISTS devices(id integer primary key autoincrement,deviceId varchar(50),registerTime integer,updateTime integer,lat varchar(20),lng varchar(20))");
+    db.run("CREATE TABLE IF NOT EXISTS devices(id integer primary key autoincrement,deviceId varchar(50),registerTime integer,updateTime integer,lat varchar(20),lng varchar(20)),versionName varchar(50),buildNumber varchar(50))");
     db.run("create index IF NOT EXISTS deviceId on devices(deviceId)");
 });
 
@@ -186,7 +186,7 @@ app.get("/devices", function (req, res) {
     })
 });
 app.get("/reg-devices", function (req, res) {
-    var sql = "select deviceId from devices where deviceId is not null  group by deviceId ";
+    var sql = "select deviceId,versionName,buildNumber from devices where deviceId is not null  group by deviceId ";
     sql += " order by deviceId";
     db.serialize(function () {
         db.all(sql, [], function (err, rows) {
@@ -195,7 +195,7 @@ app.get("/reg-devices", function (req, res) {
             } else {
                 res.writeHead(200, {'Content-Type': 'application/json'});
                 res.write(JSON.stringify(rows.map(function (row) {
-                    return {deviceId: row.deviceId};
+                    return {deviceId: row.deviceId,versionName: row.versionName,buildNumber:row.buildNumber};
                 })));
                 res.end();
             }
