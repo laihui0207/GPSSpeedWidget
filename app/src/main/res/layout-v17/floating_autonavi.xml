@@ -164,12 +164,15 @@
             android:id="@+id/image_home_navi"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:visibility="gone"
+
             android:layout_gravity="top|left"
             android:src="@drawable/gohome" />
 
         <ImageView
             android:id="@+id/image_company_navi"
             android:layout_width="50dp"
+            android:visibility="gone"
             android:layout_height="50dp"
             android:layout_gravity="bottom|left"
             android:src="@drawable/gocompany" />
@@ -186,6 +189,8 @@
             android:id="@+id/image_close_navi"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:visibility="gone"
+
             android:layout_gravity="top|right"
             android:src="@drawable/close" />
     </FrameLayout>

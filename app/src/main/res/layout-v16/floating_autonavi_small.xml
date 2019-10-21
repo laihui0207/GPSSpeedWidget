@@ -112,17 +112,39 @@
 
             </RelativeLayout>
         </RelativeLayout>
-        <ImageView android:layout_width="30dp" android:layout_height="30dp"
-            android:src="@drawable/gohome"  android:layout_gravity="top|left" android:id="@+id/image_home_navi"/>
-        <ImageView android:layout_width="30dp" android:layout_height="30dp"
-            android:src="@drawable/gocompany"  android:layout_gravity="bottom|left"
-            android:id="@+id/image_company_navi"/>
-        <ImageView android:layout_width="30dp" android:layout_height="30dp"
-            android:src="@mipmap/ic_launcher"  android:layout_gravity="bottom|right"
-            android:id="@+id/image_main_navi" android:visibility="gone"/>
-        <ImageView android:layout_width="30dp" android:layout_height="30dp"
-            android:src="@drawable/close" android:layout_gravity="top|right"
-            android:id="@+id/image_close_navi"/>
+
+        <ImageView
+            android:id="@+id/image_home_navi"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="top|left"
+            android:visibility="gone"
+
+            android:src="@drawable/gohome" />
+
+        <ImageView
+            android:id="@+id/image_company_navi"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:visibility="gone"
+            android:layout_gravity="bottom|left"
+            android:src="@drawable/gocompany" />
+
+        <ImageView
+            android:id="@+id/image_main_navi"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="bottom|right"
+            android:src="@mipmap/ic_launcher"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/image_close_navi"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:visibility="gone"
+            android:layout_gravity="top|right"
+            android:src="@drawable/close" />
     </FrameLayout>
     <LinearLayout
         android:layout_width="wrap_content"

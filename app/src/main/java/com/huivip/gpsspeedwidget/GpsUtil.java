@@ -147,7 +147,7 @@ public class GpsUtil {
             }
         };
         Toast.makeText(context,"GPS服务开启",Toast.LENGTH_SHORT).show();
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
         /*Intent recordService = new Intent(context, RecordGpsHistoryService.class);
         context.startService(recordService);*/
         serviceStarted = true;
