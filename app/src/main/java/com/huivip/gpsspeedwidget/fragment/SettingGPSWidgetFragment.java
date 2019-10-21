@@ -156,6 +156,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         if(key.equalsIgnoreCase(getString(R.string.pref_key__auto_start_wifi_hotpot))) {
             autoLaunchChanged(AppSettings.get().isEnableWifiHotpot());
         }
+        AppSettings.get().setAppRestartRequired(false);
 
     }
 

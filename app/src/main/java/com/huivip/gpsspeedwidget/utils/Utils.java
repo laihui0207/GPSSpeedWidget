@@ -480,6 +480,15 @@ public abstract class Utils {
             context.startService(intent);
       //  }
     }
+
+    public static void startForegroundService(Context context, Intent intent) {
+        /*if (Build.VERSION.SDK_INT >= 26
+                && !getDefaultDesktop(context).equalsIgnoreCase(context.getPackageName())) {
+            context.startForegroundService(intent);
+        } else {*/
+            context.startService(intent);
+       // }
+    }
     public static  String longToTimeString(long time){
         long totalSecond=time/1000;
         long hour=totalSecond/3600;

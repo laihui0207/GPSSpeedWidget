@@ -10,8 +10,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.huivip.gpsspeedwidget.beans.KuWoStatusEvent;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
+import com.huivip.gpsspeedwidget.beans.MusicStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.PlayerStatusEvent;
 import com.huivip.gpsspeedwidget.lyrics.LyricService;
 import com.huivip.gpsspeedwidget.service.TextFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -57,16 +58,20 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
             songName=intent.getStringExtra("play_music_name");
             artistName=intent.getStringExtra("play_music_artist");
             album=intent.getStringExtra("play_music_album");
-            EventBus.getDefault().post(new KuWoStatusEvent(true));
+            EventBus.getDefault().post(new PlayerStatusEvent(PlayerStatusEvent.KW,true));
         }
         // zx music
         if(intent.getAction().equalsIgnoreCase("update.widget.update_proBar")){
             songName = intent.getStringExtra("curplaysong");
             position = intent.getIntExtra("proBarvalue", 0);
+            EventBus.getDefault().post(new PlayerStatusEvent(PlayerStatusEvent.ZX,true));
+
         }
         if("com.ijidou.card.music".equalsIgnoreCase(intent.getAction())){
             artistName = intent.getStringExtra("music_artist");
             songName = intent.getStringExtra("music_title");
+            EventBus.getDefault().post(new PlayerStatusEvent(PlayerStatusEvent.JD,true));
+
         }
         if("com.ijidou.action.UPDATE_PROGRESS".equalsIgnoreCase(intent.getAction())){
             position=intent.getIntExtra("elapse", 0);
@@ -119,6 +124,10 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
             editor.commit();
         else
             editor.apply();
+
+        MusicStatusUpdateEvent event=new MusicStatusUpdateEvent(isPlaying, (int) position);
+        event.setDuration(duration.intValue());
+        EventBus.getDefault().post(event);
         if (AppSettings.get().isLyricEnable()) {
             if (!TextUtils.isEmpty(showString.toString())) {
                 Intent textFloat = new Intent(context, TextFloatingService.class);

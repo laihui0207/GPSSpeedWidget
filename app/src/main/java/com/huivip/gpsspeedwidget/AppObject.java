@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
-import com.huivip.gpsspeedwidget.utils.TaskExecutor;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -38,7 +37,6 @@ public class AppObject extends Application {
                 .build();
         Utils.getDesktopPackageName(getApplicationContext());
         mKwapi = KWAPI.createKWAPI(this, "auto");
-        TaskExecutor.self().init();
     }
     public static Context getContext() {
         return mContext;

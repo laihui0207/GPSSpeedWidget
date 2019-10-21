@@ -70,6 +70,8 @@ public class GpsUtil {
     final Handler locationHandler = new Handler();
     int limitDistancePercentage = 0;
     float distance = 0F;
+    float driveTime=0;
+    long startTime=0;
     Location preLocation;
     int cameraType = 0;
     int cameraDistance = 0;
@@ -159,6 +161,7 @@ public class GpsUtil {
             }
         };
         Toast.makeText(context, "GPS服务开启", Toast.LENGTH_SHORT).show();
+        startTime=System.currentTimeMillis();
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
        if(!Utils.isServiceRunning(context,AutoXunHangService.class.getName())) {
            Intent xunhangService = new Intent(context, AutoXunHangService.class);
@@ -250,7 +253,16 @@ public class GpsUtil {
         localNumberFormat.setMaximumFractionDigits(1);
         return localNumberFormat.format(distance / 1000) + "km";
     }
-
+    public String getDriveTimeString(){
+        if(driveTime>3600) {
+            return driveTime / 3600 + "小时" + driveTime / 60 + "分";
+        } else {
+            return driveTime/60 + "分";
+        }
+    }
+    public float getDriveTime(){
+        return driveTime;
+    }
     public Integer getSpeedometerPercentage() {
         return speedometerPercentage;
     }
@@ -270,6 +282,10 @@ public class GpsUtil {
             }
             if (preLocation != null) {
                 distance += preLocation.distanceTo(paramLocation);
+            }
+            driveTime=(System.currentTimeMillis()- startTime)/1000;
+            if(driveTime>3600*2){
+                EventBus.getDefault().post(new PlayAudioEvent("您已连续驾驶4小时，请注意休息，不要疲劳驾驶",true));
             }
             // save location every 50 m for catch road service
             if(lastedRecoredLocation==null || paramLocation.distanceTo(lastedRecoredLocation)>recordLocationDistance){

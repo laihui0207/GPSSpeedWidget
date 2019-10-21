@@ -23,6 +23,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceScreen;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -66,6 +68,12 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
     @Override
     protected AppSettings getAppSettings(Context context) {
         return _appSettings != null ? _appSettings : new AppSettings(context);
+    }
+
+    @Override
+    protected void onPreferenceScreenChanged(PreferenceFragmentCompat preferenceFragmentCompat, PreferenceScreen preferenceScreen) {
+        super.onPreferenceScreenChanged(preferenceFragmentCompat, preferenceScreen);
+        AppSettings.get().setAppRestartRequired(false);
     }
 
     @Override
