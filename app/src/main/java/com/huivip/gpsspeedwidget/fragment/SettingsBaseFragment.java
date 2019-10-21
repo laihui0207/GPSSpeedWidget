@@ -52,9 +52,9 @@ public abstract class SettingsBaseFragment extends PreferenceFragmentCompat impl
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         updateSummaries();
-        if (!noRestart.contains(key)) {
+       /* if (!noRestart.contains(key)) {
             AppSettings.get().setAppRestartRequired(true);
-        }
+        }*/
     }
 
     public void updateSummaries() {

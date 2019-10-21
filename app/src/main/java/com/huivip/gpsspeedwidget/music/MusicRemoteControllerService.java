@@ -1,26 +1,30 @@
 package com.huivip.gpsspeedwidget.music;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.RemoteControlClient;
 import android.media.RemoteController;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import com.huivip.gpsspeedwidget.beans.KuWoStatusEvent;
 import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.beans.MusicStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.PlayerStatusEvent;
 import com.huivip.gpsspeedwidget.lyrics.LyricService;
 import com.huivip.gpsspeedwidget.lyrics.utils.StringUtils;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -43,6 +47,7 @@ import cn.kuwo.autosdk.api.PlayerStatus;
 import cn.kuwo.base.bean.Music;
 
 @SuppressLint({"NewApi", "OverrideAbstract"})
+@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class MusicRemoteControllerService extends NotificationListenerService implements RemoteController.OnClientUpdateListener {
     private String TAG = "huivip";
     String songName;
@@ -52,6 +57,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     //Bitmap coverBitmap;
     AudioManager am;
     KWAPI mKwapi = null;
+    String player;
     boolean kuWoStarted = false;
     OnPlayerStatusListener kwPlayStatusListener = new OnPlayerStatusListener() {
         @Override
@@ -133,7 +139,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     public void onCreate() {
         registerRemoteController();
         EventBus.getDefault().register(this);
-        //kuwoStatusUpdate(new KuWoStatusEvent(true));
+        //kuwoStatusUpdate(new PlayerStatusEvent(true));
         super.onCreate();
     }
 
@@ -168,9 +174,11 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void kuwoStatusUpdate(KuWoStatusEvent event) {
-        if (event.isStarted() && mKwapi == null) {
-            kuWoStarted = event.isStarted();
+    public void palyerStatusUpdate(PlayerStatusEvent event) {
+        player=event.getPlayer();
+        if (PlayerStatusEvent.KW.equalsIgnoreCase(player) &&
+                event.isStarted() && mKwapi == null) {
+            kuWoStarted = true;
             mKwapi = KWAPI.getKWAPI();
             mKwapi.bindAutoSdkService(this);
             mKwapi.registerPlayerStatusListener(kwPlayStatusListener);
@@ -180,6 +188,11 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                     releaseKuWo();
                 }
             });
+        } else if(PlayerStatusEvent.ZX.equalsIgnoreCase(player)){
+            IntentFilter intentFilter2 = new IntentFilter();
+            intentFilter2.addAction("update.widget.playbtnstate");
+            intentFilter2.addAction("update.widget.update_proBar");
+            getApplicationContext().registerReceiver(zxReceiver, intentFilter2);
         }
     }
 
@@ -205,8 +218,10 @@ public class MusicRemoteControllerService extends NotificationListenerService im
     }
 
     public void sendMusicKeyEvent(int keyCode) {
-        if (mKwapi != null) {
+        if (PlayerStatusEvent.KW.equalsIgnoreCase(player)) {
             kwController(keyCode);
+        } else if (PlayerStatusEvent.ZX.equalsIgnoreCase(player)) {
+            ZXController(keyCode);
         } else {
             defaultController(keyCode);
         }
@@ -225,8 +240,27 @@ public class MusicRemoteControllerService extends NotificationListenerService im
             dispatchMediaKeyToAudioService(KeyEvent.changeAction(key, KeyEvent.ACTION_UP));
         }
     }
-
-    private void kwController(int keyCode) {
+    private static final String CMD_NEXT = "xy.android.nextmedia";
+    private static final String CMD_PAUSE_OR_PLAY = "xy.android.playpause";
+    private static final String CMD_PRE = "xy.android.previousmedia";
+    private void ZXController(int keyCode){
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_MEDIA_NEXT:
+                sendEvent(CMD_NEXT);
+                break;
+            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+                sendEvent(CMD_PRE);
+                break;
+            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                sendEvent(CMD_PAUSE_OR_PLAY);
+                break;
+        }
+    }
+    private void sendEvent(String event) {
+        Intent localIntent = new Intent(event);
+        getApplicationContext().sendBroadcast(localIntent);
+    }
+        private void kwController(int keyCode) {
         if (mKwapi == null) return;
         switch (keyCode) {
             case KeyEvent.KEYCODE_MEDIA_NEXT:
@@ -234,6 +268,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                 break;
             case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
                 mKwapi.setPlayState(PlayState.STATE_PRE);
+                break;
             case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
                 PlayerStatus status = mKwapi.getPlayerStatus();
                 if (status.name().equalsIgnoreCase("playing")) {
@@ -241,6 +276,7 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                 } else {
                     mKwapi.setPlayState(PlayState.STATE_PLAY);
                 }
+                break;
         }
     }
 
@@ -332,4 +368,34 @@ public class MusicRemoteControllerService extends NotificationListenerService im
             return MusicRemoteControllerService.this;
         }
     }
+    private BroadcastReceiver zxReceiver = new BroadcastReceiver() {
+        public void onReceive(Context paramAnonymousContext, Intent intent) {
+            if ("update.widget.playbtnstate".equals(intent.getAction())) {
+                try {
+                    boolean playing = intent.getBooleanExtra("PlayState", false);
+                    EventBus.getDefault().post(new MusicStatusUpdateEvent(playing, 0));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if ("update.widget.update_proBar".equals(intent.getAction())) {
+                try {
+                    int duration = intent.getIntExtra("proBarmax", 0);
+                    int position= intent.getIntExtra("proBarvalue", 0);
+                    String title = intent.getStringExtra("curplaysong");
+                    currentPosition = position + 2000;
+                    launchLyricService(RemoteControlClient.PLAYSTATE_PLAYING, currentPosition);
+                    MusicEvent musicEvent = new MusicEvent(title, null);
+                    musicEvent.setDuration(duration);
+                    musicEvent.setCurrentPostion(position);
+                    EventBus.getDefault().post(musicEvent);
+                    MusicStatusUpdateEvent event=new MusicStatusUpdateEvent(true, position);
+                    event.setDuration(duration);
+                    EventBus.getDefault().post(event);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
 }

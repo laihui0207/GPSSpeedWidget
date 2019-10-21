@@ -22,7 +22,7 @@ public class TimeWidget extends AppWidgetProvider {
         super.onReceive(context, paramIntent);
         if(PrefUtils.isTimeHWidgetEnable(context) && !Utils.isServiceRunning(context, TimeWidgetService.class.getName())){
             Intent widgetService=new Intent(context,TimeWidgetService.class);
-            Utils.startService(context,widgetService);
+            Utils.startForegroundService(context,widgetService);
         }
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.time_weather_widget);
 

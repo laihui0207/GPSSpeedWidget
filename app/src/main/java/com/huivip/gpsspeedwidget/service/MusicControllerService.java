@@ -115,20 +115,21 @@ public class MusicControllerService extends Service {
                 }
             }
         };
-        bindService(new Intent(this, MusicRemoteControllerService.class), new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                MusicRemoteControllerService.RCBinder binder = (MusicRemoteControllerService.RCBinder) service;
-                musicRemoteControllerService = binder.getService();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            bindService(new Intent(this, MusicRemoteControllerService.class), new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                    MusicRemoteControllerService.RCBinder binder = (MusicRemoteControllerService.RCBinder) service;
+                    musicRemoteControllerService = binder.getService();
                     musicRemoteControllerService.registerRemoteController();
                 }
-            }
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
 
-            }
-        }, Context.BIND_AUTO_CREATE);
+                @Override
+                public void onServiceDisconnected(ComponentName name) {
+
+                }
+            }, Context.BIND_AUTO_CREATE);
+        }
         IntentFilter filter = new IntentFilter();
         filter.addAction(INTENT_ACTION);
         registerReceiver(musicControllerReceiver, filter);
@@ -185,7 +186,9 @@ public class MusicControllerService extends Service {
         }
         this.manager.updateAppWidget(this.musicWidget, this.remoteViews);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            updatePlayButton(musicRemoteControllerService.isPlaying());
+            if(musicRemoteControllerService!=null) {
+                updatePlayButton(musicRemoteControllerService.isPlaying());
+            }
         }
     }
     @Subscribe(threadMode = ThreadMode.ASYNC)

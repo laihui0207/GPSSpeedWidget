@@ -1,8 +1,9 @@
 package com.huivip.gpsspeedwidget.beans;
 
 public class MusicStatusUpdateEvent {
-    boolean playing;
-    int position;
+    private boolean playing;
+    private int position;
+    private int duration;
 
     public MusicStatusUpdateEvent(boolean playing) {
         this.playing = playing;
@@ -11,6 +12,14 @@ public class MusicStatusUpdateEvent {
     public MusicStatusUpdateEvent(boolean playing, int position) {
         this.playing = playing;
         this.position = position;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
     public boolean isPlaying() {

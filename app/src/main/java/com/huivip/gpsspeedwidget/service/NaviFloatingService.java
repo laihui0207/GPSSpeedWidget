@@ -36,6 +36,7 @@ import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
+import com.huivip.gpsspeedwidget.model.SegmentModel;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -307,7 +308,7 @@ public class NaviFloatingService extends Service {
         if (TextUtils.isEmpty(info)) {
             return;
         }
-        List<TmcSegmentView.SegmentModel> models = new ArrayList<>();
+        List<SegmentModel> models = new ArrayList<>();
         x.task().autoPost(new Runnable() {
             @Override
             public void run() {
@@ -321,7 +322,7 @@ public class NaviFloatingService extends Service {
                             for (int i = 0; i < segmentArray.length(); i++) {
                                 JSONObject obj = segmentArray.getJSONObject(i);
                                 if (obj != null) {
-                                    models.add(new TmcSegmentView.SegmentModel()
+                                    models.add(new SegmentModel()
                                             .setDistance(obj.getInt("tmc_segment_distance"))
                                             .setStatus(obj.getInt("tmc_status"))
                                             .setNumber(obj.getInt("tmc_segment_number"))

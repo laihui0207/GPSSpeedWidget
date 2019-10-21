@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.NotificationManagerCompat;
 import android.view.KeyEvent;
 import android.widget.RemoteViews;
@@ -30,7 +31,7 @@ public class MusicWidget extends AppWidgetProvider {
         ComponentName localComponentName = new ComponentName(context, MusicWidget.class);
         if(PrefUtils.isMusicWidgetEnable(context) && !Utils.isServiceRunning(context, MusicControllerService.class.getName())){
             Intent widgetService=new Intent(context,MusicControllerService.class);
-            Utils.startService(context,widgetService);
+            Utils.startForegroundService(context,widgetService);
         }
         views.setOnClickPendingIntent(R.id.v_music_base_v,null);
         views.setOnClickPendingIntent(R.id.v_button_next,sendControllerBroadCast(context, KeyEvent.KEYCODE_MEDIA_NEXT,1));
@@ -53,10 +54,12 @@ public class MusicWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         if(!isNotificationListenerServiceEnabled(context)){
-            Intent settingIntent=new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-            settingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(settingIntent);
-            Toast.makeText(context, "请授予通知使用权限", Toast.LENGTH_SHORT).show();
+            if(Build.VERSION.SDK_INT>Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Intent settingIntent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                settingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(settingIntent);
+                Toast.makeText(context, "请授予通知使用权限", Toast.LENGTH_SHORT).show();
+            }
         }
         PrefUtils.setMusicWidgetEnable(context,true);
         super.onEnabled(context);

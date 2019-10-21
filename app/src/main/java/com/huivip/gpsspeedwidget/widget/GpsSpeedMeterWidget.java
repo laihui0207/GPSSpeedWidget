@@ -27,7 +27,7 @@ public class GpsSpeedMeterWidget extends AppWidgetProvider {
                 service, 0));
         if(PrefUtils.isSpeedMeterWidgetEnable(context) && !Utils.isServiceRunning(context, GpsSpeedMeterService.class.getName())){
             Intent bootService=new Intent(context, GpsSpeedMeterService.class);
-            Utils.startService(context,bootService);
+            Utils.startForegroundService(context,bootService);
         }
         ComponentName localComponentName = new ComponentName(context, GpsSpeedMeterWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);

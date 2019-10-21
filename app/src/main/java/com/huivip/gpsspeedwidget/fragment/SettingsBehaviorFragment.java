@@ -1,6 +1,7 @@
 package com.huivip.gpsspeedwidget.fragment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.preference.Preference;
 import android.view.View;
@@ -62,6 +63,13 @@ public class SettingsBehaviorFragment extends SettingsBaseFragment {
                 break;
         }
         return false;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        super.onSharedPreferenceChanged(sharedPreferences, key);
+        AppSettings.get().setAppRestartRequired(true);
+
     }
 
     @Override

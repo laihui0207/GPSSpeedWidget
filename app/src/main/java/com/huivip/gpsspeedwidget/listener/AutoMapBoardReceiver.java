@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.huivip.gpsspeedwidget.Constant;
@@ -10,6 +11,7 @@ import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
@@ -284,11 +286,23 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }
                     break;
 
-              /*  case 10056:
+                case 10056:
                     // 增加目地播报
                     String iformationJsonString = intent.getStringExtra("EXTRA_ROAD_INFO");
+                    try {
+                        JSONObject roadInfo=new JSONObject(iformationJsonString);
+                        String toPoi=roadInfo.getString("ToPoiName");
+                        String toAddress=roadInfo.getString("ToPoiAddr");
+                        if(!TextUtils.isEmpty(toPoi) && !TextUtils.isEmpty(toAddress)){
+                            new Handler().postDelayed(()->{
+                                EventBus.getDefault().post(new PlayAudioEvent("导航开始了，目的地："+toPoi+",地址："+toAddress,true));
+                            },15000);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     //FileUtil.saveLogToFile(iformationJsonString);
-                    break;*/
+                    break;
             }
        /*     if (!gpsUtil.serviceStarted && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
                 Intent service = new Intent(context, BootStartService.class);

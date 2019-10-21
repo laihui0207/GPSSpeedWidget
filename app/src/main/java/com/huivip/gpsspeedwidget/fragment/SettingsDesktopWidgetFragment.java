@@ -22,7 +22,7 @@ public class SettingsDesktopWidgetFragment extends SettingsBaseFragment {
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         super.onSharedPreferenceChanged(sharedPreferences, key);
-
+        AppSettings.get().setAppRestartRequired(true);
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,17 +24,26 @@ import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
+import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
+import com.huivip.gpsspeedwidget.model.SegmentModel;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.Tool;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.view.DigtalView;
+import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 import com.huivip.gpsspeedwidget.widget.SpeedNumberVerticalWidget;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.x;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -89,7 +99,7 @@ public class SpeedNumberVerticalService extends Service {
             return super.onStartCommand(intent,flags,startId);
         }
         this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
-        this.numberRemoteViews.setImageViewBitmap(R.id.image_speed_v,getBitmap("0",AppSettings.get().getSpeedVerticalWidgetSpeedTextColor()));
+        this.numberRemoteViews.setImageViewBitmap(R.id.image_speed_v, getSpeedBitmap("0",AppSettings.get().getSpeedVerticalWidgetSpeedTextColor()));
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
         return Service.START_REDELIVER_INTENT;
     }
@@ -195,7 +205,7 @@ public class SpeedNumberVerticalService extends Service {
     public void setSpeeding(boolean speeding) {
         int colorRes = speeding ? ContextCompat.getColor(this, R.color.red500): AppSettings.get().getSpeedVerticalWidgetSpeedTextColor();
        // int color = ContextCompat.getColor(this, colorRes);
-        this.numberRemoteViews.setImageViewBitmap(R.id.image_speed_v,getBitmap(gpsUtil.getKmhSpeedStr()+"",colorRes));
+        this.numberRemoteViews.setImageViewBitmap(R.id.image_speed_v, getSpeedBitmap(gpsUtil.getKmhSpeedStr()+"",colorRes));
     }
 
     void computeAndShowData() {
@@ -231,10 +241,7 @@ public class SpeedNumberVerticalService extends Service {
         }
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
     }
-    private Bitmap getBitmap(String text){
-       return getBitmap(text,getResources().getColor(R.color.white));
-    }
-    private Bitmap getBitmap(String text,int color) {
+    private Bitmap getSpeedBitmap(String text, int color) {
         Bitmap bitmap = null;
         View view = View.inflate(getApplicationContext(), R.layout.view_widget_number, null);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -246,6 +253,63 @@ public class SpeedNumberVerticalService extends Service {
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         view.buildDrawingCache();
         bitmap = view.getDrawingCache();
+        return bitmap;
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event) {
+        String info = event.getInfo();
+        if (TextUtils.isEmpty(info)) {
+            return;
+        }
+        List<SegmentModel> models = new ArrayList<>();
+        try {
+            JSONObject tmc = new JSONObject(info);
+            if (tmc != null) {
+                JSONArray segmentArray = tmc.getJSONArray("tmc_info");
+                if (segmentArray != null && segmentArray.length() > 0) {
+                    for (int i = 0; i < segmentArray.length(); i++) {
+                        JSONObject obj = segmentArray.getJSONObject(i);
+                        if (obj != null) {
+                            models.add(new SegmentModel()
+                                    .setDistance(obj.getInt("tmc_segment_distance"))
+                                    .setStatus(obj.getInt("tmc_status"))
+                                    .setNumber(obj.getInt("tmc_segment_number"))
+                                    .setPercent(obj.getInt("tmc_segment_percent")));
+                        }
+                    }
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
+        if (models.size() > 0) {
+            Bitmap bitmap = getTmcBitmap(models);
+           this.numberRemoteViews.setViewVisibility(R.id.v_tmc_view, View.VISIBLE);
+            this.numberRemoteViews.setImageViewBitmap(R.id.v_tmc_view,bitmap);
+        } else {
+            this.numberRemoteViews.setViewVisibility(R.id.v_tmc_view, View.GONE);
+        }
+        this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
+    }
+    private Bitmap getTmcBitmap(List<SegmentModel> models) {
+        View view = View.inflate(getApplicationContext(), R.layout.view_tmc, null);
+        view.setDrawingCacheEnabled(true);
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        //view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        TmcSegmentView tmcSegmentView = view.findViewById(R.id.v_segmentView);
+        tmcSegmentView.setSegments(models);
+      /*  Bitmap bitmap = Bitmap.createBitmap(300,100,Bitmap.Config.ARGB_8888);
+        Canvas canvas=new Canvas(bitmap);
+        view.draw(canvas);*/
+        view.buildDrawingCache(true);
+        Bitmap bitmap=view.getDrawingCache();
+        if(bitmap==null){
+            Log.d("huivip","getTmc view cache is null");
+        }
         return bitmap;
     }
     private int getTurnIcon(int iconValue) {

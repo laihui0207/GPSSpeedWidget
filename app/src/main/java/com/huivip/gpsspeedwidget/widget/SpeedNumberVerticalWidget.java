@@ -31,11 +31,11 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.v_speed_layout, launchMapFloatingService);
         if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, SpeedNumberVerticalService.class.getName())){
             Intent widgetService=new Intent(context, SpeedNumberVerticalService.class);
-            Utils.startService(context,widgetService);
+            Utils.startForegroundService(context,widgetService);
         }
         if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, RoadLineService.class.getName())){
             Intent roadLineService=new Intent(context, RoadLineService.class);
-            context.startService(roadLineService);
+            Utils.startForegroundService(context,roadLineService);
         }
         /*Intent configureActivity=new Intent(context, MainActivity.class);
         PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,configureActivity,0);
@@ -49,6 +49,7 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.v_gohome,goHomeIntent);
         views.setOnClickPendingIntent(R.id.v_gocompany,goCompanyIntent);
         views.setOnClickPendingIntent(R.id.v_gomap,goAutoIntent);
+        views.setOnClickPendingIntent(R.id.v_navi_layout,goAutoIntent);
         //views.setOnClickPendingIntent(R.id.image_xunhang_switch,switchXunHang);
 
         ComponentName localComponentName = new ComponentName(context, SpeedNumberVerticalWidget.class);

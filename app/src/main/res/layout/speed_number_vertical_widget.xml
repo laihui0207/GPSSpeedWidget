@@ -6,15 +6,21 @@
     android:layout_height="match_parent"
     android:background="@drawable/speed_border"
     android:orientation="horizontal">
+    <TextView
+        android:layout_width="match_parent" android:gravity="center" android:layout_gravity="top|center"
+        android:layout_height="wrap_content" android:textSize="20sp" android:text="导航" android:textColor="@color/white"
+        tools:ignore="HardcodedText" />
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="match_parent" android:layout_marginBottom="60dp"
         android:orientation="vertical">
+
         <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_weight="5"
             android:id="@+id/v_speed_layout"
-            android:layout_height="0dp">
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4">
+
             <ImageView
                 android:id="@+id/image_speed_v"
                 android:layout_width="wrap_content"
@@ -23,6 +29,7 @@
                 android:layout_margin="5dp"
                 android:contentDescription="speed text"
                 tools:ignore="HardcodedText" />
+
             <ImageView
                 android:id="@+id/image_roadLine_v"
                 android:layout_width="match_parent"
@@ -62,40 +69,53 @@
                 android:background="@drawable/vertical_widget_limit_border"
                 android:gravity="center"
                 tools:ignore="NestedWeights">
+
                 <LinearLayout
                     android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="top|left"
-                    android:layout_height="match_parent" android:orientation="vertical">
+                    android:layout_marginTop="5dp"
+                    android:orientation="vertical">
+
                     <ImageView
-                        android:layout_width="30dp" android:id="@+id/v_edog_camera"
+                        android:id="@+id/v_edog_camera"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:layout_marginTop="25dp"
-                        android:visibility="gone"
-                        android:layout_height="30dp" android:src="@drawable/widget_drawable_auto_ic_edog_camera_loading"
-                        android:contentDescription="edog camera" />
+                        android:contentDescription="edog camera"
+                        android:src="@drawable/widget_drawable_auto_ic_edog_camera_loading"
+                        android:visibility="gone" />
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="top|right"
-                    android:layout_height="match_parent" android:orientation="vertical">
+                    android:layout_marginTop="5dp"
+                    android:orientation="vertical">
+
                     <ImageView
-                        android:layout_width="30dp" android:id="@+id/v_edog_mute"
-                        android:visibility="gone"
+                        android:id="@+id/v_edog_mute"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:layout_marginTop="25dp"
-                        android:layout_height="30dp" android:src="@drawable/ic_xunhang_mute"
-                        android:contentDescription="edog camera" />
+                        android:contentDescription="edog camera"
+                        android:src="@drawable/ic_xunhang_mute"
+                        android:visibility="gone" />
 
                 </LinearLayout>
-                 <ProgressBar
-                     android:id="@+id/progressBarLimit_v"
-                     style="?android:attr/progressBarStyleHorizontal"
-                     android:layout_width="match_parent"
-                     android:layout_height="match_parent"
-                     android:background="@drawable/vertical_speed_limit_border"
-                     android:indeterminate="false"
-                     android:max="100"
-                     android:progress="0"
-                     android:progressDrawable="@drawable/vertical_circle_limit_number" />
+
+                <ProgressBar
+                    android:id="@+id/progressBarLimit_v"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/vertical_speed_limit_border"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/vertical_circle_limit_number" />
 
                 <TextView
                     android:id="@+id/textView_distance_v"
@@ -133,10 +153,11 @@
             <LinearLayout
                 android:id="@+id/v_navi_layout"
                 android:layout_width="0dp"
-                android:visibility="gone"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/textView_nextRoadName_v"
                     android:layout_width="match_parent"
@@ -146,6 +167,7 @@
                     android:text="---"
                     android:textColor="#fff"
                     android:textSize="25dp" />
+
                 <ImageView
                     android:id="@+id/imageView_turnicon_v"
                     android:layout_width="match_parent"
@@ -153,8 +175,6 @@
                     android:layout_gravity="top|center_vertical"
                     android:layout_weight="1"
                     android:src="@drawable/sou20_night" />
-
-
 
                 <TextView
                     android:id="@+id/textView_nextdistance_v"
@@ -168,24 +188,41 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-    <ImageView
-        android:id="@+id/v_gohome"
-        android:layout_width="70dp"
-        android:layout_height="60dp"
-        android:layout_gravity="top|left"
-        android:src="@drawable/gohome" />
-    <ImageView
-        android:id="@+id/v_gocompany"
-        android:layout_width="70dp"
-        android:layout_height="60dp"
-        android:layout_gravity="top|right"
-        android:src="@drawable/gocompany" />
 
-    <ImageView
-        android:id="@+id/v_gomap"
-        android:layout_width="70dp"
-        android:layout_height="60dp"
-        android:layout_gravity="top|center"
-        android:src="@drawable/autonavi_icon" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/v_gohome"
+            android:layout_width="70dp"
+            android:layout_height="60dp"
+            android:layout_gravity="top|left"
+            android:layout_weight="1"
+            android:src="@drawable/gohome" />
+        <ImageView
+            android:id="@+id/v_gomap"
+            android:layout_width="70dp"
+            android:layout_height="60dp"
+            android:layout_gravity="top|center"
+            android:layout_weight="1"
+            android:src="@drawable/autonavi_icon"
+            />
+        <ImageView
+            android:id="@+id/v_gocompany"
+            android:layout_width="70dp"
+            android:layout_height="60dp"
+            android:layout_gravity="top|right"
+            android:layout_weight="1"
+            android:src="@drawable/gocompany" />
+
+
+    </LinearLayout>
+<ImageView
+    android:layout_width="match_parent" android:layout_gravity="bottom|center"
+    android:layout_height="10dp" android:id="@+id/v_tmc_view"
+    tools:ignore="ContentDescription" />
 </FrameLayout>
 
