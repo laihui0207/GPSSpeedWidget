@@ -9,7 +9,6 @@ import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
@@ -107,7 +106,6 @@ public class GpsSpeedNumberService extends Service {
                 }
                 Utils.startFloatingWindows(getApplicationContext(),false);
                 PrefUtils.setUserManualClosedServer(getApplicationContext(), true);
-                Toast.makeText(getApplicationContext(), "GPS服务关闭", Toast.LENGTH_SHORT).show();
                 stopSelf();
             }
 

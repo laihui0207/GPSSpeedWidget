@@ -9,6 +9,10 @@
         android:key="@string/pref_key__desktop_default_home"
         android:summary="@string/pref_summary__desktop_default_home"
         android:title="@string/pref_title__desktop_default_home" />
+    <Preference
+        android:key="@string/pref_key__default_home"
+        android:summary="@string/pref_summary__default_home"
+        android:title="设置默认桌面" />
     <PreferenceCategory android:title="@string/pref_title__size">
         <SeekBarPreference
             android:defaultValue="4"

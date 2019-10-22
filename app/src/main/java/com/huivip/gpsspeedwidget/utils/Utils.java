@@ -176,6 +176,13 @@ public abstract class Utils {
         String defaultLauncher=packageManager.resolveActivity(intent,PackageManager.MATCH_DEFAULT_ONLY).activityInfo.packageName;
         return defaultLauncher;
     }
+    public static String getDefaultDesktopName(Context context){
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        String defaultLauncher=packageManager.resolveActivity(intent,PackageManager.MATCH_DEFAULT_ONLY).activityInfo.loadLabel(packageManager).toString();
+        return defaultLauncher;
+    }
     public static Set<String> getDesktopPackageName(Context context){
         List<String> names =new ArrayList<>();
         PackageManager packageManager = context.getPackageManager();

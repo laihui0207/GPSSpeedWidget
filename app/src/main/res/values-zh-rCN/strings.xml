@@ -239,5 +239,11 @@
     <string name="open_source_licenses">开源协议</string>
     <string name="str_btn_ok">确定</string>
     <string name="title_activity_settings">配置</string>
+    <string name="are_you_sure">你确定吗？本操作是不能恢复的，除非你有备份。</string>
+    <string name="bad_format">错误格式</string>
+    <string name="bug_reports">" bug报表"</string>
+    <string name="bug_reports_suggest_improvements">提交反馈，bug 或者建议</string>
+    <string name="changelog">更新日志</string>
+    <string name="pref_summary__default_home">设置默认桌面</string>
 
 </resources>

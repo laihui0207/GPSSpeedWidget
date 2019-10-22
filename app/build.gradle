@@ -7,7 +7,7 @@ android {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 258
+        versionCode 259
         versionName "3.0.3"
         flavorDimensions "versionCode"
         ndk {
@@ -58,7 +58,7 @@ android {
         }
     }
 
-    productFlavors {
+   /* productFlavors {
         flavorDefault {
         }
 
@@ -73,7 +73,7 @@ android {
             versionName = new Date().format('yyMMdd')
             applicationId "com.huivip.gpsspeedwidget.nightly"
         }
-    }
+    }*/
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

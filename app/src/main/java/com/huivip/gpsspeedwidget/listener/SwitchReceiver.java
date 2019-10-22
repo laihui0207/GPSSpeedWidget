@@ -3,9 +3,11 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.service.AutoXunHangService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
@@ -21,6 +23,7 @@ public class SwitchReceiver extends BroadcastReceiver {
     public static String SWITCH_TARGET_MAPFLOATING="com.huivip.switch.mapFloating";
     public static String SWITCH_TARGET_AUTOAMAP="com.huivip.switch.AutoAmap";
     public static String SWITCH_TARGET_LYRIC="com.huivip.switch.Lyric";
+    public static String SWITCH_TARGET_GPS="com.huivip.switch.GPS";
     public static String SWITCH_EVENT="com.huivip.switch.event";
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -64,6 +67,15 @@ public class SwitchReceiver extends BroadcastReceiver {
                     context.startService(lycFloatingService);
                 }
                 Toast.makeText(context, "歌词功能关闭", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if(SWITCH_TARGET_GPS.equalsIgnoreCase(target)){
+            GpsUtil gpsUtil=GpsUtil.getInstance(context);
+            Log.d("huivip","Get gps switch event,current:"+gpsUtil.isGpsLocationStarted());
+            if(gpsUtil.isServiceStarted()){
+                gpsUtil.stopLocationService(true);
+            } else {
+                gpsUtil.startLocationService();
             }
         }
     }

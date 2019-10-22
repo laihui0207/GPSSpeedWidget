@@ -127,7 +127,7 @@ public class SpeedNumberVerticalService extends Service {
 
     void checkLocationData() {
         if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
-          if (gpsUtil.isGpsLocationChanged()) {
+         if (gpsUtil.isGpsLocationChanged()) {
                 computeAndShowData();
            }
         }
@@ -166,7 +166,7 @@ public class SpeedNumberVerticalService extends Service {
             this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, limitDistancePercentage, false);
         } else {
             this.numberRemoteViews.setViewVisibility(R.id.v_edog_camera,View.GONE);
-            this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance() + "");
+            this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance()+"/"+gpsUtil.getDriveTimeString());
             this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, 0, false);
         }
 
@@ -223,7 +223,7 @@ public class SpeedNumberVerticalService extends Service {
                 this.numberRemoteViews.setViewVisibility(R.id.v_edog_camera,View.VISIBLE);
             } else {
                 this.numberRemoteViews.setViewVisibility(R.id.v_edog_camera,View.GONE);
-                this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance() + "");
+                this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance() + "/"+gpsUtil.getDriveTimeString());
                 this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, 0, false);
             }
             this.numberRemoteViews.setTextViewText(R.id.number_limit_v, gpsUtil.getLimitSpeed()+ "");
