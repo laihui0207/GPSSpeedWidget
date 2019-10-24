@@ -1,5 +1,6 @@
 package com.huivip.gpsspeedwidget.speech;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,9 +13,12 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.aispeech.AIError;
+import com.aispeech.DUILiteConfig;
 import com.aispeech.DUILiteSDK;
 import com.aispeech.common.AIConstant;
-import com.aispeech.export.engines.AILocalTTSEngine;
+import com.aispeech.export.config.AILocalTTSConfig;
+import com.aispeech.export.engines2.AILocalTTSEngine;
+import com.aispeech.export.intent.AILocalTTSIntent;
 import com.aispeech.export.listeners.AILocalTTSListener;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -22,6 +26,8 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.LinkedList;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
@@ -83,26 +89,32 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         if (mEngine != null) {
             mEngine.destroy();
         }
-        mEngine = AILocalTTSEngine.createInstance();//创建实例
-        mEngine.setFrontResBin(Constant.TTS_FRONT_RES, Constant.TTS_FRONT_RES_MD5);//设置assets目录下前端合成资源名和相应的Md5文件名
-        mEngine.setDictDb(Constant.TTS_DICT_RES, Constant.TTS_DICT_MD5);//设置assets目录下合成字典名和相应的Md5文件名
-        mEngine.setBackResBinArray(mBackResBinArray, mBackResBinMd5sumArray);//设置后端合成音色资源，如果只需设置一个，则array只需要传一个成员值就可以，init前设置setBackResBin接口无效
-        mEngine.setSpeechRate(1.0f);//设置合成音语速，范围为0.5～2.0
-        if (AppSettings.get().isAudioMix()) {
+        mEngine = AILocalTTSEngine.getInstance();//创建实例
+        AILocalTTSConfig config=new AILocalTTSConfig();
+        config.setFrontBinResource(Constant.TTS_FRONT_RES, Constant.TTS_FRONT_RES_MD5);
+        config.setDictResource(Constant.TTS_DICT_RES, Constant.TTS_DICT_MD5);
+        config.addSpeakerResource(mBackResBinArray, mBackResBinMd5sumArray);
+       // config.
+        //mEngine.setFrontResBin(Constant.TTS_FRONT_RES, Constant.TTS_FRONT_RES_MD5);//设置assets目录下前端合成资源名和相应的Md5文件名
+       // mEngine.setDictDb(Constant.TTS_DICT_RES, Constant.TTS_DICT_MD5);//设置assets目录下合成字典名和相应的Md5文件名
+       // mEngine.setBackResBinArray(mBackResBinArray, mBackResBinMd5sumArray);//设置后端合成音色资源，如果只需设置一个，则array只需要传一个成员值就可以，init前设置setBackResBin接口无效
+        //mEngine.setSpeechRate(1.0f);//设置合成音语速，范围为0.5～2.0
+      /*  if (AppSettings.get().isAudioMix()) {
             mEngine.setStreamType(AudioManager.STREAM_MUSIC);//设置audioTrack的播放流，默认为music
         } else {
             mEngine.setStreamType(AudioManager.STREAM_VOICE_CALL);
-        }
-        mEngine.setUseSSML(false);//设置是否使用ssml合成语法，默认为false
-        int volume = AppSettings.get().getAudioVolume();
-        mEngine.setSpeechVolume((int) (volume * 1.0f / 100 * 500));
+        }*/
+        //mEngine.setUseSSML(false);//设置是否使用ssml合成语法，默认为false
+        //int volume = AppSettings.get().getAudioVolume();
+        //mEngine.setSpeechVolume((int) (volume * 1.0f / 100 * 500));
         //mEngine.setSpeechVolume(500);//设置合成音频的音量，范围为1～500
-        mEngine.init(new AILocalTTSListenerImpl());//初始化合成引擎
+       // mEngine.init(new AILocalTTSListenerImpl());//初始化合成引擎
+        mEngine.init(config,new AILocalTTSListenerImpl());
     }
 
     @Override
     public void auth() {
-        DUILiteSDK.setParameter(DUILiteSDK.KEY_AUTH_TIMEOUT, "30000");//设置授权连接超时时长，默认5000ms
+        //DUILiteSDK.setParameter(DUILiteSDK.KEY_AUTH_TIMEOUT, "30000");//设置授权连接超时时长，默认5000ms
 //        DUILiteSDK.setParameter(DUILiteSDK.KEY_DEVICE_PROFILE_PATH, "/sdcard/speech");//自定义设置授权文件的保存路径,需要确保该路径事先存在
         boolean isAuthorized = DUILiteSDK.isAuthorized(context);//查询授权状态，DUILiteSDK.init之后随时可以调
         if (isAuthorized) {
@@ -114,14 +126,11 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         Log.d(TAG, "core version is: " + core_version);*/
 
         //设置SDK录音模式
-        DUILiteSDK.setAudioRecorderType(DUILiteSDK.TYPE_COMMON_MIC);//默认单麦模式
+       // DUILiteSDK.setAudioRecorderType(DUILiteSDK.TYPE_COMMON_MIC);//默认单麦模式
         // DUILiteSDK.openLog();//须在init之前调用.同时会保存日志文件在/sdcard/duilite/DUILite_SDK.log
         //TODO 新建产品需要填入productKey和productSecret，否则会授权不通过
-        DUILiteSDK.init(context,
-                Constant.SBC_API_KEY,
-                Constant.SBC_PRODUCT_ID,
-                Constant.SBC_PRODUCT_KEY,
-                Constant.SBC_PRODUCT_SECERT, this);
+        DUILiteConfig liteConfig=new DUILiteConfig(Constant.SBC_API_KEY,Constant.SBC_PRODUCT_ID,Constant.SBC_PRODUCT_KEY,Constant.SBC_PRODUCT_SECERT);
+        DUILiteSDK.init(context,liteConfig , this);
     }
 
 
@@ -132,6 +141,16 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     @Override
     public void speak(String text, boolean force) {
+        AILocalTTSIntent aILocalTTSIntent = new AILocalTTSIntent();
+        aILocalTTSIntent.setSpeed(1.0f);
+        aILocalTTSIntent.setUseSSML(false); // 设置是否使用ssml合成语法，默认为false
+           if (AppSettings.get().isAudioMix()) {
+               aILocalTTSIntent.setStreamType(AudioManager.STREAM_MUSIC);//设置audioTrack的播放流，默认为music
+        } else {
+               aILocalTTSIntent.setStreamType(AudioManager.STREAM_VOICE_CALL);
+        }
+        int volume = AppSettings.get().getAudioVolume();
+        aILocalTTSIntent.setVolume((int) (volume * 1.0f / 100 * 500));    // 设置合成音频的音量，范围为1～500
         if (AppSettings.get().isAudioMusicDuck()) {
             customPlayer = true;
             synthesize(text, force);
@@ -139,9 +158,10 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             if (AppSettings.get().isEnableAudio() && (force || PrefUtils.isEnableTempAudioService(context))) {
                 customPlayer = false;
                 if (mEngine != null) {
-                    int volume =AppSettings.get().getAudioVolume();
-                    mEngine.setSpeechVolume((int) (volume * 1.0f / 100 * 500));
-                    mEngine.speak(text, text.hashCode() + "");
+                    //int volume =AppSettings.get().getAudioVolume();
+                    //mEngine.setSpeechVolume((int) (volume * 1.0f / 100 * 500));
+                    //mEngine.speak(text, text.hashCode() + "");
+                    mEngine.speak(aILocalTTSIntent,text,text.hashCode() + "");
                 } else {
                     initTTS();
                 }
@@ -245,6 +265,21 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             //Log.d(Tag, "合成pcm音频数据:" + audioData.length);
             //正常合成结束后会收到size大小为0的audioData,即audioData.length == 0。应用层可以根据该标志停止播放
             //若合成过程中取消(stop或release)，则不会收到该结束标志
+            if(!customPlayer) return;
+            File tempAudioFile = null;
+            try {
+                String path = Environment.getExternalStorageDirectory().toString() + "/gps_tts/";
+                File dir = new File(path);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                tempAudioFile = new File(dir + "/" + utteranceId);
+                FileOutputStream fos = new FileOutputStream(tempAudioFile, true);
+                fos.write(audioData);
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -283,6 +318,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     }
 
+    @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -303,7 +339,19 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
                         if (PrefUtils.isEnableCacheAudioFile(context) && file.exists()) {
                             playAudio(fileName);
                         } else {
-                            mEngine.synthesizeToFile(playString, fileName, Integer.toString(trackID));//合成并保存到文件
+                            AILocalTTSIntent aILocalTTSIntent = new AILocalTTSIntent();
+                            aILocalTTSIntent.setSpeed(1.0f);
+                            aILocalTTSIntent.setUseSSML(false); // 设置是否使用ssml合成语法，默认为false
+                            if (AppSettings.get().isAudioMix()) {
+                                aILocalTTSIntent.setStreamType(AudioManager.STREAM_MUSIC);//设置audioTrack的播放流，默认为music
+                            } else {
+                                aILocalTTSIntent.setStreamType(AudioManager.STREAM_VOICE_CALL);
+                            }
+                            int volume = AppSettings.get().getAudioVolume();
+                            aILocalTTSIntent.setVolume((int) (volume * 1.0f / 100 * 500));    // 设置合成音频的音量，范围为1～500
+                           // aILocalTTSIntent.setSaveAudioFilePath(fileName);
+                            //mEngine.synthesizeToFile(playString, fileName, Integer.toString(trackID));//合成并保存到文件
+                            mEngine.synthesize(aILocalTTSIntent,playString,trackID+"");
                         }
                     }
                     if (mEngine == null) {
