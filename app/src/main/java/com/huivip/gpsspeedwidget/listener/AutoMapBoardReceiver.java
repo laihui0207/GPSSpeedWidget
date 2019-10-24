@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
@@ -29,14 +30,14 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent != null && !TextUtils.isEmpty(intent.getAction()) && intent.getAction().equalsIgnoreCase(Constant.AMAP_SEND_ACTION)) {
-            GpsUtil gpsUtil = GpsUtil.getInstance(context.getApplicationContext());
+            GpsUtil gpsUtil = GpsUtil.getInstance(AppObject.getContext());
             int key = intent.getIntExtra("KEY_TYPE", -1);
             switch (key) {
                 case 10019:
                     int status = intent.getIntExtra("EXTRA_STATE", -1);
                     switch (status) {
                         case 0: // auto Map Started
-                            boolean start = PrefUtils.isEnableAutoStart(context);
+                            boolean start =AppSettings.get().getAutoStart();
                             if (start && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
                                 Intent service = new Intent(context, BootStartService.class);
                                 service.putExtra(BootStartService.START_BOOT, true);

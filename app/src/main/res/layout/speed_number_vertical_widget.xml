@@ -57,6 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="4"
+            android:id="@+id/v_speed_edog"
             android:baselineAligned="false"
             android:orientation="horizontal">
 
@@ -119,10 +120,14 @@
 
                 <TextView
                     android:id="@+id/textView_distance_v"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top|center"
                     android:text="0米"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:focusable="true"
+                    android:singleLine="true"
                     android:textColor="#fff"
                     android:textSize="20sp"
                     tools:ignore="HardcodedText" />

@@ -138,20 +138,17 @@ public class LyricFloatingService extends Service{
                 });
             }
         };
-        //this.lyricTimer.schedule(this.lyricTask, 0L, 1000L);
+        this.lyricTimer.schedule(this.lyricTask, 0L, 1000L);
         return Service.START_REDELIVER_INTENT;
     }
 
     private void calTime() {
-        long position = System.currentTimeMillis() - startTime;
-       /* if(isKuwoPlayer){
-            position = mKwapi.getCurrentPos();
-        }*/
-        lrcView.setPlayercurrentMillis((int) position);
-        if (duration > 0 && (position + 1000) >= duration) {
+        //long position = System.currentTimeMillis() - startTime;
+        //lrcView.setPlayercurrentMillis((int) position);
+       /* if (duration > 0 && (position + 1000) >= duration) {
             onStop();
             stopSelf();
-        }
+        }*/
         if(!audioManager.isMusicActive()){
             onStop();
             stopSelf();

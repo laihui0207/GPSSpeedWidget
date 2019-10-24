@@ -7,12 +7,12 @@ android {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 258
+        versionCode 259
         versionName "3.0.3"
         flavorDimensions "versionCode"
         ndk {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
-            abiFilters "armeabi-v7a"
+            abiFilters "armeabi-v7a","x86"
         }
         multiDexEnabled true
         /*javaCompileOptions {
@@ -58,7 +58,7 @@ android {
         }
     }
 
-    productFlavors {
+   /* productFlavors {
         flavorDefault {
         }
 
@@ -73,7 +73,7 @@ android {
             versionName = new Date().format('yyMMdd')
             applicationId "com.huivip.gpsspeedwidget.nightly"
         }
-    }
+    }*/
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

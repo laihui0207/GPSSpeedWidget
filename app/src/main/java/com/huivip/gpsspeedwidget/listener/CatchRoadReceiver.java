@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.amap.api.maps.CoordinateConverter;
 import com.amap.api.maps.model.LatLng;
+import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.utils.CycleQueue;
@@ -30,7 +31,7 @@ public class CatchRoadReceiver extends BroadcastReceiver {
         String dateStr = "";
         String bearingStr = "";
         String speedStr = "";
-        GpsUtil gpsUtil = GpsUtil.getInstance(context.getApplicationContext());
+        GpsUtil gpsUtil = GpsUtil.getInstance(AppObject.getContext());
        /* if (!gpsUtil.isGpsLocationChanged()) {
             return;
         }*/

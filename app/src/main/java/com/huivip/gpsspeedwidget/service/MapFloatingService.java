@@ -246,6 +246,7 @@ public class MapFloatingService extends Service {
     private void updateTime(){
         SimpleDateFormat sdf = new SimpleDateFormat(AppSettings.get().getTimeWindowDateFormat(), Locale.CHINA);
         String date = sdf.format(new Date());
+        timeTextView.setTextColor(AppSettings.get().getTimeWindowTextColor());
         timeTextView.setText(date);
     }
     void checkLocationData() {

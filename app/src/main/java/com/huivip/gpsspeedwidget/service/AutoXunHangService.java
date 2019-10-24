@@ -66,29 +66,12 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(!AppSettings.get().isEnableXunHang() || intent.getBooleanExtra(EXTRA_CLOSE,false)){
+        if (!AppSettings.get().isEnableXunHang() || intent.getBooleanExtra(EXTRA_CLOSE, false)) {
             stopAimlessNavi();
             stopSelf();
-            return super.onStartCommand(intent,flags,startId);
+            return super.onStartCommand(intent, flags, startId);
         }
-        //if (Utils.isNetworkConnected(getApplicationContext())) {
-            startAimlessNavi();
-        /*} else {
-            broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if (Utils.isNetworkConnected(getApplicationContext())) {
-                        if (!aimlessStarted) {
-                            startAimlessNavi();
-                        }
-                        context.getApplicationContext().unregisterReceiver(broadcastReceiver);
-                    }
-                }
-            };
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-            getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
-        }*/
+        startAimlessNavi();
         return Service.START_REDELIVER_INTENT;
     }
 
@@ -184,7 +167,6 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     public void onGetNavigationText(String s) {
         EventBus.getDefault().post(new AimlessStatusUpdateEvent(true));
         if(!autoMapStarted) {
-            //SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext())).speak(s);
             EventBus.getDefault().post(new PlayAudioEvent(s,true));
         }
 

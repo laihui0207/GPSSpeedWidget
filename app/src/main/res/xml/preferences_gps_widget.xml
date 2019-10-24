@@ -26,6 +26,11 @@
             android:title="安全提醒语音" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="@string/pref_key__auto_start_play_outTime_warn"
+            android:summary="连续开车4小时语音提醒休息"
+            android:title="疲劳驾驶提醒语音" />
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="@string/pref_key__auto_start_time_window"
             android:summary="显示时间悬浮窗口"
             android:title="时间悬浮窗" />

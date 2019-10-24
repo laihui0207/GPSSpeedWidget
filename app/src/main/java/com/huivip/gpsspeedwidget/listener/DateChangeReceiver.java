@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.huivip.gpsspeedwidget.Constant;
-import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -17,13 +15,6 @@ import java.util.Calendar;
 public class DateChangeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        GpsUtil gpsUtil=GpsUtil.getInstance(context);
-        if(intent.getAction().equals(Intent.ACTION_TIME_TICK)){
-            gpsUtil.registTimeTickSuccess=true;
-        }
-        if(gpsUtil.registTimeTickSuccess && intent.getAction().equals(Constant.UPDATE_DATE_EVENT_ACTION)){
-            return;
-        }
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int min = cal.get(Calendar.MINUTE);

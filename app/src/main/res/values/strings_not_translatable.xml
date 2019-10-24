@@ -23,6 +23,7 @@
     <string name="pref_key__auto_start_wifi_hotpot" translatable="false">pref_key__auto_start_wifi_hotpot</string>
     <string name="pref_key__wifi_hotpot_setting" translatable="false">pref_key__wifi_hotpot_setting</string>
     <string name="pref_key__auto_start_play_warn" translatable="false">pref_key__auto_start_play_warn</string>
+    <string name="pref_key__auto_start_play_outTime_warn" translatable="false">pref_key__auto_start_play_outTime_warn</string>
     <string name="pref_key__auto_start_launch_other_app_enable" translatable="false">pref_key__auto_start_launch_other_app_enable</string>
     <string name="pref_key__auto_start_launch_other_apps" translatable="false">pref_key__auto_start_launch_other_apps</string>
     <string name="pref_key__auto_start_launch_select_other_apps" translatable="false">pref_key__auto_start_launch_select_other_apps</string>
@@ -95,6 +96,7 @@
     <string name="pref_key__widget_speed_font_size" translatable="false">pref_key__widget_time_font_size</string>
     <!-- Preference Keys -->
     <string name="pref_key__desktop_columns" translatable="false">pref_key__desktop_columns</string>
+    <string name="pref_key__default_home" translatable="false">pref_key__default_home</string>
     <string name="pref_key__desktop_rows" translatable="false">pref_key__desktop_rows</string>
     <string name="pref_key__desktop_indicator_style" translatable="false">pref_key__desktop_indicator_style</string>
     <string name="pref_key__minibar" translatable="false">pref_key__minibar</string>
