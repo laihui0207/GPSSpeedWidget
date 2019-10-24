@@ -41,6 +41,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isEnablePlayWarnAudio(){
         return getBool(R.string.pref_key__auto_start_play_warn,false);
     }
+    public boolean isEnablePlayoutTimeWarnAudio(){
+        return getBool(R.string.pref_key__auto_start_play_outTime_warn,false);
+    }
     public int getDesktopRowCount() {
         return getInt(R.string.pref_key__desktop_rows, 6);
     }

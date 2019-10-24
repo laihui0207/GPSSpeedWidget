@@ -23,6 +23,7 @@
     <string name="pref_key__auto_start_wifi_hotpot" translatable="false">pref_key__auto_start_wifi_hotpot</string>
     <string name="pref_key__wifi_hotpot_setting" translatable="false">pref_key__wifi_hotpot_setting</string>
     <string name="pref_key__auto_start_play_warn" translatable="false">pref_key__auto_start_play_warn</string>
+    <string name="pref_key__auto_start_play_outTime_warn" translatable="false">pref_key__auto_start_play_outTime_warn</string>
     <string name="pref_key__auto_start_launch_other_app_enable" translatable="false">pref_key__auto_start_launch_other_app_enable</string>
     <string name="pref_key__auto_start_launch_other_apps" translatable="false">pref_key__auto_start_launch_other_apps</string>
     <string name="pref_key__auto_start_launch_select_other_apps" translatable="false">pref_key__auto_start_launch_select_other_apps</string>

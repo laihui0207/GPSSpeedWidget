@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
@@ -70,7 +71,7 @@ public class SwitchReceiver extends BroadcastReceiver {
             }
         }
         if(SWITCH_TARGET_GPS.equalsIgnoreCase(target)){
-            GpsUtil gpsUtil=GpsUtil.getInstance(context);
+            GpsUtil gpsUtil=GpsUtil.getInstance(AppObject.getContext());
             Log.d("huivip","Get gps switch event,current:"+gpsUtil.isGpsLocationStarted());
             if(gpsUtil.isServiceStarted()){
                 gpsUtil.stopLocationService(true);

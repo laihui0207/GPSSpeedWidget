@@ -72,8 +72,7 @@ public class GpsUtil {
     int limitDistancePercentage = 0;
     float distance = 0F;
     long driveTime=0;
-    int driveOutTimeCount=4;
-    long startTime=System.currentTimeMillis();;
+    private int driveOutTimeCount=4;
     Location preLocation;
     int cameraType = 0;
     int cameraDistance = 0;
@@ -131,7 +130,6 @@ public class GpsUtil {
     private GpsUtil(Context context) {
         this.context = context;
         localNumberFormat.setMaximumFractionDigits(1);
-        startTime=System.currentTimeMillis();
         alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
@@ -139,7 +137,7 @@ public class GpsUtil {
         if (instance == null) {
             synchronized (GpsUtil.class) {
                 if (instance == null) {
-                    instance = new GpsUtil(context);
+                    instance = new GpsUtil(AppObject.getContext());
                 }
             }
         }
@@ -257,7 +255,7 @@ public class GpsUtil {
         return localNumberFormat.format(distance / 1000) + "km";
     }
     public String getDriveTimeString(){
-        return DateUtil.formatDuring(driveTime*1000);
+        return DateUtil.formatDuring(driveTime);
     }
     public float getDriveTime(){
         return driveTime;
@@ -286,16 +284,7 @@ public class GpsUtil {
             if (preLocation != null) {
                 distance += preLocation.distanceTo(paramLocation);
             }
-           /* if(startTime==0){
-                startTime=System.currentTimeMillis();
-            }*/
-            driveTime=(System.currentTimeMillis()- startTime)/1000;
-            if(driveTime > 3600*driveOutTimeCount){
-                EventBus.getDefault().post(new PlayAudioEvent("请注意休息，不要疲劳驾驶",true));
-                EventBus.getDefault().post(new PlayAudioEvent("请注意休息，不要疲劳驾驶",true));
-                EventBus.getDefault().post(new PlayAudioEvent("请注意休息，不要疲劳驾驶",true));
-                driveOutTimeCount++;
-            }
+
             // save location every 50 m for catch road service
             if(lastedRecoredLocation==null || paramLocation.distanceTo(lastedRecoredLocation)>recordLocationDistance){
                 lastedRecoredLocation=paramLocation;
@@ -358,7 +347,11 @@ public class GpsUtil {
         } catch (SecurityException e) {
            // Toast.makeText(context, "GPS widget 需要GPS权限!", Toast.LENGTH_SHORT).show();
         }
-
+        driveTime = System.currentTimeMillis() - AppObject.get().getStartTime();
+        if(AppSettings.get().isEnablePlayoutTimeWarnAudio() && driveTime > 1000*3600*driveOutTimeCount){
+            EventBus.getDefault().post(new PlayAudioEvent("请注意休息，不要疲劳驾驶",true));
+            driveOutTimeCount++;
+        }
         if ((this.velocitaString != null) && (gpsEnabled)) {
             if (!this.velocitaString.equals(this.velocita_prec)) {
                 computeAndShowData();

@@ -896,7 +896,6 @@ public abstract class AbstractLrcView extends View {
                 removeCallbacksAndMessages();
             }
             mLrcPlayerStatus = LRCPLAYERSTATUS_PLAY;
-            this.mCurPlayingTime = playProgress;
             mPlayerStartTime = System.currentTimeMillis();
             mPlayerSpendTime = 0;
             mWorkerHandler.sendEmptyMessageDelayed(0, 0);

@@ -33,6 +33,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
@@ -183,6 +184,16 @@ public abstract class Utils {
         String defaultLauncher=packageManager.resolveActivity(intent,PackageManager.MATCH_DEFAULT_ONLY).activityInfo.loadLabel(packageManager).toString();
         return defaultLauncher;
     }
+
+    public final boolean isDefaultHome(Context context) {
+        Intent intent = new Intent(Intent.ACTION_MAIN);//Intent.ACTION_VIEW
+        intent.addCategory("android.intent.category.HOME");
+        intent.addCategory("android.intent.category.DEFAULT");
+        PackageManager pm = context.getPackageManager();
+        ResolveInfo info = pm.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        boolean isDefault = context.getPackageName().equals(info.activityInfo.packageName);
+        return isDefault;
+    }
     public static Set<String> getDesktopPackageName(Context context){
         List<String> names =new ArrayList<>();
         PackageManager packageManager = context.getPackageManager();
@@ -195,10 +206,7 @@ public abstract class Utils {
         }
         List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         for(ResolveInfo resolveInfo : list){
-            //Log.d("huivip","Launcher:"+resolveInfo.activityInfo.packageName);
-            //if(!"com.huivip.gpsspeedwidget".equalsIgnoreCase(resolveInfo.activityInfo.packageName)) {
                 names.add(resolveInfo.activityInfo.packageName);
-           // }
         }
         if(names!=null && names.size()>0) {
             PrefUtils.setDefaultLaunchApp(context,names.get(0));
@@ -374,7 +382,7 @@ public abstract class Utils {
         Intent meterFloatingService=new Intent(context,MeterFloatingService.class);
         boolean needClose=false;
         if(enabled){
-            GpsUtil gpsUtil=GpsUtil.getInstance(context.getApplicationContext());
+            GpsUtil gpsUtil=GpsUtil.getInstance(AppObject.getContext());
             boolean onDesktop =PrefUtils.isOnDesktop(context);
             if(!AppSettings.get().isEnableSpeed()){
                 defaultFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);

@@ -79,7 +79,7 @@ public class SpeedNumberVerticalService extends Service {
                 x.task().autoPost(new Runnable() {
                     @Override
                     public void run() {
-                        SpeedNumberVerticalService.this.checkLocationData();
+                        SpeedNumberVerticalService.this.computeAndShowData();
                     }
                 });
             }
@@ -126,11 +126,11 @@ public class SpeedNumberVerticalService extends Service {
     }
 
     void checkLocationData() {
-        if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
-         if (gpsUtil.isGpsLocationChanged()) {
+      /*  if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
+         if (gpsUtil.isGpsLocationChanged()) {*/
                 computeAndShowData();
-           }
-        }
+       /*    }
+        }*/
     }
     @Subscribe
     public void updateNaviStatus(AutoMapStatusUpdateEvent event){
