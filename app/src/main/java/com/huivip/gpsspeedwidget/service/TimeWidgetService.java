@@ -109,7 +109,7 @@ public class TimeWidgetService extends Service {
         weatherView.setTextColor(R.id.text_temperature, AppSettings.get().getTimeWidgetOtherTextColor());
         weatherView.setTextViewTextSize(R.id.text_temperature, TypedValue.COMPLEX_UNIT_SP, textSize);
 
-        weatherView.setTextViewText(R.id.text_altitude, "海拔:" + event.getAltitude() + "米");
+        weatherView.setTextViewText(R.id.text_altitude, event.getAltitude() + "米");
         weatherView.setTextColor(R.id.text_altitude, AppSettings.get().getTimeWidgetOtherTextColor());
         weatherView.setTextViewTextSize(R.id.text_altitude, TypedValue.COMPLEX_UNIT_SP, textSize);
 
