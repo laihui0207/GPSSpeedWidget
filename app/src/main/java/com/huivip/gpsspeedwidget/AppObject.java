@@ -15,7 +15,6 @@ public class AppObject extends Application {
     private static AppObject _instance;
     public KWAPI mKwapi;
     private static Context mContext;
-    long startTime;
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -38,17 +37,8 @@ public class AppObject extends Application {
                 .build();
         Utils.getDesktopPackageName(getApplicationContext());
         mKwapi = KWAPI.createKWAPI(this, "auto");
-        startTime=System.currentTimeMillis();
     }
     public static Context getContext() {
         return mContext;
-    }
-
-    public long getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
     }
 }

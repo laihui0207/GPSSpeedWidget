@@ -72,6 +72,7 @@ public class GpsUtil {
     int limitDistancePercentage = 0;
     float distance = 0F;
     long driveTime=0;
+    long startTime=0;
     private int driveOutTimeCount=4;
     Location preLocation;
     int cameraType = 0;
@@ -274,6 +275,9 @@ public class GpsUtil {
             this.longitude = Double.toString(paramLocation.getLongitude());
             this.altitude=paramLocation.getAltitude();
             this.velocitaString = null;
+            if(startTime==0){
+                startTime=paramLocation.getTime();
+            }
             if (paramLocation.hasSpeed()) {
                 this.velocitaNumber = Integer.valueOf((int) paramLocation.getSpeed());
                 localNumberFormat.setMaximumFractionDigits(1);
@@ -347,7 +351,9 @@ public class GpsUtil {
         } catch (SecurityException e) {
            // Toast.makeText(context, "GPS widget 需要GPS权限!", Toast.LENGTH_SHORT).show();
         }
-        driveTime = System.currentTimeMillis() - AppObject.get().getStartTime();
+        if(startTime>0) {
+            driveTime = System.currentTimeMillis() - startTime;
+        }
         if(AppSettings.get().isEnablePlayoutTimeWarnAudio() && driveTime > 1000*3600*driveOutTimeCount){
             EventBus.getDefault().post(new PlayAudioEvent("请注意休息，不要疲劳驾驶",true));
             driveOutTimeCount++;
