@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +62,6 @@ public class TimeWidgetVerticalService extends Service {
         if(!Utils.isServiceRunning(getApplicationContext(),WeatherService.class.getName())){
            Intent weatherService=new Intent(getApplicationContext(),WeatherService.class);
            startService(weatherService);
-           Log.d("huivip","Widget Luanch weather service");
            EventBus.getDefault().post(new SearchWeatherEvent(false));
         }
         if(!AppSettings.get().isShow24TimeFormat()){
@@ -110,14 +108,13 @@ public class TimeWidgetVerticalService extends Service {
             weatherView.setTextColor(R.id.text_temperature_v, AppSettings.get().getTimeWidgetOtherTextColor());
             weatherView.setTextViewTextSize(R.id.text_temperature_v, TypedValue.COMPLEX_UNIT_SP, textSize);
         }
+        weatherView.setTextViewText(R.id.text_altitude_v, event.getAltitude() + "米");
+        weatherView.setTextColor(R.id.text_altitude_v, AppSettings.get().getTimeWidgetOtherTextColor());
+        weatherView.setTextViewTextSize(R.id.text_altitude_v, TypedValue.COMPLEX_UNIT_SP, textSize);
 
-       weatherView.setTextViewText(R.id.text_altitude_v,"\u2708 "+event.getAltitude()+"米");
-        weatherView.setTextColor(R.id.text_altitude_v,AppSettings.get().getTimeWidgetOtherTextColor());
-        weatherView.setTextViewTextSize(R.id.text_altitude_v, TypedValue.COMPLEX_UNIT_SP,textSize);
-
-       manager.updateAppWidget(thisWidget,weatherView);
-       updateTime=System.currentTimeMillis();
-       weatherUpdated=true;
+        manager.updateAppWidget(thisWidget, weatherView);
+        updateTime = System.currentTimeMillis();
+        weatherUpdated = true;
     }
     private void updateView(){
         Date date=new Date();

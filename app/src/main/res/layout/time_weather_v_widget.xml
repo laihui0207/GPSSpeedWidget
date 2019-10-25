@@ -48,11 +48,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="start|center"
+            android:paddingStart="20dp"
+            android:drawableStart="@drawable/ic_locat"
             android:text="--"
             android:textColor="@color/white"
             android:textSize="15sp"
-            tools:ignore="HardcodedText,NestedWeights" />
+            tools:ignore="HardcodedText,NestedWeights,RtlSymmetry" />
 
         <TextView
             android:id="@+id/text_temperature_v"
@@ -118,11 +120,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="✈ 100 米"
+            android:gravity="left"
+            android:paddingStart="20dp"
+            android:drawableStart="@drawable/ic_shan"
+            android:text="100米"
             android:textColor="@color/white"
             android:textSize="15sp"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText,RtlSymmetry" />
     </LinearLayout>
 
 </LinearLayout>
