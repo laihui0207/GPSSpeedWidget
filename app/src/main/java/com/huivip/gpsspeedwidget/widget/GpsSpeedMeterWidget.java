@@ -9,9 +9,13 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
+import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.GpsSpeedMeterService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -28,6 +32,11 @@ public class GpsSpeedMeterWidget extends AppWidgetProvider {
         if(PrefUtils.isSpeedMeterWidgetEnable(context) && !Utils.isServiceRunning(context, GpsSpeedMeterService.class.getName())){
             Intent bootService=new Intent(context, GpsSpeedMeterService.class);
             Utils.startForegroundService(context,bootService);
+        }
+        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
+            Intent bootService=new Intent(context,BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            context.startService(bootService);
         }
         ComponentName localComponentName = new ComponentName(context, GpsSpeedMeterWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
@@ -63,9 +72,13 @@ public class GpsSpeedMeterWidget extends AppWidgetProvider {
         PrefUtils.setEnabledWatchWidget(context,false);
         PrefUtils.setWidgetActived(context,false);
         if(Utils.isServiceRunning(context, GpsSpeedMeterService.class.getName())){
-            Intent bootService=new Intent(context, GpsSpeedMeterService.class);
+           /* Intent bootService=new Intent(context, GpsSpeedMeterService.class);
             bootService.putExtra(GpsSpeedMeterService.EXTRA_CLOSE,true);
-            context.startService(bootService);
+            context.startService(bootService);*/
+            LaunchEvent event=new LaunchEvent(GpsSpeedMeterService.class);
+            event.setToClose(true);
+            event.setDelaySeconds(3);
+            EventBus.getDefault().post(event);
         }
         super.onDisabled(context);
     }

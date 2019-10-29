@@ -682,7 +682,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        if(!started && !Utils.isServiceRunning(getApplicationContext(),BootStartService.class.getName())){
+        if(!Utils.isServiceRunning(getApplicationContext(),BootStartService.class.getName())){
             Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);
             bootStartService.putExtra(BootStartService.START_BOOT,true);
             Utils.startService(getApplicationContext(),bootStartService);

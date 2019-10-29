@@ -10,11 +10,15 @@ import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
+import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.GpsSpeedMeterService;
 import com.huivip.gpsspeedwidget.service.GpsSpeedNumberService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -35,6 +39,11 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         if(PrefUtils.isSpeedNumberHWidgetEnable(context) && !Utils.isServiceRunning(context, GpsSpeedNumberService.class.getName())){
             Intent widgetService=new Intent(context, GpsSpeedNumberService.class);
             Utils.startForegroundService(context,widgetService);
+        }
+        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
+            Intent bootService=new Intent(context,BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            context.startService(bootService);
         }
         Intent configureActivity=new Intent(context, MainActivity.class);
         PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,configureActivity,0);
@@ -84,9 +93,13 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         PrefUtils.setEnabledNumberWidget(context,false);
         PrefUtils.setWidgetActived(context,false);
         if(Utils.isServiceRunning(context, GpsSpeedNumberService.class.getName())){
-            Intent widgetService=new Intent(context, GpsSpeedNumberService.class);
+           /* Intent widgetService=new Intent(context, GpsSpeedNumberService.class);
             widgetService.putExtra(GpsSpeedNumberService.EXTRA_CLOSE,true);
-            context.startService(widgetService);
+            context.startService(widgetService);*/
+            LaunchEvent event=new LaunchEvent(GpsSpeedNumberService.class);
+            event.setToClose(true);
+            event.setDelaySeconds(3);
+            EventBus.getDefault().post(event);
         }
         super.onDisabled(context);
     }

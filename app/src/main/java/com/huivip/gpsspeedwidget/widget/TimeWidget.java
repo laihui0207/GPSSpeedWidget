@@ -8,9 +8,13 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
+import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.TimeWidgetService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -23,6 +27,11 @@ public class TimeWidget extends AppWidgetProvider {
         if(PrefUtils.isTimeHWidgetEnable(context) && !Utils.isServiceRunning(context, TimeWidgetService.class.getName())){
             Intent widgetService=new Intent(context,TimeWidgetService.class);
             Utils.startForegroundService(context,widgetService);
+        }
+        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
+            Intent bootService=new Intent(context,BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            context.startService(bootService);
         }
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.time_weather_widget);
 
@@ -53,9 +62,13 @@ public class TimeWidget extends AppWidgetProvider {
     public void onDisabled(Context context) {
         PrefUtils.setTimeHWidgetEnable(context,false);
         if(Utils.isServiceRunning(context, TimeWidgetService.class.getName())){
-            Intent widgetService=new Intent(context,TimeWidgetService.class);
+            /*Intent widgetService=new Intent(context,TimeWidgetService.class);
             widgetService.putExtra(TimeWidgetService.EXTRA_CLOSE,true);
-            Utils.startService(context,widgetService);
+            Utils.startService(context,widgetService);*/
+            LaunchEvent event=new LaunchEvent(TimeWidgetService.class);
+            event.setToClose(true);
+            event.setDelaySeconds(3);
+            EventBus.getDefault().post(event);
         }
         super.onDisabled(context);
     }

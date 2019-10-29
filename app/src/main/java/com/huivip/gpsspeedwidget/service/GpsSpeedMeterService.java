@@ -5,9 +5,11 @@ import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.Constant;
@@ -16,6 +18,7 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+import com.huivip.gpsspeedwidget.view.MeterWheel;
 import com.huivip.gpsspeedwidget.widget.GpsSpeedMeterWidget;
 
 import org.xutils.x;
@@ -126,11 +129,11 @@ public class GpsSpeedMeterService extends Service {
         return null;
     }
     void checkLocationData() {
-        if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
-            if (gpsUtil.isGpsLocationChanged()) {
+      /*  if (gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
+            if (gpsUtil.isGpsLocationChanged()){ */
                 computeAndShowData();
-            }
-        }
+      /*      }
+        }*/
     }
 
     public void setSpeeding(boolean speeding) {
@@ -138,7 +141,19 @@ public class GpsSpeedMeterService extends Service {
         int color = ContextCompat.getColor(this, colorRes);
         this.remoteViews.setTextColor(R.id.textView1_watch_speed, color);
     }
-
+    private Bitmap getSpeedBitmap() {
+        Bitmap bitmap = null;
+        View view = View.inflate(getApplicationContext(), R.layout.view_speed, null);
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        MeterWheel meterView = view.findViewById(R.id.v_meter_View);
+        meterView.setRotation((float)(gpsUtil.getSpeedometerPercentage()/100d*252f));
+        //meterView.setRotation(50f);
+        view.measure(view.getMeasuredWidth(), view.getMeasuredHeight());
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        view.buildDrawingCache();
+        bitmap = view.getDrawingCache();
+        return bitmap;
+    }
     void computeAndShowData() {
         this.remoteViews = new RemoteViews(getPackageName(), R.layout.speedmeterwidget);
         int mphNumber = gpsUtil.getMphSpeed().intValue();
@@ -146,8 +161,8 @@ public class GpsSpeedMeterService extends Service {
         this.remoteViews.setTextViewText(R.id.textView1_watch_speed, gpsUtil.getKmhSpeedStr() + "");
         this.remoteViews.setTextViewText(R.id.textView_watch_limit, gpsUtil.getLimitSpeed() + "");
         this.remoteViews.setTextViewText(R.id.textView_watch_direction, gpsUtil.getDirection() + "");
-
-        switch (mphNumber) {
+        this.remoteViews.setImageViewBitmap(R.id.ifreccia_all,getSpeedBitmap());
+       /* switch (mphNumber) {
             default:
                 if (mphNumber > MAX_VELOCITA_NUMBER) {
                     this.remoteViews.setImageViewResource(R.id.ifreccia_all, R.drawable.alt_150);
@@ -458,7 +473,7 @@ public class GpsSpeedMeterService extends Service {
             case 140:
                 this.remoteViews.setImageViewResource(R.id.ifreccia_all, R.drawable.alt_140);
                 break;
-        }
+        }*/
         if (gpsUtil.getCameraType() > -1) {
             this.remoteViews.setTextViewText(R.id.textView_watch_limit_label, gpsUtil.getCameraTypeName());
         } else {

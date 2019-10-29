@@ -2,6 +2,7 @@ package com.huivip.gpsspeedwidget.speech;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
@@ -42,7 +43,13 @@ public class AudioService extends Service {
             tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(AppSettings.get().getAudioEngine());
         }
         if(AppSettings.get().isEnableAudio()) {
-            tts.speak(event.getText(), event.isForce());
+            if(event.getDelaySeconds()==0) {
+                tts.speak(event.getText(), event.isForce());
+            } else if(event.getDelaySeconds()>0){
+                new Handler().postDelayed(()->{
+                    tts.speak(event.getText(), event.isForce());
+                },event.getDelaySeconds()*1000);
+            }
         }
     }
     @Subscribe
