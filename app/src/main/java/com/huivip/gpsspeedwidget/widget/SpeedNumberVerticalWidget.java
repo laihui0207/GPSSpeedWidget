@@ -6,11 +6,11 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
+import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.RoadLineService;
 import com.huivip.gpsspeedwidget.service.SpeedNumberVerticalService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -36,6 +36,11 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
         if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, RoadLineService.class.getName())){
             Intent roadLineService=new Intent(context, RoadLineService.class);
             Utils.startForegroundService(context,roadLineService);
+        }
+        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
+            Intent bootService=new Intent(context,BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            context.startService(bootService);
         }
         /*Intent configureActivity=new Intent(context, MainActivity.class);
         PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,configureActivity,0);
@@ -79,11 +84,7 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
         if(Utils.isServiceRunning(context, SpeedNumberVerticalService.class.getName())){
             Intent widgetService=new Intent(context, SpeedNumberVerticalService.class);
             widgetService.putExtra(SpeedNumberVerticalService.EXTRA_CLOSE,true);
-            if(Build.VERSION.SDK_INT >= 26){
-                context.startForegroundService(widgetService);
-            } else {
-                context.startService(widgetService);
-            }
+            context.startService(widgetService);
         }
         PrefUtils.setSpeedNumberVWidgetEnable(context,false);
         super.onDisabled(context);

@@ -19,18 +19,25 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
+import com.huivip.gpsspeedwidget.listener.AutoMapBoardReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
 import com.huivip.gpsspeedwidget.listener.MediaNotificationReceiver;
 import com.huivip.gpsspeedwidget.listener.NetWorkConnectChangedReceiver;
+import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
 import com.huivip.gpsspeedwidget.speech.AudioService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 
 public class BootStartService extends Service {
@@ -41,6 +48,7 @@ public class BootStartService extends Service {
     private static final String NOTIFICATION_CHANNEL_NAME = "BackgroundLocation";
     private NotificationManager notificationManager = null;
     boolean isCreateChannel = false;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -53,12 +61,12 @@ public class BootStartService extends Service {
     public void onCreate() {
         alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
         CrashHandler.getInstance().init(getApplicationContext());
-        DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
-        deviceId=deviceUuidFactory.getDeviceUuid().toString();
+        DeviceUuidFactory deviceUuidFactory = new DeviceUuidFactory(getApplicationContext());
+        deviceId = deviceUuidFactory.getDeviceUuid().toString();
         boolean start = AppSettings.get().getAutoStart();
-        Log.d("huivip","Auto Start: "+start);
+        Log.d("huivip", "Auto Start: " + start);
         if (start) {
-            //startForeground(1, buildNotification());
+            startForeground(1, buildNotification());
             String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
             if (AppSettings.get().isEnableLaunchOtherApp() && !TextUtils.isEmpty(apps)) {
                 String[] autoApps = apps.split(",");
@@ -100,9 +108,9 @@ public class BootStartService extends Service {
                     new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
 
-            if (AppSettings.get().isPlayTime()|| AppSettings.get().isPlayWeather() || AppSettings.get().isPlayAddressOnStop()) {
+            if (AppSettings.get().isPlayTime() || AppSettings.get().isPlayWeather() || AppSettings.get().isPlayAddressOnStop()) {
                 Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
-                Utils.startService(getApplicationContext(),weatherService);
+                Utils.startService(getApplicationContext(), weatherService);
 
                 PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                         new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -124,10 +132,11 @@ public class BootStartService extends Service {
                     mPlayer.start();
                 }
             }
-            if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.O){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 registerBoardCast(getApplicationContext());
             }
         }
+        EventBus.getDefault().register(this);
         super.onCreate();
     }
 
@@ -142,64 +151,73 @@ public class BootStartService extends Service {
                 if (AppSettings.get().isEnableTimeWindow()) {
                     if (!Utils.isServiceRunning(getApplicationContext(), RealTimeFloatingService.class.getName())) {
                         Intent timeFloating = new Intent(getApplicationContext(), RealTimeFloatingService.class);
-                        Utils.startService(getApplicationContext(),timeFloating);
+                        Utils.startService(getApplicationContext(), timeFloating);
                     }
                 }
-                if(AppSettings.get().isEnableRoadLine()){
-                    if(!Utils.isServiceRunning(getApplicationContext(),RoadLineService.class.getName())) {
+                if (AppSettings.get().isEnableRoadLine()) {
+                    if (!Utils.isServiceRunning(getApplicationContext(), RoadLineService.class.getName())) {
                         Intent roadLineService = new Intent(getApplicationContext(), RoadLineService.class);
-                       Utils.startService(getApplicationContext(),roadLineService);
+                        Utils.startService(getApplicationContext(), roadLineService);
                     }
-                    if(AppSettings.get().isEnableRoadLineFloatingWindow() &&
-                            !Utils.isServiceRunning(getApplicationContext(),RoadLineFloatingService.class.getName())) {
+                    if (AppSettings.get().isEnableRoadLineFloatingWindow() &&
+                            !Utils.isServiceRunning(getApplicationContext(), RoadLineFloatingService.class.getName())) {
                         Intent roadLineFloatingService = new Intent(getApplicationContext(), RoadLineFloatingService.class);
-                        Utils.startService(getApplicationContext(),roadLineFloatingService);
+                        Utils.startService(getApplicationContext(), roadLineFloatingService);
                     }
                 }
-                if(AppSettings.get().isEnableSpeed()) {
+                if (AppSettings.get().isEnableSpeed()) {
                     Utils.startFloatingWindows(getApplicationContext(), true);
                 }
-                if(AppSettings.get().isEnableAudio() &&  !Utils.isServiceRunning(getApplicationContext(), AudioService.class.getName())){
-                    Intent audioService=new Intent(getApplicationContext(),AudioService.class);
-                    Utils.startService(getApplicationContext(),audioService);
+                if (AppSettings.get().isEnableAudio() && !Utils.isServiceRunning(getApplicationContext(), AudioService.class.getName())) {
+                    Intent audioService = new Intent(getApplicationContext(), AudioService.class);
+                    Utils.startService(getApplicationContext(), audioService);
                 }
-                if(Utils.isNetworkConnected(getApplicationContext())) {
+                if (Utils.isNetworkConnected(getApplicationContext())) {
                     if (AppSettings.get().isEnableXunHang() && !Utils.isServiceRunning(getApplicationContext(), AutoXunHangService.class.getName())) {
                         Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
-                        Utils.startService(getApplicationContext(),xunHangService);
+                        Utils.startService(getApplicationContext(), xunHangService);
                     }
-                    if (AppSettings.get().isEnableTracker() && !Utils.isServiceRunning(getApplicationContext(),NaviTrackService.class.getName())) {
+                    if (AppSettings.get().isEnableTracker() && !Utils.isServiceRunning(getApplicationContext(), NaviTrackService.class.getName())) {
                         Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
-                        Utils.startService(getApplicationContext(),trackService);
+                        Utils.startService(getApplicationContext(), trackService);
                     }
                     new Thread(() -> Utils.registerSelf(getApplicationContext())).start();
                 } else {
                     IntentFilter intentFilter = new IntentFilter();
                     intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-                    NetWorkConnectChangedReceiver broadcastReceiver=new NetWorkConnectChangedReceiver();
+                    NetWorkConnectChangedReceiver broadcastReceiver = new NetWorkConnectChangedReceiver();
                     getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
                 }
             }
         }
-        new Handler().postDelayed(new Runnable() {
+       /* new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 stopSelf();
             }
-        }, 1000 * 60 * 5);
+        }, 1000 * 60 * 5);*/
         return super.onStartCommand(intent, flags, startId);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
     private Notification buildNotification() {
 
         Notification.Builder builder = null;
         Notification notification = null;
-        if(android.os.Build.VERSION.SDK_INT >= 26) {
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
             //Android O上对Notification进行了修改，如果设置的targetSDKVersion>=26建议使用此种方式创建通知栏
             if (null == notificationManager) {
                 notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             }
             String channelId = getApplicationContext().getPackageName();
-            if(!isCreateChannel) {
+            if (!isCreateChannel) {
                 NotificationChannel notificationChannel = new NotificationChannel(channelId,
                         NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
                 notificationChannel.enableLights(true);//是否在桌面icon右上角展示小圆点
@@ -225,8 +243,27 @@ public class BootStartService extends Service {
         }
         return notification;
     }
-    private void registerBoardCast(Context context){
-        String[] actions=new String[]{"com.android.music.metachanged",
+    @Subscribe
+    public void launchService(LaunchEvent event){
+        Intent mService=new Intent(AppObject.getContext(),event.getServiceClass());
+        if(event.getDelaySeconds()>0){
+            new Handler().postDelayed(()->{
+                if(event.isToClose()){
+                    AppObject.getContext().stopService(mService);
+                } else {
+                    AppObject.getContext().startService(mService);
+                }
+            },event.getDelaySeconds()*1000);
+        } else {
+            if(event.isToClose()){
+                AppObject.getContext().stopService(mService);
+            } else {
+                AppObject.getContext().startService(mService);
+            }
+        }
+    }
+    private void registerBoardCast(Context context) {
+        String[] actions = new String[]{"com.android.music.metachanged",
                 "com.android.music.statuschanged",
                 "com.android.music.musicservicecommand",
                 "com.android.music.updateprogress",
@@ -247,11 +284,18 @@ public class BootStartService extends Service {
                 "com.ijidou.action.UPDATE_PROGRESS",
                 "com.tencent.qqmusiccar.action.PLAY_COMMAND_SEND_FOR_THIRD"
         };
-       IntentFilter intentFilter=new IntentFilter();
-       for(String action:actions){
-           intentFilter.addAction(action);
-       }
-       context.registerReceiver(new MediaNotificationReceiver(),intentFilter);
+        IntentFilter intentFilter = new IntentFilter();
+        for (String action : actions) {
+            intentFilter.addAction(action);
+        }
+        context.registerReceiver(new MediaNotificationReceiver(), intentFilter);
 
+        IntentFilter switchFiliter = new IntentFilter();
+        switchFiliter.addAction(SwitchReceiver.SWITCH_EVENT);
+        context.registerReceiver(new SwitchReceiver(), switchFiliter);
+
+        IntentFilter autoMapFiliter = new IntentFilter();
+        autoMapFiliter.addAction("AUTONAVI_STANDARD_BROADCAST_SEND");
+        context.registerReceiver(new AutoMapBoardReceiver(), autoMapFiliter);
     }
 }

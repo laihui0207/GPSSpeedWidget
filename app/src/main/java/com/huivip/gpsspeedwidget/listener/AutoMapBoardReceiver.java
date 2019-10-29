@@ -3,7 +3,6 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.text.TextUtils;
 
 import com.huivip.gpsspeedwidget.AppObject;
@@ -124,12 +123,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             break;
                         case 40: // heart check
                             //Toast.makeText(context,"Heated Checked",Toast.LENGTH_SHORT).show();
-                           /* if (PrefUtils.isEnableAutoStart(context) && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
+                            if (AppSettings.get().getAutoStart() && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
                                 Intent service = new Intent(context, BootStartService.class);
                                 service.putExtra(BootStartService.START_BOOT, true);
                                 context.startService(service);
                                 gpsUtil.setAutoMapBackendProcessStarted(true);
-                            }*/
+                            }
                             break;
                         case 39:
                             stopBackendNaviFloatingService(context, true);
@@ -296,10 +295,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         JSONObject roadInfo=new JSONObject(iformationJsonString);
                         String toPoi=roadInfo.getString("ToPoiName");
                         String toAddress=roadInfo.getString("ToPoiAddr");
-                        if(!TextUtils.isEmpty(toPoi) && !TextUtils.isEmpty(toAddress)){
-                            new Handler().postDelayed(()->{
-                                EventBus.getDefault().post(new PlayAudioEvent("导航开始了，目的地："+toPoi+",地址："+toAddress,true));
-                            },15000);
+                        if (!TextUtils.isEmpty(toPoi) && !TextUtils.isEmpty(toAddress)) {
+                            PlayAudioEvent event = new PlayAudioEvent("导航中，目的地：" + toPoi + ",地址：" + toAddress, true);
+                            event.setDelaySeconds(15);
+                            EventBus.getDefault().post(event);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -307,11 +306,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     //FileUtil.saveLogToFile(iformationJsonString);
                     break;
             }
-       /*     if (!gpsUtil.serviceStarted && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
-                Intent service = new Intent(context, BootStartService.class);
-                service.putExtra(BootStartService.START_BOOT, true);
-                context.startService(service);
-            }*/
 
         }
 
