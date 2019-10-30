@@ -13,6 +13,7 @@ android {
         ndk {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
             abiFilters "armeabi-v7a"
+            //,"x86","x86_64","armebi","arm64-v8a"
         }
         multiDexEnabled true
         /*javaCompileOptions {
