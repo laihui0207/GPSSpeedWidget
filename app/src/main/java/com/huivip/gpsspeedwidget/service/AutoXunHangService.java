@@ -166,7 +166,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     @Override
     public void onGetNavigationText(String s) {
         EventBus.getDefault().post(new AimlessStatusUpdateEvent(true));
-        if(!autoMapStarted) {
+        if(!autoMapStarted || !AppSettings.get().isAutoMute()) {
             EventBus.getDefault().post(new PlayAudioEvent(s,true));
         }
 

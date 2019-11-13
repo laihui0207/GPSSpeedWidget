@@ -60,7 +60,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             }*/
                             EventBus.getDefault().post(new AudioTempMuteEvent(true));
                             gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Started);
-                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
                             break;
                         case 4: // auto map in backend
                             gpsUtil.setAutoNavi_on_Frontend(false);
@@ -82,6 +81,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                             break;
                         case 24:  // xun hang started
+                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
                             break;
                         case 8: // start navi
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);

@@ -156,6 +156,11 @@
             android:key="@string/pref_key__XunHang_enable"
             android:summary="使用高德提供在线智能巡航服务"
             android:title="启用智能巡航" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key__Audio_auto_mute"
+            android:summary="高德地图启动后插件巡航自动静音"
+            android:title="自动静音" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="@string/pref_key__Tracker_enable"
