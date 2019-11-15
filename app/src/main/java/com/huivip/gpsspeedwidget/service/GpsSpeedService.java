@@ -64,7 +64,7 @@ public class GpsSpeedService extends Service {
             }
         };
         CrashHandler.getInstance().init(getApplicationContext());
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
         super.onCreate();
     }
 

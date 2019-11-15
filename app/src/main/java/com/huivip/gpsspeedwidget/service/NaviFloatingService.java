@@ -18,10 +18,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
-import android.view.*;
-import android.widget.*;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
@@ -32,6 +39,9 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -141,7 +151,7 @@ public class NaviFloatingService extends Service{
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }

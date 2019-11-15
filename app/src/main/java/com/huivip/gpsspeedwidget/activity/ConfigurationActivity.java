@@ -405,6 +405,14 @@ public class ConfigurationActivity extends Activity {
                 }
             }
         });
+        CheckBox startPlayWarnCheckBox=findViewById(R.id.checkBox_playWarn);
+        startPlayWarnCheckBox.setChecked(PrefUtils.isPlayWaring(getApplicationContext()));
+        startPlayWarnCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setPlayWarning(getApplicationContext(),buttonView.isChecked());
+            }
+        });
         CheckBox autoWidgetFloatingCheckBox=findViewById(R.id.checkBox_Auto_widget_floating);
         autoWidgetFloatingCheckBox.setEnabled(PrefUtils.getSelectAMAPPLUGIN(getApplicationContext())!=-1);
         autoWidgetFloatingCheckBox.setChecked(PrefUtils.isEnableAutoWidgetFloatingWidow(getApplicationContext()));
@@ -481,6 +489,7 @@ public class ConfigurationActivity extends Activity {
         } /*else {
             allShowButton.setChecked(true);
         }*/
+
         onlyDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         noDesktopButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));
         onAutoNaviButton.setEnabled(PrefUtils.isEnableAccessibilityService(getApplicationContext()));

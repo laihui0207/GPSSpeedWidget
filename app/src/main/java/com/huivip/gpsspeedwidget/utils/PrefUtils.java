@@ -109,6 +109,7 @@ public abstract class PrefUtils {
     static final String ROADLINE_FLOATTING_FIXED_POSITION="com.huivip.roaldLine.fixed.position";
     static final String ROADLINE_FLOATTING="com.huivip.roaldLine.enabled";
     static final String ROADLINE_SPEED="com.huivip.roaldLine.speed.enabled";
+    static final String Enable_PLAY_WARNING="com.huivip.start.play.waring.enabled";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -252,6 +253,12 @@ public abstract class PrefUtils {
     }
     public static boolean isPlayWeather(Context context){
         return getSharedPreferences(context).getBoolean(APP_PLAY_WEATHER, true);
+    }
+    public static boolean isPlayWaring(Context context){
+        return getSharedPreferences(context).getBoolean(Enable_PLAY_WARNING, false);
+    }
+    public static void setPlayWarning(Context context,boolean value){
+        edit(context).putBoolean(Enable_PLAY_WARNING, value).apply();
     }
     public static void setAppFirstRun(Context context,boolean firstRun){
         edit(context).putBoolean(APP_FIRST_RUN, firstRun).apply();

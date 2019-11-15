@@ -4,12 +4,14 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
 import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
@@ -27,10 +29,28 @@ public class BootStartService extends Service {
         return null;
     }
 
+    MediaPlayer mPlayer;
+
     @Override
     public void onCreate() {
         alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
         super.onCreate();
+        if (PrefUtils.isPlayWaring(getApplicationContext())) {
+            mPlayer = MediaPlayer.create(this, R.raw.warn);
+            if (mPlayer != null) {
+                mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        if (mPlayer != null) {
+                            mPlayer.reset();
+                            mPlayer.release();
+                        }
+                        mPlayer = null;
+                    }
+                });
+                mPlayer.start();
+            }
+        }
     }
 
     @Override

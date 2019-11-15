@@ -9,6 +9,8 @@
             <ImageView android:id="@+id/imageview_speed"
                 android:layout_width="match_parent" android:layout_height="match_parent"
                 android:layout_centerHorizontal="true" android:layout_centerVertical="true"
+                android:background="@drawable/index_bg_nomove_day"
+
                 />
             <ImageView android:id="@+id/imageview_red_night" android:background="@drawable/index_red_bg_night"
                 android:layout_width="match_parent"

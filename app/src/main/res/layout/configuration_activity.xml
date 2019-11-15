@@ -46,6 +46,13 @@
                     android:layout_height="wrap_content"
                     android:text="报天气" />
 
+                <CheckBox
+                    android:id="@+id/checkBox_playWarn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="开机报安全提醒" />
+
             </LinearLayout>
 
             <LinearLayout
