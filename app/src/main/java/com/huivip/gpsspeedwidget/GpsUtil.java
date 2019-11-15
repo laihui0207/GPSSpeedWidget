@@ -13,9 +13,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.amap.api.services.traffic.TrafficSearch;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
-import com.huivip.gpsspeedwidget.beans.SearchTrafficEvent;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.service.AutoXunHangService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -689,9 +687,9 @@ public class GpsUtil {
 
     public void setCurrentRoadName(String currentRoadName) {
         this.currentRoadName = currentRoadName;
-        if(!TextUtils.isEmpty(currentRoadName) && !currentRoadName.equalsIgnoreCase(preRoadName) && !TextUtils.isEmpty(cityCode)){
+      /*  if(!TextUtils.isEmpty(currentRoadName) && !currentRoadName.equalsIgnoreCase(preRoadName) && !TextUtils.isEmpty(cityCode)){
             EventBus.getDefault().post(new SearchTrafficEvent(cityCode,currentRoadName, TrafficSearch.ROAD_LEVEL_NONAME_WAY));
-        }
+        }*/
         if(preRoadName==null && !TextUtils.isEmpty(currentRoadName)){
             preRoadName=currentRoadName;
         }

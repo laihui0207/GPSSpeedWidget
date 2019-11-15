@@ -334,13 +334,9 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                   /* SpeechFactory.getInstance(getApplicationContext())
-                            .getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()))
-                            .speak("已通过");*/
-
                     EventBus.getDefault().post(new PlayAudioEvent("已通过",false));
                 }
-            }, 500L);
+            }, 1000L);
 
         }
     }
