@@ -24,16 +24,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.amap.api.services.traffic.TrafficSearch;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.beans.SearchTrafficEvent;
 import com.huivip.gpsspeedwidget.lyrics.LyricService;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.ToastUtil;
 import com.huivip.gpsspeedwidget.view.LrcView;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -232,8 +228,6 @@ public class AudioTestActivity extends Activity {
         rebootBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(
-                        new SearchTrafficEvent("340000","习友西路",TrafficSearch.ROAD_LEVEL_NONAME_WAY));
                 /*int widgetId = appWidgetHost.allocateAppWidgetId();
                 Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
                 pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);

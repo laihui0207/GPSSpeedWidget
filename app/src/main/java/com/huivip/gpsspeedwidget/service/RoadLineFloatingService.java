@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,6 +19,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
@@ -32,6 +34,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.x;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,6 +58,10 @@ public class RoadLineFloatingService extends Service{
     GpsUtil gpsUtil;
     @BindView(R.id.imageView_floating_roadLine)
     ImageView roadLineView;
+    TimerTask timerTask;
+    Timer timer = new Timer();
+    @BindView(R.id.textView_roadLine_roadName)
+    TextView roadName;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -90,6 +99,20 @@ public class RoadLineFloatingService extends Service{
         initMonitorPosition();
         EventBus.getDefault().register(this);
         CrashHandler.getInstance().init(getApplicationContext());
+        timerTask=new TimerTask() {
+            @Override
+            public void run() {
+                x.task().autoPost(()->{
+                    if(TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
+                        roadName.setVisibility(View.GONE);
+                    } else {
+                        roadName.setVisibility(View.VISIBLE);
+                        roadName.setText(gpsUtil.getCurrentRoadName());
+                    }
+                });
+            }
+        };
+        timer.schedule(timerTask,0L,1000L);
         super.onCreate();
     }
     @Override
@@ -128,22 +151,6 @@ public class RoadLineFloatingService extends Service{
             }
         }
     }
-   /* @Subscribe
-    private void showRoadLine(RoadLineEvent event) {
-        if (roadLineBinder != null && roadLineView != null) {
-            View vv = roadLineBinder.getRoadLineView();
-            if (vv != null && !gpsUtil.isAutoNavi_on_Frontend()) {
-                roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
-                roadLineView.setVisibility(View.VISIBLE);
-                isShowing=true;
-            } else {
-                roadLineView.setVisibility(View.INVISIBLE);
-                isShowing=false;
-                onStop();
-                stopSelf();
-            }
-        }
-    }*/
     @Subscribe(threadMode= ThreadMode.MAIN)
     public void showRoadLine(RoadLineEvent event) {
         if (event.isShowed()) {

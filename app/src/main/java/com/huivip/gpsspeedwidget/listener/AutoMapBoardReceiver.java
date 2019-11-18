@@ -52,6 +52,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 gpsUtil.setAutoMapBackendProcessStarted(true);
                             }
                             launchSpeedFloatingWindows(context, true);
+                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
                             if (AppSettings.get().isCloseFlattingOnAmap() && PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
                                 Utils.startFloatingWindows(context.getApplicationContext(), false);
                             }
@@ -81,7 +82,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                             break;
                         case 24:  // xun hang started
-                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
                             break;
                         case 8: // start navi
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
@@ -306,7 +306,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     //FileUtil.saveLogToFile(iformationJsonString);
                     break;
             }
-
+            if (!gpsUtil.serviceStarted && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
+                Intent service = new Intent(context, BootStartService.class);
+                service.putExtra(BootStartService.START_BOOT, true);
+                context.startService(service);
+            }
         }
 
     }

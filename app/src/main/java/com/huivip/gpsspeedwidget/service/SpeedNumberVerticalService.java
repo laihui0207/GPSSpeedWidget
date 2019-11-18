@@ -228,6 +228,15 @@ public class SpeedNumberVerticalService extends Service {
             }
             this.numberRemoteViews.setTextViewText(R.id.number_limit_v, gpsUtil.getLimitSpeed()+ "");
         }
+        if(aimlessNaviStarted) {
+            if (tempMute) {
+                this.numberRemoteViews.setImageViewResource(R.id.v_edog_mute, R.drawable.ic_xunhang_mute);
+            } else {
+                this.numberRemoteViews.setImageViewResource(R.id.v_edog_mute, R.drawable.ic_xunhang_enable);
+            }
+        } else {
+            this.numberRemoteViews.setImageViewResource(R.id.v_edog_mute, R.drawable.ic_xunhang_disable);
+        }
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
     }
     @Subscribe
