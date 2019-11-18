@@ -93,7 +93,7 @@
     void *(**On*Event);
 }
 #----------------------------------------------------------------------------
--libraryjars libs/AMap3DMap_7.0.0_AMapNavi_7.0.0_AMapSearch_6.9.2_AMapTrack_1.1.0_AMapLocation_4.7.2_20191008.jar
+-libraryjars libs/AMap3DMap_7.1.0_AMapNavi_7.1.0_AMapSearch_7.1.0_AMapTrack_1.1.0_AMapLocation_4.7.2_20191030.jar
 -libraryjars libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar
 -libraryjars libs/kwmusic-autosdk-v2.0.2.jar
 #---------------------------------webview------------------------------------

@@ -84,6 +84,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isEnableXunHang(){
         return getBool(R.string.pref_key__XunHang_enable,false);
     }
+    public boolean isAutoMute(){
+        return getBool(R.string.pref_key__Audio_auto_mute,true);
+    }
     public boolean isEnableDaoHang(){
         return getBool(R.string.pref_key__DaoHang_enable,false);
     }

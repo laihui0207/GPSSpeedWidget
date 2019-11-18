@@ -52,6 +52,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 gpsUtil.setAutoMapBackendProcessStarted(true);
                             }
                             launchSpeedFloatingWindows(context, true);
+                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
                             if (AppSettings.get().isCloseFlattingOnAmap() && PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ALL)) {
                                 Utils.startFloatingWindows(context.getApplicationContext(), false);
                             }
@@ -60,7 +61,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             }*/
                             EventBus.getDefault().post(new AudioTempMuteEvent(true));
                             gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Started);
-                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true));
                             break;
                         case 4: // auto map in backend
                             gpsUtil.setAutoNavi_on_Frontend(false);
@@ -304,7 +304,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     //FileUtil.saveLogToFile(iformationJsonString);
                     break;
             }
-
+            if (!gpsUtil.serviceStarted && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
+                Intent service = new Intent(context, BootStartService.class);
+                service.putExtra(BootStartService.START_BOOT, true);
+                context.startService(service);
+            }
         }
 
     }

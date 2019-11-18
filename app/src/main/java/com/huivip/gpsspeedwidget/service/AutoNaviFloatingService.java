@@ -140,7 +140,7 @@ public class AutoNaviFloatingService extends Service {
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
-        if(PrefUtils.isShowSmallFloatingStyle(getApplicationContext())){
+        if(AppSettings.get().isSpeedSmallShow()){
             mFloatingView = inflater.inflate(R.layout.floating_autonavi_small, null);
         } else{
             mFloatingView = inflater.inflate(R.layout.floating_autonavi, null);
