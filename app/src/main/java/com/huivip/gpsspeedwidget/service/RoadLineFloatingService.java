@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,6 +22,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
@@ -62,6 +64,8 @@ public class RoadLineFloatingService extends Service{
     ImageView roadLineView;
     private ServiceConnection mServiceConnection;
     RoadLineService.RoadLineBinder roadLineBinder;
+    @BindView(R.id.textView_roadLine_roadName)
+    TextView roadName;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -108,6 +112,7 @@ public class RoadLineFloatingService extends Service{
                     public void run()
                     {
                         showRoadLine();
+
                     }
                 });
             }
@@ -177,8 +182,14 @@ public class RoadLineFloatingService extends Service{
                roadLineView.setVisibility(View.INVISIBLE);
            }
        }
+        if(TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
+            roadName.setVisibility(View.GONE);
+        } else {
+            roadName.setVisibility(View.VISIBLE);
+            roadName.setText(gpsUtil.getCurrentRoadName());
+        }
     }
-    @OnClick(value = {R.id.imageView_roadLine_floating_fixed})
+    @OnClick(value = {R.id.imageView_roadLine_floating_fixed,R.id.imageView_roadLine_floating_close})
     public void clickHandler(View view){
         switch (view.getId()){
             case R.id.imageView_roadLine_floating_fixed:
@@ -187,7 +198,11 @@ public class RoadLineFloatingService extends Service{
                 mFloatingView.setLayoutParams(params);
                 controlView.setVisibility(View.INVISIBLE);
                 mWindowManager.updateViewLayout(mFloatingView, params);
-                PrefUtils.setEnableRoadLineFloatingFixed(getApplicationContext(),true);
+                //PrefUtils.setEnableRoadLineFloatingFixed(getApplicationContext(),true);
+                break;
+            case R.id.imageView_roadLine_floating_close:
+                onStop();
+                stopSelf();
                 break;
         }
     }

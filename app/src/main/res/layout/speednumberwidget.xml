@@ -62,6 +62,7 @@
                 android:text="2000"
                 android:textColor="#fff"
                 android:textSize="60dp"
+                android:textStyle="bold"
                 app:autoSizeTextType="uniform" />
             <TextView
                     android:text="海拔" android:textColor="#ffffffff"
@@ -98,20 +99,24 @@
                     android:progress="0"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"/>
-            <TextView android:layout_width="match_parent"
-                      android:id="@+id/number_speed"
-                      android:layout_height="wrap_content"
-                      android:ellipsize="none"
-                      android:text="关"
-                      android:fontFamily="sans-serif-thin"
-                      android:gravity="center_vertical|center_horizontal"
-                      android:includeFontPadding="false"
-                      android:textColor="#fff"
-                      android:layout_marginLeft="25dp"
-                      android:layout_marginRight="25dp"
-                      android:textSize="80dp"
-                      android:layout_alignParentLeft="true"
-                      android:layout_centerVertical="true" android:layout_alignParentStart="true"/>
+
+            <TextView
+                android:id="@+id/number_speed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:ellipsize="none"
+                android:fontFamily="sans-serif-thin"
+                android:gravity="center_vertical|center_horizontal"
+                android:includeFontPadding="false"
+                android:text="关"
+                android:textColor="#fff"
+                android:textSize="80dp"
+                android:textStyle="bold" />
             <TextView
                     android:text="km/h" android:textColor="#ffffffff"
                     android:layout_width="match_parent"
