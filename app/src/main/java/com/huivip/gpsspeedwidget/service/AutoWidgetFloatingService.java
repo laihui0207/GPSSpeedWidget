@@ -231,34 +231,6 @@ public class AutoWidgetFloatingService extends Service {
             }
         });
     }
-
-    /* private void animateViewToSideSlot() {
-         Point screenSize = new Point();
-         mWindowManager.getDefaultDisplay().getSize(screenSize);
-
-         WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-         int endX;
-         if (params.x + mFloatingView.getWidth() / 2 >= screenSize.x / 2) {
-             endX = screenSize.x - mFloatingView.getWidth();
-         } else {
-             endX = 0;
-         }
-
-         PrefUtils.setDriveWayFloatingLocation(getApplicationContext(), (float) params.y / screenSize.y, endX == 0);
-         ValueAnimator valueAnimator = ValueAnimator.ofInt(params.x, endX)
-                 .setDuration(300);
-         valueAnimator.setInterpolator(new LinearOutSlowInInterpolator());
-         valueAnimator.addUpdateListener(animation -> {
-             WindowManager.LayoutParams params1 = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-             params1.x = (int) animation.getAnimatedValue();
-             try {
-                 mWindowManager.updateViewLayout(mFloatingView, params1);
-             } catch (IllegalArgumentException ignore) {
-             }
-         });
-
-         valueAnimator.start();
-     }*/
     private class FloatingOnTouchListener implements View.OnTouchListener {
 
         private float mInitialTouchX;

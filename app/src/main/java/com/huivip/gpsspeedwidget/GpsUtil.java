@@ -141,7 +141,6 @@ public class GpsUtil {
                     @Override
                     public void run() {
                         checkLocationData();
-                        //Log.d("huivip","GPS UTIL Check Location");
                     }
                 });
             }
@@ -160,13 +159,6 @@ public class GpsUtil {
                 this.locationTimer.cancel();
                 this.locationTimer.purge();
             }
-            //stopAimlessNavi();
-           /* Intent recordService = new Intent(context, RecordGpsHistoryService.class);
-            recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
-            context.startService(recordService);*/
-           /* if (ttsUtil != null) {
-                ttsUtil.stop();
-            }*/
             serviceStarted = false;
             Intent roadLineService=new Intent(context, RoadLineFloatingService.class);
             roadLineService.putExtra(RoadLineFloatingService.EXTRA_CLOSE,true);
