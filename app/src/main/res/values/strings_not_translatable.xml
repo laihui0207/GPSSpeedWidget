@@ -84,6 +84,7 @@
     <string name="pref_key__Audio_auto_mute" translatable="false">pref_key__Audio_auto_mute</string>
     <!-- Preference Keys -->
     <string name="pref_key__check_update" translatable="false">pref_key__check_update</string>
+    <string name="pref_key__auto_check_update" translatable="false">pref_key__auto_check_update</string>
     <string name="pref_key__system_setting" translatable="false">pref_key__system_setting</string>
     <!-- Time Weather widget Keys -->
     <string name="pref_key__widget_time_font_color" translatable="false">pref_key__widget_time_font_color</string>

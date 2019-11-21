@@ -15,35 +15,26 @@
  */
 package com.huivip.gpsspeedwidget.fragment;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
-import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.SettingsActivity;
+import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
-import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 import net.gsantner.opoc.format.markdown.SimpleMarkdownParser;
 import net.gsantner.opoc.preference.GsPreferenceFragmentCompat;
 import net.gsantner.opoc.util.ActivityUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -90,7 +81,8 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                     return true;
                 }
                 case  R.string.pref_key__check_update:{
-                    checkUpdate();
+                    EventBus.getDefault().post(new AutoCheckUpdateEvent().setHostActivity(getActivity()));
+                    //checkUpdate();
                     return true;
                 }
                 case R.string.pref_key__donate:{
@@ -179,7 +171,8 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
         }
         return null;
     }
-    private void checkUpdate(){
+   /* @Subscribe(threadMode = ThreadMode.MAIN)
+    public void checkUpdate(AutoCheckUpdateEvent event){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -199,12 +192,12 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                             if(updateVersionCode>currentVersionCode){
                                 message.arg1 = 1;
                                 AlterHandler.handleMessage(message);
-                            } else {
+                            } else if(!event.isAutoCheck()) {
                                 message.arg1 = 0;
                                 AlterHandler.handleMessage(message);
                             }
                         } else {
-                            if (currentVersion.equalsIgnoreCase(updateVersion)) {
+                            if (currentVersion.equalsIgnoreCase(updateVersion) && !event.isAutoCheck()) {
                                 message.arg1 = 0;
                                 AlterHandler.handleMessage(message);
                             } else {
@@ -225,7 +218,7 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                 }
                 Looper.loop();
             }
-        }).start();
+        });//.start();
     }
     @SuppressLint("HandlerLeak")
     final Handler AlterHandler=new Handler(){
@@ -283,7 +276,7 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                 mDialog.create().show();
             }
         }
-    };
+    };*/
     @Override
     protected boolean isAllowedToTint(Preference pref) {
         return !getString(R.string.pref_key__more_info__app).equals(pref.getKey());

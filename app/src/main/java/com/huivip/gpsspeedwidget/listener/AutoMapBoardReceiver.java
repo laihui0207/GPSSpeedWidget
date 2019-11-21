@@ -82,6 +82,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                             break;
                         case 24:  // xun hang started
+                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setXunHangStarted(true));
                             break;
                         case 8: // start navi
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
@@ -109,6 +110,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             EventBus.getDefault().post(new AudioTempMuteEvent(false));
                             gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
                         case 25:  // xunhang end
+                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setXunHangStarted(false));
                            // gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
                         case 9:  // navi end
                             //gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
@@ -181,71 +183,14 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     } else {
                         gpsUtil.setCurrentRoadName("");
                     }
-                   /* int limitSpeed = intent.getIntExtra("LIMITED_SPEED", 0);
-                    if (limitSpeed > 0) {
-                        gpsUtil.setLimitSpeed(limitSpeed);
-                    }
-                    int roadType = intent.getIntExtra("ROAD_TYPE", -1);
-                    if (roadType != -1) {
-                        gpsUtil.setRoadType(roadType);
-                    }*/
-
-                   /* String nextRoadName = intent.getStringExtra("NEXT_ROAD_NAME");
-                    if (!TextUtils.isEmpty(nextRoadName)) {
-                        gpsUtil.setNextRoadName(nextRoadName);
-                    } else {
-                        gpsUtil.setNextRoadName("");
-                    }
-                    int nextRoadDistance = intent.getIntExtra("SEG_REMAIN_DIS", -1);
-                    if (nextRoadDistance > 0) {
-                        gpsUtil.setNextRoadDistance(nextRoadDistance);
-                    } else {
-                        gpsUtil.setNextRoadDistance(0);
-                    }*/
-                   /* int naviIcon = intent.getIntExtra("ICON", -1);
-                    if (naviIcon >= 0) {
-                        gpsUtil.setNavi_turn_icon(naviIcon);
-                    } else {
-                        gpsUtil.setNavi_turn_icon(0);
-                    }*/
                     int leftDistance = intent.getIntExtra("ROUTE_REMAIN_DIS", 0);
                     if (leftDistance > 0) {
                         gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
-                        // gpsUtil.setTotalLeftDistance(leftDistance);
                         if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Ended && gpsUtil.getNaviFloatingStatus() == Constant.Navi_Floating_Disabled) {
                             startBackendNaviFloatingService(context);
                             gpsUtil.setNaviFloatingStatus((Constant.Navi_Status_Started));
                         }
                     }
-                   /* int leftTime = intent.getIntExtra("ROUTE_REMAIN_TIME", -1);
-                    if (leftTime > 0) {
-                        gpsUtil.setTotalLeftTime(leftTime);
-                    } else {
-                        gpsUtil.setTotalLeftTime(0);
-                    }
-                    int roadLimitSpeed = intent.getIntExtra("LIMITED_SPEED", -1);
-                    if (roadLimitSpeed > 0) {
-                        gpsUtil.setLimitSpeed(roadLimitSpeed);
-                        gpsUtil.setCameraType(9999);
-                    }*/
-                    //if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
-                       /* int cameraType = intent.getIntExtra("CAMERA_TYPE", -1);
-                        if (cameraType > -1) {
-                            gpsUtil.setCameraType(cameraType);
-                        } else {
-                            gpsUtil.setCameraType(-1);
-                        }
-                        int cameraDistance = intent.getIntExtra("CAMERA_DIST", 0);
-                        if (cameraDistance > 0) {
-                            gpsUtil.setCameraDistance(cameraDistance);
-                        } else {
-                            gpsUtil.setCameraDistance(0);
-                        }
-                        int cameraSpeed = intent.getIntExtra("CAMERA_SPEED", 0);
-                        if (cameraSpeed > 0) {
-                            gpsUtil.setCameraSpeed(cameraSpeed);
-                        }*/
-                    //}
                     break;
                 case 13011:
                     String info = intent.getStringExtra("EXTRA_TMC_SEGMENT");
