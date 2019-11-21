@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget.beans;
 public class AutoMapStatusUpdateEvent {
     private boolean aMapstarted=false;
     private boolean daoHangStarted=false;
+    private boolean xunHangStarted=false;
 
     public AutoMapStatusUpdateEvent() {
     }
@@ -26,6 +27,15 @@ public class AutoMapStatusUpdateEvent {
 
     public AutoMapStatusUpdateEvent setDaoHangStarted(boolean daoHangStarted) {
         this.daoHangStarted = daoHangStarted;
+        return this;
+    }
+
+    public boolean isXunHangStarted() {
+        return xunHangStarted;
+    }
+
+    public AutoMapStatusUpdateEvent setXunHangStarted(boolean xunHangStarted) {
+        this.xunHangStarted = xunHangStarted;
         return this;
     }
 }

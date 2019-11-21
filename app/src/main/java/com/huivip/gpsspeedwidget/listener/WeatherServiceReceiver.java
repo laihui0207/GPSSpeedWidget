@@ -13,7 +13,10 @@ public class WeatherServiceReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         DateChangeReceiver receiver=new DateChangeReceiver();
-        context.getApplicationContext().registerReceiver(receiver,new IntentFilter(Intent.ACTION_TIME_TICK));
+        IntentFilter timeFilter=new IntentFilter(Intent.ACTION_TIME_TICK);
+        timeFilter.addAction(Intent.ACTION_TIME_CHANGED);
+        timeFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        context.getApplicationContext().registerReceiver(receiver,timeFilter);
         EventBus.getDefault().post(new SearchWeatherEvent());
     }
 }

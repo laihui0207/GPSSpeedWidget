@@ -157,6 +157,7 @@ public class RoadLineFloatingService extends Service{
             View vv = event.getRoadLineView();
             if (vv != null) {
                 roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
+                roadLineView.setScaleType(ImageView.ScaleType.FIT_XY);
                 roadLineView.setVisibility(View.VISIBLE);
             }
         } else {

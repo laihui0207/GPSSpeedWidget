@@ -23,6 +23,8 @@ import com.nononsenseapps.filepicker.Utils;
 
 import net.gsantner.opoc.util.ContextUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.util.List;
 
@@ -55,6 +57,15 @@ public class SettingsActivity extends ThemeActivity implements SettingsBaseFragm
         // this pushes the user back out to the home activity
         if (_appSettings.getAppRestartRequired()) {
             startActivity(new Intent(this, HomeActivity.class));
+        }
+        //EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
         }
     }
 
@@ -108,4 +119,5 @@ public class SettingsActivity extends ThemeActivity implements SettingsBaseFragm
             }
         }
     }
+
 }

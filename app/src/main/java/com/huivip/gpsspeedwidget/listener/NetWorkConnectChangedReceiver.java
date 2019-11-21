@@ -4,10 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
 import com.huivip.gpsspeedwidget.service.AutoXunHangService;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.xutils.x;
 
 public class NetWorkConnectChangedReceiver extends BroadcastReceiver {
     @Override
@@ -22,6 +26,11 @@ public class NetWorkConnectChangedReceiver extends BroadcastReceiver {
                 context.startService(trackService);
             }
             new Thread(() -> Utils.registerSelf(context)).start();
+            if(AppSettings.get().isAutoCheckUpdate()) {
+                x.task().postDelayed(() -> {
+                    EventBus.getDefault().post(new AutoCheckUpdateEvent().setAutoCheck(true));
+                }, 1000 * 60);
+            }
             context.getApplicationContext().unregisterReceiver(this);
         }
     }

@@ -29,7 +29,7 @@ public class DateChangeReceiver extends BroadcastReceiver {
             if(AppSettings.get().isPlayTime()) {
                 EventBus.getDefault().post(new PlayAudioEvent(text, true));
             }
-            EventBus.getDefault().post(new SearchWeatherEvent());
+            EventBus.getDefault().post(new SearchWeatherEvent(true));
         }
     }
 }

@@ -22,6 +22,8 @@ import android.util.Log;
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.AutoMapBoardReceiver;
@@ -38,6 +40,7 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.xutils.x;
 
 
 public class BootStartService extends Service {
@@ -182,6 +185,11 @@ public class BootStartService extends Service {
                         Utils.startService(getApplicationContext(), trackService);
                     }
                     new Thread(() -> Utils.registerSelf(getApplicationContext())).start();
+                    if(AppSettings.get().isAutoCheckUpdate()) {
+                        x.task().postDelayed(() -> {
+                            EventBus.getDefault().post(new AutoCheckUpdateEvent().setAutoCheck(true));
+                        }, 1000 * 60);
+                    }
                 } else {
                     IntentFilter intentFilter = new IntentFilter();
                     intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -260,6 +268,19 @@ public class BootStartService extends Service {
             } else {
                 AppObject.getContext().startService(mService);
             }
+        }
+    }
+    @Subscribe
+    public void launchAutoWidgetFloattingWindow(AutoMapStatusUpdateEvent event) {
+        if (AppSettings.get().isShowAmapWidgetContent()) {
+            if (event.isXunHangStarted()) {
+                Intent autoWidgetFloatingService = new Intent(AppObject.getContext(), AutoWidgetFloatingService.class);
+                AppObject.getContext().startService(autoWidgetFloatingService);
+            }
+        } else {
+            Intent autoWidgetFloatingService = new Intent(AppObject.getContext(), AutoWidgetFloatingService.class);
+            autoWidgetFloatingService.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
+            AppObject.getContext().startService(autoWidgetFloatingService);
         }
     }
     private void registerBoardCast(Context context) {

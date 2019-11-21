@@ -71,7 +71,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
         }
-        startAimlessNavi();
+            startAimlessNavi();
         return Service.START_REDELIVER_INTENT;
     }
 
@@ -85,6 +85,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     }
 
     public void startAimlessNavi() {
+        if(aimlessStarted) return;
         aMapNavi = AMapNavi.getInstance(getApplicationContext());
         AMapNavi.setIgnoreWifiCheck(true);
         aMapNavi.addAMapNaviListener(this);

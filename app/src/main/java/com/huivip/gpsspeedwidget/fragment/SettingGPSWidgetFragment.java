@@ -20,6 +20,7 @@ import com.amap.api.maps.offlinemap.OfflineMapActivity;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
@@ -96,7 +97,9 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             case R.string.pref_key__accessibility_permission:
                 startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                 break;
-
+            case R.string.pref_key__Amap_widget_content:
+                EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setXunHangStarted(true));
+                break;
         }
         return false;
     }

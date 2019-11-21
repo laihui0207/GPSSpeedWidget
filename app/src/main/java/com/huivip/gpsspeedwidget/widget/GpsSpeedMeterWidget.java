@@ -72,9 +72,6 @@ public class GpsSpeedMeterWidget extends AppWidgetProvider {
         PrefUtils.setEnabledWatchWidget(context,false);
         PrefUtils.setWidgetActived(context,false);
         if(Utils.isServiceRunning(context, GpsSpeedMeterService.class.getName())){
-           /* Intent bootService=new Intent(context, GpsSpeedMeterService.class);
-            bootService.putExtra(GpsSpeedMeterService.EXTRA_CLOSE,true);
-            context.startService(bootService);*/
             LaunchEvent event=new LaunchEvent(GpsSpeedMeterService.class);
             event.setToClose(true);
             event.setDelaySeconds(3);

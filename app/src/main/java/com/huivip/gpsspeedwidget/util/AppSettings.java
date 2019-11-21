@@ -54,6 +54,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isEnableTimeWindow(){
         return getBool(R.string.pref_key__auto_start_time_window,false);
     }
+    public boolean isAutoCheckUpdate(){
+        return getBool(R.string.pref_key__auto_check_update,false);
+    }
     public String getTimeWindowDateFormat(){
         return getString(R.string.pref_key__auto_start_time_window_dateFormat,"HH:mm");
     }
