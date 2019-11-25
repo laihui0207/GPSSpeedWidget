@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" android:id="@+id/roadline_view">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="wrap_content" android:id="@+id/layout_roadLine"
         android:layout_height="wrap_content" android:orientation="vertical">
 
         <ImageView
@@ -12,7 +12,7 @@
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:visibility="gone"
             tools:ignore="ContentDescription" />
 
@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:background="@color/blue"
             android:gravity="center"
+            android:visibility="gone"
             android:layout_gravity="bottom"
             android:text="无名道路"
             android:textColor="@color/white"
