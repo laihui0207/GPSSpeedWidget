@@ -195,6 +195,11 @@
             android:title="独立车道悬浮窗口" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="@string/pref_key__road_line_roadName"
+            android:summary="在车道悬浮窗口显示当前道路名称"
+            android:title="车道窗口显示道路名" />
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="@string/pref_key__road_line_fixed"
             android:summary="车道悬浮窗位置固定，点击透穿"
             android:title="车道窗口位置固定" />

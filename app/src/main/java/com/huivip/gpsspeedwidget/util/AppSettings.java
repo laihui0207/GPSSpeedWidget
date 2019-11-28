@@ -120,6 +120,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public void setRoadLineFixed(boolean value){
         setBool(R.string.pref_key__road_line_fixed,value);
     }
+    public boolean isRoadLineShowRoadName(){
+        return getBool(R.string.pref_key__road_line_roadName,false);
+    }
     public boolean isEnableDesktopFunction(){
         return getBool(R.string.pref_key__desktop_default_home,false);
     }

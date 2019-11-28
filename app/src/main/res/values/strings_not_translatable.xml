@@ -67,6 +67,7 @@
     <string name="pref_key__Road_line_plugin_select" translatable="false">pref_key__Road_line_plugin_select</string>
     <string name="pref_key__speed_road_line_show" translatable="false">pref_key__speed_road_line_show</string>
     <string name="pref_key__road_line_fixed" translatable="false">pref_key__road_line_fixed</string>
+    <string name="pref_key__road_line_roadName" translatable="false">pref_key__road_line_roadName</string>
     <string name="pref_key__Amap_widget_content" translatable="false">pref_key__Amap_widget_content</string>
     <string name="pref_key__Amap_widget_show_only_cross" translatable="false">pref_key__Amap_widget_show_only_cross</string>
     <string name="pref_key__download_offline_map" translatable="false">pref_key__download_offline_map</string>

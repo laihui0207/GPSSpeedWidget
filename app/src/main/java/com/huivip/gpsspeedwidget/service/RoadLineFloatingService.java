@@ -19,6 +19,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +63,8 @@ public class RoadLineFloatingService extends Service{
     Timer timer = new Timer();
     @BindView(R.id.textView_roadLine_roadName)
     TextView roadName;
+    @BindView(R.id.layout_roadLine)
+    LinearLayout roadLineLayout;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -103,16 +106,18 @@ public class RoadLineFloatingService extends Service{
             @Override
             public void run() {
                 x.task().autoPost(()->{
-                    if(TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
-                        roadName.setVisibility(View.GONE);
-                    } else {
+                    if(AppSettings.get().isRoadLineShowRoadName() &&  !TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
                         roadName.setVisibility(View.VISIBLE);
                         roadName.setText(gpsUtil.getCurrentRoadName());
+                    } else {
+                        roadName.setVisibility(View.GONE);
                     }
                 });
             }
         };
-        timer.schedule(timerTask,0L,1000L);
+        if(AppSettings.get().isRoadLineShowRoadName()) {
+            timer.schedule(timerTask, 0L, 1000L);
+        }
         super.onCreate();
     }
     @Override
@@ -157,7 +162,6 @@ public class RoadLineFloatingService extends Service{
             View vv = event.getRoadLineView();
             if (vv != null) {
                 roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
-                roadLineView.setScaleType(ImageView.ScaleType.FIT_XY);
                 roadLineView.setVisibility(View.VISIBLE);
             }
         } else {
