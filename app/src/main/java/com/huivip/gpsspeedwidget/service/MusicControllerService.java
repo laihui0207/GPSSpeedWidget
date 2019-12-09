@@ -78,8 +78,8 @@ public class MusicControllerService extends Service {
                         startActivity(selectMusicPlayer);
                     } else {
 
-                        if (musicRemoteControllerService != null) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                            if (musicRemoteControllerService != null) {
                                 if(!appStarted && !Utils.isServiceRunning(getApplicationContext(),PrefUtils.getSelectMusicPlayer(getApplicationContext()))){
                                     startApp(PrefUtils.getSelectMusicPlayer(getApplicationContext()));
                                     if(key == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE){

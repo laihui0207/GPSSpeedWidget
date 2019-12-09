@@ -175,11 +175,11 @@ public class BootStartService extends Service {
                     Intent audioService = new Intent(getApplicationContext(), AudioService.class);
                     Utils.startService(getApplicationContext(), audioService);
                 }
+                if (AppSettings.get().isEnableXunHang() && !Utils.isServiceRunning(getApplicationContext(), AutoXunHangService.class.getName())) {
+                    Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
+                    Utils.startService(getApplicationContext(), xunHangService);
+                }
                 if (Utils.isNetworkConnected(getApplicationContext())) {
-                    if (AppSettings.get().isEnableXunHang() && !Utils.isServiceRunning(getApplicationContext(), AutoXunHangService.class.getName())) {
-                        Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
-                        Utils.startService(getApplicationContext(), xunHangService);
-                    }
                     if (AppSettings.get().isEnableTracker() && !Utils.isServiceRunning(getApplicationContext(), NaviTrackService.class.getName())) {
                         Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
                         Utils.startService(getApplicationContext(), trackService);

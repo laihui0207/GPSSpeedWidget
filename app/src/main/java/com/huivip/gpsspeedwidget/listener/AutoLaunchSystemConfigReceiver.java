@@ -39,6 +39,11 @@ public class AutoLaunchSystemConfigReceiver extends BroadcastReceiver {
                 context.getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
             }
         }
+        if(AppSettings.get().isEnableStopMobileNetwork()){
+            if(WifiUtils.checkMobileAvalible(context)){
+                WifiUtils.setMobileData(context,false);
+            }
+        }
      /*   if(!GpsUtil.getInstance(context).isAutoMapBackendProcessStarted()) {
             Intent launchBroadcast = new Intent();
             intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");

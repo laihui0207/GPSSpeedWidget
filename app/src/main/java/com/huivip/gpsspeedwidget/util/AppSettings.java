@@ -38,6 +38,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isEnableWifiHotpot(){
         return getBool(R.string.pref_key__auto_start_wifi_hotpot,false);
     }
+    public boolean isEnableStopMobileNetwork(){
+        return getBool(R.string.pref_key__auto_start_stop_mobile_data,false);
+    }
     public boolean isEnablePlayWarnAudio(){
         return getBool(R.string.pref_key__auto_start_play_warn,false);
     }
@@ -119,6 +122,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     }
     public void setRoadLineFixed(boolean value){
         setBool(R.string.pref_key__road_line_fixed,value);
+    }
+    public boolean isRoadLineShowRoadName(){
+        return getBool(R.string.pref_key__road_line_roadName,false);
     }
     public boolean isEnableDesktopFunction(){
         return getBool(R.string.pref_key__desktop_default_home,false);

@@ -14,23 +14,26 @@ public class PlayAudioEvent {
         return text;
     }
 
-    public void setText(String text) {
+    public PlayAudioEvent setText(String text) {
         this.text = text;
+        return this;
     }
 
     public boolean isForce() {
         return force;
     }
 
-    public void setForce(boolean force) {
+    public PlayAudioEvent setForce(boolean force) {
         this.force = force;
+        return this;
     }
 
     public int getDelaySeconds() {
         return delaySeconds;
     }
 
-    public void setDelaySeconds(int delaySeconds) {
+    public PlayAudioEvent setDelaySeconds(int delaySeconds) {
         this.delaySeconds = delaySeconds;
+        return this;
     }
 }

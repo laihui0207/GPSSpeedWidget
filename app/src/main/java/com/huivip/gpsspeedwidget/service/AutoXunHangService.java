@@ -31,7 +31,7 @@ import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
-import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -47,7 +47,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     AMapNavi aMapNavi;
     boolean aimlessStarted =false;
     GpsUtil gpsUtil;
-    boolean autoMapStarted=false;
+    boolean autoToMute =false;
 /*
     BroadcastReceiver broadcastReceiver;
 */
@@ -85,7 +85,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     }
 
     public void startAimlessNavi() {
-        if(aimlessStarted) return;
+        //if(aimlessStarted) return;
         aMapNavi = AMapNavi.getInstance(getApplicationContext());
         AMapNavi.setIgnoreWifiCheck(true);
         aMapNavi.addAMapNaviListener(this);
@@ -135,7 +135,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
 
     @Override
     public void onInitNaviSuccess() {
-        aimlessStarted = true;
+       // aimlessStarted = true;
         aimlessNaviTryCount=0;
         EventBus.getDefault().post(new AimlessStatusUpdateEvent(true));
         Toast.makeText(getApplicationContext(), "智能巡航服务开启成功", Toast.LENGTH_SHORT).show();
@@ -161,13 +161,17 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
 
     }
     @Subscribe
-    public void updateAutoMapStatus(AutoMapStatusUpdateEvent event){
-        this.autoMapStarted = event.isaMapstarted();
+    public void updateAutoToMute(AudioTempMuteEvent event){
+        this.autoToMute = event.isMute();
     }
     @Override
     public void onGetNavigationText(String s) {
         EventBus.getDefault().post(new AimlessStatusUpdateEvent(true));
-        if(!autoMapStarted || !AppSettings.get().isAutoMute()) {
+        if(AppSettings.get().isAutoMute()){
+            if(!autoToMute) {
+                EventBus.getDefault().post(new PlayAudioEvent(s, true));
+            }
+        } else {
             EventBus.getDefault().post(new PlayAudioEvent(s,true));
         }
 
@@ -332,13 +336,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             gpsUtil.setCameraSpeed(0);
             gpsUtil.setCameraDistance(0 );
             gpsUtil.setCameraType(-1);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    EventBus.getDefault().post(new PlayAudioEvent("已通过",false));
-                }
-            }, 1000L);
-
+            EventBus.getDefault().post(new PlayAudioEvent("已通过",true).setDelaySeconds(2));
         }
     }
     @Override

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.preference.Preference;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -154,6 +155,8 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         }
         if(key.equalsIgnoreCase(getString(R.string.pref_key__Road_line_floating_window_enable))){
             Intent roadLineService = new Intent(getContext(), RoadLineFloatingService.class);
+            Log.d("huivip","Road line floating:"+AppSettings.get().isEnableRoadLineFloatingWindow());
+            roadLineService.putExtra(RoadLineFloatingService.EXTRA_CLOSE,AppSettings.get().isEnableRoadLineFloatingWindow());
             getContext().startService(roadLineService);
         }
         if(key.equalsIgnoreCase(getString(R.string.pref_key__auto_start_wifi_hotpot))) {

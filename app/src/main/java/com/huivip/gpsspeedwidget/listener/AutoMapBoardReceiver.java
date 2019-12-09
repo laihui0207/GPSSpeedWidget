@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
@@ -82,7 +83,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                             break;
                         case 24:  // xun hang started
-                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setXunHangStarted(true));
                             break;
                         case 8: // start navi
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
@@ -111,7 +111,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
                         case 25:  // xunhang end
                             EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setXunHangStarted(false));
-                           // gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Ended);
                         case 9:  // navi end
                             //gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                             EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setDaoHangStarted(false));
@@ -139,18 +138,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Disabled);
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                             break;
-                     /*   case 13:  // TTS speaking start
-                       *//* if (PrefUtils.isEnableAutoMute(context)) {
-                            PrefUtils.setEnableTempAudioService(context,false);
-                        }*//*
-                            //Toast.makeText(context,"speaking",Toast.LENGTH_SHORT).show();
+                        case 13:  // TTS speaking start
+                            Toast.makeText(context,"speaking",Toast.LENGTH_SHORT).show();
                             break;
                         case 14:  // TTS Speak End
-                        *//*if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) {
-                            PrefUtils.setEnableTempAudioService(context, true);
-                        }*//*
-                            //Toast.makeText(context,"speaking End",Toast.LENGTH_SHORT).show();
-                            break;*/
+                            Toast.makeText(context,"speaking End",Toast.LENGTH_SHORT).show();
+                            break;
                         case 37:
                             gpsUtil.setNight(false);
                             break;

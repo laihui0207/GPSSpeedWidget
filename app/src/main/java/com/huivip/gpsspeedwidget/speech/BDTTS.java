@@ -81,7 +81,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
             customPlayer =true;
             synthesize(text, force);
         } else {
-            if (AppSettings.get().isEnableAudio() && mSpeechSynthesizer != null && (force || PrefUtils.isEnableTempAudioService(context))) {
+            if (AppSettings.get().isEnableAudio() && mSpeechSynthesizer != null ) {
                 customPlayer = false;
                 int volume= AppSettings.get().getAudioVolume();
                 float realVolume=volume/100f * 9;
@@ -110,7 +110,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     @Override
     public void synthesize(String text, boolean force) {
-        if (AppSettings.get().isEnableAudio() && mSpeechSynthesizer != null && (force || PrefUtils.isEnableTempAudioService(context))) {
+        if (AppSettings.get().isEnableAudio() && mSpeechSynthesizer != null) {
             if (!inited) {
                 //release();
                 initTTS();

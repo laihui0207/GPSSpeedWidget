@@ -15,6 +15,11 @@
             android:key="@string/pref_key__auto_start_wifi_hotpot"
             android:summary="开机自动启动wifi热点"
             android:title=" 开机启动热点" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__auto_start_stop_mobile_data"
+            android:summary="开机自动关闭移动数据连接"
+            android:title="关闭移动网络" />
         <Preference
             android:defaultValue="0"
             android:key="@string/pref_key__wifi_hotpot_setting"
@@ -193,6 +198,11 @@
             android:key="@string/pref_key__Road_line_floating_window_enable"
             android:summary="在独立悬浮窗口显示车道信息"
             android:title="独立车道悬浮窗口" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__road_line_roadName"
+            android:summary="在车道悬浮窗口显示当前道路名称"
+            android:title="车道窗口显示道路名" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key__road_line_fixed"
