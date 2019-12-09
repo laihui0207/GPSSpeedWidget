@@ -15,6 +15,11 @@
             android:key="@string/pref_key__auto_start_wifi_hotpot"
             android:summary="开机自动启动wifi热点"
             android:title=" 开机启动热点" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__auto_start_stop_mobile_data"
+            android:summary="开机自动关闭移动数据连接"
+            android:title="关闭移动网络" />
         <Preference
             android:defaultValue="0"
             android:key="@string/pref_key__wifi_hotpot_setting"

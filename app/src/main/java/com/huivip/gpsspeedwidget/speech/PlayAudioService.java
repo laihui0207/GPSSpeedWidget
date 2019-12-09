@@ -75,16 +75,17 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
         int streamType = -1;
         if (AppSettings.get().isAudioMix()) {
             focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK;
-        } else {
+        }
+         else {
             focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
         }
-        streamType = AudioManager.STREAM_MUSIC;
+        streamType = AudioManager.STREAM_NOTIFICATION;
         int result = -1;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mFocusRequest = new AudioFocusRequest.Builder(focusType)
                     .setAudioAttributes(new AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_MEDIA)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                             .build())
                      .setAcceptsDelayedFocusGain(true)
                     .setWillPauseWhenDucked(true)
@@ -167,7 +168,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             audioTrack.setStereoVolume(realVolume,realVolume);
         }
         try {
-            if (beforeSpeak()) {
+           // if (beforeSpeak()) {
                 audioTrack.play();
                 FileInputStream fis = null;
                 fis = new FileInputStream(fileName);
@@ -193,12 +194,12 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                 audioTrack.release();
                 audioTrack = null;
                 fis.close();
-                afterSpeak();
+               // afterSpeak();
                 if (!PrefUtils.isEnableCacheAudioFile(getApplicationContext())) {
                     File file = new File(fileName);
                     file.delete();
                 }
-            }
+         //   }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

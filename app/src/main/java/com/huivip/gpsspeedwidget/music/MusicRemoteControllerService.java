@@ -11,13 +11,11 @@ import android.media.MediaMetadataRetriever;
 import android.media.RemoteControlClient;
 import android.media.RemoteController;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -47,7 +45,6 @@ import cn.kuwo.autosdk.api.PlayerStatus;
 import cn.kuwo.base.bean.Music;
 
 @SuppressLint({"NewApi", "OverrideAbstract"})
-@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class MusicRemoteControllerService extends NotificationListenerService implements RemoteController.OnClientUpdateListener {
     private String TAG = "huivip";
     String songName;

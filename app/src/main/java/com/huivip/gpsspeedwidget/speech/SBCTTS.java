@@ -155,7 +155,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             customPlayer = true;
             synthesize(text, force);
         } else {
-            if (AppSettings.get().isEnableAudio() && (force || PrefUtils.isEnableTempAudioService(context))) {
+            if (AppSettings.get().isEnableAudio()) {
                 customPlayer = false;
                 if (mEngine != null) {
                     //int volume =AppSettings.get().getAudioVolume();
@@ -186,7 +186,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     @Override
     public void synthesize(String text, boolean force) {
-        if (AppSettings.get().isEnableAudio() && (force || PrefUtils.isEnableTempAudioService(context))) {
+        if (AppSettings.get().isEnableAudio()) {
             customPlayer = true;
             if (wordList != null)
                 wordList.addLast(text);

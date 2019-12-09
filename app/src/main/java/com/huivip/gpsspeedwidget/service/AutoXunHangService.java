@@ -31,7 +31,7 @@ import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
-import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -47,7 +47,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     AMapNavi aMapNavi;
     boolean aimlessStarted =false;
     GpsUtil gpsUtil;
-    boolean autoMapStarted=false;
+    boolean autoToMute =false;
 /*
     BroadcastReceiver broadcastReceiver;
 */
@@ -161,14 +161,14 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
 
     }
     @Subscribe
-    public void updateAutoMapStatus(AutoMapStatusUpdateEvent event){
-        this.autoMapStarted = event.isaMapstarted();
+    public void updateAutoToMute(AudioTempMuteEvent event){
+        this.autoToMute = event.isMute();
     }
     @Override
     public void onGetNavigationText(String s) {
         EventBus.getDefault().post(new AimlessStatusUpdateEvent(true));
         if(AppSettings.get().isAutoMute()){
-            if(!autoMapStarted) {
+            if(!autoToMute) {
                 EventBus.getDefault().post(new PlayAudioEvent(s, true));
             }
         } else {
