@@ -228,6 +228,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isAudioMusicDuck(){
         return getBool(R.string.pref_key__Audio_music_duck,false);
     }
+    public boolean isAudioRequestFocus(){
+        return getBool(R.string.pref_key__Audio_music_focus_request,true);
+    }
     public boolean isPlayTime(){
         return getBool(R.string.pref_key__Audio_play_time,true);
     }

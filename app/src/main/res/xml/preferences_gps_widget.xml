@@ -265,6 +265,11 @@
             android:summary="语音压低音乐音量，需要车机支持"
             android:title="压低音乐" />
         <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key__Audio_music_focus_request"
+            android:summary="语音之前请求焦点"
+            android:title="音频焦点" />
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key__Audio_play_time"
             android:summary="整点，半点报时间"
