@@ -336,7 +336,9 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
             gpsUtil.setCameraSpeed(0);
             gpsUtil.setCameraDistance(0 );
             gpsUtil.setCameraType(-1);
-            EventBus.getDefault().post(new PlayAudioEvent("已通过",true).setDelaySeconds(2));
+            PlayAudioEvent event=new PlayAudioEvent("已通过",true);
+            event.setDelaySeconds(2);
+            EventBus.getDefault().post(event);
         }
     }
     @Override

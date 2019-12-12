@@ -158,9 +158,6 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
             if (AppSettings.get().isEnableAudio()) {
                 customPlayer = false;
                 if (mEngine != null) {
-                    //int volume =AppSettings.get().getAudioVolume();
-                    //mEngine.setSpeechVolume((int) (volume * 1.0f / 100 * 500));
-                    //mEngine.speak(text, text.hashCode() + "");
                     mEngine.speak(aILocalTTSIntent,text,text.hashCode() + "");
                 } else {
                     initTTS();
