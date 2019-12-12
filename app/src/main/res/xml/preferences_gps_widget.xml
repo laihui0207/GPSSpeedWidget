@@ -269,6 +269,13 @@
             android:key="@string/pref_key__Audio_music_focus_request"
             android:summary="语音之前请求焦点"
             android:title="音频焦点" />
+        <ListPreference
+            android:defaultValue="3"
+            android:entries="@array/items_widget_audio_type"
+            android:entryValues="@array/items_widget_audio_type"
+            android:key="@string/pref_key__Audio_stream_type"
+            android:summary="选择音频通道"
+            android:title="音频通道" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key__Audio_play_time"
@@ -284,6 +291,11 @@
             android:key="@string/pref_key__Audio_play_Address"
             android:summary="车辆停车时播报当前地址"
             android:title="停车报地址" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__Audio_play_dest_Address"
+            android:summary="导航开始时或者重新规划后播报目的地地址"
+            android:title="播报导航目的地" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="歌词">

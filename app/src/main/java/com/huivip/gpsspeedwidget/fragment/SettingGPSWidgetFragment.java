@@ -74,7 +74,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                 }
                 return true;
             case R.string.pref_key__Audio_test:
-                EventBus.getDefault().post(new PlayAudioEvent("已通过", true));
+                EventBus.getDefault().post(new PlayAudioEvent("欢迎使用本插件，有钱的捧个钱场，没钱的也尽量捧个钱场！", true));
                 break;
             case R.string.pref_key__Road_line_plugin_select:
                 AppWidgetHost appWidgetHost = new AppWidgetHost(getContext(), Constant.APP_WIDGET_HOST_ID);
@@ -227,6 +227,8 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             pre_audio_engine.setSummary("思必驰语音");
             baiDuSpeaker.setVisible(false);
         }
+        Preference audioStream=findPreference(getString(R.string.pref_key__Audio_stream_type));
+        audioStream.setSummary("音频通道："+AppSettings.get().getAudioStreamType());
         EventBus.getDefault().post(new TTSEngineChangeEvent());
         Preference pre_speedFlatting_Stylee=findPreference(getString(R.string.pref_key__speed_style));
         Preference default_speed_show=findPreference(getString(R.string.pref_key__speed_default_speed_show));

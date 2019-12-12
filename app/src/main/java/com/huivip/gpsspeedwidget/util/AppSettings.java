@@ -240,6 +240,12 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isPlayAddressOnStop(){
         return getBool(R.string.pref_key__Audio_play_Address,false);
     }
+    public boolean isPlayDestAddress(){
+        return getBool(R.string.pref_key__Audio_play_dest_Address,false);
+    }
+    public int getAudioStreamType(){
+        return Integer.parseInt(getString(R.string.pref_key__Audio_stream_type,"3"));
+    }
     public boolean isReturnHomeAfterLaunchOtherApp(){
         return getBool(R.string.pref_key__auto_start_launch_other_app_return_desktop,false);
     }

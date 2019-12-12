@@ -81,9 +81,11 @@
     <string name="pref_key__Audio_mixed" translatable="false">pref_key__Audio_mixed</string>
     <string name="pref_key__Audio_music_duck" translatable="false">pref_key__Audio_music_duck</string>
     <string name="pref_key__Audio_music_focus_request" translatable="false">pref_key__Audio_music_focus_request</string>
+    <string name="pref_key__Audio_stream_type" translatable="false">pref_key__Audio_stream_type</string>
     <string name="pref_key__Audio_play_time" translatable="false">pref_key__Audio_play_time</string>
     <string name="pref_key__Audio_play_weather" translatable="false">pref_key__Audio_play_weather</string>
     <string name="pref_key__Audio_play_Address" translatable="false">pref_key__Audio_play_Address</string>
+    <string name="pref_key__Audio_play_dest_Address" translatable="false">pref_key__Audio_play_dest_Address</string>
     <string name="pref_key__Audio_auto_mute" translatable="false">pref_key__Audio_auto_mute</string>
     <!-- Preference Keys -->
     <string name="pref_key__check_update" translatable="false">pref_key__check_update</string>
