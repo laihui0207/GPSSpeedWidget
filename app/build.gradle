@@ -7,7 +7,7 @@ android {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 267
+        versionCode 268
         versionName "3.0.5"
         flavorDimensions "versionCode"
         ndk {

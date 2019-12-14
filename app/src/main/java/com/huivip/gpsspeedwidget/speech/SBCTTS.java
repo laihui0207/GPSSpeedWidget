@@ -151,7 +151,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         }
         int volume = AppSettings.get().getAudioVolume();
         aILocalTTSIntent.setVolume((int) (volume * 1.0f / 100 * 500));    // 设置合成音频的音量，范围为1～500
-        if (AppSettings.get().isAudioMusicDuck()) {
+        if (AppSettings.get().getAudioPlayType()==2) {
             customPlayer = true;
             synthesize(text, force);
         } else {

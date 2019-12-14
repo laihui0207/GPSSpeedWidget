@@ -25,7 +25,7 @@
         android:key="@string/pref_key__check_update"
         android:title="检查更新" />
     <CheckBoxPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="@string/pref_key__auto_check_update"
         android:summary="开机自动检查更新"
         android:title="自动检查更新" />

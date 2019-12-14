@@ -259,6 +259,13 @@
             android:key="@string/pref_key__Audio_mixed"
             android:summary="语音与音乐混合发声"
             android:title="语音与音乐混合" />
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/items_widget_audio_play_type"
+            android:entryValues="@array/values_widget_audio_play_type"
+            android:key="@string/pref_key__Audio_play_type"
+            android:summary="选择播放方式"
+            android:title="播放方式" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key__Audio_music_duck"

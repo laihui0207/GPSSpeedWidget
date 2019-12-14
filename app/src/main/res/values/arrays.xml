@@ -181,4 +181,12 @@
         <item>19</item>
         <item>20</item>
     </string-array>
+    <string-array name="values_widget_audio_play_type" translatable="false">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="items_widget_audio_play_type" translatable="false">
+        <item>语音引擎管理播放</item>
+        <item>插件管理播放</item>
+    </string-array>
 </resources>

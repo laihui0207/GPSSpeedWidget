@@ -84,6 +84,7 @@ public class WeatherService extends Service implements AMapLocationListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        gpsUtil.startLocationService();
         startLocation();
         WeatherEvent weatherEvent=new WeatherEvent(cityName,altitude,
                 weather,temperature);

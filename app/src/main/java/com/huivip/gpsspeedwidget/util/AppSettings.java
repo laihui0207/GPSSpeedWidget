@@ -58,7 +58,7 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
         return getBool(R.string.pref_key__auto_start_time_window,false);
     }
     public boolean isAutoCheckUpdate(){
-        return getBool(R.string.pref_key__auto_check_update,false);
+        return getBool(R.string.pref_key__auto_check_update,true);
     }
     public String getTimeWindowDateFormat(){
         return getString(R.string.pref_key__auto_start_time_window_dateFormat,"HH:mm");
@@ -245,6 +245,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     }
     public int getAudioStreamType(){
         return Integer.parseInt(getString(R.string.pref_key__Audio_stream_type,"3"));
+    }
+    public int getAudioPlayType(){
+        return Integer.parseInt(getString(R.string.pref_key__Audio_play_type,"1"));
     }
     public boolean isReturnHomeAfterLaunchOtherApp(){
         return getBool(R.string.pref_key__auto_start_launch_other_app_return_desktop,false);

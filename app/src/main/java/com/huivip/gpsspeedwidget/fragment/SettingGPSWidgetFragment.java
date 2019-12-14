@@ -229,6 +229,8 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         }
         Preference audioStream=findPreference(getString(R.string.pref_key__Audio_stream_type));
         audioStream.setSummary("音频通道："+AppSettings.get().getAudioStreamType());
+        Preference audioPlayType=findPreference(getString(R.string.pref_key__Audio_play_type));
+        audioPlayType.setSummary(AppSettings.get().getAudioPlayType()==1 ? "语音引擎管理播放" : "插件管理播放");
         EventBus.getDefault().post(new TTSEngineChangeEvent());
         Preference pre_speedFlatting_Stylee=findPreference(getString(R.string.pref_key__speed_style));
         Preference default_speed_show=findPreference(getString(R.string.pref_key__speed_default_speed_show));
