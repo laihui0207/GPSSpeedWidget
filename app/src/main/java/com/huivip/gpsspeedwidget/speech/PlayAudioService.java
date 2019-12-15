@@ -31,18 +31,21 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
     private AudioTrack audioTrack;
     PlayBinder playBinder;
 
-    public  class PlayBinder extends Binder {
+    public class PlayBinder extends Binder {
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        public void play(String fileName, MediaPlayer.OnCompletionListener listener){
-            playAudio(fileName,listener);
+        public void play(String fileName, MediaPlayer.OnCompletionListener listener) {
+            playAudio(fileName, listener);
         }
-        public void playByAudioTrack(String fileName,MediaPlayer.OnCompletionListener listener){
-            playAudioByAudioTrack(fileName,listener);
+
+        public void playByAudioTrack(String fileName, MediaPlayer.OnCompletionListener listener) {
+            playAudioByAudioTrack(fileName, listener);
         }
-        public PlayAudioService getService(){
+
+        public PlayAudioService getService() {
             return PlayAudioService.this;
         }
-        boolean isPlaying(){
+
+        boolean isPlaying() {
             return mediaPlayer.isPlaying();
         }
 
@@ -57,7 +60,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
     @Override
     public void onCreate() {
         super.onCreate();
-        mediaPlayer=new MediaPlayer();
+        mediaPlayer = new MediaPlayer();
 
         playBinder = new PlayBinder();
     }
@@ -68,18 +71,21 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             mAudioManager = (AudioManager) getSystemService(
                     Context.AUDIO_SERVICE);
         }
-        if(!AppSettings.get().isAudioRequestFocus()){
+        if (!AppSettings.get().isAudioRequestFocus()) {
             return true;
         }
         int focusType = -1;
         int streamType = -1;
         if (AppSettings.get().isAudioMix()) {
-            focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK;
+            streamType = AudioManager.STREAM_MUSIC;
+        } else {
+            streamType = AudioManager.STREAM_VOICE_CALL;
         }
-         else {
+        if (AppSettings.get().isAudioMusicDuck()) {
+            focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK;
+        } else {
             focusType = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
         }
-        streamType = AudioManager.STREAM_VOICE_CALL;
         int result = -1;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mFocusRequest = new AudioFocusRequest.Builder(focusType)
@@ -87,7 +93,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
                             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                             .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                             .build())
-                     .setAcceptsDelayedFocusGain(true)
+                    .setAcceptsDelayedFocusGain(true)
                     .setWillPauseWhenDucked(true)
                     .setOnAudioFocusChangeListener(this)
                     .build();
@@ -101,17 +107,17 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
         return false;
     }
 
-    protected boolean beforeSpeak(){
+    protected boolean beforeSpeak() {
         return requestAudioFocus();
     }
 
     protected void afterSpeak() {
-        if(!AppSettings.get().isAudioRequestFocus()){
-            return ;
+        if (!AppSettings.get().isAudioRequestFocus()) {
+            return;
         }
-        if (/*vIsActive &&*/ mAudioManager!=null) {
+        if (/*vIsActive &&*/ mAudioManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if(mFocusRequest!=null) {
+                if (mFocusRequest != null) {
                     mAudioManager.abandonAudioFocusRequest(mFocusRequest);
                 }
             } else {
@@ -119,33 +125,34 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             }
         }
     }
+
     @Override
     public void onAudioFocusChange(int focusChange) {
-        switch (focusChange){
+        switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
             case AudioManager.AUDIOFOCUS_GAIN:
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
-                if(!mediaPlayer.isPlaying()){
+                if (!mediaPlayer.isPlaying()) {
                     mediaPlayer.start();
                 }
-                int volume= AppSettings.get().getAudioVolume();
-                mediaPlayer.setVolume(volume/100f,volume/100f);
+                int volume = AppSettings.get().getAudioVolume();
+                mediaPlayer.setVolume(volume / 100f, volume / 100f);
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
-                if(mediaPlayer.isPlaying()){
+                if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 }
                 mediaPlayer.release();
-                mediaPlayer=null;
+                mediaPlayer = null;
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                if(mediaPlayer.isPlaying()){
+                if (mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
                 }
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.setVolume(0.1f,0.1f);
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.setVolume(0.1f, 0.1f);
                 }
                 break;
 
@@ -154,7 +161,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
 
     public void playAudioByAudioTrack(String fileName, MediaPlayer.OnCompletionListener listener) {
         int bufferSize = AudioTrack.getMinBufferSize(16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        int type=AudioManager.USE_DEFAULT_STREAM_TYPE;
+        int type = AppSettings.get().getAudioStreamType();
        /* if(!PrefUtils.isEnableAudioMixService(getApplicationContext())) {
             type=AudioManager.STREAM_VOICE_CALL;
         }*/
@@ -164,11 +171,11 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
         //边读边播
         byte[] buffer = new byte[bufferSize];
         int volume = AppSettings.get().getAudioVolume();
-        float realVolume=volume / 100f;
+        float realVolume = volume / 100f;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             audioTrack.setVolume(realVolume);
         } else {
-            audioTrack.setStereoVolume(realVolume,realVolume);
+            audioTrack.setStereoVolume(realVolume, realVolume);
         }
         try {
             if (beforeSpeak()) {
@@ -211,13 +218,14 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
 
         }
     }
-    public void playAudio(String fileName, MediaPlayer.OnCompletionListener listener){
+
+    public void playAudio(String fileName, MediaPlayer.OnCompletionListener listener) {
         try {
             mediaPlayer.reset();
             FileInputStream fis = new FileInputStream(fileName);
             mediaPlayer.setDataSource(fis.getFD());
-            int volume=AppSettings.get().getAudioVolume();
-            mediaPlayer.setVolume(volume/100f,volume/100f);
+            int volume = AppSettings.get().getAudioVolume();
+            mediaPlayer.setVolume(volume / 100f, volume / 100f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 AudioAttributes.Builder attrBuilder = new AudioAttributes.Builder();
                 if (AppSettings.get().isAudioMix()) {
@@ -249,7 +257,7 @@ public class PlayAudioService extends Service implements AudioManager.OnAudioFoc
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    if(beforeSpeak()){
+                    if (beforeSpeak()) {
                         mediaPlayer.start();
                     }
                 }

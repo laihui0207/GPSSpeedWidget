@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
@@ -139,10 +138,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                             break;
                         case 13:  // TTS speaking start
-                            Toast.makeText(context,"speaking",Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context,"speaking",Toast.LENGTH_SHORT).show();
+                            EventBus.getDefault().post(new AudioTempMuteEvent(true));
                             break;
                         case 14:  // TTS Speak End
-                            Toast.makeText(context,"speaking End",Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(context,"speaking End",Toast.LENGTH_SHORT).show();
                             break;
                         case 37:
                             gpsUtil.setNight(false);
@@ -231,7 +231,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         JSONObject roadInfo=new JSONObject(iformationJsonString);
                         String toPoi=roadInfo.getString("ToPoiName");
                         String toAddress=roadInfo.getString("ToPoiAddr");
-                        if (!TextUtils.isEmpty(toPoi) && !TextUtils.isEmpty(toAddress)) {
+                        if (AppSettings.get().isPlayDestAddress() && !TextUtils.isEmpty(toPoi) && !TextUtils.isEmpty(toAddress)) {
                             PlayAudioEvent event = new PlayAudioEvent("导航中，目的地：" + toPoi + ",地址：" + toAddress, true);
                             event.setDelaySeconds(15);
                             EventBus.getDefault().post(event);

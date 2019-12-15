@@ -74,7 +74,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                 }
                 return true;
             case R.string.pref_key__Audio_test:
-                EventBus.getDefault().post(new PlayAudioEvent("测试语音，欢迎使用本插件", true));
+                EventBus.getDefault().post(new PlayAudioEvent("欢迎使用本插件，有钱的捧个钱场，没钱的也尽量捧个钱场！", true));
                 break;
             case R.string.pref_key__Road_line_plugin_select:
                 AppWidgetHost appWidgetHost = new AppWidgetHost(getContext(), Constant.APP_WIDGET_HOST_ID);

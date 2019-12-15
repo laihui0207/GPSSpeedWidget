@@ -162,7 +162,7 @@ public class GpsUtil {
         };
         Toast.makeText(context, "GPS服务开启", Toast.LENGTH_SHORT).show();
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
-       if(!Utils.isServiceRunning(context,AutoXunHangService.class.getName())) {
+       if(AppSettings.get().isEnableXunHang() && !Utils.isServiceRunning(context,AutoXunHangService.class.getName())) {
            Intent xunhangService = new Intent(context, AutoXunHangService.class);
            context.startService(xunhangService);
        }

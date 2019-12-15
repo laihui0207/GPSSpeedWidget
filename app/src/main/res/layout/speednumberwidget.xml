@@ -3,7 +3,7 @@
     android:id="@+id/widget_number_base"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/speed_border"
+    android:background="@drawable/speed_border_h"
     android:gravity="center"
     android:orientation="horizontal">
 

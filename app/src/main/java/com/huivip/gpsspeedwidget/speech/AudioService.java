@@ -16,6 +16,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 public class AudioService extends Service {
     TTS tts;
+    private String preContent;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -43,6 +44,10 @@ public class AudioService extends Service {
             tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(AppSettings.get().getAudioEngine());
         }
         if(AppSettings.get().isEnableAudio()) {
+            if(preContent!=null && preContent.equalsIgnoreCase(event.getText())){
+                return;
+            }
+            preContent=event.getText();
             if(event.getDelaySeconds()==0) {
                 tts.speak(event.getText(), event.isForce());
             } else if(event.getDelaySeconds()>0){
@@ -50,6 +55,9 @@ public class AudioService extends Service {
                     tts.speak(event.getText(), event.isForce());
                 },event.getDelaySeconds()*1000);
             }
+            new Handler().postDelayed(()->{
+               preContent=null;
+            },2*1000);
         }
     }
     @Subscribe

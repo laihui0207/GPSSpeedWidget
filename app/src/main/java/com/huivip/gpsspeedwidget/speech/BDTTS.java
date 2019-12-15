@@ -77,7 +77,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
             if(result!=0){
             }
         }*/
-        if(AppSettings.get().isAudioMusicDuck()) {
+        if(AppSettings.get().getAudioPlayType()==2) {
             customPlayer =true;
             synthesize(text, force);
         } else {

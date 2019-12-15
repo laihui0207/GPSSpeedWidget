@@ -84,6 +84,7 @@ public class WeatherService extends Service implements AMapLocationListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        gpsUtil.startLocationService();
         startLocation();
         WeatherEvent weatherEvent=new WeatherEvent(cityName,altitude,
                 weather,temperature);
@@ -117,6 +118,7 @@ public class WeatherService extends Service implements AMapLocationListener {
     public void stopLocation(){
         mLocationClient.stopLocation();
         isLocationStarted=false;
+        gpsUtil.stopLocationService(false);
        /* if (android.os.Build.VERSION.SDK_INT >= 26 || PrefUtils.isShowNotification(this)) {
             mLocationClient.disableBackgroundLocation(true);
         }*/
