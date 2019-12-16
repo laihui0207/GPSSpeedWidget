@@ -106,7 +106,7 @@ public class WeatherService extends Service implements AMapLocationListener {
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
         mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
         //mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
-        mLocationOption.setInterval(5000);
+        mLocationOption.setInterval(2000);
         mLocationOption.setLocationCacheEnable(false);
         mLocationClient.setLocationOption(mLocationOption);
         mLocationClient.startLocation();
@@ -118,7 +118,6 @@ public class WeatherService extends Service implements AMapLocationListener {
     public void stopLocation(){
         mLocationClient.stopLocation();
         isLocationStarted=false;
-        gpsUtil.stopLocationService(false);
        /* if (android.os.Build.VERSION.SDK_INT >= 26 || PrefUtils.isShowNotification(this)) {
             mLocationClient.disableBackgroundLocation(true);
         }*/
@@ -211,7 +210,6 @@ public class WeatherService extends Service implements AMapLocationListener {
 
                     //Toast.makeText(getApplicationContext(),cityName+ adCode,Toast.LENGTH_SHORT).show();
                 }
-                float speed=aMapLocation.getSpeed();
                 gpsUtil.setCityCode(cityCode);
                 localNumberFormat.setMaximumFractionDigits(1);
                 altitude=localNumberFormat.format(aMapLocation.getAltitude());
@@ -228,7 +226,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                         pre_adCode =adCode;
                     }
                 }
-                if(!running && speed>0){
+                if(!running && gpsUtil.getKmhSpeed()>0){
                     Utils.startFloatingWindows(getApplicationContext().getApplicationContext(),true);
                 }
                 if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>50){
@@ -239,15 +237,15 @@ public class WeatherService extends Service implements AMapLocationListener {
                 }
 
                 //Toast.makeText(getApplicationContext(),aMapLocation.toString(),Toast.LENGTH_SHORT).show();
-              /*  if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getLocationType() == 1){
+                if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getLocationType() == 1){
                     if(!gpsUtil.isAutoMapBackendProcessStarted() && !gpsUtil.isCatchRoadServiceStarted() &&
                             (TextUtils.isEmpty(gpsUtil.getCurrentRoadName()) ||
                                     !aMapLocation.getStreet().equalsIgnoreCase(gpsUtil.getCurrentRoadName()))){
                         gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
                     }
                     address=aMapLocation.getAddress();
-                }*/
-                if (speed == 0 && running) {
+                }
+                if (gpsUtil.getSpeed() == 0 && running) {
                     running = false;
                     if (AppSettings.get().isCloseFlattingOnStop()) {
                         Utils.startFloatingWindows(getApplicationContext().getApplicationContext(), false);
@@ -264,7 +262,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(aMapLocation.getSpeed() == 0 ) {
+                                    if(gpsUtil.getSpeed()==0) {
                                         resultText ="当前地址："+address;
                                         handler.post(runnableUi);
                                     }
