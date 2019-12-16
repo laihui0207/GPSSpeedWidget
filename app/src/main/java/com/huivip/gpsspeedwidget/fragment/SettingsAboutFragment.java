@@ -29,6 +29,7 @@ import com.huivip.gpsspeedwidget.activity.SettingsActivity;
 import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import net.gsantner.opoc.format.markdown.SimpleMarkdownParser;
 import net.gsantner.opoc.preference.GsPreferenceFragmentCompat;
@@ -297,7 +298,9 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
         // Basic app info
         if ((pref = findPreference(R.string.pref_key__more_info__app)) != null && pref.getSummary() == null) {
             pref.setIcon(R.drawable.ic_launcher);
-            pref.setSummary(String.format(locale, "Version v%s (%d)\nDeviceId: %s",  _cu.getAppVersionName(), _cu.bcint("VERSION_CODE", 0), PrefUtils.getShortDeviceId(getContext())));
+            pref.setSummary(String.format(locale, "Version v%s (%d-baidu)\nDeviceId: %s",
+                    _cu.getAppVersionName(), Utils.getLocalVersionCode(getContext()),
+                    PrefUtils.getShortDeviceId(getContext())));
         }
 
         // Extract some build information and publish in summary
