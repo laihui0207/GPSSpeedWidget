@@ -106,7 +106,7 @@ public class WeatherService extends Service implements AMapLocationListener {
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
         mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
         //mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
-        mLocationOption.setInterval(5000);
+        mLocationOption.setInterval(2000);
         mLocationOption.setLocationCacheEnable(false);
         mLocationClient.setLocationOption(mLocationOption);
         mLocationClient.startLocation();
@@ -181,7 +181,7 @@ public class WeatherService extends Service implements AMapLocationListener {
             if(!TextUtils.isEmpty(resultText)){
                 if(TextUtils.isEmpty(address)){
                     showStr= resultText;
-                } else {
+                } else if(!resultText.equalsIgnoreCase(showStr)) {
                     showStr+="\n\n"+ resultText;
                 }
                 /*SpeechFactory.getInstance(getApplicationContext())
