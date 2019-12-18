@@ -106,7 +106,7 @@ public class WeatherService extends Service implements AMapLocationListener {
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
         mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
         //mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
-        mLocationOption.setInterval(2000);
+        mLocationOption.setInterval(1000);
         mLocationOption.setLocationCacheEnable(false);
         mLocationClient.setLocationOption(mLocationOption);
         mLocationClient.startLocation();
