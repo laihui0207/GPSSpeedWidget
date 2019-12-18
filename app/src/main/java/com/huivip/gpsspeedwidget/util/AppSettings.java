@@ -126,8 +126,17 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isRoadLineShowRoadName(){
         return getBool(R.string.pref_key__road_line_roadName,false);
     }
+    public boolean isRoadLineDontShowRoadImage(){
+        return getBool(R.string.pref_key__road_line_not_show_road,false);
+    }
     public boolean isEnableDesktopFunction(){
         return getBool(R.string.pref_key__desktop_default_home,false);
+    }
+    public int getRoadLineRoadNameSize(){
+        return Integer.parseInt(getString(R.string.pref_key__speed_road_line_font_size,"20"));
+    }
+    public int getRoadLineRoadNameColor(){
+        return getInt(R.string.pref_key__widget_speed_road_line_font_color,R.color.white);
     }
     public boolean isShowAmapWidgetContent(){
         return getBool(R.string.pref_key__Amap_widget_content,false);

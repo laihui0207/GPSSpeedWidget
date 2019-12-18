@@ -101,7 +101,7 @@
         <receiver
                 android:name=".widget.GpsSpeedMeterWidget"
                 android:icon="@drawable/icon"
-                android:label="GPS速度插件速度仪表">
+                android:label="速度仪表">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="GPS_WIDGET_UPDATE"/>
@@ -113,7 +113,7 @@
         </receiver>
         <receiver
                 android:name=".widget.GpsSpeedNumberWidget"
-                android:label="GPS速度插件速度横版">
+                android:label="速度横版">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="GPS_WIDGET_UPDATE"/>
@@ -125,7 +125,7 @@
         </receiver>
         <receiver
             android:name=".widget.SpeedNumberVerticalWidget"
-            android:label="GPS速度插件速度竖版">
+            android:label="速度竖版">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="GPS_WIDGET_UPDATE"/>
@@ -137,7 +137,7 @@
         </receiver>
         <receiver
                 android:name=".widget.LyricWidget"
-                android:label="GPS速度插件桌面歌词">
+                android:label="桌面歌词">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="Lyric_WIDGET_UPDATE"/>
@@ -149,7 +149,7 @@
         <receiver
             android:name=".widget.TimeWidget"
             android:icon="@drawable/time_widget"
-            android:label="GPS速度插件时间横版">
+            android:label="时间横版">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
@@ -160,7 +160,7 @@
         <receiver
             android:name=".widget.TimeWidget_v"
             android:icon="@drawable/time_widget"
-            android:label="GPS速度插件时间竖版">
+            android:label="时间竖版">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
@@ -170,7 +170,7 @@
         </receiver>
         <receiver
             android:name=".widget.MusicWidget"
-            android:label="GPS速度插件音乐竖版">
+            android:label="音乐竖版">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
