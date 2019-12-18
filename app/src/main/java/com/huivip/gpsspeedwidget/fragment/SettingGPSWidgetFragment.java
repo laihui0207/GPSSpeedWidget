@@ -265,6 +265,8 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             Intent audioService=new Intent(getContext(),AudioService.class);
             getContext().startService(audioService);
         }
+        Preference roadLineFontSize=findPreference(getString(R.string.pref_key__speed_road_line_font_size));
+        roadLineFontSize.setSummary("字体大小:"+AppSettings.get().getRoadLineRoadNameSize());
         Preference dateTimeFormat=findPreference(getString(R.string.pref_key__auto_start_time_window_dateFormat));
         Preference dateTimeFontColor=findPreference(getString(R.string.pref_key__time_window_font_color));
         if(AppSettings.get().isEnableTimeWindow()) {

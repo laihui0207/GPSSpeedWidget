@@ -1,16 +1,13 @@
 package com.huivip.gpsspeedwidget.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -19,18 +16,12 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -41,14 +32,12 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.huivip.gpsspeedwidget.BuildConfig;
-import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpAppDrawer;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpDesktopPickAction;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpDragOption;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpInitSetup;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpSearchBar;
-import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
 import com.huivip.gpsspeedwidget.interfaces.AppDeleteListener;
 import com.huivip.gpsspeedwidget.interfaces.AppUpdateListener;
 import com.huivip.gpsspeedwidget.manager.Setup;
@@ -66,7 +55,6 @@ import com.huivip.gpsspeedwidget.util.LauncherAction;
 import com.huivip.gpsspeedwidget.util.LauncherAction.Action;
 import com.huivip.gpsspeedwidget.util.Tool;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
-import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.viewutil.DialogHelper;
@@ -89,10 +77,6 @@ import com.huivip.gpsspeedwidget.widget.SearchBar;
 import net.gsantner.opoc.util.ContextUtils;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -227,7 +211,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
         init();
         started =true;
-        EventBus.getDefault().register(this);
+        //EventBus.getDefault().register(this);
     }
 
     private void init() {
@@ -651,7 +635,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             Tool.toast(this, R.string.toast_not_enough_space);
         }
     }
-    @Subscribe(threadMode = ThreadMode.MAIN)
+   /* @Subscribe(threadMode = ThreadMode.MAIN)
     public void checkUpdate(AutoCheckUpdateEvent event){
         new Thread(new Runnable() {
             @Override
@@ -694,12 +678,12 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                         }
 
                     }
-                   /* else {
+                   *//* else {
                         Message message = Message.obtain();
                         message.obj ="";
                         message.arg1 = 0;
                         AlterHandler.handleMessage(message);
-                    }*/
+                    }*//*
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -765,7 +749,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                 mDialog.create().show();
             }
         }
-    };
+    };*/
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == RESULT_OK) {
