@@ -3,7 +3,9 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
@@ -13,10 +15,12 @@ import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
+import com.huivip.gpsspeedwidget.lyrics.utils.StringUtils;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.NaviFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -112,6 +116,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setXunHangStarted(false));
                         case 9:  // navi end
                             //gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
+                            PrefUtils.setNaviDestAddress(context,"");
                             EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setDaoHangStarted(false));
                         case 12:  // simulate navi end
                             stopBackendNaviFloatingService(context, true);
@@ -225,7 +230,27 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         gpsUtil.setHomeSet(address);
                     }
                     break;
-
+                case 10030:
+                    String cityName=intent.getStringExtra("CITY_NAME");
+                    String provinceName=intent.getStringExtra("PROVINCE_NAME");
+                    String areaName=intent.getStringExtra("AREA_NAME");
+                    if(StringUtils.isNotBlank(provinceName)){
+                        cityName=provinceName+cityName;
+                    }
+                    if(StringUtils.isNotBlank(areaName)){
+                        cityName+=areaName;
+                    }
+                    Toast.makeText(context,"当前城市:"+cityName,Toast.LENGTH_SHORT).show();
+                    Bundle bundle = intent.getExtras();
+                    StringBuilder extras= new StringBuilder();
+                    if (bundle != null) {
+                        for (String eKey : bundle.keySet()) {
+                            extras.append("key:").append(eKey).append("~").append(bundle.get(eKey)).append(".");
+                            //Log.e(TAG, key + " : " + (bundle.get(key) != null ? bundle.get(key) : "NULL"));
+                        }
+                    }
+                    FileUtil.saveLogToFile(extras.toString());
+                    break;
                 case 10056:
                     // 增加目地播报
                     String iformationJsonString = intent.getStringExtra("EXTRA_ROAD_INFO");
@@ -234,9 +259,13 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         String toPoi=roadInfo.getString("ToPoiName");
                         String toAddress=roadInfo.getString("ToPoiAddr");
                         if (AppSettings.get().isPlayDestAddress() && !TextUtils.isEmpty(toPoi) && !TextUtils.isEmpty(toAddress)) {
-                            PlayAudioEvent event = new PlayAudioEvent("导航中，目的地：" + toPoi + ",地址：" + toAddress, true);
-                            event.setDelaySeconds(15);
-                            EventBus.getDefault().post(event);
+                            String savedAddress = PrefUtils.getNaviDestAddress(context);
+                            if (savedAddress == null || !savedAddress.equalsIgnoreCase(toPoi+","+toAddress)) {
+                                PlayAudioEvent event = new PlayAudioEvent("导航中，目的地：" + toPoi + ",地址：" + toAddress, true);
+                                event.setDelaySeconds(15);
+                                EventBus.getDefault().post(event);
+                                PrefUtils.setNaviDestAddress(context,toPoi+","+toAddress);
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

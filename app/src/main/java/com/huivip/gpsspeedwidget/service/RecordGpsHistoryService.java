@@ -6,13 +6,14 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.listener.UploadRoadDataReceiver;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.DBUtil;
-import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.Date;
 import java.util.Timer;
@@ -48,8 +49,8 @@ public class RecordGpsHistoryService extends Service{
             stopSelf();
             return super.onStartCommand(intent,flags,startId);
         }
-        boolean recordGPS= PrefUtils.isEnableRecordGPSHistory(this);
-        boolean uploadGPS=PrefUtils.isEnableUploadGPSHistory(this);
+        boolean recordGPS= AppSettings.get().isEnableRecord();//PrefUtils.isEnableRecordGPSHistory(this);
+        boolean uploadGPS=AppSettings.get().isEnableSelfUpload();//PrefUtils.isEnableUploadGPSHistory(this);
 
         if(recordGPS) {
             if(uploadGPS) {

@@ -184,6 +184,10 @@ public class BootStartService extends Service {
                         Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
                         Utils.startService(getApplicationContext(), trackService);
                     }
+                    if(AppSettings.get().isEnableRecord()){
+                        Intent trackService = new Intent(getApplicationContext(), RecordGpsHistoryService.class);
+                        Utils.startService(getApplicationContext(), trackService);
+                    }
                     new Thread(() -> Utils.registerSelf(getApplicationContext())).start();
                     if(AppSettings.get().isAutoCheckUpdate()) {
                         x.task().postDelayed(() -> {
