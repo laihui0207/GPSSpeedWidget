@@ -177,7 +177,6 @@ public class RoadLineFloatingService extends Service{
            View vv=roadLineBinder.getRoadLineView();
            if(vv!=null && !gpsUtil.isAutoNavi_on_Frontend()){
                roadLineView.setImageDrawable(((ImageView)vv).getDrawable());
-               roadLineView.setScaleType(ImageView.ScaleType.FIT_XY);
                roadLineView.setVisibility(View.VISIBLE);
            } else {
                roadLineView.setVisibility(View.INVISIBLE);

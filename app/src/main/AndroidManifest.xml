@@ -263,6 +263,7 @@
         <service android:name=".service.RoadLineFloatingService"/>
         <service android:name=".service.RoadLineService"/>
         <service android:name=".service.WeatherService"/>
+        <service android:name=".service.AltitudeFloatingService"/>
         <service
                 android:name=".detection.AppDetectionService"
                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">

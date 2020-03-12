@@ -110,6 +110,7 @@ public abstract class PrefUtils {
     static final String ROADLINE_FLOATTING="com.huivip.roaldLine.enabled";
     static final String ROADLINE_SPEED="com.huivip.roaldLine.speed.enabled";
     static final String Enable_PLAY_WARNING="com.huivip.start.play.waring.enabled";
+    static final String Enable_ALTITUDE_WINDOWS="com.huivip.altitude.window.enabled";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -229,6 +230,12 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableAutoWidgetFloatingWidowOnlyTurn(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_AUTO_WIDGET_FLOATING_WINDOW_ONLY_TURN, false);
+    }
+    public static void setEnableAltitudeWindows(Context context,boolean value){
+        edit(context).putBoolean(Enable_ALTITUDE_WINDOWS,value).apply();
+    }
+    public static boolean getEnableAltitudeWindow(Context context){
+        return getSharedPreferences(context).getBoolean(Enable_ALTITUDE_WINDOWS,false);
     }
     public static void setHideFloatingWidowOnNaviApp(Context context, boolean value){
         edit(context).putBoolean(ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI, value).apply();

@@ -8,5 +8,15 @@
     <color name="red500">#f44336</color>
     <color name="green">#31c17d</color>
     <color name="blue">#0080FF</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="darkTransparent">#B0000000</color>
+    <color name="transparent">#00000000</color>
 
+    <color name="materialRed">#d6552e</color>
+    <color name="materialGreen">#b4c64a</color>
+    <color name="materialBlue">#1892cc</color>
+
+    <color name="introText">#ff444444</color>
+    <color name="introButton">#7d000000</color>
 </resources>

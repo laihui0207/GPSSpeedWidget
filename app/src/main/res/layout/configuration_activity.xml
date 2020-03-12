@@ -494,6 +494,15 @@
                     android:layout_toRightOf="@+id/checkBox_speed_fixed_position"
                     android:text="车道信息" />
                 <CheckBox
+                    android:id="@+id/speed_altitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/checkBox_speed_fixed_position"
+                    android:layout_alignBottom="@+id/checkBox_speed_fixed_position"
+                    android:layout_toEndOf="@+id/speed_roadLine"
+                    android:layout_toRightOf="@+id/checkBox_speed_fixed_position"
+                    android:text="单独海拔窗口" />
+                <CheckBox
                     android:id="@+id/checkBox_navi_fixed_position"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

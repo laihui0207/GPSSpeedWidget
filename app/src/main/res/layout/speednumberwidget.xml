@@ -61,7 +61,7 @@
                 android:includeFontPadding="false"
                 android:text="2000"
                 android:textColor="#fff"
-                android:textSize="60dp"
+                android:textSize="50dp"
                 android:textStyle="bold"
                 app:autoSizeTextType="uniform" />
             <TextView
@@ -115,7 +115,7 @@
                 android:includeFontPadding="false"
                 android:text="关"
                 android:textColor="#fff"
-                android:textSize="80dp"
+                android:textSize="60dp"
                 android:textStyle="bold" />
             <TextView
                     android:text="km/h" android:textColor="#ffffffff"

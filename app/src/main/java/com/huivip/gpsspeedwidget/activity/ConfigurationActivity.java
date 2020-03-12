@@ -51,6 +51,7 @@ import com.huivip.gpsspeedwidget.appselection.AppInfo;
 import com.huivip.gpsspeedwidget.appselection.AppInfoIconLoader;
 import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
+import com.huivip.gpsspeedwidget.service.AltitudeFloatingService;
 import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
 import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
@@ -163,7 +164,19 @@ public class ConfigurationActivity extends Activity {
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         enableAutoNaviCheckBox.setChecked(PrefUtils.isEnableAutoNaviService(getApplicationContext()));
         remoteUrlEditBox.setEnabled(uploadGPSCheckBox.isChecked());
-
+        CheckBox altitudeWindow=findViewById(R.id.speed_altitude);
+        altitudeWindow.setChecked(PrefUtils.getEnableAltitudeWindow(getApplicationContext()));
+        altitudeWindow.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PrefUtils.setEnableAltitudeWindows(getApplicationContext(),compoundButton.isChecked());
+                Intent altitudeFloatingService=new Intent(getApplicationContext(), AltitudeFloatingService.class);
+                if(!compoundButton.isChecked()){
+                    altitudeFloatingService.putExtra(AltitudeFloatingService.EXTRA_CLOSE,true);
+                }
+                getApplicationContext().startService(altitudeFloatingService);
+            }
+        });
         CheckBox autoSoltCheckBox=findViewById(R.id.checkBox_autoSolt);
         autoSoltCheckBox.setChecked(PrefUtils.isFloattingAutoSolt(getApplicationContext()));
         autoSoltCheckBox.setEnabled(enableFloatingWidnowCheckBox.isChecked());
