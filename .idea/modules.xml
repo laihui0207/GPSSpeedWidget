@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GPSSpeedWidget.iml" filepath="$PROJECT_DIR$/GPSSpeedWidget.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GPSSpeedWidget.iml" filepath="$PROJECT_DIR$/GPSSpeedWidget.iml" group="GPSSpeedWidget" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="GPSSpeedWidget/app" />
     </modules>
   </component>
 </project>
