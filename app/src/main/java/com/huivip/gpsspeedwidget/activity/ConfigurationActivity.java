@@ -186,6 +186,15 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setEnableAutoStart(getApplicationContext(),checkBoxButton.isChecked());
             }
         });
+        CheckBox altitudeAutoSoltCheckBox=findViewById(R.id.checkBox_altitude_autoSolt);
+        altitudeAutoSoltCheckBox.setChecked(PrefUtils.isFloattingAutoSolt(getApplicationContext()));
+        altitudeAutoSoltCheckBox.setEnabled(enableFloatingWidnowCheckBox.isChecked());
+        altitudeAutoSoltCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
+                PrefUtils.setAltitudeFloattingWindowsAutoSolt(getApplicationContext(),checkBoxButton.isChecked());
+            }
+        });
         recordGPSCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
@@ -533,6 +542,11 @@ public class ConfigurationActivity extends Activity {
                 if(adjustValue!=null && !adjustValue.equalsIgnoreCase("")){
                     PrefUtils.setSpeedAdjust(getApplicationContext(),Integer.parseInt(adjustValue));
                 }
+                EditText altitudeFontSizeEditText=findViewById(R.id.editText_altitude_fontSize_adjust);
+                String fontSizeAdjustValue=altitudeFontSizeEditText.getText().toString();
+                if(fontSizeAdjustValue!=null && !fontSizeAdjustValue.equalsIgnoreCase("")){
+                    PrefUtils.setAltitudeFontSize(getApplicationContext(),Integer.parseInt(fontSizeAdjustValue));
+                }
                 EditText delayTimeEditText=findViewById(R.id.editText_delay_started);
                 String delayTimeValue=delayTimeEditText.getText().toString();
                 if(TextUtils.isEmpty(delayTimeValue)){
@@ -654,7 +668,11 @@ public class ConfigurationActivity extends Activity {
         if(PrefUtils.getSpeedAdjust(getApplicationContext())!=0){
             speedAdjustEditText.setText(PrefUtils.getSpeedAdjust(getApplicationContext())+"");
         }
-
+        EditText altitudeFontSizeAdjustEditText=findViewById(R.id.editText_altitude_fontSize_adjust);
+        altitudeFontSizeAdjustEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(-15, 45)});
+        if(PrefUtils.getAltitudeFontSize(getApplicationContext())!=0){
+            altitudeFontSizeAdjustEditText.setText(PrefUtils.getAltitudeFontSize(getApplicationContext())+"");
+        }
         CheckBox flattingDirectionCheckbox=findViewById(R.id.checkBox_h_direction);
         flattingDirectionCheckbox.setChecked(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext()));
         Intent floatService=new Intent(this, DefaultFloatingService.class);
@@ -938,6 +956,14 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox altitueFloatingFixedCheckBox=findViewById(R.id.checkBox_altitude_fixed_position);
+        altitueFloatingFixedCheckBox.setChecked(PrefUtils.isEnableAltitudeFloatingFixed(getApplicationContext()));
+        altitueFloatingFixedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableAltitudeFloatingFixed(getApplicationContext(),buttonView.isChecked());
             }
         });
         CheckBox lyricFloatingFixedCheckBox=findViewById(R.id.lyric_fixed);

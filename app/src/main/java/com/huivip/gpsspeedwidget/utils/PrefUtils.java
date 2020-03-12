@@ -17,6 +17,7 @@ public abstract class PrefUtils {
 
     private static final String PREF_METRIC = "pref_metric";
     private static final String PREF_FLOATING_LOCATION = "pref_floating_location";
+    private static final String PREF_ALTITUDE_FLOATING_LOCATION = "pref_altitude_floating_location";
     private static final String PREF_NAVI_FLOATING_LOCATION= "pref_navi_floating_location";
     private static final String PREF_DRIVE_FLOATING_LOCATION= "pref_driveWay_floating_location";
     private static final String PREF_TIME_FLOATING_LOCATION= "pref_time_floating_location";
@@ -59,10 +60,12 @@ public abstract class PrefUtils {
     public static final String GPS_REMOTE_URL="com.huivip.widget.remoteUrl";
     public static final String SHOW_FLATTING_ON="com.huivip.widget.showFlatingOn";
     public static final String FLOATTING_WINDOWS_AUTO_SOLT="com.huivip.wdiget.floatting.autoslot";
+    public static final String ALTITUDE_FLOATTING_WINDOWS_AUTO_SOLT="com.huivip.wdiget.altitude.floatting.autoslot";
     public static final String NAVI_FLOATTING_WINDOWS_AUTO_SOLT="com.huivip.wdiget.floatting.navi.autoslot";
     public static final String FLOATING_WINDWS_DIRECTION_horizontal="com.huivip.widget.Direction";
     public static final String PREF_GPS_SPEED_ADJUST="com.huivip.widget.speed.adjust";
     public static final String FLOATTING_WINDOW_XY="com.huivip.widget.xy";
+    public static final String ALTITUDE_FLOATTING_WINDOW_XY="com.huivip.widget.altitude.xy";
     public static final String DRIVE_WAY_FLOATTING_WINDOW_XY="com.huivip.widget.xy";
     public static final String NAVI_FLOATTING_WINDOW_XY="com.huivip.widget.navi.xy";
     public static final String TIME_FLOATTING_WINDOW_XY="com.huivip.widget.Time.xy";
@@ -105,12 +108,14 @@ public abstract class PrefUtils {
     static final String NAVI_MODE_NEW_DRIVER="com.huivip.navi.mode.newDriver";
     static final String NAVI_FLOATTING_FIXED_POSITION="com.huivip.navi.fixed.position";
     static final String SPEED_FLOATTING_FIXED_POSITION="com.huivip.speed.fixed.position";
+    static final String ALTITUDE_FLOATTING_FIXED_POSITION="com.huivip.altitude.fixed.position";
     static final String LYRIC_FLOATTING_FIXED_POSITION="com.huivip.lyric.fixed.position";
     static final String ROADLINE_FLOATTING_FIXED_POSITION="com.huivip.roaldLine.fixed.position";
     static final String ROADLINE_FLOATTING="com.huivip.roaldLine.enabled";
     static final String ROADLINE_SPEED="com.huivip.roaldLine.speed.enabled";
     static final String Enable_PLAY_WARNING="com.huivip.start.play.waring.enabled";
     static final String Enable_ALTITUDE_WINDOWS="com.huivip.altitude.window.enabled";
+    static final String ALTITUDE_WINDOWS_FONTSIZE="com.huivip.altitude.window.fontSize";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -309,6 +314,12 @@ public abstract class PrefUtils {
     public static void setFloattingWindowsAutoSolt(Context context,boolean autoSolt){
         edit(context).putBoolean(FLOATTING_WINDOWS_AUTO_SOLT, autoSolt).apply();
     }
+    public static boolean isAltitudeFloattingAutoSolt(Context context){
+        return getSharedPreferences(context).getBoolean(ALTITUDE_FLOATTING_WINDOWS_AUTO_SOLT, true);
+    }
+    public static void setAltitudeFloattingWindowsAutoSolt(Context context,boolean autoSolt){
+        edit(context).putBoolean(ALTITUDE_FLOATTING_WINDOWS_AUTO_SOLT, autoSolt).apply();
+    }
     public static boolean isNaviFloattingAutoSolt(Context context){
         return getSharedPreferences(context).getBoolean(NAVI_FLOATTING_WINDOWS_AUTO_SOLT, true);
     }
@@ -404,6 +415,13 @@ public abstract class PrefUtils {
     public static int getSpeedAdjust(Context context) {
         return getSharedPreferences(context).getInt(PREF_GPS_SPEED_ADJUST, 0);
     }
+    public static void setAltitudeFontSize(Context context, int value) {
+        edit(context).putInt(ALTITUDE_WINDOWS_FONTSIZE, value).apply();
+    }
+
+    public static int getAltitudeFontSize(Context context) {
+        return getSharedPreferences(context).getInt(ALTITUDE_WINDOWS_FONTSIZE, 0);
+    }
     public static void setDelayStartOtherApp( Context context, int value) {
         edit(context).putInt(PREF_DELAY_AUTO_START, value).apply();
     }
@@ -481,6 +499,9 @@ public abstract class PrefUtils {
     public static void setFloatingSolidLocation(Context context, float x, float y) {
         edit(context).putString(FLOATTING_WINDOW_XY, x + "," + y).apply();
     }
+    public static void setAltitudeFloatingSolidLocation(Context context, float x, float y) {
+        edit(context).putString(ALTITUDE_FLOATTING_WINDOW_XY, x + "," + y).apply();
+    }
     public static void setDriveWayFloatingSolidLocation(Context context, float x, float y) {
         edit(context).putString(DRIVE_WAY_FLOATTING_WINDOW_XY, x + "," + y).apply();
     }
@@ -493,11 +514,17 @@ public abstract class PrefUtils {
     public static String getFloatingSolidLocation(Context context) {
         return getSharedPreferences(context).getString(FLOATTING_WINDOW_XY, "0,0");
     }
+    public static String getAltitudeFloatingSolidLocation(Context context) {
+        return getSharedPreferences(context).getString(ALTITUDE_FLOATTING_WINDOW_XY, "0,0");
+    }
     public static String getDriveWayFloatingSolidLocation(Context context) {
         return getSharedPreferences(context).getString(DRIVE_WAY_FLOATTING_WINDOW_XY, "0,0");
     }
     public static void setFloatingLocation(Context context, float screenYRatio, boolean left) {
         edit(context).putString(PREF_FLOATING_LOCATION, left + "," + screenYRatio).apply();
+    }
+    public static void setAltitudeFloatingLocation(Context context, float screenYRatio, boolean left) {
+        edit(context).putString(PREF_ALTITUDE_FLOATING_LOCATION, left + "," + screenYRatio).apply();
     }
     public static String getNaviFloatingSolidLocation(Context context) {
         return getSharedPreferences(context).getString(NAVI_FLOATTING_WINDOW_XY, "0,0");
@@ -542,6 +569,9 @@ public abstract class PrefUtils {
     }
     public static String getNaviFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_NAVI_FLOATING_LOCATION, "true,0");
+    }
+    public static String getAltitudeFloatingLocation(Context context) {
+        return getSharedPreferences(context).getString(PREF_ALTITUDE_FLOATING_LOCATION, "true,0");
     }
     public static String getDriveWayFloatingLocation(Context context) {
         return getSharedPreferences(context).getString(PREF_DRIVE_FLOATING_LOCATION, "true,0");
@@ -624,6 +654,13 @@ public abstract class PrefUtils {
 
     public static void setEnableSpeedFloatingFixed(Context context, boolean show) {
         edit(context).putBoolean(SPEED_FLOATTING_FIXED_POSITION, show).apply();
+    }
+    public static boolean isEnableAltitudeFloatingFixed(Context context) {
+        return getSharedPreferences(context).getBoolean(ALTITUDE_FLOATTING_FIXED_POSITION, false);
+    }
+
+    public static void setEnableAltitudeFloatingFixed(Context context, boolean show) {
+        edit(context).putBoolean(ALTITUDE_FLOATTING_FIXED_POSITION, show).apply();
     }
     public static boolean isEnableLyricFloatingFixed(Context context) {
         return getSharedPreferences(context).getBoolean(LYRIC_FLOATTING_FIXED_POSITION, false);

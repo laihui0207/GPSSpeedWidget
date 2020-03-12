@@ -55,6 +55,8 @@ public class AltitudeFloatingService extends Service{
     GpsUtil gpsUtil;
     @BindView(R.id.textView_altitude)
     TextView textViewAltitude;
+    @BindView(R.id.textView_altitude_unit)
+    TextView textViewAltitudeUnit;
     private ServiceConnection mServiceConnection;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
@@ -68,7 +70,7 @@ public class AltitudeFloatingService extends Service{
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent!=null){
-            boolean enableFloatingService=PrefUtils.isEnableFlatingWindow(getApplicationContext());
+            boolean enableFloatingService=PrefUtils.getEnableAltitudeWindow(getApplicationContext());
             boolean userClosedService=PrefUtils.isUserManualClosedService(getApplicationContext());
             if (!enableFloatingService || userClosedService || intent.getBooleanExtra(EXTRA_CLOSE, false)) {
                 onStop();
@@ -159,12 +161,15 @@ public class AltitudeFloatingService extends Service{
     }*/
 
     void checkLocationData() {
+        int fontSizeAdjust=PrefUtils.getAltitudeFontSize(getApplicationContext());
+        textViewAltitude.setTextSize(40f+fontSizeAdjust);
+        textViewAltitudeUnit.setTextSize(35f+fontSizeAdjust);
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             //if(gpsUtil.isGpsLocationChanged()){
-           textViewAltitude.setText("海拔:" + gpsUtil.getAltitude() + "米");
+           textViewAltitude.setText(gpsUtil.getAltitude() + "");
             // }
         } else {
-            textViewAltitude.setText("海拔: 0米");
+            textViewAltitude.setText("8848");
         }
     }
     private int getWindowType() {
@@ -180,17 +185,17 @@ public class AltitudeFloatingService extends Service{
             @Override
             public void onGlobalLayout() {
                 WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-                String[] split = PrefUtils.getFloatingLocation(getApplicationContext()).split(",");
+                String[] split = PrefUtils.getAltitudeFloatingLocation(getApplicationContext()).split(",");
                 boolean left = Boolean.parseBoolean(split[0]);
                 float yRatio = Float.parseFloat(split[1]);
-                if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
+                if(PrefUtils.isAltitudeFloattingAutoSolt(getApplicationContext() )) {
                     Point screenSize = new Point();
                     mWindowManager.getDefaultDisplay().getSize(screenSize);
                     params.x = left ? 0 : screenSize.x - mFloatingView.getWidth();
                     params.y = (int) (yRatio * screenSize.y + 0.5f);
                 }
                 else {
-                    String[] xy=PrefUtils.getFloatingSolidLocation(getApplicationContext()).split(",");
+                    String[] xy=PrefUtils.getAltitudeFloatingSolidLocation(getApplicationContext()).split(",");
                     params.x=(int)Float.parseFloat(xy[0]);
                     params.y=(int)Float.parseFloat(xy[1]);
                 }
@@ -220,7 +225,7 @@ public class AltitudeFloatingService extends Service{
             endX = 0;
         }
 
-        PrefUtils.setFloatingLocation(getApplicationContext(), (float) params.y / screenSize.y, endX == 0);
+        PrefUtils.setAltitudeFloatingLocation(getApplicationContext(), (float) params.y / screenSize.y, endX == 0);
         ValueAnimator valueAnimator = ValueAnimator.ofInt(params.x, endX)
                 .setDuration(300);
         valueAnimator.setInterpolator(new LinearOutSlowInInterpolator());
@@ -283,7 +288,7 @@ public class AltitudeFloatingService extends Service{
                     mIsClick = true;
                     return true;
                 case MotionEvent.ACTION_MOVE:
-                    if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())){
+                    if(PrefUtils.isEnableAltitudeFloatingFixed(getApplicationContext())){
                         return true;
                     }
                     float dX = event.getRawX() - mInitialTouchX;
@@ -327,16 +332,16 @@ public class AltitudeFloatingService extends Service{
                         }
                     }
                     else {
-                        if(PrefUtils.isFloattingAutoSolt(getApplicationContext()) && !PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
+                        if(PrefUtils.isAltitudeFloattingAutoSolt(getApplicationContext()) ) {
                              animateViewToSideSlot();
                         } else {
-                            PrefUtils.setFloatingSolidLocation(getApplicationContext(),params.x,params.y);
+                            PrefUtils.setAltitudeFloatingSolidLocation(getApplicationContext(),params.x,params.y);
                         }
                     }
                     if(mIsClick && (event.getEventTime()- event.getDownTime())> ViewConfiguration.getLongPressTimeout()) {
-                        if(PrefUtils.isEnableSpeedFloatingFixed(getApplicationContext())) {
+                        if(PrefUtils.isEnableAltitudeFloatingFixed(getApplicationContext())) {
                             Toast.makeText(getApplicationContext(), "取消悬浮窗口固定功能", Toast.LENGTH_SHORT).show();
-                            PrefUtils.setEnableSpeedFloatingFixed(getApplicationContext(), false);
+                            PrefUtils.setEnableAltitudeFloatingFixed(getApplicationContext(), false);
                         }
                         Intent configActivity=new Intent(getApplicationContext(), ConfigurationActivity.class);
                         configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
