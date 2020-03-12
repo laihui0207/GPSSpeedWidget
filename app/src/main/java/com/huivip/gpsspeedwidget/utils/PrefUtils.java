@@ -315,7 +315,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(FLOATTING_WINDOWS_AUTO_SOLT, autoSolt).apply();
     }
     public static boolean isAltitudeFloattingAutoSolt(Context context){
-        return getSharedPreferences(context).getBoolean(ALTITUDE_FLOATTING_WINDOWS_AUTO_SOLT, true);
+        return getSharedPreferences(context).getBoolean(ALTITUDE_FLOATTING_WINDOWS_AUTO_SOLT, false);
     }
     public static void setAltitudeFloattingWindowsAutoSolt(Context context,boolean autoSolt){
         edit(context).putBoolean(ALTITUDE_FLOATTING_WINDOWS_AUTO_SOLT, autoSolt).apply();
@@ -677,7 +677,7 @@ public abstract class PrefUtils {
         edit(context).putBoolean(ROADLINE_FLOATTING_FIXED_POSITION, show).apply();
     }
     public static boolean isEnableRoadLineFloating(Context context) {
-        return getSharedPreferences(context).getBoolean(ROADLINE_FLOATTING, true);
+        return getSharedPreferences(context).getBoolean(ROADLINE_FLOATTING, false);
     }
 
     public static void setEnableRoadLineFloating(Context context, boolean show) {

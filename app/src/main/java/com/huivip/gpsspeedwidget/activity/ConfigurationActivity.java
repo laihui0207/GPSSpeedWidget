@@ -95,6 +95,7 @@ public class ConfigurationActivity extends Activity {
     @BindView(R.id.enableOver)
     Button enableServiceButton;
     CheckBox enableFloatingWidnowCheckBox;
+    CheckBox altitudeWindow;
     CheckBox enableNaviFloatingCheckBox;
     CheckBox enableShowFlattingOnDesktopCheckBox;
     EditText remoteUrlEditBox;
@@ -164,19 +165,9 @@ public class ConfigurationActivity extends Activity {
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         enableAutoNaviCheckBox.setChecked(PrefUtils.isEnableAutoNaviService(getApplicationContext()));
         remoteUrlEditBox.setEnabled(uploadGPSCheckBox.isChecked());
-        CheckBox altitudeWindow=findViewById(R.id.speed_altitude);
+        altitudeWindow=findViewById(R.id.speed_altitude);
         altitudeWindow.setChecked(PrefUtils.getEnableAltitudeWindow(getApplicationContext()));
-        altitudeWindow.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                PrefUtils.setEnableAltitudeWindows(getApplicationContext(),compoundButton.isChecked());
-                Intent altitudeFloatingService=new Intent(getApplicationContext(), AltitudeFloatingService.class);
-                if(!compoundButton.isChecked()){
-                    altitudeFloatingService.putExtra(AltitudeFloatingService.EXTRA_CLOSE,true);
-                }
-                getApplicationContext().startService(altitudeFloatingService);
-            }
-        });
+
         CheckBox autoSoltCheckBox=findViewById(R.id.checkBox_autoSolt);
         autoSoltCheckBox.setChecked(PrefUtils.isFloattingAutoSolt(getApplicationContext()));
         autoSoltCheckBox.setEnabled(enableFloatingWidnowCheckBox.isChecked());
@@ -187,12 +178,24 @@ public class ConfigurationActivity extends Activity {
             }
         });
         CheckBox altitudeAutoSoltCheckBox=findViewById(R.id.checkBox_altitude_autoSolt);
-        altitudeAutoSoltCheckBox.setChecked(PrefUtils.isFloattingAutoSolt(getApplicationContext()));
-        altitudeAutoSoltCheckBox.setEnabled(enableFloatingWidnowCheckBox.isChecked());
+        altitudeAutoSoltCheckBox.setChecked(PrefUtils.isAltitudeFloattingAutoSolt(getApplicationContext()));
+        altitudeAutoSoltCheckBox.setEnabled(altitudeWindow.isChecked());
         altitudeAutoSoltCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton checkBoxButton, boolean b) {
                 PrefUtils.setAltitudeFloattingWindowsAutoSolt(getApplicationContext(),checkBoxButton.isChecked());
+            }
+        });
+        altitudeWindow.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PrefUtils.setEnableAltitudeWindows(getApplicationContext(),compoundButton.isChecked());
+                altitudeAutoSoltCheckBox.setEnabled(compoundButton.isChecked());
+                Intent altitudeFloatingService=new Intent(getApplicationContext(), AltitudeFloatingService.class);
+                if(!compoundButton.isChecked()){
+                    altitudeFloatingService.putExtra(AltitudeFloatingService.EXTRA_CLOSE,true);
+                }
+                getApplicationContext().startService(altitudeFloatingService);
             }
         });
         recordGPSCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
@@ -1233,6 +1236,7 @@ public class ConfigurationActivity extends Activity {
         boolean serviceEnabled = Utils.isAccessibilityServiceEnabled(this, AppDetectionService.class);
         PrefUtils.setEnableAccessibilityService(getApplicationContext(),serviceEnabled);
         enableFloatingWidnowCheckBox.setEnabled(overlayEnabled);
+        altitudeWindow.setEnabled(overlayEnabled);
         enableNaviFloatingCheckBox.setEnabled(overlayEnabled);
         enableFloatingButton.setEnabled(!overlayEnabled);
         enableServiceButton.setEnabled(overlayEnabled && !serviceEnabled);
