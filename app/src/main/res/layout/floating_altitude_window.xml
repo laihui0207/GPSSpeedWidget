@@ -19,11 +19,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_atlitude"
+            android:drawableLeft="@drawable/atlitude_selector"
             android:gravity="end|bottom"
             android:text="10000"
             android:textColor="@color/cardview_light_background"
-            android:textSize="40dp" />
+            android:textSize="40dp"
+            android:drawableStart="@drawable/atlitude_selector" />
 
         <TextView
             android:id="@+id/textView_altitude_unit"

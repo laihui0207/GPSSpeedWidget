@@ -7,7 +7,7 @@
     android:layout_height="wrap_content" android:orientation="vertical"
     android:layout_below="@id/limit">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_centerHorizontal="true"
@@ -81,7 +81,7 @@
                 android:textSize="15dp" />
 
         </FrameLayout>
-    </RelativeLayout>
+    </FrameLayout>
     <LinearLayout
         android:layout_width="120dp"
         android:gravity="center"

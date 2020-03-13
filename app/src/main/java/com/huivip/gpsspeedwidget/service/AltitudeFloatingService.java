@@ -17,6 +17,7 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -114,6 +115,7 @@ public class AltitudeFloatingService extends Service{
             }
             return;
         }
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -166,10 +168,10 @@ public class AltitudeFloatingService extends Service{
         textViewAltitudeUnit.setTextSize(35f+fontSizeAdjust);
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             //if(gpsUtil.isGpsLocationChanged()){
-           textViewAltitude.setText(gpsUtil.getAltitude() + "");
+           textViewAltitude.setText("海拔:"+gpsUtil.getAltitude() + "");
             // }
         } else {
-            textViewAltitude.setText("8848");
+            textViewAltitude.setText("海拔:8848");
         }
     }
     private int getWindowType() {
