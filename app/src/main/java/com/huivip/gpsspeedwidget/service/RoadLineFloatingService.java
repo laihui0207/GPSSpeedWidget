@@ -58,6 +58,8 @@ public class RoadLineFloatingService extends Service{
     boolean isShowing=false;
     @BindView(R.id.roadline_control)
     View controlView;
+    @BindView(R.id.roadline_view)
+    View allView;
     // WindowManager.LayoutParams params;
     GpsUtil gpsUtil;
     @BindView(R.id.imageView_floating_roadLine)
@@ -178,16 +180,17 @@ public class RoadLineFloatingService extends Service{
            if(vv!=null && !gpsUtil.isAutoNavi_on_Frontend()){
                roadLineView.setImageDrawable(((ImageView)vv).getDrawable());
                roadLineView.setVisibility(View.VISIBLE);
+               if(!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
+                   roadName.setText(gpsUtil.getCurrentRoadName());
+                   roadName.setVisibility(View.VISIBLE);
+               }
+               allView.setVisibility(View.VISIBLE);
            } else {
-               roadLineView.setVisibility(View.INVISIBLE);
+               allView.setVisibility(View.GONE);
            }
+       } else {
+           allView.setVisibility(View.GONE);
        }
-        if(TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
-            roadName.setVisibility(View.GONE);
-        } else {
-            roadName.setVisibility(View.VISIBLE);
-            roadName.setText(gpsUtil.getCurrentRoadName());
-        }
     }
     @OnClick(value = {R.id.imageView_roadLine_floating_fixed,R.id.imageView_roadLine_floating_close})
     public void clickHandler(View view){

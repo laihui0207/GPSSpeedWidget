@@ -90,16 +90,16 @@ public class WeatherService extends Service implements AMapLocationListener {
         mLocationClient.setLocationOption(mLocationOption);
         mLocationClient.startLocation();
         isLocationStarted = true;
-        if (PrefUtils.isShowNotification(this)) {
+       /* if (PrefUtils.isShowNotification(this)) {
             mLocationClient.enableBackgroundLocation(2001, buildNotification());
-        }
+        }*/
     }
     public void stopLocation(){
         mLocationClient.stopLocation();
         isLocationStarted=false;
-        if (android.os.Build.VERSION.SDK_INT >= 27 || PrefUtils.isShowNotification(this)) {
+      /*  if (android.os.Build.VERSION.SDK_INT >= 27 || PrefUtils.isShowNotification(this)) {
             mLocationClient.disableBackgroundLocation(true);
-        }
+        }*/
     }
     public void setCityName(String cityName){
         this.cityName=cityName;

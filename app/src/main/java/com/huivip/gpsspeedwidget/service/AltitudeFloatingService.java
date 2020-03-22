@@ -36,6 +36,7 @@ import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
+import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -67,13 +68,12 @@ public class AltitudeFloatingService extends Service{
     public IBinder onBind(Intent intent) {
         return null;
     }
-
+    DecimalFormat df=new DecimalFormat("0000");
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent!=null){
             boolean enableFloatingService=PrefUtils.getEnableAltitudeWindow(getApplicationContext());
-            boolean userClosedService=PrefUtils.isUserManualClosedService(getApplicationContext());
-            if (!enableFloatingService || userClosedService || intent.getBooleanExtra(EXTRA_CLOSE, false)) {
+            if (!enableFloatingService || intent.getBooleanExtra(EXTRA_CLOSE, false)) {
                 onStop();
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
@@ -168,10 +168,10 @@ public class AltitudeFloatingService extends Service{
         textViewAltitudeUnit.setTextSize(35f+fontSizeAdjust);
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             //if(gpsUtil.isGpsLocationChanged()){
-           textViewAltitude.setText("海拔:"+gpsUtil.getAltitude() + "");
+           textViewAltitude.setText("海拔"+df.format(Integer.parseInt(gpsUtil.getAltitude())) + "米");
             // }
         } else {
-            textViewAltitude.setText("海拔:8848");
+            textViewAltitude.setText("海拔8848米");
         }
     }
     private int getWindowType() {

@@ -1,9 +1,15 @@
 package com.huivip.gpsspeedwidget.service;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -23,6 +29,10 @@ public class BootStartService extends Service {
     boolean started=false;
     boolean autoStarted=false;
     AlarmManager alarm;
+    private NotificationManager notificationManager = null;
+    private static final String NOTIFICATION_CHANNEL_NAME = "BackgroundLocation";
+
+    boolean isCreateChannel = false;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -61,7 +71,7 @@ public class BootStartService extends Service {
                 if (intent.getBooleanExtra(START_BOOT, false)) {
                     Log.d(START_BOOT,"Auto Boot Start Service Launched");
                     autoStarted = true;
-
+                    startForeground(1,buildNotification());
                     String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
                     if(!TextUtils.isEmpty(apps)) {
                         String[] autoApps = apps.split(",");
@@ -89,6 +99,9 @@ public class BootStartService extends Service {
                             }).start();
                         }
                     }
+                    AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
+                    PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000L, gotoHomeIntent);
                    /* PendingIntent thirdIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(getApplicationContext(), ThirdSoftLaunchReceiver.class), 0);
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 100L, thirdIntent);*/
 
@@ -129,8 +142,8 @@ public class BootStartService extends Service {
                     GpsUtil.getInstance(getApplicationContext()).startLocationService();
                 }
                 if(PrefUtils.getEnableAltitudeWindow(getApplicationContext())){
-                    Intent roadLineFloatingService=new Intent(getApplicationContext(),AltitudeFloatingService.class);
-                    getApplicationContext().startService(roadLineFloatingService);
+                    Intent altitudeFloatingService=new Intent(getApplicationContext(),AltitudeFloatingService.class);
+                    getApplicationContext().startService(altitudeFloatingService);
                 }
                 if(PrefUtils.isEnableRoadLineFloating(getApplicationContext())){
                     Intent roadLineFloatingService=new Intent(getApplicationContext(),RoadLineFloatingService.class);
@@ -139,5 +152,42 @@ public class BootStartService extends Service {
             }
         }
         return super.onStartCommand(intent, flags, startId);
+    }
+    @SuppressLint("NewApi")
+    private Notification buildNotification() {
+
+        Notification.Builder builder = null;
+        Notification notification = null;
+        if(android.os.Build.VERSION.SDK_INT >= 26) {
+            //Android O上对Notification进行了修改，如果设置的targetSDKVersion>=26建议使用此种方式创建通知栏
+            if (null == notificationManager) {
+                notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            }
+            String channelId = getApplicationContext().getPackageName();
+            if(!isCreateChannel) {
+                NotificationChannel notificationChannel = new NotificationChannel(channelId,
+                        NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.enableLights(true);//是否在桌面icon右上角展示小圆点
+                notificationChannel.setLightColor(Color.BLUE); //小圆点颜色
+                notificationChannel.setShowBadge(true); //是否在久按桌面图标时显示此渠道的通知
+                notificationManager.createNotificationChannel(notificationChannel);
+                isCreateChannel = true;
+            }
+            builder = new Notification.Builder(getApplicationContext(), channelId);
+        } else {
+            builder = new Notification.Builder(getApplicationContext());
+        }
+        builder.setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle("GPS速度插件")
+                // .setSmallIcon(R.drawable.ic_speedometer_notif)
+                .setContentText("正在后台运行")
+                .setWhen(System.currentTimeMillis());
+
+        if (android.os.Build.VERSION.SDK_INT >= 16) {
+            notification = builder.build();
+        } else {
+            return builder.getNotification();
+        }
+        return notification;
     }
 }

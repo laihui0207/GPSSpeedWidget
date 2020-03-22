@@ -53,6 +53,7 @@ import com.huivip.gpsspeedwidget.appselection.AppSelectionActivity;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.service.AltitudeFloatingService;
 import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
+import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.MeterFloatingService;
@@ -1107,7 +1108,7 @@ public class ConfigurationActivity extends Activity {
 
             };
         });
-
+        startFloatingWindows(true);
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
@@ -1159,6 +1160,10 @@ public class ConfigurationActivity extends Activity {
         if (hasFocus) {
             invalidateStates();
         }
+    }
+    private void startFloatingWindows(boolean enabled){
+        Intent bootStartService=new Intent(getApplicationContext(), BootStartService.class);
+        startService(bootStartService);
     }
     private void startFloationgWindows(boolean enabled){
         Intent defaultFloatingService=new Intent(this, DefaultFloatingService.class);

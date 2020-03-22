@@ -20,7 +20,7 @@
             android:layout_gravity="bottom|end"
             android:layout_weight="1"
             android:gravity="end|bottom"
-            android:text="10000"
+            android:text="海拔8848米"
             android:textColor="@color/cardview_light_background"
             android:textSize="40dp" />
 
@@ -31,6 +31,7 @@
             android:layout_weight="1"
             android:layout_gravity="start|bottom"
             android:gravity="start|bottom"
+            android:visibility="gone"
             android:text="米"
             android:textColor="@color/cardview_light_background"
             android:textSize="35dp" />
