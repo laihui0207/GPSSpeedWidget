@@ -63,9 +63,9 @@
                 android:background="@drawable/circle_autonavi_limit"
                 android:layout_gravity="center"
                 android:layout_height="44dp"
+                android:visibility="gone"
                 android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:visibility="gone">
+                >
                 <ProgressBar
                     android:id="@+id/autoNavi_progressBarLimit"
                     android:layout_width="match_parent"

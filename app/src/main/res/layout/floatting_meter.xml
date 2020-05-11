@@ -12,7 +12,8 @@
                                                    android:layout_height="match_parent"
                                                    android:layout_centerHorizontal="true"
                                                    android:layout_centerVertical="true" android:padding="10dp"/>
-        <com.huivip.gpsspeedwidget.view.DigtalView android:textSize="40dp"
+        <com.huivip.gpsspeedwidget.view.DigitalView
+            android:textSize="40dp"
                   android:id="@+id/textview_meter_SpeedText" android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:text="80"

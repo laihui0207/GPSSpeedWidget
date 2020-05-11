@@ -230,7 +230,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     public void updateCameraInfo(AMapNaviCameraInfo[] aMapNaviCameraInfos) {
         for (AMapNaviCameraInfo aMapNaviCameraInfo : aMapNaviCameraInfos) {
             gpsUtil.setCameraType( aMapNaviCameraInfo.getCameraType());
-            if (aMapNaviCameraInfo.getCameraSpeed() > 0 && aMapNaviCameraInfo.getCameraDistance() > 0) {
+            if (aMapNaviCameraInfo.getCameraSpeed() > 0 || aMapNaviCameraInfo.getCameraDistance() > 0) {
                 gpsUtil.setCameraDistance(aMapNaviCameraInfo.getCameraDistance());
                 gpsUtil.setCameraSpeed(aMapNaviCameraInfo.getCameraSpeed());
             }

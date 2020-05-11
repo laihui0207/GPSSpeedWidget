@@ -23,7 +23,7 @@ import com.huivip.gpsspeedwidget.model.WeatherItem;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.ChinaDateUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
-import com.huivip.gpsspeedwidget.view.DigtalView;
+import com.huivip.gpsspeedwidget.view.DigitalView;
 import com.huivip.gpsspeedwidget.widget.TimeWidget;
 
 import org.greenrobot.eventbus.EventBus;
@@ -158,7 +158,7 @@ public class TimeWidgetService extends Service {
         Bitmap bitmap = null;
         View view = View.inflate(getApplicationContext(), R.layout.view_widget_number, null);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        DigtalView timeView = view.findViewById(R.id.v_widget_number);
+        DigitalView timeView = view.findViewById(R.id.v_widget_number);
         timeView.setText(text);
         timeView.setTextColor(AppSettings.get().getTimeWidgetTimeTextColor());
         timeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 50 + Integer.parseInt(AppSettings.get().getTimeWidgetTimeTextSize()));

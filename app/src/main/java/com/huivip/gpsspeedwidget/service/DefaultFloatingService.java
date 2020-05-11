@@ -32,9 +32,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
+import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
@@ -106,7 +109,7 @@ public class DefaultFloatingService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-
+    private boolean naviStarted=false;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent!=null){
@@ -262,13 +265,15 @@ public class DefaultFloatingService extends Service {
     void checkLocationData() {
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             setSpeed(gpsUtil.getKmhSpeedStr(), gpsUtil.getSpeedometerPercentage());
-            mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
-            setSpeeding(gpsUtil.isHasLimited());
-            setLimit(gpsUtil.getLimitDistancePercentage());
-            if (gpsUtil.getCameraType() > -1) {
-                limitShowLabel.setText(gpsUtil.getCameraTypeName());
-            } else {
-                limitShowLabel.setText("限速");
+            if(!naviStarted) {
+                mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
+                setSpeeding(gpsUtil.isHasLimited());
+                setLimit(gpsUtil.getLimitDistancePercentage(), gpsUtil.getLimitDistance());
+                if (gpsUtil.getCameraType() > -1) {
+                    limitShowLabel.setText(gpsUtil.getCameraTypeName());
+                } else {
+                    limitShowLabel.setText("限速");
+                }
             }
             mSpeedDirectionText.setText(gpsUtil.getDirection());
             if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
@@ -283,7 +288,29 @@ public class DefaultFloatingService extends Service {
             mSpeedometerText.setText("--");
         }
     }
+    @Subscribe
+    public void updateNaviStatus(AutoMapStatusUpdateEvent event){
+        this.naviStarted=event.isDaoHangStarted();
+        if(!naviStarted){
+            setLimit(0,0);
+        }
+    }
+    @Subscribe
+    public void updateNaviInfo(NaviInfoUpdateEvent event) {
+        if (gpsUtil.getAutoNaviStatus() != Constant.Navi_Status_Started) return;
+        textViewCurrentRoadName.setText(event.getCurRoadName());
+        int limitDistancePercentage=0;
+        if (event.getLimitDistance()<300 && event.getLimitDistance()>0) {
+            limitDistancePercentage = Math.round((300F -event.getLimitDistance() ) / 300 * 100);
+        }
+        setLimit(limitDistancePercentage,event.getLimitDistance());
+        if(event.getCameraSpeed()>0) {
+            mLimitText.setText(event.getCameraSpeed() + "");
+        }
+        gpsUtil.setCameraType(event.getLimitType());
+        limitShowLabel.setText(gpsUtil.getCameraTypeName());
 
+    }
     @Subscribe(threadMode= ThreadMode.MAIN)
     public void showRoadLine(RoadLineEvent event) {
         if (AppSettings.get().isShowRoadLineOnSpeed() && event.isShowed()) {
@@ -301,12 +328,12 @@ public class DefaultFloatingService extends Service {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
                 WindowManager.LayoutParams.TYPE_PHONE;
     }
-    public void setLimit(int percentOfLimit){
+    public void setLimit(int percentOfLimit,int distance){
         if(PrefUtils.getShowLimits(this)) {
             mLimitArcView.getModels().get(0).setProgress(percentOfLimit);
             mLimitArcView.animateProgress();
-            if(gpsUtil.getLimitDistance()>0){
-                mFloatingimitDistance.setText(gpsUtil.getLimitDistance()+"米");
+            if(distance>0){
+                mFloatingimitDistance.setText(distance+"米");
             }
             else {
                 mFloatingimitDistance.setText(gpsUtil.getDistance());
