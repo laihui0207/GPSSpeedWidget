@@ -128,6 +128,7 @@ public abstract class PrefUtils {
     static final String WEATHER_WEATHRE= "com.huivip.weather.current.weather";
     static final String WEATHER_TEMPERATURE= "com.huivip.weather.current.temperature";
     static final String WEATHER_ALTITUDE= "com.huivip.weather.current.altitude";
+    static final String NAVI_DEST_ADDRESS= "com.huivip.navi.address";
 
 
     private static SharedPreferences.Editor edit(Context context) {
@@ -182,6 +183,12 @@ public abstract class PrefUtils {
     }
     public static String getTtsEngine(Context context){
         return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.BAIDUTTS);
+    }
+    public static void setNaviDestAddress(Context context,String address){
+        edit(context).putString(NAVI_DEST_ADDRESS,address).apply();
+    }
+    public static String getNaviDestAddress(Context context){
+        return getSharedPreferences(context).getString(NAVI_DEST_ADDRESS, null);
     }
     public static String getAmapWebKey(Context context){
         String deviceId=getShortDeviceId(context);

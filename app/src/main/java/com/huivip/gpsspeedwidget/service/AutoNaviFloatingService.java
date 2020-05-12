@@ -31,10 +31,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
+import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
+import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
@@ -89,7 +92,9 @@ public class AutoNaviFloatingService extends Service {
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     GpsUtil gpsUtil;
-   /* private ServiceConnection mServiceConnection;
+    boolean naviStarted=false;
+
+    /* private ServiceConnection mServiceConnection;
     RoadLineService.RoadLineBinder roadLineBinder;*/
     @Nullable
     @Override
@@ -294,11 +299,40 @@ public class AutoNaviFloatingService extends Service {
         int color = ContextCompat.getColor(this, colorRes);
         speedView.setTextColor(color);
         speedOveralView.setVisibility(speeding ? View.VISIBLE : View.GONE);
-        limitView.setVisibility((gpsUtil.getLimitDistance()>0 || gpsUtil.getLimitSpeed() > 0 )  ? View.VISIBLE : View.GONE);
-        limitTextView.setText(gpsUtil.getLimitSpeed()+"");
-        limitDistanceTextView.setText(gpsUtil.getLimitDistance()+"");
-        limitProgressBar.setProgress(gpsUtil.getLimitDistancePercentage());
+        if(!naviStarted) {
+            limitView.setVisibility((gpsUtil.getLimitDistance() > 0 || gpsUtil.getLimitSpeed() > 0) ? View.VISIBLE : View.GONE);
+            limitTextView.setText(gpsUtil.getLimitSpeed() + "");
+            setLimit(gpsUtil.getLimitDistancePercentage(), gpsUtil.getLimitDistance());
+            limitTypeTextView.setText(gpsUtil.getCameraTypeName());
+        }
+    }
+    @Subscribe
+    public void updateNaviStatus(AutoMapStatusUpdateEvent event){
+        this.naviStarted=event.isDaoHangStarted();
+        if(!naviStarted){
+            setLimit(0,0);
+        }
+    }
+    @Subscribe
+    public void updateNaviInfo(NaviInfoUpdateEvent event) {
+        if (gpsUtil.getAutoNaviStatus() != Constant.Navi_Status_Started) return;
+        speedUnitTextView.setText(event.getCurRoadName());
+        int limitDistancePercentage=0;
+        if (event.getLimitDistance()<300 && event.getLimitDistance()>0) {
+            limitDistancePercentage = Math.round((300F -event.getLimitDistance() ) / 300 * 100);
+        }
+        limitView.setVisibility(event.getLimitDistance()>0   ? View.VISIBLE : View.GONE);
+        if(event.getCameraSpeed()>0) {
+            limitTextView.setText(event.getLimitSpeed() + "");
+        }
+        gpsUtil.setCameraSpeed(event.getLimitSpeed());
+        setLimit(limitDistancePercentage,event.getLimitDistance());
+        gpsUtil.setCameraType(event.getLimitType());
         limitTypeTextView.setText(gpsUtil.getCameraTypeName());
+    }
+    public void setLimit(int limitDistancePercentage,int limitDistance){
+        limitDistanceTextView.setText(limitDistance+"");
+        limitProgressBar.setProgress(limitDistancePercentage);
     }
    /* public void setSpeed(String speed) {
         if (PrefUtils.getShowSpeedometer(this) && speedView != null) {

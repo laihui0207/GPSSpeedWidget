@@ -47,7 +47,11 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -89,6 +93,9 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                 break;
             case R.string.pref_key__wifi_hotpot_setting:
                 setWifiConfig();
+                break;
+            case R.string.pref_key__Tracker_self_server_url:
+                setTrackerServerUrl();
                 break;
             case R.string.pref_key__overdraw_permission:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -315,6 +322,34 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                         PrefUtils.setAutoLaunchHotSpotName(getContext(),wifiName);
                         PrefUtils.setAutoLaunchHotSpotPassword(getContext(),wifiPassword);
                         //autoLaunchChanged(buttonView);
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("取消",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        final android.app.AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+    private void setTrackerServerUrl(){
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View promptView = layoutInflater.inflate(R.layout.dialog_server_url_setting, null);
+        android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setView(promptView);
+        final EditText nameEditText = (EditText) promptView.findViewById(R.id.input_serverUrl);
+        nameEditText.setText(PrefUtils.getGPSRemoteUrl(getContext()));
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String serverUrl= nameEditText.getText().toString();
+                        if (TextUtils.isEmpty(serverUrl)) {
+                            serverUrl = PrefUtils.getGPSRemoteUrl(getContext());
+                        }
+                        PrefUtils.setGpsRemoteUrl(getContext(),serverUrl);
                         dialog.cancel();
                     }
                 })

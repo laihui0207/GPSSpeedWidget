@@ -24,7 +24,7 @@ import com.huivip.gpsspeedwidget.model.WeatherItem;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.ChinaDateUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
-import com.huivip.gpsspeedwidget.view.DigtalView;
+import com.huivip.gpsspeedwidget.view.DigitalView;
 import com.huivip.gpsspeedwidget.widget.TimeWidget_v;
 
 import org.greenrobot.eventbus.EventBus;
@@ -56,7 +56,7 @@ public class TimeWidgetVerticalService extends Service {
     @Override
     public void onCreate() {
         this.manager = AppWidgetManager.getInstance(this);
-        getApplicationContext().registerReceiver(myBroadcastReceiver,new IntentFilter(Intent.ACTION_TIME_TICK));
+        registerReceiver(myBroadcastReceiver,new IntentFilter(Intent.ACTION_TIME_TICK));
         this.thisWidget = new ComponentName(this, TimeWidget_v.class);
         EventBus.getDefault().register(this);
         if(!Utils.isServiceRunning(getApplicationContext(),WeatherService.class.getName())){
@@ -78,7 +78,7 @@ public class TimeWidgetVerticalService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
         EventBus.getDefault().post(new SearchWeatherEvent(false));
-        updateView();
+        //updateView();
         return Service.START_REDELIVER_INTENT;
     }
 
@@ -88,7 +88,7 @@ public class TimeWidgetVerticalService extends Service {
         if(EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().unregister(this);
         }
-        getApplicationContext().unregisterReceiver(myBroadcastReceiver);
+        unregisterReceiver(myBroadcastReceiver);
     }
     public void onStop(){
 
@@ -119,8 +119,8 @@ public class TimeWidgetVerticalService extends Service {
     private void updateView(){
         Date date=new Date();
        RemoteViews timeView = new RemoteViews(getPackageName(), R.layout.time_weather_v_widget);
-        timeView.setImageViewBitmap(R.id.image_time_v, getBitmap(timeFormat.format(date)));
-
+       Bitmap timeBitmap=getBitmap(timeFormat.format(date));
+        timeView.setImageViewBitmap(R.id.image_time_v, timeBitmap);
         int textSize=15+Integer.parseInt(AppSettings.get().getTimeWidgetOtherTextSize());
         timeView.setTextViewText(R.id.text_day_v,dateFormat.format(date));
         timeView.setTextColor(R.id.text_day_v,AppSettings.get().getTimeWidgetOtherTextColor());
@@ -154,7 +154,7 @@ public class TimeWidgetVerticalService extends Service {
         Bitmap bitmap = null;
         View view = View.inflate(getApplicationContext(),R.layout.view_widget_number, null);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        DigtalView timeView=view.findViewById(R.id.v_widget_number);
+        DigitalView timeView=view.findViewById(R.id.v_widget_number);
         timeView.setText(text);
         timeView.setTextColor(AppSettings.get().getTimeWidgetTimeTextColor());
         timeView.setTextSize(TypedValue.COMPLEX_UNIT_SP,50+Integer.parseInt(AppSettings.get().getTimeWidgetTimeTextSize()));
@@ -162,6 +162,8 @@ public class TimeWidgetVerticalService extends Service {
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());;
         view.buildDrawingCache();
         bitmap = view.getDrawingCache();
+        view.refreshDrawableState();
+        view=null;
         return bitmap;
     }
 }

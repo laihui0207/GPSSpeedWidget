@@ -29,7 +29,7 @@ import com.huivip.gpsspeedwidget.model.SegmentModel;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.Tool;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
-import com.huivip.gpsspeedwidget.view.DigtalView;
+import com.huivip.gpsspeedwidget.view.DigitalView;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 import com.huivip.gpsspeedwidget.widget.SpeedNumberVerticalWidget;
 
@@ -86,7 +86,7 @@ public class SpeedNumberVerticalService extends Service {
         };
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         CrashHandler.getInstance().init(getApplicationContext());
-        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         EventBus.getDefault().register(this);
         super.onCreate();
     }
@@ -226,7 +226,13 @@ public class SpeedNumberVerticalService extends Service {
                 this.numberRemoteViews.setTextViewText(R.id.textView_distance_v, gpsUtil.getDistance() + "/"+gpsUtil.getDriveTimeString());
                 this.numberRemoteViews.setProgressBar(R.id.progressBarLimit_v, 100, 0, false);
             }
-            this.numberRemoteViews.setTextViewText(R.id.number_limit_v, gpsUtil.getLimitSpeed()+ "");
+            if(gpsUtil.isHasLimited()) {
+                this.numberRemoteViews.setTextViewText(R.id.number_limit_v, gpsUtil.getLimitSpeed() + "");
+                this.numberRemoteViews.setTextColor(R.id.number_limit_v, ContextCompat.getColor(this, R.color.red500));
+            } else {
+                this.numberRemoteViews.setTextViewText(R.id.number_limit_v, gpsUtil.getLimitSpeed() + "");
+                this.numberRemoteViews.setTextColor(R.id.number_limit_v, ContextCompat.getColor(this, R.color.white));
+            }
         }
         if(aimlessNaviStarted) {
             if (tempMute) {
@@ -254,7 +260,7 @@ public class SpeedNumberVerticalService extends Service {
         Bitmap bitmap = null;
         View view = View.inflate(getApplicationContext(), R.layout.view_widget_number, null);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        DigtalView timeView = view.findViewById(R.id.v_widget_number);
+        DigitalView timeView = view.findViewById(R.id.v_widget_number);
         timeView.setText(text);
         timeView.setTextColor(color);
         timeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 60 + Integer.parseInt(AppSettings.get().getSpeedVerticalWidgetSpeedTextSize()));

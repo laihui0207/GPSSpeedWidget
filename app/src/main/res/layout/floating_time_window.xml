@@ -7,7 +7,7 @@
             android:orientation="horizontal"
             android:layout_width="wrap_content" android:background="@drawable/real_time_floating_border"
             android:layout_height="wrap_content" android:id="@+id/layout_Time">
-        <com.huivip.gpsspeedwidget.view.DigtalView
+        <com.huivip.gpsspeedwidget.view.DigitalView
                 android:text="00:00"
                 android:layout_height="wrap_content" android:id="@+id/textView_time" android:layout_weight="1"
                 android:textSize="40sp" android:textStyle="bold"

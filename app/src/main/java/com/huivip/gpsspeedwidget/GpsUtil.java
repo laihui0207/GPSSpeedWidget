@@ -56,6 +56,7 @@ public class GpsUtil {
     boolean gpsLocationStarted = false;
     boolean gpsLocationChanged = false;
     public boolean serviceStarted = false;
+    boolean firstLaunch=true;
     TimerTask locationScanTask;
     Timer locationTimer;
     LocationManager locationManager;
@@ -360,6 +361,7 @@ public class GpsUtil {
             if (!this.velocitaString.equals(this.velocita_prec)) {
                 computeAndShowData();
                 gpsLocationChanged = true;
+
                 this.velocita_prec = this.velocitaString;
             } else {
                 gpsLocationChanged = false;

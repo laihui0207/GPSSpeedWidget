@@ -99,6 +99,12 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isEnableTracker(){
         return getBool(R.string.pref_key__Tracker_enable,false);
     }
+    public boolean isEnableRecord(){
+        return getBool(R.string.pref_key__Tracker_self_record_enable,false);
+    }
+    public boolean isEnableSelfUpload(){
+        return getBool(R.string.pref_key__Tracker_self_enable,false);
+    }
     public boolean isEnableRoadLine(){
         return getBool(R.string.pref_key__Road_line_enable,false);
     }

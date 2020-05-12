@@ -28,6 +28,8 @@ public class WeatherItem {
             return R.drawable.hail;
         } else if (paramString.equals("雨夹雪")) {
             return R.drawable.sleet;
+        } else if (paramString.equals("雨")) {
+            return R.drawable.light_rain;
         } else if (paramString.equals("小雨")) {
             return R.drawable.light_rain;
         } else if (paramString.equals("中雨")) {

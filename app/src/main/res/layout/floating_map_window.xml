@@ -15,7 +15,8 @@
             android:orientation="horizontal"
             android:layout_width="300dp"
             android:layout_height="wrap_content" android:weightSum="10" android:gravity="right">
-            <com.huivip.gpsspeedwidget.view.DigtalView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            <com.huivip.gpsspeedwidget.view.DigitalView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="高德地图" android:layout_weight="10" android:id="@+id/textview_floating_map_title"
                 android:textSize="25dp" android:gravity="center" android:textStyle="bold"
                 android:textColor="@color/blue"/>
