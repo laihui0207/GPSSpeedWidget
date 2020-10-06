@@ -57,6 +57,8 @@ public class AltitudeFloatingService extends Service{
     GpsUtil gpsUtil;
     @BindView(R.id.textView_altitude)
     TextView textViewAltitude;
+    @BindView(R.id.textView_altitude_direction)
+    TextView textViewDirection;
     @BindView(R.id.textView_altitude_unit)
     TextView textViewAltitudeUnit;
     private ServiceConnection mServiceConnection;
@@ -173,6 +175,7 @@ public class AltitudeFloatingService extends Service{
         } else {
             textViewAltitude.setText("海拔8848米");
         }
+        textViewDirection.setText(gpsUtil.getDirection());
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?

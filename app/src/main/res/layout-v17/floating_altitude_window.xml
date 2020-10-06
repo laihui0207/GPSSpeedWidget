@@ -12,7 +12,13 @@
         android:layout_gravity="center"
         android:background="@drawable/navi_floating_border"
         android:orientation="horizontal">
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="北"
+            android:id="@+id/textView_altitude_direction"
+            android:textSize="40sp"
+            android:textColor="@color/cardview_light_background" />
         <TextView
             android:id="@+id/textView_altitude"
             android:layout_width="wrap_content"
