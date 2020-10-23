@@ -1,3 +1,4 @@
+/*
 package com.huivip.gpsspeedwidget.activity.homeparts;
 
 import android.content.Intent;
@@ -58,3 +59,4 @@ public class HpGestureCallback implements DesktopGestureListener.DesktopGestureC
         return false;
     }
 }
+*/

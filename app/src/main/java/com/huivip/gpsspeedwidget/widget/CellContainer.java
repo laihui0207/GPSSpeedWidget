@@ -22,8 +22,6 @@ import com.huivip.gpsspeedwidget.util.Tool;
 import java.util.ArrayList;
 import java.util.List;
 
-import in.championswimmer.sfg.lib.SimpleFingerGestures;
-
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class CellContainer extends ViewGroup {
@@ -39,7 +37,9 @@ public class CellContainer extends ViewGroup {
     private Point _currentOutlineCoordinate = new Point(-1, -1);
     private Long _down = Long.valueOf(0);
     @Nullable
+/*
     private SimpleFingerGestures _gestures;
+*/
     private boolean _hideGrid = true;
     private final Paint _paint = new Paint(1);
     private boolean[][] _occupied;
@@ -136,9 +136,9 @@ public class CellContainer extends ViewGroup {
         _blockTouch = v;
     }
 
-    public final void setGestures(@Nullable SimpleFingerGestures v) {
+  /*  public final void setGestures(@Nullable SimpleFingerGestures v) {
         _gestures = v;
-    }
+    }*/
 
     @NonNull
     public final List<View> getAllCells() {
@@ -272,7 +272,7 @@ public class CellContainer extends ViewGroup {
         if (_blockTouch) {
             return super.onTouchEvent(event);
         }
-        try {
+        /*try {
             SimpleFingerGestures simpleFingerGestures = _gestures;
             if(simpleFingerGestures!=null) {
                 simpleFingerGestures.onTouch(this, event);
@@ -280,7 +280,7 @@ public class CellContainer extends ViewGroup {
         } catch (Exception e) {
             e.printStackTrace();
             return super.onTouchEvent(event);
-        }
+        }*/
         return super.onTouchEvent(event);
     }
 

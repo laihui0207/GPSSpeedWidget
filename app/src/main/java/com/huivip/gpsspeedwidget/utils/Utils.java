@@ -487,22 +487,22 @@ public abstract class Utils {
     }
 
     public static void startService(Context context, Intent intent) {
-      /*  if (Build.VERSION.SDK_INT >= 26
-                && !(Utils.isServiceRunning(context, HomeActivity.class.getName()) || Utils.isServiceRunning(context,MainActivity.class.getName()))
-                && !getDefaultDesktop(context).equalsIgnoreCase(context.getPackageName())) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                /*&& !(Utils.isServiceRunning(context, HomeActivity.class.getName()) || Utils.isServiceRunning(context,MainActivity.class.getName()))
+                && !getDefaultDesktop(context).equalsIgnoreCase(context.getPackageName())*/) {
             context.startForegroundService(intent);
-        } else {*/
+        } else {
             context.startService(intent);
-      //  }
+        }
     }
 
     public static void startForegroundService(Context context, Intent intent) {
-        /*if (Build.VERSION.SDK_INT >= 26
+        if (Build.VERSION.SDK_INT >= 26
                 && !getDefaultDesktop(context).equalsIgnoreCase(context.getPackageName())) {
             context.startForegroundService(intent);
-        } else {*/
+        } else {
             context.startService(intent);
-       // }
+        }
     }
     public static  String longToTimeString(long time){
         long totalSecond=time/1000;

@@ -318,9 +318,9 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
                 gpsUtil.setCameraType(info.getBroadcastType());
                 if (Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
                    gpsUtil.setCameraDistance(info.getDistance());
-                    if (info.getLimitSpeed() > 0) {
+                   // if (info.getLimitSpeed() > 0) {
                         gpsUtil.setCameraSpeed(info.getLimitSpeed());
-                    }
+                    //}
                 }
             }
         }

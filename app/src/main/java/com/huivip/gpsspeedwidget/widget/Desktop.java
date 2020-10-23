@@ -24,15 +24,11 @@ import com.huivip.gpsspeedwidget.util.DragAction.Action;
 import com.huivip.gpsspeedwidget.util.DragHandler;
 import com.huivip.gpsspeedwidget.util.Tool;
 import com.huivip.gpsspeedwidget.viewutil.DesktopCallback;
-import com.huivip.gpsspeedwidget.viewutil.DesktopGestureListener;
 import com.huivip.gpsspeedwidget.viewutil.ItemViewFactory;
 import com.huivip.gpsspeedwidget.widget.CellContainer.DragState;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import in.championswimmer.sfg.lib.SimpleFingerGestures;
-import in.championswimmer.sfg.lib.SimpleFingerGestures.OnFingerGestureListener;
 
 import static com.huivip.gpsspeedwidget.util.Definitions.WallpaperScroll.Inverse;
 import static com.huivip.gpsspeedwidget.util.Definitions.WallpaperScroll.Normal;
@@ -125,16 +121,18 @@ public final class Desktop extends ViewPager implements DesktopCallback {
             }
         }
 
-        private OnFingerGestureListener getGestureListener() {
+     /*   private OnFingerGestureListener getGestureListener() {
             return new DesktopGestureListener(_desktop, Setup.desktopGestureCallback());
-        }
+        }*/
 
         private CellContainer getItemLayout() {
             Context context = _desktop.getContext();
             CellContainer layout = new CellContainer(context);
-            SimpleFingerGestures mySfg = new SimpleFingerGestures();
-            mySfg.setOnFingerGestureListener(getGestureListener());
+          /*  SimpleFingerGestures mySfg = new SimpleFingerGestures();
+            mySfg.setOnFingerGestureListener(getGestureListener());*/
+/*
             layout.setGestures(mySfg);
+*/
             layout.setGridSize(Setup.appSettings().getDesktopColumnCount(), Setup.appSettings().getDesktopRowCount());
             layout.setOnClickListener(new OnClickListener() {
                 @Override

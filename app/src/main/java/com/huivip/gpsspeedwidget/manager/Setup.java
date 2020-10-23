@@ -7,7 +7,9 @@ import com.huivip.gpsspeedwidget.model.Item;
 import com.huivip.gpsspeedwidget.util.AppManager;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.DatabaseHelper;
+/*
 import com.huivip.gpsspeedwidget.viewutil.DesktopGestureListener;
+*/
 
 public abstract class Setup {
     private static Setup _setup = null;
@@ -35,9 +37,9 @@ public abstract class Setup {
         return get().getAppSettings();
     }
 
-    public static DesktopGestureListener.DesktopGestureCallback desktopGestureCallback() {
+   /* public static DesktopGestureListener.DesktopGestureCallback desktopGestureCallback() {
         return get().getDesktopGestureCallback();
-    }
+    }*/
 
     public static DatabaseHelper dataManager() {
         return get().getDataManager();
@@ -59,7 +61,9 @@ public abstract class Setup {
 
     public abstract AppSettings getAppSettings();
 
+/*
     public abstract DesktopGestureListener.DesktopGestureCallback getDesktopGestureCallback();
+*/
 
     public abstract DatabaseHelper getDataManager();
 

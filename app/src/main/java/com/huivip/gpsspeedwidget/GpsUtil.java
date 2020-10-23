@@ -76,6 +76,7 @@ public class GpsUtil {
     Location preLocation;
     int cameraType = 0;
     int cameraDistance = 0;
+    int preCameraDistance=0;
     int cameraSpeed = 0;
     String currentRoadName = "";
     String preRoadName=null;
@@ -283,6 +284,10 @@ public class GpsUtil {
                 this.speed = Double.valueOf(paramLocation.getSpeed());
                 this.velocitaString = localNumberFormat.format(this.speed);
                 this.bearing = paramLocation.getBearing();
+               /* if(firstLaunch){
+                    EventBus.getDefault().post(new LocationEnabledEvent());
+                    firstLaunch=false;
+                }*/
             }
             if (preLocation != null) {
                 distance += preLocation.distanceTo(paramLocation);
@@ -297,12 +302,12 @@ public class GpsUtil {
             }
             preLocation = paramLocation;
             // reset camera data every 4 second
-            if(cameraDistance>0 && paramLocation.getSpeed()>15 && locationUpdateCount>40){
+            if(cameraDistance>0 && paramLocation.getSpeed()>10 && locationUpdateCount>20){
                 setCameraDistance(0);
                 setCameraSpeed(0);
                 locationUpdateCount=0;
             }
-            else  if(cameraDistance>0 && paramLocation.getSpeed()>15 ) {
+            if(cameraDistance>0 && paramLocation.getSpeed()>10 ) {
                 locationUpdateCount++;
             }
 
@@ -315,7 +320,7 @@ public class GpsUtil {
                     alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300L, catchRoadIntent);
                     catchRoadLocation = paramLocation;
                     recordLocationDistance = 10;
-                    catchRoadDistance = 100;
+                    catchRoadDistance = 1000;
                 }
             }
             /*if(PrefUtils.isEnableAutoGoHomeAfterNaviStarted(context) && kmhSpeed>0 && autoNavi_on_Frontend && naviFloatingStatus == Constant.Navi_Status_Started ){
@@ -665,6 +670,9 @@ public class GpsUtil {
     }
 
     public void setCameraDistance(int cameraDistance) {
+        if(cameraDistance<preCameraDistance){
+            preCameraDistance=cameraDistance;
+        }
         this.cameraDistance = cameraDistance;
         this.limitDistance = cameraDistance;
     }

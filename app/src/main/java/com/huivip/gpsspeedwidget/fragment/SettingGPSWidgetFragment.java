@@ -47,11 +47,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -93,6 +89,9 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                 break;
             case R.string.pref_key__wifi_hotpot_setting:
                 setWifiConfig();
+                break;
+            case R.string.pref_key__over_speed_tts_setting:
+                setOverSpeedTTS();
                 break;
             case R.string.pref_key__Tracker_self_server_url:
                 setTrackerServerUrl();
@@ -299,6 +298,8 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         }
         Preference floatLyricFontSize=findPreference(getString(R.string.pref_key__lyric_music_font_size));
         floatLyricFontSize.setSummary("字体调整:"+AppSettings.get().getMusicLyricFontSize());
+        Preference overSpeedTTS=findPreference(getString(R.string.pref_key__over_speed_tts_setting));
+        overSpeedTTS.setSummary("当前语音："+PrefUtils.getPrefOverSpeedTts(getContext()));
         super.updateSummaries();
     }
     private void setWifiConfig(){
@@ -326,6 +327,34 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                         PrefUtils.setAutoLaunchHotSpotName(getContext(),wifiName);
                         PrefUtils.setAutoLaunchHotSpotPassword(getContext(),wifiPassword);
                         //autoLaunchChanged(buttonView);
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("取消",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        final android.app.AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+    private void setOverSpeedTTS(){
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View promptView = layoutInflater.inflate(R.layout.dialog_overspeed_tts_setting, null);
+        android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setView(promptView);
+        final EditText ttsValueEditText = (EditText) promptView.findViewById(R.id.input_overSpeedTTSName);
+        ttsValueEditText.setText(PrefUtils.getPrefOverSpeedTts(getContext()));
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String ttsValue = ttsValueEditText.getText().toString();
+                        if (TextUtils.isEmpty(ttsValue)) {
+                            ttsValue = Constant.OVER_SPEED_TTS;
+                        }
+                        PrefUtils.setPrefOverSpeedTts(getContext(),ttsValue);
                         dialog.cancel();
                     }
                 })

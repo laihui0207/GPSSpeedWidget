@@ -112,8 +112,6 @@ app:desugarDebugAndroidTestFileDependencies
 app:desugarDebugFileDependencies
 app:dexBuilderDebug
 app:dexBuilderDebugAndroidTest
-app:dummydebugUnitTest
-app:dummyreleaseUnitTest
 app:extractApksForDebug
 app:extractApksForRelease
 app:extractDeepLinksDebug
@@ -149,9 +147,6 @@ app:javaPreCompileDebugAndroidTest
 app:javaPreCompileDebugUnitTest
 app:javaPreCompileRelease
 app:javaPreCompileReleaseUnitTest
-app:mainApkListPersistenceDebug
-app:mainApkListPersistenceDebugAndroidTest
-app:mainApkListPersistenceRelease
 app:makeApkFromBundleForDebug
 app:makeApkFromBundleForRelease
 app:mergeDebugAndroidTestAssets
@@ -212,6 +207,7 @@ app:processReleaseUnitTestJavaRes
 app:reportBuildArtifactsDebug
 app:reportBuildArtifactsRelease
 app:resolveConfigAttr
+app:sdkReleaseDependencyData
 app:shrinkReleaseRes
 app:shrinkReleaseResources
 app:signDebugBundle
@@ -344,8 +340,6 @@ desugarDebugAndroidTestFileDependencies
 desugarDebugFileDependencies
 dexBuilderDebug
 dexBuilderDebugAndroidTest
-dummydebugUnitTest
-dummyreleaseUnitTest
 extractApksForDebug
 extractApksForRelease
 extractDeepLinksDebug
@@ -381,9 +375,6 @@ javaPreCompileDebugAndroidTest
 javaPreCompileDebugUnitTest
 javaPreCompileRelease
 javaPreCompileReleaseUnitTest
-mainApkListPersistenceDebug
-mainApkListPersistenceDebugAndroidTest
-mainApkListPersistenceRelease
 makeApkFromBundleForDebug
 makeApkFromBundleForRelease
 mergeDebugAndroidTestAssets
@@ -444,6 +435,7 @@ processReleaseUnitTestJavaRes
 reportBuildArtifactsDebug
 reportBuildArtifactsRelease
 resolveConfigAttr
+sdkReleaseDependencyData
 shrinkReleaseRes
 shrinkReleaseResources
 signDebugBundle

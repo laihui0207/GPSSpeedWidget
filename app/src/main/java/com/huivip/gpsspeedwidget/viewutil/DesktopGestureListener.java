@@ -1,3 +1,4 @@
+/*
 package com.huivip.gpsspeedwidget.viewutil;
 
 import com.huivip.gpsspeedwidget.widget.Desktop;
@@ -63,3 +64,4 @@ public class DesktopGestureListener implements SimpleFingerGestures.OnFingerGest
         boolean onDrawerGesture(Desktop desktop, Type event);
     }
 }
+*/

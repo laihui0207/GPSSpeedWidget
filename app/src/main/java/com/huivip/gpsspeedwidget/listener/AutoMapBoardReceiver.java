@@ -20,7 +20,6 @@ import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.NaviFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
-import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -249,7 +248,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             //Log.e(TAG, key + " : " + (bundle.get(key) != null ? bundle.get(key) : "NULL"));
                         }
                     }
-                    FileUtil.saveLogToFile(extras.toString());
+                    //FileUtil.saveLogToFile(extras.toString());
                     break;
                 case 10056:
                     // 增加目地播报

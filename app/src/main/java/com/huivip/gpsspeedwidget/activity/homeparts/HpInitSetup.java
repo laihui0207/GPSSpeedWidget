@@ -9,19 +9,22 @@ import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.util.AppManager;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.DatabaseHelper;
-import com.huivip.gpsspeedwidget.viewutil.DesktopGestureListener.DesktopGestureCallback;
 
 public final class HpInitSetup extends Setup {
     private final AppManager _appLoader;
     private final DatabaseHelper _dataManager;
+/*
     private final HpGestureCallback _desktopGestureCallback;
+*/
     private final HpEventHandler _eventHandler;
     private final Logger _logger;
     private final AppSettings _appSettings;
 
     public HpInitSetup(Context context) {
         _appSettings = AppSettings.get();
+/*
         _desktopGestureCallback = new HpGestureCallback(_appSettings);
+*/
         _dataManager = new DatabaseHelper(context);
         _appLoader = AppManager.getInstance(context);
         _eventHandler = new HpEventHandler();
@@ -44,11 +47,11 @@ public final class HpInitSetup extends Setup {
         return _appSettings;
     }
 
-    @NonNull
+   /* @NonNull
     public DesktopGestureCallback getDesktopGestureCallback() {
         return _desktopGestureCallback;
     }
-
+*/
     @NonNull
     public DatabaseHelper getDataManager() {
         return _dataManager;
