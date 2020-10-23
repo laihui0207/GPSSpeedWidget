@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 public class BootStartReceiver extends BroadcastReceiver {
     @Override
@@ -15,7 +16,7 @@ public class BootStartReceiver extends BroadcastReceiver {
             Log.d("huivip","get Action:"+intent.getAction());
             Intent bootService=new Intent(context, BootStartService.class);
             bootService.putExtra(BootStartService.START_BOOT,true);
-            context.startService(bootService);
+            Utils.startService(context,bootService);
         }
     }
 }

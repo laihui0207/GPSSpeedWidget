@@ -175,6 +175,7 @@ public class AltitudeFloatingService extends Service{
         } else {
             textViewAltitude.setText("海拔8848米");
         }
+        textViewDirection.setTextSize(40f+fontSizeAdjust);
         textViewDirection.setText(gpsUtil.getDirection());
     }
     private int getWindowType() {

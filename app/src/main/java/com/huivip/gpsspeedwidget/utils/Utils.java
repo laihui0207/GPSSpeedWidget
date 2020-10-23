@@ -495,6 +495,13 @@ public abstract class Utils {
           Log.d("huivip","Launch Notification Center failed");
       }
     }
+    public static void startService(Context context, Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            context.startForegroundService(intent);
+        } else {
+            context.startService(intent);
+        }
+    }
 /*    @TargetApi(Build.VERSION_CODES.KITKAT)*/
     public static boolean isNotificationEnabled(Context context) {
         ComponentName cn = new ComponentName(context, LyricService.class);
