@@ -57,6 +57,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isEnableTimeWindow(){
         return getBool(R.string.pref_key__auto_start_time_window,false);
     }
+    public boolean isEnableAltitudeWindow(){
+        return getBool(R.string.pref_key__auto_start_altitude_window,false);
+    }
     public boolean isAutoCheckUpdate(){
         return getBool(R.string.pref_key__auto_check_update,true);
     }
@@ -210,6 +213,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public int getLyricFontColor(){
         return getInt(R.string.pref_key__lyric_font_color,R.color.blue);
     }
+    public int getAltitudeFontColor(){
+        return getInt(R.string.pref_key__altitude_font_color,R.color.blue);
+    }
     public boolean isShowKuwoAlbum(){
         return getBool(R.string.pref_key__music_show_kuwo_album,true);
     }
@@ -221,6 +227,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     }
     public String getMusicLyricFontSize(){
         return getString(R.string.pref_key__lyric_music_font_size,"0");
+    }
+    public String getAltitudeFontSize(){
+        return getString(R.string.pref_key__altitude_font_size,"0");
     }
     public boolean isEnableLaunchOtherApp(){
         return getBool(R.string.pref_key__auto_start_launch_other_app_enable,false);

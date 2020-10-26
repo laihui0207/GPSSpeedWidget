@@ -26,6 +26,7 @@ import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.manager.Setup;
+import com.huivip.gpsspeedwidget.service.AltitudeFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.RealTimeFloatingService;
 import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
@@ -130,6 +131,20 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                     Intent timefloating = new Intent(getContext(), RealTimeFloatingService.class);
                     timefloating.putExtra(RealTimeFloatingService.EXTRA_CLOSE, true);
                     getContext().startService(timefloating);
+                }
+            }
+        }
+        if(key.equalsIgnoreCase(getString(R.string.pref_key__auto_start_altitude_window))) {
+            if (AppSettings.get().isEnableAltitudeWindow()) {
+                if (!Utils.isServiceRunning(getContext(), AltitudeFloatingService.class.getName())) {
+                    Intent altitudeFloating = new Intent(getContext(), AltitudeFloatingService.class);
+                    getContext().startService(altitudeFloating);
+                }
+            } else {
+                if (Utils.isServiceRunning(getContext(), AltitudeFloatingService.class.getName())) {
+                    Intent altitudeFloating = new Intent(getContext(), AltitudeFloatingService.class);
+                    altitudeFloating.putExtra(AltitudeFloatingService.EXTRA_CLOSE, true);
+                    getContext().startService(altitudeFloating);
                 }
             }
         }
@@ -298,6 +313,8 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         }
         Preference floatLyricFontSize=findPreference(getString(R.string.pref_key__lyric_music_font_size));
         floatLyricFontSize.setSummary("字体调整:"+AppSettings.get().getMusicLyricFontSize());
+        Preference floatAltitudeFontSize=findPreference(getString(R.string.pref_key__altitude_font_size));
+        floatAltitudeFontSize.setSummary("字体调整:"+AppSettings.get().getAltitudeFontSize());
         Preference overSpeedTTS=findPreference(getString(R.string.pref_key__over_speed_tts_setting));
         overSpeedTTS.setSummary("当前语音："+PrefUtils.getPrefOverSpeedTts(getContext()));
         super.updateSummaries();

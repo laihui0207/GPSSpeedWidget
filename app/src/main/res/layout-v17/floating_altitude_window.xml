@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/layout_Time"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@drawable/navi_floating_border"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\u2191东北"
+            android:layout_gravity="bottom|end"
+            android:layout_weight="1"
+            android:gravity="end|bottom"
+            android:id="@+id/textView_altitude_direction"
+            android:textSize="40sp"
+            android:textColor="@color/cardview_light_background" />
+        <TextView
+            android:id="@+id/textView_altitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_weight="1"
+            android:gravity="end|bottom"
+            android:text="\u26f0海拔8848米"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="40dp" />
+
+        <TextView
+            android:id="@+id/textView_altitude_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="start|bottom"
+            android:gravity="start|bottom"
+            android:visibility="gone"
+            android:text="米"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="35dp" />
+
+    </LinearLayout>
+</LinearLayout>

@@ -181,6 +181,10 @@ public class BootStartService extends Service {
                     Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
                     Utils.startService(getApplicationContext(), xunHangService);
                 }
+                if(AppSettings.get().isEnableAltitudeWindow()){
+                    Intent altitudeWindowService= new Intent(getApplicationContext(), AltitudeFloatingService.class);
+                    Utils.startService(getApplicationContext(), altitudeWindowService);
+                }
                 if (Utils.isNetworkConnected(getApplicationContext())) {
                     if (AppSettings.get().isEnableTracker() && !Utils.isServiceRunning(getApplicationContext(), NaviTrackService.class.getName())) {
                         Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);

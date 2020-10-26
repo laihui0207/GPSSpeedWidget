@@ -44,6 +44,7 @@
             android:key="@string/pref_key__auto_start_time_window"
             android:summary="显示时间悬浮窗口"
             android:title="时间悬浮窗" />
+
         <ListPreference
             android:defaultValue="HH:mm EEE"
             android:entries="@array/entries__date_format"
@@ -58,6 +59,25 @@
            app:lightnessSlider="true"
            app:alphaSlider="true"
             />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__auto_start_altitude_window"
+            android:summary="海拔悬浮窗口"
+            android:title="海拔悬浮窗" />
+        <com.flask.colorpicker.ColorPickerPreference
+            android:defaultValue="@color/blue"
+            android:key="@string/pref_key__altitude_font_color"
+            android:title="海拔窗口字体颜色"
+            app:lightnessSlider="true"
+            app:alphaSlider="true"
+            />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/items_widget_font_size"
+            android:entryValues="@array/items_widget_font_size"
+            android:key="@string/pref_key__altitude_font_size"
+            android:summary="调整海拔窗口字体大小"
+            android:title="海拔窗口字体大小" />
     </PreferenceCategory>
     <PreferenceCategory android:title="启动第三方应用">
         <SwitchPreference
