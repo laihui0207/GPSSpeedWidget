@@ -243,6 +243,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                 Manifest.permission.ACCESS_WIFI_STATE,
                 Manifest.permission.CHANGE_WIFI_STATE,
                 Manifest.permission.CHANGE_NETWORK_STATE,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
         };
 
         ArrayList<String> toApplyList = new ArrayList<String>();

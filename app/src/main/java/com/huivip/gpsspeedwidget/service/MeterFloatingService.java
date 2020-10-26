@@ -53,6 +53,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class MeterFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
+    public static final String TARGET="com.huivip.gpsSpeedWidget.speedFloating";
     private WindowManager mWindowManager;
     private View mFloatingView;
     @BindView(R.id.imageView_meter_pointer)
@@ -99,6 +100,7 @@ public class MeterFloatingService extends Service {
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
             try {
+                Utils.delayLaunchSelf(getApplicationContext(),TARGET,180000L,"START");
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
                 e.printStackTrace();

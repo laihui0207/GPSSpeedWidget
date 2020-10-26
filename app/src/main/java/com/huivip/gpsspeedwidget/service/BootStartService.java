@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -22,6 +23,7 @@ import android.util.Log;
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
@@ -242,10 +244,17 @@ public class BootStartService extends Service {
         } else {
             builder = new Notification.Builder(getApplicationContext());
         }
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        // Create the TaskStackBuilder and add the intent, which inflates the back stack
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+// Get the PendingIntent containing the entire back stack
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("GPS速度插件")
                 .setSmallIcon(R.drawable.ic_speedometer_notif)
-                .setContentText("正在后台运行")
+                .setContentText("正在后台运行,点击打开主界面").setContentIntent(resultPendingIntent)
                 .setWhen(System.currentTimeMillis());
 
         if (android.os.Build.VERSION.SDK_INT >= 16) {

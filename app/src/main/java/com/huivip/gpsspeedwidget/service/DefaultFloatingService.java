@@ -65,7 +65,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class DefaultFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
-
+    public static final String TARGET="com.huivip.gpsSpeedWidget.speedFloating";
     private WindowManager mWindowManager;
     private View mFloatingView;
     @BindView(R.id.limit)
@@ -128,6 +128,7 @@ public class DefaultFloatingService extends Service {
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
             try {
+                Utils.delayLaunchSelf(getApplicationContext(),TARGET,180000L,"START");
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
                 e.printStackTrace();
@@ -265,7 +266,7 @@ public class DefaultFloatingService extends Service {
     void checkLocationData() {
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             setSpeed(gpsUtil.getKmhSpeedStr(), gpsUtil.getSpeedometerPercentage());
-            if(!naviStarted) {
+            if (!naviStarted) {
                 mLimitText.setText(Integer.toString(gpsUtil.getLimitSpeed()));
                 setSpeeding(gpsUtil.isHasLimited());
                 setLimit(gpsUtil.getLimitDistancePercentage(), gpsUtil.getLimitDistance());
@@ -274,16 +275,15 @@ public class DefaultFloatingService extends Service {
                 } else {
                     limitShowLabel.setText("限速");
                 }
+                mSpeedDirectionText.setText(gpsUtil.getDirection());
+                if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
+                    speedUnitTextView.setText("km/h");
+                } else {
+                    speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
+                }
+                textViewCurrentRoadName.setText(gpsUtil.getCurrentRoadName());
             }
-            mSpeedDirectionText.setText(gpsUtil.getDirection());
-            if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
-                speedUnitTextView.setText("km/h");
-            } else {
-                speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
-            }
-            textViewCurrentRoadName.setText(gpsUtil.getCurrentRoadName());
             textViewAltitude.setText("海拔" + gpsUtil.getAltitude() + "米");
-            // }
         } else {
             mSpeedometerText.setText("--");
         }

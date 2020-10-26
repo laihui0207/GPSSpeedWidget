@@ -6,7 +6,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
@@ -25,9 +24,13 @@ import com.amap.api.track.query.model.QueryTerminalRequest;
 import com.amap.api.track.query.model.QueryTerminalResponse;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
+import com.huivip.gpsspeedwidget.beans.LocationEnabledEvent;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.SimpleOnTrackLifecycleListener;
 import com.huivip.gpsspeedwidget.utils.SimpleOnTrackListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class NaviTrackService extends Service {
     private String TAG = "GpSWidget";
@@ -39,7 +42,6 @@ public class NaviTrackService extends Service {
     private long trackId;
     private long serviceId;
     private String TERMINAL_NAME;
-    BroadcastReceiver broadcastReceiver;
 
     @Nullable
     @Override
@@ -52,7 +54,8 @@ public class NaviTrackService extends Service {
         serviceId = Long.parseLong(PrefUtils.getAmapTrackServiceID(getApplicationContext()));
         TERMINAL_NAME = "Track_" + PrefUtils.getShortDeviceId(getApplicationContext());
         aMapTrackClient = new AMapTrackClient(getApplicationContext());
-        //aMapTrackClient.setInterval(5  , 20);
+        aMapTrackClient.setInterval(5  , 60);
+        EventBus.getDefault().register(this);
         super.onCreate();
     }
 
@@ -78,7 +81,10 @@ public class NaviTrackService extends Service {
         }*/
         return Service.START_REDELIVER_INTENT;
     }
-
+    @Subscribe
+    public void launchTrack(LocationEnabledEvent enabledEvent){
+       // startTrack();
+    }
     @Override
     public void onDestroy() {
         if (isServiceRunning) {

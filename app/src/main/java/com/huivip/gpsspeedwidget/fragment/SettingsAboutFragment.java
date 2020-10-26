@@ -127,7 +127,7 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                     _cu.openWebpageInExternalBrowser(getString(R.string.app_source_code_url));
                     return true;
                 }
-                case R.string.pref_key__more_info__project_license: {
+             /*   case R.string.pref_key__more_info__project_license: {
                     try {
                         au.showDialogWithHtmlTextView(R.string.licenses, new SimpleMarkdownParser().parse(
                                 getResources().openRawResource(R.raw.license),
@@ -136,7 +136,7 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
                         e.printStackTrace();
                     }
                     return true;
-                }
+                }*/
                 case R.string.pref_key__more_info__open_source_licenses: {
                     try {
                         au.showDialogWithHtmlTextView(R.string.licenses, new SimpleMarkdownParser().parse(

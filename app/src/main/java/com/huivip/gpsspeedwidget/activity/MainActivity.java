@@ -755,6 +755,7 @@ public class MainActivity extends Activity implements TraceListener {
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.ACCESS_WIFI_STATE,
                 Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
         };
 
         ArrayList<String> toApplyList = new ArrayList<String>();

@@ -60,6 +60,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class AutoNaviFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
+    public static final String TARGET="com.huivip.gpsSpeedWidget.speedFloating";
     private WindowManager mWindowManager;
     private View mFloatingView;
     @BindView(R.id.imageView_pointer)
@@ -119,6 +120,7 @@ public class AutoNaviFloatingService extends Service {
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
             try {
+                Utils.delayLaunchSelf(getApplicationContext(),TARGET,180000L,"START");
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
                 e.printStackTrace();
@@ -281,11 +283,7 @@ public class AutoNaviFloatingService extends Service {
             setSpeedOveral(gpsUtil.isHasLimited());
             directionTextView.setText(gpsUtil.getDirection() + "");
             altitudeTextView.setText("海拔： " + gpsUtil.getAltitude() + "米");
-            if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
-                speedUnitTextView.setText("km/h");
-            } else {
-                speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
-            }
+
         } else {
             speedView.setText("...");
         }
@@ -304,6 +302,11 @@ public class AutoNaviFloatingService extends Service {
             limitTextView.setText(gpsUtil.getLimitSpeed() + "");
             setLimit(gpsUtil.getLimitDistancePercentage(), gpsUtil.getLimitDistance());
             limitTypeTextView.setText(gpsUtil.getCameraTypeName());
+            if (TextUtils.isEmpty(gpsUtil.getCurrentRoadName())) {
+                speedUnitTextView.setText("km/h");
+            } else {
+                speedUnitTextView.setText(gpsUtil.getCurrentRoadName());
+            }
         }
     }
     @Subscribe

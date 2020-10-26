@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.huivip.gpsspeedwidget.beans.LocationEnabledEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
 import com.huivip.gpsspeedwidget.service.AutoXunHangService;
@@ -284,10 +285,10 @@ public class GpsUtil {
                 this.speed = Double.valueOf(paramLocation.getSpeed());
                 this.velocitaString = localNumberFormat.format(this.speed);
                 this.bearing = paramLocation.getBearing();
-               /* if(firstLaunch){
+                if(firstLaunch){
                     EventBus.getDefault().post(new LocationEnabledEvent());
                     firstLaunch=false;
-                }*/
+                }
             }
             if (preLocation != null) {
                 distance += preLocation.distanceTo(paramLocation);

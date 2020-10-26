@@ -4,6 +4,7 @@ import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -39,6 +40,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
+import com.huivip.gpsspeedwidget.listener.DelayTaskReceiver;
 import com.huivip.gpsspeedwidget.lyrics.LyricService;
 import com.huivip.gpsspeedwidget.service.AutoNaviFloatingService;
 import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
@@ -613,6 +615,16 @@ public abstract class Utils {
       } catch (Exception e){
           Log.d("huivip","Launch Notification Center failed");
       }
+    }
+   public static void delayLaunchSelf(Context context,String target,long delayTime,String action) {
+        AlarmManager alarm = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+        Intent delayTask = new Intent(context, DelayTaskReceiver.class);
+        delayTask.putExtra(DelayTaskReceiver.TARGET, target);
+        delayTask.setAction(action);
+        PendingIntent delayTaskServiceIntent =
+                PendingIntent.getBroadcast(context, 0, delayTask, 0);
+
+        alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+delayTime, delayTaskServiceIntent);
     }
 /*    @TargetApi(Build.VERSION_CODES.KITKAT)*/
     public static boolean isNotificationEnabled(Context context) {

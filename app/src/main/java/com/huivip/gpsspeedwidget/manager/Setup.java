@@ -7,9 +7,6 @@ import com.huivip.gpsspeedwidget.model.Item;
 import com.huivip.gpsspeedwidget.util.AppManager;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.DatabaseHelper;
-/*
-import com.huivip.gpsspeedwidget.viewutil.DesktopGestureListener;
-*/
 
 public abstract class Setup {
     private static Setup _setup = null;

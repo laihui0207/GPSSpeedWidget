@@ -25,17 +25,11 @@ public class CatchRoadReceiver extends BroadcastReceiver {
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     @Override
     public void onReceive(Context context, Intent intent) {
-        //  DBUtil dbUtil=new DBUtil(context);
-        // List<LocationVO> lastPoint=dbUtil.getLastedData("5");
         String latlng = "";
         String dateStr = "";
         String bearingStr = "";
         String speedStr = "";
         GpsUtil gpsUtil = GpsUtil.getInstance(AppObject.getContext());
-       /* if (!gpsUtil.isGpsLocationChanged()) {
-            Log.d("huivip","Catch Road: GPS is no Ready, quit!");
-            return;
-        }*/
 
         CoordinateConverter converter = new CoordinateConverter(context);
         converter.from(CoordinateConverter.CoordType.GPS);
