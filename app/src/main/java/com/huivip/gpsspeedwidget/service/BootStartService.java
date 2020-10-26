@@ -7,6 +7,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import android.util.Log;
 
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
 import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
@@ -31,7 +33,8 @@ public class BootStartService extends Service {
     AlarmManager alarm;
     private NotificationManager notificationManager = null;
     private static final String NOTIFICATION_CHANNEL_NAME = "BackgroundLocation";
-
+    private static Thread uploadGpsThread;
+    private boolean isrun = true;
     boolean isCreateChannel = false;
     @Nullable
     @Override
@@ -71,7 +74,7 @@ public class BootStartService extends Service {
                 if (intent.getBooleanExtra(START_BOOT, false)) {
                     Log.d(START_BOOT,"Auto Boot Start Service Launched");
                     autoStarted = true;
-                    startForeground(1,buildNotification());
+                    startForeground(100,buildNotification());
                     String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
                     if(!TextUtils.isEmpty(apps)) {
                         String[] autoApps = apps.split(",");
@@ -151,6 +154,25 @@ public class BootStartService extends Service {
                 }
             }
         }
+        if(uploadGpsThread == null){
+            uploadGpsThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //这里用死循环就是模拟一直执行的操作
+                    while (isrun){
+
+                        //你需要执行的任务
+
+                        try {
+                            Thread.sleep(10000L);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        }
+
         return super.onStartCommand(intent, flags, startId);
     }
     @SuppressLint("NewApi")
@@ -177,10 +199,19 @@ public class BootStartService extends Service {
         } else {
             builder = new Notification.Builder(getApplicationContext());
         }
+        Intent resultIntent = new Intent(this, ConfigurationActivity.class);
+        // Create the TaskStackBuilder and add the intent, which inflates the back stack
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+// Get the PendingIntent containing the entire back stack
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("GPS速度插件")
-                // .setSmallIcon(R.drawable.ic_speedometer_notif)
-                .setContentText("正在后台运行")
+                .setOngoing(true)
+                .setContentText("正在后台运行,点击打开主界面").setContentIntent(resultPendingIntent)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setSmallIcon(R.drawable.ic_launcher)
                 .setWhen(System.currentTimeMillis());
 
         if (android.os.Build.VERSION.SDK_INT >= 16) {

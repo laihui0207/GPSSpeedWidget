@@ -18,12 +18,16 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
@@ -31,15 +35,20 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.MeterWheel;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class MeterFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
+    public static final String TARGET="com.huivip.gpsSpeedWidget.speedFloating";
     private WindowManager mWindowManager;
     private View mFloatingView;
     @BindView(R.id.imageView_meter_pointer)
@@ -85,6 +94,7 @@ public class MeterFloatingService extends Service {
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
             try {
+                Utils.delayLaunchSelf(getApplicationContext(),TARGET,180000L,"START");
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
                 Log.d("huivip",e.getLocalizedMessage());
@@ -95,6 +105,7 @@ public class MeterFloatingService extends Service {
             locationTimer.cancel();
             locationTimer.purge();
         }
+
        /* if(gpsUtil!= null) {
             gpsUtil.stopLocationService(false);
         }*/

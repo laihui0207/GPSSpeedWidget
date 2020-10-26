@@ -2,6 +2,8 @@ package com.huivip.gpsspeedwidget.service;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -33,8 +35,10 @@ import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
+import com.huivip.gpsspeedwidget.listener.DelayTaskReceiver;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.text.DecimalFormat;
 import java.util.Timer;
@@ -51,7 +55,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class AltitudeFloatingService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
-
+    public static final String TARGET="com.huivip.gpsspeedwidget.altitudeWindow";
     private WindowManager mWindowManager;
     private View mFloatingView;
     GpsUtil gpsUtil;
@@ -65,6 +69,7 @@ public class AltitudeFloatingService extends Service{
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
+    AlarmManager alarm;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -97,6 +102,12 @@ public class AltitudeFloatingService extends Service{
             locationTimer.cancel();
             locationTimer.purge();
         }
+        Intent delayTask = new Intent(getApplicationContext(), DelayTaskReceiver.class);
+        delayTask.putExtra(DelayTaskReceiver.TARGET, TARGET);
+        PendingIntent delayTaskServiceIntent =
+                PendingIntent.getBroadcast(getApplicationContext(), 0, delayTask, 0);
+
+        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 60000L, delayTaskServiceIntent);
        /* if(gpsUtil!= null) {
             gpsUtil.stopLocationService(false);
         }*/
@@ -117,6 +128,7 @@ public class AltitudeFloatingService extends Service{
             }
             return;
         }
+        alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
@@ -176,7 +188,11 @@ public class AltitudeFloatingService extends Service{
             textViewAltitude.setText("海拔8848米");
         }
         textViewDirection.setTextSize(40f+fontSizeAdjust);
-        textViewDirection.setText(gpsUtil.getDirection());
+        String direction=gpsUtil.getDirection();
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1){
+            direction+="|";
+        }
+        textViewDirection.setText(direction);
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
@@ -316,9 +332,17 @@ public class AltitudeFloatingService extends Service{
                     }
                     return true;
                 case MotionEvent.ACTION_POINTER_UP:
-                        Toast.makeText(getApplicationContext(),"双指单击关闭悬浮窗",Toast.LENGTH_SHORT).show();
-                        onStop();
-                        stopSelf();
+                    Toast.makeText(getApplicationContext(), "双指单击关闭悬浮窗", Toast.LENGTH_SHORT).show();
+                    Utils.delayLaunchSelf(getApplicationContext(),TARGET,60000L,"START");
+                   /* Intent delayTask = new Intent(getApplicationContext(), DelayTaskReceiver.class);
+                    delayTask.putExtra(DelayTaskReceiver.TARGET, TARGET);
+                    delayTask.setAction("START");
+                    PendingIntent delayTaskServiceIntent =
+                            PendingIntent.getBroadcast(getApplicationContext(), 0, delayTask, 0);
+
+                    alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 60000L, delayTaskServiceIntent);*/
+                    onStop();
+                    stopSelf();
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {

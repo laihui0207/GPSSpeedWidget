@@ -39,6 +39,7 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -57,7 +58,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class DefaultFloatingService extends Service{
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
-
+    public static final String TARGET="com.huivip.gpsSpeedWidget.speedFloating";
     private WindowManager mWindowManager;
     private View mFloatingView;
     @BindView(R.id.limit)
@@ -116,6 +117,7 @@ public class DefaultFloatingService extends Service{
     }
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
+            Utils.delayLaunchSelf(getApplicationContext(),TARGET,180000L,"START");
             try {
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
@@ -127,6 +129,7 @@ public class DefaultFloatingService extends Service{
             locationTimer.cancel();
             locationTimer.purge();
         }
+
        /* if(gpsUtil!= null) {
             gpsUtil.stopLocationService(false);
         }*/
@@ -162,7 +165,7 @@ public class DefaultFloatingService extends Service{
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
-        mSpeedometerText.setOnTouchListener(new FloatingOnTouchListener());
+        //mSpeedometerText.setOnTouchListener(new FloatingOnTouchListener());
         boolean isShowLimit=PrefUtils.getShowLimits(getApplicationContext());
         mLimitView.setVisibility(isShowLimit ? View.VISIBLE : View.GONE);
         boolean isShowSpeed=PrefUtils.getShowSpeedometer(getApplicationContext());
@@ -452,9 +455,9 @@ public class DefaultFloatingService extends Service{
                     }
                     return true;
                 case MotionEvent.ACTION_POINTER_UP:
-                        Toast.makeText(getApplicationContext(),"双指单击关闭悬浮窗",Toast.LENGTH_SHORT).show();
-                        onStop();
-                        stopSelf();
+                    Toast.makeText(getApplicationContext(), "双指单击关闭悬浮窗", Toast.LENGTH_SHORT).show();
+                    onStop();
+                    stopSelf();
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {

@@ -40,6 +40,7 @@ import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.view.SpeedWheel;
 
 import java.util.Timer;
@@ -52,6 +53,8 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class AutoNaviFloatingService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
+    public static final String TARGET="com.huivip.gpsSpeedWidget.speedFloating";
+
     private WindowManager mWindowManager;
     private View mFloatingView;
     @BindView(R.id.imageView_pointer)
@@ -119,6 +122,7 @@ public class AutoNaviFloatingService extends Service {
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
             try {
+                Utils.delayLaunchSelf(getApplicationContext(),TARGET,180000L,"START");
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
                 Log.d("huivip",e.getLocalizedMessage());
@@ -129,6 +133,7 @@ public class AutoNaviFloatingService extends Service {
             locationTimer.cancel();
             locationTimer.purge();
         }
+
        /* if(gpsUtil!= null) {
             gpsUtil.stopLocationService(false);
         }*/
@@ -393,7 +398,7 @@ public class AutoNaviFloatingService extends Service {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             final WindowManager.LayoutParams params = (WindowManager.LayoutParams) mFloatingView.getLayoutParams();
-            switch (event.getAction()) {
+            switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     mInitialTouchX = event.getRawX();
                     mInitialTouchY = event.getRawY();
