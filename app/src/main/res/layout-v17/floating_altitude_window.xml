@@ -15,13 +15,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="\u2191东北"
+            android:text="东北"
             android:layout_gravity="bottom|end"
             android:layout_weight="1"
             android:gravity="end|bottom"
             android:id="@+id/textView_altitude_direction"
             android:textSize="40sp"
-            android:textColor="@color/cardview_light_background" />
+            android:textColor="@color/blue" />
+        <TextView android:id="@+id/altitude_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/green"
+            android:textSize="40dp"
+            android:text="\u26f0"/>
         <TextView
             android:id="@+id/textView_altitude"
             android:layout_width="wrap_content"
@@ -29,8 +36,8 @@
             android:layout_gravity="bottom|end"
             android:layout_weight="1"
             android:gravity="end|bottom"
-            android:text="\u26f0海拔8848米"
-            android:textColor="@color/cardview_light_background"
+            android:text="海拔8848米"
+            android:textColor="@color/blue"
             android:textSize="40dp" />
 
         <TextView
