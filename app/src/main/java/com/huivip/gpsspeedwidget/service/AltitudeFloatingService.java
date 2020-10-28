@@ -189,9 +189,9 @@ public class AltitudeFloatingService extends Service{
         }
         textViewDirection.setTextSize(40f+fontSizeAdjust);
         String direction=gpsUtil.getDirection();
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1){
+      /*  if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1){
             direction+="|";
-        }
+        }*/
         textViewDirection.setText(direction);
     }
     private int getWindowType() {
