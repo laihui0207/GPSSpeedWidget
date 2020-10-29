@@ -54,6 +54,16 @@
                     android:text="开机报安全提醒" />
 
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content" android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <CheckBox
+                    android:id="@+id/checkBox_auto_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5秒后自动关闭配置窗口，再次打开配置请常按悬浮窗口"
+                    />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -91,6 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="启动后返回桌面" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -645,7 +656,7 @@
 
                 <Button
                     android:id="@+id/button_feedback"
-                    android:layout_width="wrap_content" android:visibility="gone"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="反馈问题" />
                 <Button

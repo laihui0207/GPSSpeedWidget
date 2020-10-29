@@ -497,7 +497,7 @@ public abstract class Utils {
           Log.d("huivip","Launch Notification Center failed");
       }
     }
-   public static void delayLaunchSelf(Context context,String target,long delayTime,String action) {
+   public static void delayTaskForSelf(Context context, String target, long delayTime, String action) {
         AlarmManager alarm = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
         Intent delayTask = new Intent(context, DelayTaskReceiver.class);
         delayTask.putExtra(DelayTaskReceiver.TARGET, target);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.util.HashMap;

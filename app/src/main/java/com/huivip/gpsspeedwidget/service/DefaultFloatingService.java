@@ -117,7 +117,7 @@ public class DefaultFloatingService extends Service{
     }
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
-            Utils.delayLaunchSelf(getApplicationContext(),TARGET,180000L,"START");
+            Utils.delayTaskForSelf(getApplicationContext(),TARGET,180000L,"START");
             try {
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
@@ -490,6 +490,7 @@ public class DefaultFloatingService extends Service{
                         }
                         Intent configActivity=new Intent(getApplicationContext(), ConfigurationActivity.class);
                         configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                        configActivity.putExtra(ConfigurationActivity.AUTO_CLOSE_FLAG,false);
                         startActivity(configActivity);
                     }
                     return false;

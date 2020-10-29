@@ -116,6 +116,9 @@ public abstract class PrefUtils {
     static final String Enable_PLAY_WARNING="com.huivip.start.play.waring.enabled";
     static final String Enable_ALTITUDE_WINDOWS="com.huivip.altitude.window.enabled";
     static final String ALTITUDE_WINDOWS_FONTSIZE="com.huivip.altitude.window.fontSize";
+    static final String FIRST_LAUNCH="com.huivip.firstLaunch";
+    static final String AUTO_CLOSE_CONFIGURE_WINDOWS="com.huivip.auto.close.window";
+
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -295,6 +298,18 @@ public abstract class PrefUtils {
     }
     public static boolean isEnableNAVIUploadGPSHistory(Context context){
         return getSharedPreferences(context).getBoolean(UPLOAD_GPS_HISTORY_NAVI_PREFS_NAME, false);
+    }
+    public static void setFirstLaunch(Context context,boolean value){
+        edit(context).putBoolean(FIRST_LAUNCH, value).apply();
+    }
+    public static boolean isFristLaunch(Context context){
+        return getSharedPreferences(context).getBoolean(FIRST_LAUNCH, true);
+    }
+    public static void setAutoCloseConfigureWindows(Context context,boolean value){
+        edit(context).putBoolean(AUTO_CLOSE_CONFIGURE_WINDOWS, value).apply();
+    }
+    public static boolean isEnableAutoCloseConfigureWindow(Context context){
+        return getSharedPreferences(context).getBoolean(AUTO_CLOSE_CONFIGURE_WINDOWS, false);
     }
     public static void setAutoCleanGPSHistory(Context context,boolean cleanHistory){
         edit(context).putBoolean(AUTO_CLEAN_GPS_HISTORY_PREFS_NAME, cleanHistory).apply();

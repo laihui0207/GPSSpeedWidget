@@ -188,7 +188,7 @@ public class AltitudeFloatingService extends Service{
             textViewAltitude.setText("海拔8848米");
         }
         textViewDirection.setTextSize(40f+fontSizeAdjust);
-        String direction=gpsUtil.getDirection();
+        String direction=gpsUtil.getDirection()+" ";
       /*  if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1){
             direction+="|";
         }*/
@@ -333,7 +333,7 @@ public class AltitudeFloatingService extends Service{
                     return true;
                 case MotionEvent.ACTION_POINTER_UP:
                     Toast.makeText(getApplicationContext(), "双指单击关闭悬浮窗", Toast.LENGTH_SHORT).show();
-                    Utils.delayLaunchSelf(getApplicationContext(),TARGET,60000L,"START");
+                    Utils.delayTaskForSelf(getApplicationContext(),TARGET,60000L,"START");
                    /* Intent delayTask = new Intent(getApplicationContext(), DelayTaskReceiver.class);
                     delayTask.putExtra(DelayTaskReceiver.TARGET, TARGET);
                     delayTask.setAction("START");
@@ -375,6 +375,7 @@ public class AltitudeFloatingService extends Service{
                         }
                         Intent configActivity=new Intent(getApplicationContext(), ConfigurationActivity.class);
                         configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                        configActivity.putExtra(ConfigurationActivity.AUTO_CLOSE_FLAG,false);
                         startActivity(configActivity);
                     }
                     return false;

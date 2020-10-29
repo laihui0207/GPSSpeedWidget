@@ -94,7 +94,7 @@ public class MeterFloatingService extends Service {
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
             try {
-                Utils.delayLaunchSelf(getApplicationContext(),TARGET,180000L,"START");
+                Utils.delayTaskForSelf(getApplicationContext(),TARGET,180000L,"START");
                 mWindowManager.removeView(mFloatingView);
             }catch (Exception e){
                 Log.d("huivip",e.getLocalizedMessage());
@@ -364,6 +364,7 @@ public class MeterFloatingService extends Service {
                         }
                         Intent configActivity=new Intent(getApplicationContext(), ConfigurationActivity.class);
                         configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                        configActivity.putExtra(ConfigurationActivity.AUTO_CLOSE_FLAG,false);
                         startActivity(configActivity);
                     }
                     return true;

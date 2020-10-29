@@ -433,6 +433,7 @@ public class NaviFloatingService extends Service{
                         }
                         Intent configActivity=new Intent(getApplicationContext(), ConfigurationActivity.class);
                         configActivity.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                        configActivity.putExtra(ConfigurationActivity.AUTO_CLOSE_FLAG,false);
                         startActivity(configActivity);
                     }
                     return true;

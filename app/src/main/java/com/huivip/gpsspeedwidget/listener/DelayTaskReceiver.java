@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.service.AltitudeFloatingService;
 import com.huivip.gpsspeedwidget.service.DefaultFloatingService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
@@ -27,6 +28,12 @@ public class DelayTaskReceiver extends BroadcastReceiver {
                     context.startService(textFloatingService);
                 }
 
+            }
+            if("CLOSE".equalsIgnoreCase(intent.getAction())){
+                if(ConfigurationActivity.TARGET.equalsIgnoreCase(intent.getStringExtra(TARGET))){
+                    Intent intent1=new Intent(ConfigurationActivity.FINISH_ACTION);
+                    context.sendBroadcast(intent1);
+                }
             }
             if ("START".equalsIgnoreCase(intent.getAction())) {
                 if (AltitudeFloatingService.TARGET.equalsIgnoreCase(intent.getStringExtra(TARGET))) {

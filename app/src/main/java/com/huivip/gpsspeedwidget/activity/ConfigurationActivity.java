@@ -6,10 +6,12 @@ import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
@@ -59,6 +61,8 @@ import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.MeterFloatingService;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
 import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
+import com.huivip.gpsspeedwidget.speech.SpeechFactory;
+import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
@@ -88,6 +92,9 @@ import butterknife.BindView;
  * @author sunlaihui
  */
 public class ConfigurationActivity extends Activity {
+    public final static String TARGET="com.huivip.configureActivity";
+    public final static String FINISH_ACTION="com.huivip.finish.self";
+    public final static String AUTO_CLOSE_FLAG="com.huivip.auto.close.flag";
     private int mAppWidgetId = 0 ;
     @BindView(R.id.EnableFalting)
     Button enableFloatingButton;
@@ -112,6 +119,20 @@ public class ConfigurationActivity extends Activity {
     private static  final int REQUEST_STORAGE=106;
     private static final int REQUEST_PHONE=107;
     AppWidgetHost appWidgetHost;
+    boolean autoClose=true;
+     FinishSelfReceiver finishSelfReceiver;
+
+    @Override
+    protected void onStart() {
+        Intent intent = getIntent();
+        autoClose=intent.getBooleanExtra(AUTO_CLOSE_FLAG,true);
+        boolean firstLaunch=PrefUtils.isFristLaunch(getApplicationContext());
+        boolean isEnableAutoClose=PrefUtils.isEnableAutoCloseConfigureWindow(getApplicationContext());
+        if(!firstLaunch && isEnableAutoClose && autoClose){
+            Utils.delayTaskForSelf(getApplicationContext(),TARGET,5000L,"CLOSE");
+        }
+        super.onStart();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +147,9 @@ public class ConfigurationActivity extends Activity {
                     AppWidgetManager.INVALID_APPWIDGET_ID);
 
         }
+        finishSelfReceiver=new FinishSelfReceiver();
+        registFinishSelfReceiver();
+
         initPermission();
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
         handler=new Handler();
@@ -135,8 +159,6 @@ public class ConfigurationActivity extends Activity {
         recordGPSCheckBox.setChecked(PrefUtils.isEnableRecordGPSHistory(getApplicationContext()));
         CheckBox uploadGPSCheckBox=(CheckBox)findViewById(R.id.uploadGPSData);
         uploadGPSCheckBox.setChecked(PrefUtils.isEnableUploadGPSHistory(getApplicationContext()));
-      /*  CheckBox cleanDataCheckBox = findViewById(R.id.checkBox_cleanData);
-        cleanDataCheckBox.setChecked(PrefUtils.isEnableAutoCleanGPSHistory(getApplicationContext()));*/
         if(PrefUtils.isEnbleDrawOverFeature(getApplicationContext())){
             if(PrefUtils.isAppFirstRun(getApplicationContext())) {
                 PrefUtils.setFlatingWindow(getApplicationContext(), true);
@@ -147,8 +169,6 @@ public class ConfigurationActivity extends Activity {
         }
         enableFloatingWidnowCheckBox=findViewById(R.id.enableFloatingWindow);
         enableFloatingWidnowCheckBox.setChecked(PrefUtils.isEnableFlatingWindow(getApplicationContext()));
-        //enableShowFlattingOnDesktopCheckBox=findViewById(R.id.checkBox_showondescktop);
-        //enableShowFlattingOnDesktopCheckBox.setChecked(PrefUtils.isEnableShowFlatingOnDesktop(getApplicationContext()));
         remoteUrlEditBox=findViewById(R.id.editText_remoteURL);
         if(!PrefUtils.getGPSRemoteUrl(getApplicationContext()).equalsIgnoreCase(Constant.LBSURL)) {
             remoteUrlEditBox.setText(PrefUtils.getGPSRemoteUrl(getApplicationContext()));
@@ -158,11 +178,6 @@ public class ConfigurationActivity extends Activity {
         CheckBox enableAudioCheckBox=findViewById(R.id.enableAudio);
         enableAudioCheckBox.setChecked(PrefUtils.isEnableAudioService(getApplicationContext()));
         CheckBox audidMixCheckBox=findViewById(R.id.checkBox_mix);
-       /* audidMixCheckBox.setChecked(PrefUtils.isEnableAudioMixService(getApplicationContext()));
-        audidMixCheckBox.setEnabled(enableAudioCheckBox.isChecked());
-        CheckBox ttsEngineCheckBox=findViewById(R.id.checkBox_xftts);
-        ttsEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.XUNFEITTS));
-        ttsEngineCheckBox.setEnabled(enableAudioCheckBox.isChecked());*/
         CheckBox enableAutoNaviCheckBox=findViewById(R.id.enableAutoNavi);
         enableAutoNaviCheckBox.setChecked(PrefUtils.isEnableAutoNaviService(getApplicationContext()));
         remoteUrlEditBox.setEnabled(uploadGPSCheckBox.isChecked());
@@ -370,6 +385,14 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setShowSmallFloatingStyle(getApplicationContext(),buttonView.isChecked());
             }
         });
+        CheckBox autoCloseCheckBox=findViewById(R.id.checkBox_auto_close);
+        autoCloseCheckBox.setChecked(PrefUtils.isEnableAutoCloseConfigureWindow(getApplicationContext()));
+        autoCloseCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setAutoCloseConfigureWindows(getApplicationContext(),isChecked);
+            }
+        });
        /* CheckBox floatingHideWhenStop=findViewById(R.id.checkBox_hideFloating);
         floatingHideWhenStop.setChecked(PrefUtils.isHideFlatingWindowWhenStop(getApplicationContext()));
         floatingHideWhenStop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -568,6 +591,7 @@ public class ConfigurationActivity extends Activity {
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
+                PrefUtils.setFirstLaunch(getApplicationContext(),false);
                 finish();
             }
         };
@@ -847,6 +871,8 @@ public class ConfigurationActivity extends Activity {
         feedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.TEXTTTS);
+                tts.speak("你好，语音测试",true);
                 final EditText inputText = new EditText(ConfigurationActivity.this);
                 DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
                 String deviceId=deviceUuidFactory.getDeviceUuid().toString();
@@ -1109,6 +1135,20 @@ public class ConfigurationActivity extends Activity {
             };
         });
         startFloatingWindows(true);
+    }
+    private class FinishSelfReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(PrefUtils.isEnableAutoCloseConfigureWindow(context)) {
+                ConfigurationActivity.this.finish();
+            }
+        }
+    }
+    private void registFinishSelfReceiver(){
+        IntentFilter intentFilter=new IntentFilter();
+        intentFilter.addAction(FINISH_ACTION);
+        registerReceiver(finishSelfReceiver,intentFilter);
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
