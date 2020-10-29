@@ -3,7 +3,10 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
+import android.widget.Toast;
+
 import com.huivip.gpsspeedwidget.*;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
@@ -149,12 +152,27 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                 String channelNumber=intent.getStringExtra("CHANNEL_NUM");
                 //Toast.makeText(context,"Version:"+versionNumber+",Channel:"+channelNumber,Toast.LENGTH_SHORT).show();
             }
-           /* if(key==10030){
-                String cityName=intent.getStringExtra("CITY_NAME");
-                //Log.d("huivip","city:"+cityName);
-                //Toast.makeText(context,"city:"+cityName,Toast.LENGTH_LONG).show();
-                WeatherService.getInstance(context).setCityName(cityName);
-            }*/
+            if (key==10030) {
+                String cityName = intent.getStringExtra("CITY_NAME");
+                String provinceName = intent.getStringExtra("PROVINCE_NAME");
+                String areaName = intent.getStringExtra("AREA_NAME");
+                if (Utils.isNotBlank(provinceName)) {
+                    cityName = provinceName + cityName;
+                }
+                if (Utils.isNotBlank(areaName)) {
+                    cityName += areaName;
+                }
+                Toast.makeText(context, "当前城市:" + cityName, Toast.LENGTH_SHORT).show();
+                Bundle bundle = intent.getExtras();
+                StringBuilder extras = new StringBuilder();
+                if (bundle != null) {
+                    for (String eKey : bundle.keySet()) {
+                        extras.append("key:").append(eKey).append("~").append(bundle.get(eKey)).append(".");
+                        //Log.e(TAG, key + " : " + (bundle.get(key) != null ? bundle.get(key) : "NULL"));
+                    }
+                }
+                //FileUtil.saveLogToFile(extras.toString());
+            }
             if(key==10001){  // navi information
                 //Toast.makeText(context,intent.getExtras().toString(),Toast.LENGTH_LONG).show();
                 String currentRoadName=intent.getStringExtra("CUR_ROAD_NAME");

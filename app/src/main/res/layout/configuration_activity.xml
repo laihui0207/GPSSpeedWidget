@@ -665,28 +665,31 @@
                     android:layout_height="wrap_content"
                     android:text="打赏" />
             </LinearLayout>
+            <LinearLayout android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:text="作者QQ： 478722925, 交流群：613841801"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView3"/>
+                <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_appVersion"
+                    android:layout_marginLeft="52dp"
+                    android:layout_marginStart="52dp"/>
+                <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_uid"/>
+            </LinearLayout>
         </LinearLayout>
 
 
     </ScrollView>
-   <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
-       <TextView
-               android:text="作者QQ： 478722925, 交流群：613841801"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:id="@+id/textView3"/>
-       <TextView
-               android:text="TextView"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:id="@+id/textView_appVersion"
-               android:layout_marginLeft="52dp"
-               android:layout_marginStart="52dp"/>
-       <TextView
-               android:text="TextView"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:id="@+id/textView_uid"/>
-   </LinearLayout>
+
 
 </LinearLayout>
