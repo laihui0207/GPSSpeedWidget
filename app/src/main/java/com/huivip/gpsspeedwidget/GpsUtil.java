@@ -168,19 +168,19 @@ public class GpsUtil {
     }
 
     public String getDirection() {
-        String direction = "北";
+        String direction = "正北";
         if (bearing >= 22.5 && bearing < 67.5) {
             direction = "东北";
         } else if (bearing >= 67.5 && bearing <= 112.5) {
-            direction = "东";
+            direction = "正东";
         } else if (bearing > 112.5 && bearing <= 157.5) {
             direction = "东南";
         } else if (bearing >= 157.5 && bearing <= 202.5) {
-            direction = "南";
+            direction = "正南";
         } else if (bearing >= 202.5 && bearing <= 247.5) {
             direction = "西南";
         } else if (bearing >= 247.5 && bearing <= 292.5) {
-            direction = "西";
+            direction = "正西";
         } else if (bearing >= 292.5 && bearing <= 337.5) {
             direction = "西北";
         }

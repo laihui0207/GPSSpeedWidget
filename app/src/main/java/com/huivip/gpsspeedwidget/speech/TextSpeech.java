@@ -1,5 +1,6 @@
 package com.huivip.gpsspeedwidget.speech;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
@@ -15,7 +16,8 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
     private String TAG="huivip_TxtTTS";
     TextToSpeech mts;
     private boolean inited=false;
-    static TextSpeech instance;
+    @SuppressLint("StaticFieldLeak")
+    private static TextSpeech instance;
     private TextSpeech(Context context){
         this.context=context;
         if(mts==null){

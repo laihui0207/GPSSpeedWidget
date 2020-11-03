@@ -147,3 +147,33 @@
 -keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
     <init>(java.lang.Throwable);
 }
+-keep public class com.aispeech.common.Util{public *;}
+-keep public class com.aispeech.common.WavFileWriter{public *;}
+-keep public class com.aispeech.common.AITimer{public *;}
+-keep public class com.aispeech.common.JSONResultParser{public *;}
+-keep public class com.aispeech.common.AIConstant{public *;}
+-keep public class com.aispeech.common.FileUtil{public *;}
+-keep public class com.aispeech.DUILiteSDK{public *;}
+-keep public class com.aispeech.echo.**{public *;}
+-keep public class com.aispeech.speex.**{public *;}
+-keep public interface com.aispeech.lite.vad.VadKernelListener{public *;}
+-keep public interface com.aispeech.lite.nr.NRKernelListener{public *;}
+-keep public class com.aispeech.lite.vprint.VprintIntent{public *;}
+-keep public class com.aispeech.lite.vprint.VprintIntent$*{public *;}
+-keep public class com.aispeech.lite.vprint.VprintConfig{public *;}
+-keep public class com.aispeech.lite.vprint.VprintConfig$*{public *;}
+
+-keep class com.aispeech.upload.**{*;}
+-keep public class com.aispeech.AIAudioRecord{public *;}
+
+-keepclassmembers class com.aispeech.kernel.**{
+	public static native <methods>;
+}
+
+-keep interface com.aispeech.kernel.**$*{
+	public *;
+}
+
+-keep class com.aispeech.kernel.**$*{
+	public *;
+}

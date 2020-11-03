@@ -40,4 +40,10 @@ public class Constant {
     public static String AUTONAVI_WEB_KEY_TRACK_SERVICE_NAME="GPSWidgetService";
     public static String AUTONAVI_WEB_KEY2_TRACK_SERVICE_ID="15618";
     public static String AUTONAVI_WEB_KEY2_TRACK_SERVICE_NAME="GPSWidgetService";
+
+    public static final String SBC_API_KEY="25e15f2c9a4529d7fbd960985fa039f5";
+    public static final String SBC_PRODUCT_ID="279597900";
+    public static final String SBC_PRODUCT_KEY="ab0cbb11445fda975980b6429b9159d8";
+    public static final String SBC_PRODUCT_SECERT="97993cd4dc9a8aa7ec6ef8b1208ed623";
+
 }
