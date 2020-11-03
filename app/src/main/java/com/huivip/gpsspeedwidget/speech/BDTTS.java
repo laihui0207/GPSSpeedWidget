@@ -256,6 +256,25 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
         sendMessage("准备开始合成,序列号:" + utteranceId);
     }
 
+    @Override
+    public void onSynthesizeDataArrived(String utteranceId, byte[] bytes, int i, int i1) {
+        if(!customPlayer) return;
+        File tempAudioFile = null;
+        try {
+            String path = Environment.getExternalStorageDirectory().toString() + "/gps_tts/";
+            File dir = new File(path);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            tempAudioFile = new File(dir + "/" + utteranceId + ".pcm");
+            FileOutputStream fos = new FileOutputStream(tempAudioFile, true);
+            fos.write(bytes);
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 语音流 16K采样率 16bits编码 单声道 。
      *
@@ -263,7 +282,6 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
      * @param bytes       二进制语音 ，注意可能有空data的情况，可以忽略
      * @param progress    如合成“百度语音问题”这6个字， progress肯定是从0开始，到6结束。 但progress无法和合成到第几个字对应。
      */
-    @Override
     public void onSynthesizeDataArrived(String utteranceId, byte[] bytes, int progress) {
         if(!customPlayer) return;
         File tempAudioFile = null;
