@@ -47,6 +47,7 @@
             android:persistent="true"
             android:roundIcon="@drawable/ic_launcher"
             android:sharedUserId="android.uid.system"
+        android:requestLegacyExternalStorage="true"
             android:supportsRtl="true"
         android:theme="@style/Home.Light"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
