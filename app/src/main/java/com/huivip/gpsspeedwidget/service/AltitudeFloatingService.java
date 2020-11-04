@@ -184,7 +184,7 @@ public class AltitudeFloatingService extends Service{
         textViewAltitudeUnit.setTextSize(35f+fontSizeAdjust);
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
             //if(gpsUtil.isGpsLocationChanged()){
-            textViewAltitude.setText("海拔"+df.format(Integer.parseInt(gpsUtil.getAltitude())) + "米");
+            textViewAltitude.setText("海拔"+df.format(Integer.parseInt(gpsUtil.getAltitude(0))) + "米");
             // }
         } else {
             textViewAltitude.setText("海拔8848米");
