@@ -24,8 +24,6 @@ public class SpeechFactory {
         if(type==null) return null;
         if(TEXTTTS.equalsIgnoreCase(type)){
             return TextSpeech.getInstance(context);
-        } else if(SBCTTS.equalsIgnoreCase(type)){
-            return SBCSpeech.getInstance(context);
         }
         return TextSpeech.getInstance(context);
     }
