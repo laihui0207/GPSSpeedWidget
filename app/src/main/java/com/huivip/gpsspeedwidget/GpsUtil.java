@@ -115,6 +115,7 @@ public class GpsUtil {
         c = random.nextInt();
 /*        ttsUtil = TTSUtil.getInstance(context);*/
         localNumberFormat.setMaximumFractionDigits(1);
+        localNumberFormat.setGroupingUsed(false);
     }
 
     public static GpsUtil getInstance(Context context) {
