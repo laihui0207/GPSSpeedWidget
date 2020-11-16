@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +68,8 @@ public class AltitudeFloatingService extends Service{
     TextView textViewDirection;
     @BindView(R.id.textView_altitude_unit)
     TextView textViewAltitudeUnit;
+    @BindView(R.id.layout_altitude_bg)
+    LinearLayout background;
     private ServiceConnection mServiceConnection;
     TimerTask locationScanTask;
     Timer locationTimer = new Timer();
@@ -142,8 +146,10 @@ public class AltitudeFloatingService extends Service{
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.START;
-        params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
+        //params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
         ButterKnife.bind(this, mFloatingView);
+        Drawable backgroundDrawable = background.getBackground();
+        backgroundDrawable.setAlpha(PrefUtils.getOpacity(getApplicationContext()));
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         initMonitorPosition();

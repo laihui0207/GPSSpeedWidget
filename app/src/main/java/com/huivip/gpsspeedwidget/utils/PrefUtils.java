@@ -9,6 +9,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.speech.SpeechFactory;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -732,7 +733,7 @@ public abstract class PrefUtils {
     }
 
     public static int getOpacity(Context context) {
-        return getSharedPreferences(context).getInt(PREF_OPACITY, 100);
+        return AppSettings.get().getAltutudeAlpha();
     }
 
     public static boolean getShowSpeedometer(Context context) {

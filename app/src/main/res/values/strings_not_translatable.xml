@@ -38,6 +38,7 @@
     <string name="pref_key__over_speed_tts_setting" translatable="false">pref_key__over_speed_tts_setting</string>
     <string name="pref_key__altitude_font_color" translatable="false">pref_key__altitude_font_color</string>
     <string name="pref_key__altitude_font_size" translatable="false">pref_key__altitude_font_size</string>
+    <string name="pref_key__altitude_alpha" translatable="false">pref_key__altitude_alpha</string>
     <!-- music lyric -->
     <string name="pref_key__lyric_enable" translatable="false">pref_key__lyric_enable</string>
     <string name="pref_key__lyric_floating_window_enable" translatable="false">pref_key__lyric_floating_window_enable</string>

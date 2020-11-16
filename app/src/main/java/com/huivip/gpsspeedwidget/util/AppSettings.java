@@ -246,6 +246,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public int getAudioVolume(){
         return getInt(R.string.pref_key__Audio_volume,50);
     }
+    public int getAltutudeAlpha(){
+        return getInt(R.string.pref_key__altitude_alpha,100);
+    }
     public boolean isAudioMix(){
         return getBool(R.string.pref_key__Audio_mixed,false);
     }

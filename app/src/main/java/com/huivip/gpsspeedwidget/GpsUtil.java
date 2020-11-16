@@ -132,6 +132,7 @@ public class GpsUtil {
     private GpsUtil(Context context) {
         this.context = context;
         localNumberFormat.setMaximumFractionDigits(1);
+        localNumberFormat.setGroupingUsed(false);
         alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
