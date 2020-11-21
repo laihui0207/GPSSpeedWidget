@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -67,6 +68,8 @@ public class AltitudeFloatingService extends Service{
     TextView textViewAltitudeUnit;
     private ServiceConnection mServiceConnection;
     TimerTask locationScanTask;
+    @BindView(R.id.layout_altitude_background)
+    View background;
     Timer locationTimer = new Timer();
     final Handler locationHandler = new Handler();
     AlarmManager alarm;
@@ -143,6 +146,8 @@ public class AltitudeFloatingService extends Service{
         params.gravity = Gravity.TOP | Gravity.START;
         params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
         ButterKnife.bind(this, mFloatingView);
+        Drawable backgroundDrawable=background.getBackground();
+        backgroundDrawable.setAlpha(PrefUtils.getAltitudeAlpha(getApplicationContext()));
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
        initMonitorPosition();
@@ -177,6 +182,8 @@ public class AltitudeFloatingService extends Service{
     }*/
 
     void checkLocationData() {
+        Drawable backgroundDrawable=background.getBackground();
+        backgroundDrawable.setAlpha(PrefUtils.getAltitudeAlpha(getApplicationContext()));
         int fontSizeAdjust=PrefUtils.getAltitudeFontSize(getApplicationContext());
         textViewAltitude.setTextSize(40f+fontSizeAdjust);
         textViewAltitudeUnit.setTextSize(35f+fontSizeAdjust);

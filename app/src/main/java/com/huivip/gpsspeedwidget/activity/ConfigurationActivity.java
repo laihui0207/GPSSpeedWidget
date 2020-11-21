@@ -574,6 +574,11 @@ public class ConfigurationActivity extends Activity {
                 if(fontSizeAdjustValue!=null && !fontSizeAdjustValue.equalsIgnoreCase("")){
                     PrefUtils.setAltitudeFontSize(getApplicationContext(),Integer.parseInt(fontSizeAdjustValue));
                 }
+                EditText altitudeAlphaEditText=findViewById(R.id.editText_altitude_font_alpha_adjust);
+                String alphaAdjustValue=altitudeAlphaEditText.getText().toString();
+                if(!alphaAdjustValue.equalsIgnoreCase("")){
+                    PrefUtils.setAltitudeAlpha(getApplicationContext(),Integer.parseInt(alphaAdjustValue));
+                }
                 EditText delayTimeEditText=findViewById(R.id.editText_delay_started);
                 String delayTimeValue=delayTimeEditText.getText().toString();
                 if(TextUtils.isEmpty(delayTimeValue)){
@@ -701,6 +706,9 @@ public class ConfigurationActivity extends Activity {
         if(PrefUtils.getAltitudeFontSize(getApplicationContext())!=0){
             altitudeFontSizeAdjustEditText.setText(PrefUtils.getAltitudeFontSize(getApplicationContext())+"");
         }
+        EditText altitudeFontAlphaAdjustEditText=findViewById(R.id.editText_altitude_font_alpha_adjust);
+        altitudeFontAlphaAdjustEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, 100)});
+        altitudeFontAlphaAdjustEditText.setText(PrefUtils.getAltitudeAlpha(getApplicationContext())+"");
         CheckBox flattingDirectionCheckbox=findViewById(R.id.checkBox_h_direction);
         flattingDirectionCheckbox.setChecked(PrefUtils.isFloattingDirectionHorizontal(getApplicationContext()));
         Intent floatService=new Intent(this, DefaultFloatingService.class);
@@ -1065,6 +1073,29 @@ public class ConfigurationActivity extends Activity {
         buttonTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*ColorPickerDialogBuilder
+                        .with(getApplicationContext())
+                        .setTitle("Choose color")
+                        .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                        .density(12)
+                        .setOnColorSelectedListener(new OnColorSelectedListener() {
+                            @Override
+                            public void onColorSelected(int selectedColor) {
+                                //toast("onColorSelected: 0x" + Integer.toHexString(selectedColor));
+                            }
+                        })
+                        .setPositiveButton("ok", new ColorPickerClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                               // changeBackgroundColor(selectedColor);
+                            }
+                        })
+                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .build();*/
             /*    ComponentName componentToLaunch = new ComponentName(
                         "com.android.settings",
                         "com.android.settings.SubSettings");

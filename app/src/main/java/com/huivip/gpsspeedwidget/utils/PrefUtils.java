@@ -116,6 +116,7 @@ public abstract class PrefUtils {
     static final String Enable_PLAY_WARNING="com.huivip.start.play.waring.enabled";
     static final String Enable_ALTITUDE_WINDOWS="com.huivip.altitude.window.enabled";
     static final String ALTITUDE_WINDOWS_FONTSIZE="com.huivip.altitude.window.fontSize";
+    static final String ALTITUDE_WINDOWS_ALPHA="com.huivip.altitude.window.alpha";
     static final String FIRST_LAUNCH="com.huivip.firstLaunch";
     static final String AUTO_CLOSE_CONFIGURE_WINDOWS="com.huivip.auto.close.window";
 
@@ -436,6 +437,13 @@ public abstract class PrefUtils {
 
     public static int getAltitudeFontSize(Context context) {
         return getSharedPreferences(context).getInt(ALTITUDE_WINDOWS_FONTSIZE, 0);
+    }
+    public static void setAltitudeAlpha(Context context, int value) {
+        edit(context).putInt(ALTITUDE_WINDOWS_ALPHA, value).apply();
+    }
+
+    public static int getAltitudeAlpha(Context context) {
+        return getSharedPreferences(context).getInt(ALTITUDE_WINDOWS_ALPHA, 100);
     }
     public static void setDelayStartOtherApp( Context context, int value) {
         edit(context).putInt(PREF_DELAY_AUTO_START, value).apply();
