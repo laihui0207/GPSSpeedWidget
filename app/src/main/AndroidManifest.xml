@@ -188,7 +188,13 @@
         <receiver android:name=".listener.AutoMapBoardReceiver">
             <intent-filter>
                 <action android:name="AUTONAVI_STANDARD_BROADCAST_SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
 
+        <receiver android:name=".listener.AutoMapFromHostBoardReceiver">
+            <intent-filter>
+                <action android:name="AUTONAVI_STANDARD_BROADCAST_RECV"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
@@ -297,7 +303,6 @@
         </service>
         <service android:name=".lyrics.LyricService" />
         <service android:name=".speech.AudioService" />
-        <service android:name=".service.SearchTrafficService" />
         <service android:name=".service.SpeedNumberVerticalService" />
         <service android:name=".service.MusicControllerService" />
         <service android:name=".music.MusicRemoteControllerService"

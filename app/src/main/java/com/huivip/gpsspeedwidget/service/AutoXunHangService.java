@@ -19,7 +19,6 @@ import com.amap.api.navi.model.AMapLaneInfo;
 import com.amap.api.navi.model.AMapModelCross;
 import com.amap.api.navi.model.AMapNaviCameraInfo;
 import com.amap.api.navi.model.AMapNaviCross;
-import com.amap.api.navi.model.AMapNaviInfo;
 import com.amap.api.navi.model.AMapNaviLocation;
 import com.amap.api.navi.model.AMapNaviRouteNotifyData;
 import com.amap.api.navi.model.AMapNaviTrafficFacilityInfo;
@@ -27,7 +26,6 @@ import com.amap.api.navi.model.AMapServiceAreaInfo;
 import com.amap.api.navi.model.AimLessModeCongestionInfo;
 import com.amap.api.navi.model.AimLessModeStat;
 import com.amap.api.navi.model.NaviInfo;
-import com.autonavi.tbt.TrafficFacilityInfo;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
@@ -87,9 +85,8 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     public void startAimlessNavi() {
         //if(aimlessStarted) return;
         aMapNavi = AMapNavi.getInstance(getApplicationContext());
-        AMapNavi.setIgnoreWifiCheck(true);
         aMapNavi.addAMapNaviListener(this);
-        aMapNavi.setUseInnerVoice(false);
+        aMapNavi.setUseInnerVoice(false,false);
         if (PrefUtils.isOldDriverMode(getApplicationContext())) {
             aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
             aMapNavi.startAimlessMode(AimLessMode.CAMERA_DETECTED);
@@ -218,11 +215,6 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     }
 
     @Override
-    public void onNaviInfoUpdated(AMapNaviInfo aMapNaviInfo) {
-
-    }
-
-    @Override
     public void onServiceAreaUpdate(AMapServiceAreaInfo[] aMapServiceAreaInfos) {
 
     }
@@ -299,12 +291,6 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
 
     }
-
-    @Override
-    public void OnUpdateTrafficFacility(TrafficFacilityInfo trafficFacilityInfo) {
-
-    }
-
     @Override
     public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
 
@@ -354,5 +340,10 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     @Override
     public void onNaviRouteNotify(AMapNaviRouteNotifyData aMapNaviRouteNotifyData) {
 
+    }
+
+    @Override
+    public void onGpsSignalWeak(boolean b) {
+        Toast.makeText(getApplicationContext(),"GPS信号偏弱！",Toast.LENGTH_SHORT).show();
     }
 }

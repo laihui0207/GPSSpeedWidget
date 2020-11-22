@@ -2,6 +2,7 @@ package com.huivip.gpsspeedwidget.service;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
@@ -145,6 +147,7 @@ public class MapFloatingService extends Service {
        // timeThread.running=false;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate() {
         if(!PrefUtils.isEnableDrawOverFeature(getApplicationContext())){
@@ -219,7 +222,7 @@ public class MapFloatingService extends Service {
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 100L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
         EventBus.getDefault().register(this);
         updateTime();
         broadcastReceiver=new BroadcastReceiver() {
@@ -246,7 +249,12 @@ public class MapFloatingService extends Service {
     private void updateTime(){
         SimpleDateFormat sdf = new SimpleDateFormat(AppSettings.get().getTimeWindowDateFormat(), Locale.CHINA);
         String date = sdf.format(new Date());
-        timeTextView.setTextColor(AppSettings.get().getTimeWindowTextColor());
+        if(gpsUtil.isNight()){
+            timeTextView.setTextColor(Color.WHITE);
+        }
+        else {
+            timeTextView.setTextColor(Color.RED);
+        }
         timeTextView.setText(date);
     }
     void checkLocationData() {
