@@ -13,7 +13,7 @@ public class BootStartReceiver extends BroadcastReceiver {
         if(intent!=null){
             Intent bootService=new Intent(context,BootStartService.class);
             bootService.putExtra(BootStartService.START_BOOT,true);
-            Utils.startService(context,bootService);
+            Utils.startService(context,bootService, true);
         }
     }
 }

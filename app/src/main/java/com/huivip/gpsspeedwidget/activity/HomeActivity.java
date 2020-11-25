@@ -803,7 +803,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         if(!Utils.isServiceRunning(getApplicationContext(),BootStartService.class.getName())){
             Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);
             bootStartService.putExtra(BootStartService.START_BOOT,true);
-            Utils.startService(getApplicationContext(),bootStartService);
+            Utils.startService(getApplicationContext(),bootStartService, false);
         }
         handleLauncherResume();
     }

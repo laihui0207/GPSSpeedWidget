@@ -1,5 +1,6 @@
 package com.huivip.gpsspeedwidget.speech;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Environment;
@@ -33,6 +34,7 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
     protected TtsMode ttsMode = TtsMode.MIX;
     protected String offlineVoice = BDOfflineResource.VOICE_FEMALE;
     protected SpeechSynthesizer mSpeechSynthesizer;
+    @SuppressLint("StaticFieldLeak")
     private static BDTTS BdTTS;
     boolean inited = false;
     // ================选择TtsMode.ONLINE  不需要设置以下参数; 选择TtsMode.MIX 需要设置下面2个离线资源文件的路径

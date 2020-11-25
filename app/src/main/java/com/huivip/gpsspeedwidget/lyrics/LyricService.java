@@ -148,7 +148,7 @@ public class LyricService extends Service {
         if (AppSettings.get().isLyricFloattingWidownEnable()) {
             Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
             lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
-            Utils.startService(getApplicationContext(),lycFloatingService);
+            Utils.startService(getApplicationContext(),lycFloatingService, false);
         }
         EventBus.getDefault().post(new LyricContentEvent(songName));
     }
@@ -163,13 +163,13 @@ public class LyricService extends Service {
             }
             lycFloatingService.putExtra(LyricFloatingService.LYRIC_CONTENT, lyricContent);
             lycFloatingService.putExtra(LyricFloatingService.DURATION, duration);
-            Utils.startService(getApplicationContext(),lycFloatingService);
+            Utils.startService(getApplicationContext(),lycFloatingService, false);
         }
         if (PrefUtils.isLyricWidgetEnable(getApplicationContext())) {
             if (!Utils.isServiceRunning(getApplicationContext(), LyricWidgetService.class.getName()))
             {
                 Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
-                Utils.startService(getApplicationContext(),widgetService);
+                Utils.startService(getApplicationContext(),widgetService, false);
             }
             EventBus.getDefault().post(new LyricContentEvent(songName, artistName,lyricContent, currentPosition));
         }

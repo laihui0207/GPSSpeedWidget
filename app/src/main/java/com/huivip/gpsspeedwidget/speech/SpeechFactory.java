@@ -7,7 +7,7 @@ public class SpeechFactory {
     public static String BAIDUTTS="baiduTTS";
     public static String SIBICHITTS="SBCTTS";
     public static String TEXTTTS="textTTS";
-    public static String SDKTTS="SDKTTS";
+    public static String SDKTTS="aliTTS";
     static SpeechFactory factory;
     Context context;
     private SpeechFactory(Context context){
@@ -27,9 +27,11 @@ public class SpeechFactory {
             return TextSpeech.getInstance(context);
         } else if(SIBICHITTS.equalsIgnoreCase(type)){
             return SBCTTS.getInstance(context);
-        }
-        else {
+        } else if(BAIDUTTS.equalsIgnoreCase(type)) {
             return BDTTS.getInstance(context);
+        }else if(SDKTTS.equalsIgnoreCase(type)){
+            return AliTTS.getInstance(context);
         }
+        return null;
     }
 }

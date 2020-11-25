@@ -41,6 +41,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
 
     private String[] mBackResBinMd5sumArray = new String[]{Constant.TTS_BACK_RES_ZHILING_MD5};
     boolean haveAuth = false;
+    @SuppressLint("StaticFieldLeak")
     private static SBCTTS tts = null;
     private int mauthCount = 0;
     BroadcastReceiver broadcastReceiver;

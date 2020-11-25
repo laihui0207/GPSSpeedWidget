@@ -231,7 +231,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                 case "5":
                     baiDuSpeaker.setSummary("度小娇（情感女声）");
                     break;
-                case "103":
+               /* case "103":
                     baiDuSpeaker.setSummary("度米朵（情感儿童声）");
                     break;
                 case "106":
@@ -242,10 +242,13 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                     break;
                 case "111":
                     baiDuSpeaker.setSummary("度小萌（情感女声");
-                    break;
+                    break;*/
             }
         } else if(SpeechFactory.SIBICHITTS.equalsIgnoreCase(audioEngine)){
             pre_audio_engine.setSummary("思必驰语音");
+            baiDuSpeaker.setVisible(false);
+        } else if(SpeechFactory.SDKTTS.equalsIgnoreCase(audioEngine)){
+            pre_audio_engine.setSummary("高德内置语音");
             baiDuSpeaker.setVisible(false);
         }
         Preference audioStream=findPreference(getString(R.string.pref_key__Audio_stream_type));

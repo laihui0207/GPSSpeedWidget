@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
+import com.amap.api.navi.AimlessModeListener;
 import com.amap.api.navi.enums.AMapNaviRingType;
 import com.amap.api.navi.enums.AimLessMode;
 import com.amap.api.navi.enums.BroadcastMode;
@@ -40,7 +41,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.Arrays;
 
 @SuppressLint("Registered")
-public class AutoXunHangService extends Service implements AMapNaviListener {
+public class AutoXunHangService extends Service implements AMapNaviListener, AimlessModeListener {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
     AMapNavi aMapNavi;
     boolean aimlessStarted =false;
@@ -85,8 +86,9 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     public void startAimlessNavi() {
         //if(aimlessStarted) return;
         aMapNavi = AMapNavi.getInstance(getApplicationContext());
+       // aMapNavi.setUseInnerVoice(SpeechFactory.SDKTTS.equalsIgnoreCase(AppSettings.get().getAudioEngine()), true);
         aMapNavi.addAMapNaviListener(this);
-        aMapNavi.setUseInnerVoice(false,false);
+        aMapNavi.addAimlessModeListener(this);
         if (PrefUtils.isOldDriverMode(getApplicationContext())) {
             aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
             aMapNavi.startAimlessMode(AimLessMode.CAMERA_DETECTED);
@@ -291,6 +293,37 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
 
     }
+
+    @Override
+    public void onUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
+        if(gpsUtil.getAutoNaviStatus()!= Constant.Navi_Status_Started) {
+            for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
+                gpsUtil.setCameraType(info.getBroadcastType());
+                if (Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
+                    gpsUtil.setCameraDistance(info.getDistance());
+                    // if (info.getLimitSpeed() > 0) {
+                    gpsUtil.setCameraSpeed(info.getLimitSpeed());
+                    //}
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onUpdateAimlessModeElecCameraInfo(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
+        if(gpsUtil.getAutoNaviStatus()!= Constant.Navi_Status_Started) {
+            for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
+                gpsUtil.setCameraType(info.getBroadcastType());
+                if (Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
+                    gpsUtil.setCameraDistance(info.getDistance());
+                    // if (info.getLimitSpeed() > 0) {
+                    gpsUtil.setCameraSpeed(info.getLimitSpeed());
+                    //}
+                }
+            }
+        }
+    }
+
     @Override
     public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
 
@@ -299,17 +332,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener {
 
     @Override
     public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
-        if(gpsUtil.getAutoNaviStatus()!= Constant.Navi_Status_Started) {
-            for (AMapNaviTrafficFacilityInfo info : aMapNaviTrafficFacilityInfos) {
-                gpsUtil.setCameraType(info.getBroadcastType());
-                if (Arrays.asList(broadcastTypes).contains(info.getBroadcastType())) {
-                   gpsUtil.setCameraDistance(info.getDistance());
-                   // if (info.getLimitSpeed() > 0) {
-                        gpsUtil.setCameraSpeed(info.getLimitSpeed());
-                    //}
-                }
-            }
-        }
+
     }
     @Override
     public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {

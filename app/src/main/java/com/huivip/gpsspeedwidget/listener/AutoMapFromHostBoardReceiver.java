@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.beans.NightNowEvent;
@@ -29,7 +30,8 @@ public class AutoMapFromHostBoardReceiver extends BootStartReceiver {
                 if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
                     Intent bootService=new Intent(context,BootStartService.class);
                     bootService.putExtra(BootStartService.START_BOOT,true);
-                    Utils.startService(context,bootService);
+                    Utils.startService(context,bootService, true);
+                    Toast.makeText(context,"Acc On",Toast.LENGTH_LONG).show();
                 }
             }
         }

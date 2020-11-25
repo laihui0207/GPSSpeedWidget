@@ -43,7 +43,7 @@ public class AudioService extends Service {
         if(tts==null){
             tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(AppSettings.get().getAudioEngine());
         }
-        if(AppSettings.get().isEnableAudio()) {
+        if(AppSettings.get().isEnableAudio() && tts!=null) {
             if(preContent!=null && preContent.equalsIgnoreCase(event.getText())){
                 return;
             }
@@ -62,9 +62,11 @@ public class AudioService extends Service {
     }
     @Subscribe
     public void changeTTSEngine(TTSEngineChangeEvent engineChangeEvent){
-        tts.release();
-        tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(AppSettings.get().getAudioEngine());
-        tts.initTTS();
+       // if(!SpeechFactory.SDKTTS.equalsIgnoreCase(AppSettings.get().getAudioEngine())) {
+            tts.release();
+            tts = SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(AppSettings.get().getAudioEngine());
+            tts.initTTS();
+        //}
     }
     @Override
     public void onDestroy() {

@@ -119,6 +119,9 @@
 -keep class com.autonavi.aps.amapapi.model.**{*;}
 -keep class com.amap.api.navi.**{*;}
 -keep class com.autonavi.**{*;}
+-keep class com.loc.**{*;}
+-keep class com.alibaba.mit.alitts.*{*;}
+-keep class com.google.**{*;}
 # baidu tts
 -keep class com.baidu.speech.**{*;}
 -keep class com.baidu.tts.**{*;}

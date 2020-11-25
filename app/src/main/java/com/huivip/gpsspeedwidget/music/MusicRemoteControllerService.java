@@ -349,11 +349,11 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                 public void run() {
                     if (state == RemoteControlClient.PLAYSTATE_PLAYING) {
                         Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
-                        Utils.startService(getApplicationContext(), lyricService);
+                        Utils.startService(getApplicationContext(), lyricService, false);
                     } else if (state == RemoteControlClient.PLAYSTATE_PAUSED || state == RemoteControlClient.PLAYSTATE_STOPPED) {
                         Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
                         lyricService.putExtra(LyricService.EXTRA_CLOSE, true);
-                        Utils.startService(getApplicationContext(), lyricService);
+                        Utils.startService(getApplicationContext(), lyricService, false);
                     }
                 }
             }, 1000);

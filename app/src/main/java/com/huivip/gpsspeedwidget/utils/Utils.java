@@ -488,8 +488,8 @@ public abstract class Utils {
         }
     }
 
-    public static void startService(Context context, Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+    public static void startService(Context context, Intent intent, boolean frontService) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && frontService
                 /*&& !(Utils.isServiceRunning(context, HomeActivity.class.getName()) || Utils.isServiceRunning(context,MainActivity.class.getName()))
                 && !getDefaultDesktop(context).equalsIgnoreCase(context.getPackageName())*/) {
             context.startForegroundService(intent);

@@ -115,7 +115,7 @@ public class BootStartService extends Service {
 
             if (AppSettings.get().isPlayTime() || AppSettings.get().isPlayWeather() || AppSettings.get().isPlayAddressOnStop()) {
                 Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
-                Utils.startService(getApplicationContext(), weatherService);
+                Utils.startService(getApplicationContext(), weatherService, false);
 
                 PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                         new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -156,18 +156,18 @@ public class BootStartService extends Service {
                 if (AppSettings.get().isEnableTimeWindow()) {
                     if (!Utils.isServiceRunning(getApplicationContext(), RealTimeFloatingService.class.getName())) {
                         Intent timeFloating = new Intent(getApplicationContext(), RealTimeFloatingService.class);
-                        Utils.startService(getApplicationContext(), timeFloating);
+                        Utils.startService(getApplicationContext(), timeFloating, false);
                     }
                 }
                 if (AppSettings.get().isEnableRoadLine()) {
                     if (!Utils.isServiceRunning(getApplicationContext(), RoadLineService.class.getName())) {
                         Intent roadLineService = new Intent(getApplicationContext(), RoadLineService.class);
-                        Utils.startService(getApplicationContext(), roadLineService);
+                        Utils.startService(getApplicationContext(), roadLineService, false);
                     }
                     if (AppSettings.get().isEnableRoadLineFloatingWindow() &&
                             !Utils.isServiceRunning(getApplicationContext(), RoadLineFloatingService.class.getName())) {
                         Intent roadLineFloatingService = new Intent(getApplicationContext(), RoadLineFloatingService.class);
-                        Utils.startService(getApplicationContext(), roadLineFloatingService);
+                        Utils.startService(getApplicationContext(), roadLineFloatingService, false);
                     }
                 }
                 if (AppSettings.get().isEnableSpeed()) {
@@ -175,24 +175,24 @@ public class BootStartService extends Service {
                 }
                 if (AppSettings.get().isEnableAudio() && !Utils.isServiceRunning(getApplicationContext(), AudioService.class.getName())) {
                     Intent audioService = new Intent(getApplicationContext(), AudioService.class);
-                    Utils.startService(getApplicationContext(), audioService);
+                    Utils.startService(getApplicationContext(), audioService, false);
                 }
                 if (AppSettings.get().isEnableXunHang() && !Utils.isServiceRunning(getApplicationContext(), AutoXunHangService.class.getName())) {
                     Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
-                    Utils.startService(getApplicationContext(), xunHangService);
+                    Utils.startService(getApplicationContext(), xunHangService, false);
                 }
                 if(AppSettings.get().isEnableAltitudeWindow()){
                     Intent altitudeWindowService= new Intent(getApplicationContext(), AltitudeFloatingService.class);
-                    Utils.startService(getApplicationContext(), altitudeWindowService);
+                    Utils.startService(getApplicationContext(), altitudeWindowService, false);
                 }
                 if (Utils.isNetworkConnected(getApplicationContext())) {
                     if (AppSettings.get().isEnableTracker() && !Utils.isServiceRunning(getApplicationContext(), NaviTrackService.class.getName())) {
                         Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
-                        Utils.startService(getApplicationContext(), trackService);
+                        Utils.startService(getApplicationContext(), trackService, false);
                     }
                     if(AppSettings.get().isEnableRecord()){
                         Intent trackService = new Intent(getApplicationContext(), RecordGpsHistoryService.class);
-                        Utils.startService(getApplicationContext(), trackService);
+                        Utils.startService(getApplicationContext(), trackService, false);
                     }
                     new Thread(() -> Utils.registerSelf(getApplicationContext())).start();
                     if(AppSettings.get().isAutoCheckUpdate()) {
