@@ -3,7 +3,6 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -239,15 +238,18 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     if(StringUtils.isNotBlank(areaName)){
                         cityName+=areaName;
                     }
-                    Toast.makeText(context,"当前城市:"+cityName,Toast.LENGTH_SHORT).show();
-                    Bundle bundle = intent.getExtras();
+                    if(!cityName.equalsIgnoreCase(gpsUtil.getCityName())){
+                        Toast.makeText(context,"当前城市:"+cityName,Toast.LENGTH_SHORT).show();
+                        gpsUtil.setCityName(cityName);
+                    }
+                   /* Bundle bundle = intent.getExtras();
                     StringBuilder extras= new StringBuilder();
                     if (bundle != null) {
                         for (String eKey : bundle.keySet()) {
                             extras.append("key:").append(eKey).append("~").append(bundle.get(eKey)).append(".");
                             //Log.e(TAG, key + " : " + (bundle.get(key) != null ? bundle.get(key) : "NULL"));
                         }
-                    }
+                    }*/
                     //FileUtil.saveLogToFile(extras.toString());
                     break;
                 case 10056:

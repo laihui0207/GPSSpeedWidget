@@ -209,7 +209,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                     //cityName=aMapLocation.getCity();
                     cityCode=aMapLocation.getCityCode();
                     adCode =aMapLocation.getAdCode();
-                    gpsUtil.setCityName(cityName);
+                    //gpsUtil.setCityName(cityName);
 
                     //Toast.makeText(getApplicationContext(),cityName+ adCode,Toast.LENGTH_SHORT).show();
                 }
