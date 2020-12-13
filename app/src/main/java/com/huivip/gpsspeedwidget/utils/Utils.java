@@ -507,8 +507,8 @@ public abstract class Utils {
 
         alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+delayTime, delayTaskServiceIntent);
     }
-    public static void startService(Context context, Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+    public static void startService(Context context, Intent intent, boolean frontLaunch) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && frontLaunch){
             context.startForegroundService(intent);
         } else {
             context.startService(intent);

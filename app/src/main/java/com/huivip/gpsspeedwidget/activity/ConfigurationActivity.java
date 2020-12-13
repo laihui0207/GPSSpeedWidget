@@ -65,7 +65,6 @@ import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.speech.TTS;
 import com.huivip.gpsspeedwidget.utils.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
-import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -77,7 +76,6 @@ import org.json.JSONObject;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,6 +119,7 @@ public class ConfigurationActivity extends Activity {
     AppWidgetHost appWidgetHost;
     boolean autoClose=true;
      FinishSelfReceiver finishSelfReceiver;
+     Intent finishSelfRegister;
 
     @Override
     protected void onStart() {
@@ -148,7 +147,7 @@ public class ConfigurationActivity extends Activity {
 
         }
         finishSelfReceiver=new FinishSelfReceiver();
-        registFinishSelfReceiver();
+        registerFinishSelfReceiver();
 
         initPermission();
         appWidgetHost = new AppWidgetHost(getApplicationContext(), Constant.APP_WIDGET_HOST_ID);
@@ -545,12 +544,13 @@ public class ConfigurationActivity extends Activity {
         Glide.get(this)
                 .register(AppInfo.class, InputStream.class, new AppInfoIconLoader.Factory());
         PrefUtils.setApps(getApplicationContext(), Utils.getDesktopPackageName(getApplicationContext()));
+        // button OK function
         Button btnOk= (Button) findViewById(R.id.confirm);
         View.OnClickListener confirmListener  = new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                EditText urlText=findViewById(R.id.editText_remoteURL);
+                /*EditText urlText=findViewById(R.id.editText_remoteURL);
                 String url=urlText.getText().toString();
                 if(!TextUtils.isEmpty(url.trim())){
                     PrefUtils.setGpsRemoteUrl(getApplicationContext(),url.trim());
@@ -563,7 +563,7 @@ public class ConfigurationActivity extends Activity {
                     FileUtil.copyFromAssets(getApplicationContext().getAssets(), "GPSHistory.js", destPath+"/"+"GPSHistory.js", false);
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
                 EditText speedAdjustEditText=findViewById(R.id.editText_speedadjust);
                 String adjustValue=speedAdjustEditText.getText().toString();
                 if(adjustValue!=null && !adjustValue.equalsIgnoreCase("")){
@@ -597,6 +597,7 @@ public class ConfigurationActivity extends Activity {
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
                 PrefUtils.setFirstLaunch(getApplicationContext(),false);
+                unregisterReceiver(finishSelfReceiver);
                 finish();
             }
         };
@@ -1172,11 +1173,12 @@ public class ConfigurationActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(PrefUtils.isEnableAutoCloseConfigureWindow(context)) {
+                unregisterReceiver(finishSelfReceiver);
                 ConfigurationActivity.this.finish();
             }
         }
     }
-    private void registFinishSelfReceiver(){
+    private void registerFinishSelfReceiver(){
         IntentFilter intentFilter=new IntentFilter();
         intentFilter.addAction(FINISH_ACTION);
         registerReceiver(finishSelfReceiver,intentFilter);
