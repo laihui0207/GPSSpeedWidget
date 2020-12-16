@@ -703,7 +703,7 @@ public class ConfigurationActivity extends Activity {
             speedAdjustEditText.setText(PrefUtils.getSpeedAdjust(getApplicationContext())+"");
         }
         EditText altitudeFontSizeAdjustEditText=findViewById(R.id.editText_altitude_fontSize_adjust);
-        altitudeFontSizeAdjustEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(-15, 45)});
+        altitudeFontSizeAdjustEditText.setFilters(new InputFilter[]{ new InputFilterMinMax(-45, 45)});
         if(PrefUtils.getAltitudeFontSize(getApplicationContext())!=0){
             altitudeFontSizeAdjustEditText.setText(PrefUtils.getAltitudeFontSize(getApplicationContext())+"");
         }

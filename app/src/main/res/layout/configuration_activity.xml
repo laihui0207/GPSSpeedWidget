@@ -579,7 +579,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="5"
-                    android:hint="0(-15,45)"
+                    android:hint="0(-45,45)"
                     android:inputType="numberSigned" />
                 <TextView
                     android:id="@+id/textView_font_alpha"
