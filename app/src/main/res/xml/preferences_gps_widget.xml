@@ -375,6 +375,11 @@
             android:key="@string/pref_key__Audio_play_dest_Address"
             android:summary="导航开始时或者重新规划后播报目的地地址"
             android:title="播报导航目的地" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key__Audio_play_alter_altitude"
+            android:summary="高海拔地区(>2000米)海拔高度播报"
+            android:title="播报海拔高度" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="歌词">

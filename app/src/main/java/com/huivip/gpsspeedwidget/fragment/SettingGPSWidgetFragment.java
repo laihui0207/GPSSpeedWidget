@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.amap.api.maps.offlinemap.OfflineMapActivity;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
@@ -162,6 +163,10 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                     getContext().startService(lycFloatingService);
                 }
             }
+        }
+        if(key.equalsIgnoreCase(getString(R.string.pref_key__Audio_play_alter_altitude))){
+            GpsUtil gpsUtil=GpsUtil.getInstance(getContext());
+            gpsUtil.setPlayAltitudeAlter(AppSettings.get().isPlayAltitudeAlter());
         }
         if(key.equalsIgnoreCase(getString(R.string.pref_key__speed_enable))) {
             if (AppSettings.get().isEnableSpeed()) {

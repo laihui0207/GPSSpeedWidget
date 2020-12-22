@@ -204,6 +204,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isLyricFloattingWidownEnable(){
         return getBool(R.string.pref_key__lyric_floating_window_enable,false);
     }
+    public boolean isPlayAltitudeAlter(){
+        return getBool(R.string.pref_key__Audio_play_alter_altitude,false);
+    }
     public boolean isLyricFixed(){
         return getBool(R.string.pref_key__lyric_fixed,false);
     }

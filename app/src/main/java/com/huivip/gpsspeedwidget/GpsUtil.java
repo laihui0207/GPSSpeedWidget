@@ -100,6 +100,7 @@ public class GpsUtil {
     String homeSet;
     AlarmManager alarm ;
     boolean isNight=false;
+    boolean isPlayAltitudeAlter=false;
     int locationUpdateCount=0;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     DecimalFormat decimalFormat=new DecimalFormat("0.0");
@@ -133,6 +134,7 @@ public class GpsUtil {
         this.context = context;
         localNumberFormat.setMaximumFractionDigits(1);
         localNumberFormat.setGroupingUsed(false);
+        isPlayAltitudeAlter=AppSettings.get().isPlayAltitudeAlter();
         alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
@@ -236,7 +238,9 @@ public class GpsUtil {
     public boolean isNight() {
         return isNight;
     }
-
+    public void setPlayAltitudeAlter(boolean enabled){
+        this.isPlayAltitudeAlter=enabled;
+    }
     public void setNight(boolean night) {
         isNight = night;
     }
@@ -294,7 +298,9 @@ public class GpsUtil {
             if (preLocation != null) {
                 distance += preLocation.distanceTo(paramLocation);
             }
-
+            if(isPlayAltitudeAlter) {
+                altitudeAlert();
+            }
             // save location every 50 m for catch road service
             if(lastedRecoredLocation==null || paramLocation.distanceTo(lastedRecoredLocation)>recordLocationDistance){
                 lastedRecoredLocation=paramLocation;
@@ -411,7 +417,20 @@ public class GpsUtil {
             limitCounter = 0;
         }
     }
+    public void altitudeAlert(){
+        if(altitude>2000 && altitude<3000){
+            playAltitude(2000,200);
 
+        } else if(altitude>=3000) {
+            playAltitude(3000,100);
+        }
+    }
+    private void playAltitude(double alter_altitude,int frequency){
+        double i_altitude = altitude - alter_altitude;
+        if(i_altitude%frequency==0){
+            EventBus.getDefault().post(new PlayAudioEvent("当前海拔高度"+altitude+"米",true));
+        }
+    }
     public CycleQueue<Location> getLocationVOCycleQueue() {
         return locationVOCycleQueue;
     }
