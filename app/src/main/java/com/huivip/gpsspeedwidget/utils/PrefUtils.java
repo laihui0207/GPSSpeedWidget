@@ -137,6 +137,8 @@ public abstract class PrefUtils {
     static final String NAVI_DEST_ADDRESS= "com.huivip.navi.address";
     static final String Enable_ALTITUDE_WINDOWS="com.huivip.altitude.window.enabled";
     static final String ALTITUDE_WINDOWS_FONTSIZE="com.huivip.altitude.window.fontSize";
+    static final String ALTITUDE_ALTER_START="com.huivip.altitude.alter.start";
+    static final String ALTITUDE_ALTER_FREQUENCY="com.huivip.altitude.alter.frequency";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -542,6 +544,19 @@ public abstract class PrefUtils {
     }
     public static int getSpeedAdjust(Context context) {
         return getSharedPreferences(context).getInt(PREF_GPS_SPEED_ADJUST, 0);
+    }
+
+    public static String getAltitudeAlterStart(Context context) {
+        return getSharedPreferences(context).getString(ALTITUDE_ALTER_START, "1000");
+    }
+    public static void setAltitudeAlterStart(Context context,String value){
+        edit(context).putString(ALTITUDE_ALTER_START, value).apply();
+    }
+    public static String getAltitudeAlterFrequency(Context context) {
+        return getSharedPreferences(context).getString(ALTITUDE_ALTER_FREQUENCY, "100");
+    }
+    public static void setAltitudeAlterFrequency(Context context,String value){
+        edit(context).putString(ALTITUDE_ALTER_FREQUENCY, value).apply();
     }
     public static void setAltitudeFontSize(Context context, int value) {
         edit(context).putInt(ALTITUDE_WINDOWS_FONTSIZE, value).apply();

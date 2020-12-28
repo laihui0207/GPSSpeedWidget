@@ -101,6 +101,8 @@ public class GpsUtil {
     AlarmManager alarm ;
     boolean isNight=false;
     boolean isPlayAltitudeAlter=false;
+    int altitudeAlterStart=2000;
+    int altitudeAlterFrequency=100;
     int locationUpdateCount=0;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     DecimalFormat decimalFormat=new DecimalFormat("0.0");
@@ -135,6 +137,8 @@ public class GpsUtil {
         localNumberFormat.setMaximumFractionDigits(1);
         localNumberFormat.setGroupingUsed(false);
         isPlayAltitudeAlter=AppSettings.get().isPlayAltitudeAlter();
+        altitudeAlterStart=Integer.parseInt(PrefUtils.getAltitudeAlterStart(context));
+        altitudeAlterFrequency=Integer.parseInt(PrefUtils.getAltitudeAlterFrequency(context));
         alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
@@ -241,6 +245,23 @@ public class GpsUtil {
     public void setPlayAltitudeAlter(boolean enabled){
         this.isPlayAltitudeAlter=enabled;
     }
+
+    public int getAltitudeAlterStart() {
+        return altitudeAlterStart;
+    }
+
+    public void setAltitudeAlterStart(int altitudeAlterStart) {
+        this.altitudeAlterStart = altitudeAlterStart;
+    }
+
+    public int getAltitudeAlterFrequency() {
+        return altitudeAlterFrequency;
+    }
+
+    public void setAltitudeAlterFrequency(int altitudeAlterFrequency) {
+        this.altitudeAlterFrequency = altitudeAlterFrequency;
+    }
+
     public void setNight(boolean night) {
         isNight = night;
     }
@@ -418,11 +439,8 @@ public class GpsUtil {
         }
     }
     public void altitudeAlert(){
-        if(altitude>2000 && altitude<3000){
-            playAltitude(2000,200);
-
-        } else if(altitude>=3000) {
-            playAltitude(3000,100);
+        if(altitude>=altitudeAlterStart) {
+            playAltitude(altitudeAlterStart, altitudeAlterFrequency);
         }
     }
     private void playAltitude(double alter_altitude,int frequency){

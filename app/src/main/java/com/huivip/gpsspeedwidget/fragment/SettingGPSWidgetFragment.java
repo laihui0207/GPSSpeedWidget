@@ -98,6 +98,9 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             case R.string.pref_key__Tracker_self_server_url:
                 setTrackerServerUrl();
                 break;
+            case R.string.pref_key__Altitude_alter_config:
+                setAltitudeAlterConfig();
+                break;
             case R.string.pref_key__overdraw_permission:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
@@ -325,6 +328,8 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         floatAltitudeFontSize.setSummary("字体调整:"+AppSettings.get().getAltitudeFontSize());
         Preference overSpeedTTS=findPreference(getString(R.string.pref_key__over_speed_tts_setting));
         overSpeedTTS.setSummary("当前语音："+PrefUtils.getPrefOverSpeedTts(getContext()));
+        Preference alterAltitudeConfig=findPreference(getString(R.string.pref_key__Altitude_alter_config));
+        alterAltitudeConfig.setSummary("播报起始高度:"+PrefUtils.getAltitudeAlterStart(getContext())+"米,频率每"+PrefUtils.getAltitudeAlterFrequency(getContext())+"米播报一次");
         super.updateSummaries();
     }
     private void setWifiConfig(){
@@ -351,6 +356,44 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                         }
                         PrefUtils.setAutoLaunchHotSpotName(getContext(),wifiName);
                         PrefUtils.setAutoLaunchHotSpotPassword(getContext(),wifiPassword);
+                        //autoLaunchChanged(buttonView);
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("取消",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        final android.app.AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+    private void setAltitudeAlterConfig(){
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View promptView = layoutInflater.inflate(R.layout.dialog_altitude_alter_setting, null);
+        android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setView(promptView);
+        final EditText alterStartEditText = (EditText) promptView.findViewById(R.id.input_altitude_start);
+        alterStartEditText.setText(PrefUtils.getAltitudeAlterStart(getContext()));
+        final EditText alterSequenceEditText = (EditText) promptView.findViewById(R.id.input_altitude_sequence);
+        alterSequenceEditText.setText(PrefUtils.getAltitudeAlterFrequency(getContext()));
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String start = alterStartEditText.getText().toString();
+                        String frequency = alterSequenceEditText.getText().toString();
+
+                        if (TextUtils.isEmpty(start) || TextUtils.isEmpty(frequency)) {
+                            start = Constant.ALTITUDE_ALTER_START;
+                            frequency = Constant.ALTITUDE_ALTER_FREQUENCY;
+                        }
+                        PrefUtils.setAltitudeAlterStart(getContext(),start);
+                        PrefUtils.setAltitudeAlterFrequency(getContext(),frequency);
+                        GpsUtil gpsUtil=GpsUtil.getInstance(getContext());
+                        gpsUtil.setAltitudeAlterStart(Integer.parseInt(start));
+                        gpsUtil.setAltitudeAlterFrequency(Integer.parseInt(frequency));
                         //autoLaunchChanged(buttonView);
                         dialog.cancel();
                     }

@@ -100,6 +100,7 @@
     <string name="pref_key__Audio_play_Address" translatable="false">pref_key__Audio_play_Address</string>
     <string name="pref_key__Audio_play_dest_Address" translatable="false">pref_key__Audio_play_dest_Address</string>
     <string name="pref_key__Audio_play_alter_altitude" translatable="false">pref_key__Audio_play_alter_altitude</string>
+    <string name="pref_key__Altitude_alter_config" translatable="false">pref_key__Altitude_alter_config</string>
     <string name="pref_key__Audio_auto_mute" translatable="false">pref_key__Audio_auto_mute</string>
     <!-- Preference Keys -->
     <string name="pref_key__check_update" translatable="false">pref_key__check_update</string>

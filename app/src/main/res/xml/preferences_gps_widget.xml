@@ -378,8 +378,12 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key__Audio_play_alter_altitude"
-            android:summary="高海拔地区(>2000米)海拔高度播报"
+            android:summary="建议高海拔地区(>2000米)开启海拔高度播报"
             android:title="播报海拔高度" />
+        <Preference
+            android:defaultValue="0"
+            android:key="@string/pref_key__Altitude_alter_config"
+            android:title="播报海拔高度设置" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="歌词">
