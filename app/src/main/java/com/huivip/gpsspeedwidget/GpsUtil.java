@@ -446,7 +446,7 @@ public class GpsUtil {
     private void playAltitude(double alter_altitude,int frequency){
         double i_altitude = altitude - alter_altitude;
         if(i_altitude%frequency==0){
-            EventBus.getDefault().post(new PlayAudioEvent("当前海拔高度"+altitude+"米",true));
+            EventBus.getDefault().post(new PlayAudioEvent("当前海拔高度"+getAltitude(0)+"米",true));
         }
     }
     public CycleQueue<Location> getLocationVOCycleQueue() {

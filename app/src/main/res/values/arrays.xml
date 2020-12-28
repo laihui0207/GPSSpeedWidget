@@ -137,8 +137,11 @@
         <item>2</item>
     </string-array>
     <string-array name="items_widget_font_size" translatable="false">
-        <item>-2</item>
-        <item>-1</item>
+        <item>-35</item>
+        <item>-25</item>
+        <item>-15</item>
+        <item>-10</item>
+        <item>-5</item>
         <item>0</item>
         <item>1</item>
         <item>2</item>

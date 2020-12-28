@@ -68,6 +68,7 @@ public class AltitudeFloatingService extends Service{
     TextView textViewDirection;
     @BindView(R.id.textView_altitude_unit)
     TextView textViewAltitudeUnit;
+    @Nullable
     @BindView(R.id.layout_altitude_bg)
     LinearLayout background;
     private ServiceConnection mServiceConnection;
@@ -90,9 +91,27 @@ public class AltitudeFloatingService extends Service{
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
+            if(gpsUtil==null){
+                gpsUtil=GpsUtil.getInstance(getApplicationContext());
+            }
             gpsUtil.startLocationService();
         }
+        setStyle();
         return Service.START_REDELIVER_INTENT;
+    }
+    private void setStyle(){
+        int fontSizeAdjust=Integer.parseInt(AppSettings.get().getAltitudeFontSize());
+        textViewAltitude.setTextSize(40f+fontSizeAdjust);
+        textViewAltitude.setTextColor(AppSettings.get().getAltitudeFontColor());
+        textViewAltitudeUnit.setTextSize(35f+fontSizeAdjust);
+        Drawable altitudeDrawable = getApplicationContext().getResources().getDrawable(R.drawable.ic_altitude);
+        altitudeDrawable.setBounds(0,0,40+fontSizeAdjust,40+fontSizeAdjust);
+        textViewAltitude.setCompoundDrawables(altitudeDrawable,null,null,null);
+        textViewDirection.setTextSize(40f+fontSizeAdjust);
+        textViewDirection.setTextColor(AppSettings.get().getAltitudeFontColor());
+        Drawable directionDrawable = getApplicationContext().getResources().getDrawable(R.drawable.ic_direction);
+        directionDrawable.setBounds(0,0,40+fontSizeAdjust,40+fontSizeAdjust);
+        textViewDirection.setCompoundDrawables(directionDrawable,null,null,null);
     }
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
@@ -148,8 +167,11 @@ public class AltitudeFloatingService extends Service{
         params.gravity = Gravity.TOP | Gravity.START;
         //params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
         ButterKnife.bind(this, mFloatingView);
-        Drawable backgroundDrawable = background.getBackground();
-        backgroundDrawable.setAlpha(PrefUtils.getOpacity(getApplicationContext()));
+        if(background!=null) {
+            Drawable backgroundDrawable = background.getBackground();
+            backgroundDrawable.setAlpha(PrefUtils.getOpacity(getApplicationContext()));
+        }
+
         mWindowManager.addView(mFloatingView, params);
         mFloatingView.setOnTouchListener( new FloatingOnTouchListener());
         initMonitorPosition();
@@ -184,24 +206,12 @@ public class AltitudeFloatingService extends Service{
     }*/
 
     void checkLocationData() {
-        int fontSizeAdjust=Integer.parseInt(AppSettings.get().getAltitudeFontSize());
-        textViewAltitude.setTextSize(40f+fontSizeAdjust);
-        textViewAltitude.setTextColor(AppSettings.get().getAltitudeFontColor());
-        textViewAltitudeUnit.setTextSize(35f+fontSizeAdjust);
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
-            //if(gpsUtil.isGpsLocationChanged()){
             textViewAltitude.setText("海拔"+df.format(Integer.parseInt(gpsUtil.getAltitude(0))) + "米");
-            // }
         } else {
             textViewAltitude.setText("海拔8848米");
         }
-        textViewDirection.setTextSize(40f+fontSizeAdjust);
-        String direction=gpsUtil.getDirection();
-      /*  if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1){
-            direction="\u2191"+direction;
-        }*/
-        textViewDirection.setText(direction);
-        textViewDirection.setTextColor(AppSettings.get().getAltitudeFontColor());
+        textViewDirection.setText(gpsUtil.getDirection());
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
