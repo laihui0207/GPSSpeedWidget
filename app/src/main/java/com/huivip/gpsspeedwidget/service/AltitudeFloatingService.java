@@ -90,7 +90,27 @@ public class AltitudeFloatingService extends Service{
             }
             gpsUtil.startLocationService();
         }
+        setStyle();
         return Service.START_REDELIVER_INTENT;
+    }
+    private void setStyle(){
+        int fontSizeAdjust=PrefUtils.getAltitudeFontSize(getApplicationContext());
+        textViewAltitude.setTextSize(40f+fontSizeAdjust);
+        //textViewAltitude.setTextColor(AppSettings.get().getAltitudeFontColor());
+        textViewAltitudeUnit.setTextSize(35f+fontSizeAdjust);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Drawable altitudeDrawable = getApplicationContext().getResources().getDrawable(R.drawable.ic_altitude);
+            altitudeDrawable.setBounds(0, 0, 40 + fontSizeAdjust, 40 + fontSizeAdjust);
+            textViewAltitude.setCompoundDrawables(altitudeDrawable,null,null,null);
+
+            Drawable directionDrawable = getApplicationContext().getResources().getDrawable(R.drawable.ic_direction2);
+            directionDrawable.setBounds(0,0,40+fontSizeAdjust,40+fontSizeAdjust);
+            textViewDirection.setCompoundDrawables(directionDrawable,null,null,null);
+        }
+        textViewDirection.setTextSize(40f+fontSizeAdjust);
+        //textViewDirection.setTextColor(AppSettings.get().getAltitudeFontColor());
+        Drawable backgroundDrawable=background.getBackground();
+        backgroundDrawable.setAlpha(PrefUtils.getAltitudeAlpha(getApplicationContext()));
     }
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
@@ -182,24 +202,12 @@ public class AltitudeFloatingService extends Service{
     }*/
 
     void checkLocationData() {
-        Drawable backgroundDrawable=background.getBackground();
-        backgroundDrawable.setAlpha(PrefUtils.getAltitudeAlpha(getApplicationContext()));
-        int fontSizeAdjust=PrefUtils.getAltitudeFontSize(getApplicationContext());
-        textViewAltitude.setTextSize(40f+fontSizeAdjust);
-        textViewAltitudeUnit.setTextSize(35f+fontSizeAdjust);
         if (gpsUtil != null && gpsUtil.isGpsEnabled() && gpsUtil.isGpsLocationStarted()) {
-            //if(gpsUtil.isGpsLocationChanged()){
            textViewAltitude.setText("海拔"+df.format(Integer.parseInt(gpsUtil.getAltitude())) + "米");
-            // }
         } else {
             textViewAltitude.setText("海拔8848米");
         }
-        textViewDirection.setTextSize(40f+fontSizeAdjust);
-        String direction=gpsUtil.getDirection()+" ";
-      /*  if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1){
-            direction+="|";
-        }*/
-        textViewDirection.setText(direction);
+        textViewDirection.setText(gpsUtil.getDirection()+" ");
     }
     private int getWindowType() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
