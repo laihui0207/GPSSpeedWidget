@@ -184,9 +184,6 @@ public class WeatherService extends Service implements AMapLocationListener {
                 } else if(!resultText.equalsIgnoreCase(showStr)) {
                     showStr+="\n\n"+ resultText;
                 }
-                /*SpeechFactory.getInstance(getApplicationContext())
-                        .getTTSEngine(PrefUtils.getTtsEngine(getApplicationContext()))
-                        .speak(resultText,true);*/
                 EventBus.getDefault().post(new PlayAudioEvent(resultText,true));
             }
             if(!TextUtils.isEmpty(showStr)) {
@@ -246,7 +243,16 @@ public class WeatherService extends Service implements AMapLocationListener {
                                     !aMapLocation.getStreet().equalsIgnoreCase(gpsUtil.getCurrentRoadName()))){
                         gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
                     }
-                    address=aMapLocation.getAddress();
+                    if(!TextUtils.isEmpty(aMapLocation.getDistrict())){
+                        address+=aMapLocation.getDistrict();
+                    }
+                    if(!TextUtils.isEmpty(aMapLocation.getStreet())){
+                        address+=aMapLocation.getStreet();
+                    }
+                    if(!TextUtils.isEmpty(aMapLocation.getStreetNum())){
+                        address+=aMapLocation.getStreetNum();
+                    }
+                    //address=aMapLocation.getAddress();
                 }
                 if (gpsUtil.getSpeed() == 0 && running) {
                     running = false;

@@ -104,14 +104,17 @@ public class AltitudeFloatingService extends Service{
         textViewAltitude.setTextSize(40f+fontSizeAdjust);
         textViewAltitude.setTextColor(AppSettings.get().getAltitudeFontColor());
         textViewAltitudeUnit.setTextSize(35f+fontSizeAdjust);
-        Drawable altitudeDrawable = getApplicationContext().getResources().getDrawable(R.drawable.ic_altitude);
-        altitudeDrawable.setBounds(0,0,40+fontSizeAdjust,40+fontSizeAdjust);
-        textViewAltitude.setCompoundDrawables(altitudeDrawable,null,null,null);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            Drawable altitudeDrawable = getApplicationContext().getResources().getDrawable(R.drawable.ic_altitude);
+            altitudeDrawable.setBounds(0,0,40+fontSizeAdjust,40+fontSizeAdjust);
+            textViewAltitude.setCompoundDrawables(altitudeDrawable,null,null,null);
+
+            Drawable directionDrawable = getApplicationContext().getResources().getDrawable(R.drawable.ic_direction);
+            directionDrawable.setBounds(0,0,40+fontSizeAdjust,40+fontSizeAdjust);
+            textViewDirection.setCompoundDrawables(directionDrawable,null,null,null);
+        }
         textViewDirection.setTextSize(40f+fontSizeAdjust);
         textViewDirection.setTextColor(AppSettings.get().getAltitudeFontColor());
-        Drawable directionDrawable = getApplicationContext().getResources().getDrawable(R.drawable.ic_direction);
-        directionDrawable.setBounds(0,0,40+fontSizeAdjust,40+fontSizeAdjust);
-        textViewDirection.setCompoundDrawables(directionDrawable,null,null,null);
     }
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
