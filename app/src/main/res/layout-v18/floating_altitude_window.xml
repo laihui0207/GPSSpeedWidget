@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -11,7 +12,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:background="@drawable/navi_floating_border"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -21,7 +23,7 @@
             android:layout_weight="1"
             android:gravity="end|bottom"
             android:id="@+id/textView_altitude_direction"
-            android:textSize="40sp"
+            android:textSize="40dp"
             android:textColor="@color/cardview_light_background" />
         <TextView
             android:id="@+id/textView_altitude"
