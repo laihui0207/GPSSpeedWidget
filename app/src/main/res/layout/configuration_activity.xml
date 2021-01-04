@@ -45,13 +45,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="报天气" />
-
+                <CheckBox
+                    android:id="@+id/checkBox_play_speed_limit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="报超速" />
                 <CheckBox
                     android:id="@+id/checkBox_playWarn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="开机报安全提醒" />
+
 
             </LinearLayout>
             <LinearLayout
@@ -61,7 +67,7 @@
                     android:id="@+id/checkBox_auto_close"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5秒后自动关闭配置窗口，再次打开配置请常按悬浮窗口"
+                    android:text="5秒后自动关闭配置窗口，再次打开配置请长按悬浮窗口"
                     />
             </LinearLayout>
 
@@ -552,49 +558,89 @@
             </RelativeLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <CheckBox
-                    android:id="@+id/speed_altitude"
+                android:layout_height="wrap_content" android:orientation="vertical">
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="单独海拔窗口" />
-                <CheckBox
-                    android:id="@+id/checkBox_altitude_autoSolt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="自动靠边" />
-                <CheckBox
-                    android:id="@+id/checkBox_altitude_fixed_position"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="固定位置" />
-                <TextView
-                    android:id="@+id/textView_fontSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="  字体大小:" />
+                    android:layout_height="wrap_content">
+                    <CheckBox
+                        android:id="@+id/speed_altitude"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="单独海拔窗口" />
+                    <CheckBox
+                        android:id="@+id/checkBox_altitude_autoSolt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="自动靠边" />
+                    <CheckBox
+                        android:id="@+id/checkBox_altitude_fixed_position"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="固定位置" />
+                    <TextView
+                        android:id="@+id/textView_fontSize"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="  字体大小:" />
 
-                <EditText
-                    android:id="@+id/editText_altitude_fontSize_adjust"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="5"
-                    android:hint="0(-45,45)"
-                    android:inputType="numberSigned" />
-                <TextView
-                    android:id="@+id/textView_font_alpha"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="  背景透明度:" />
+                    <EditText
+                        android:id="@+id/editText_altitude_fontSize_adjust"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="5"
+                        android:hint="0(-45,45)"
+                        android:inputType="numberSigned" />
+                    <TextView
+                        android:id="@+id/textView_font_alpha"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="  背景透明度:" />
 
-                <EditText
-                    android:id="@+id/editText_altitude_font_alpha_adjust"
+                    <EditText
+                        android:id="@+id/editText_altitude_font_alpha_adjust"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="5"
+                        android:hint="100(0,100)"
+                        android:inputType="numberSigned" />
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="5"
-                    android:hint="100(0,100)"
-                    android:inputType="numberSigned" />
+                    android:layout_height="wrap_content" android:orientation="horizontal">
+                    <CheckBox
+                        android:id="@+id/checkBox_alter_altitude"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="海拔播报" />
+                    <TextView
+                        android:id="@+id/alter_altitude_start_table"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="  播报起始高度:" />
+
+                    <EditText
+                        android:id="@+id/editText_alter_altitude_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="5"
+                        android:hint="2000"
+                        android:inputType="numberSigned" />
+                    <TextView
+                        android:id="@+id/textView_alter_altitude_frequency_lable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="  播报频度:" />
+
+                    <EditText
+                        android:id="@+id/editText_alter_altitude_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="5"
+                        android:hint="100"
+                        android:inputType="numberSigned" />
+                </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

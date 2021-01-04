@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
 import com.huivip.gpsspeedwidget.service.WeatherService;
+import com.huivip.gpsspeedwidget.speech.SpeechFactory;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import java.text.NumberFormat;
@@ -38,6 +39,7 @@ public class GpsUtil {
     Integer mphSpeed = Integer.valueOf(0);
     Integer kmhSpeed = Integer.valueOf(0);
     Integer limitSpeed = Integer.valueOf(0);
+    Integer roadLimitSpeed = Integer.valueOf(0);
     Float limitDistance = 0F;
     String mphSpeedStr = "0";
     String kmhSpeedStr = "0";
@@ -242,6 +244,9 @@ public class GpsUtil {
             if (preLocation != null) {
                 distance += preLocation.distanceTo(paramLocation);
             }
+            if(PrefUtils.getEnableAlterAltitude(context)) {
+                altitudeAlert();
+            }
             preLocation = paramLocation;
         } else {
 
@@ -292,18 +297,37 @@ public class GpsUtil {
         }
         speedometerPercentage = Math.round((float) kmhSpeed / 240 * 100);
         // limit speak just say one times in one minutes
-        if (limitSpeed > 0 && kmhSpeed > limitSpeed) {
+        if (cameraSpeed > 0 && kmhSpeed > cameraSpeed) {
             hasLimited = true;
             limitCounter++;
             if (!limitSpeaked || limitCounter > 300) {
                 limitSpeaked = true;
                 limitCounter = 0;
-                //ttsUtil.speak("您已超速");
+                if(PrefUtils.isEnableTTSPlaySpeedLimit(context)){
+                    SpeechFactory.getInstance(context)
+                            .getTTSEngine(SpeechFactory.TEXTTTS)
+                            .speak("您已超速", false);
+                }
             }
         } else {
             hasLimited = false;
             limitSpeaked = false;
             limitCounter = 0;
+        }
+    }
+    private double pre_altitude;
+    public void altitudeAlert(){
+        if(altitude>=PrefUtils.getEnableAlterAltitudeStart(context)) {
+            playAltitude(PrefUtils.getEnableAlterAltitudeStart(context), PrefUtils.getEnableAlterAltitudeFrequency(context));
+        }
+    }
+    private void playAltitude(double alter_altitude,int frequency){
+        double i_altitude = altitude - alter_altitude;
+        if(i_altitude%frequency==0 && pre_altitude!=altitude){
+            SpeechFactory.getInstance(context)
+                    .getTTSEngine(SpeechFactory.TEXTTTS)
+                    .speak("当前海拔高度"+getAltitude()+"米",true);
+            pre_altitude=altitude;
         }
     }
 
@@ -558,7 +582,10 @@ public class GpsUtil {
         this.cameraSpeed = cameraSpeed;
         this.limitSpeed = cameraSpeed;
     }
-
+    public void setRoadLimitSpeed(int roadLimit){
+        this.roadLimitSpeed = roadLimit;
+        this.limitSpeed = roadLimit;
+    }
     public String getCurrentRoadName() {
         if (!TextUtils.isEmpty(currentRoadName) && currentRoadName.length() > 4) {
             return currentRoadName.substring(0, 4);

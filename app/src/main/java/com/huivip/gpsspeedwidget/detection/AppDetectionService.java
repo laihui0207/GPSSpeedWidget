@@ -109,7 +109,11 @@ public class AppDetectionService extends AccessibilityService {
             autoNaviFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
             meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
         }
-
+        if(PrefUtils.isHideFloatingWidowOnNaviApp(getApplicationContext()) && onAutoNavi){
+            floatService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+            autoNaviFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+            meterFloatingService.putExtra(DefaultFloatingService.EXTRA_CLOSE, true);
+        }
 
         try {
             String floatingStyle=PrefUtils.getFloatingStyle(getApplicationContext());

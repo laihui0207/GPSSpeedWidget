@@ -222,6 +222,28 @@ public class ConfigurationActivity extends Activity {
                 PrefUtils.setRecordGPSHistory(getApplicationContext(),checkBoxButton.isChecked());
             }
         });
+        CheckBox enablePlaySpeedLimitCheckBox=findViewById(R.id.checkBox_play_speed_limit);
+        enablePlaySpeedLimitCheckBox.setChecked(PrefUtils.isEnableTTSPlaySpeedLimit(getApplicationContext()));
+        enablePlaySpeedLimitCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefUtils.setEnableAltitudeWindows(getApplicationContext(),buttonView.isChecked());
+            }
+        });
+        CheckBox enableAlterAltitudeCheckBox=findViewById(R.id.checkBox_alter_altitude);
+        enableAlterAltitudeCheckBox.setChecked(PrefUtils.getEnableAlterAltitude(getApplicationContext()));
+        enableAlterAltitudeCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton checkBoxButton, boolean isChecked) {
+                PrefUtils.setEnableAlterAltitude(getApplicationContext(),checkBoxButton.isChecked());
+            }
+        });
+        TextView alterAltitudeStart=findViewById(R.id.editText_alter_altitude_start);
+        alterAltitudeStart.setText(PrefUtils.getEnableAlterAltitudeStart(getApplicationContext())+"");
+        TextView alterAltitudeFrequency=findViewById(R.id.editText_alter_altitude_frequency);
+        alterAltitudeFrequency.setText(PrefUtils.getEnableAlterAltitudeFrequency(getApplicationContext())+"");
        /* cleanDataCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -597,6 +619,10 @@ public class ConfigurationActivity extends Activity {
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
                 PrefUtils.setFirstLaunch(getApplicationContext(),false);
+                TextView alterAltitudeStart=findViewById(R.id.editText_alter_altitude_start);
+                PrefUtils.setEnableAlterAltitudeStart(getApplicationContext(),Integer.parseInt(alterAltitudeStart.getText().toString()));
+                TextView alterAltitudeFrequency=findViewById(R.id.editText_alter_altitude_frequency);
+                PrefUtils.setEnableAlterAltitudeFrequency(getApplicationContext(),Integer.parseInt(alterAltitudeFrequency.getText().toString()));
                 unregisterReceiver(finishSelfReceiver);
                 finish();
             }
@@ -880,8 +906,7 @@ public class ConfigurationActivity extends Activity {
         feedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.TEXTTTS);
-                tts.speak("你好，语音测试",true);
+
                 final EditText inputText = new EditText(ConfigurationActivity.this);
                 DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(getApplicationContext());
                 String deviceId=deviceUuidFactory.getDeviceUuid().toString();
@@ -1074,36 +1099,8 @@ public class ConfigurationActivity extends Activity {
         buttonTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*ColorPickerDialogBuilder
-                        .with(getApplicationContext())
-                        .setTitle("Choose color")
-                        .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
-                        .density(12)
-                        .setOnColorSelectedListener(new OnColorSelectedListener() {
-                            @Override
-                            public void onColorSelected(int selectedColor) {
-                                //toast("onColorSelected: 0x" + Integer.toHexString(selectedColor));
-                            }
-                        })
-                        .setPositiveButton("ok", new ColorPickerClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
-                               // changeBackgroundColor(selectedColor);
-                            }
-                        })
-                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        })
-                        .build();*/
-            /*    ComponentName componentToLaunch = new ComponentName(
-                        "com.android.settings",
-                        "com.android.settings.SubSettings");
-                Intent intent = new Intent();
-                intent.setComponent(componentToLaunch);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);*/
+                TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.TEXTTTS);
+                tts.speak("你好，语音测试,有钱的捧个钱场，没钱的也尽量捧个钱场",true);
             }
         });
         CheckBox goToHomeCheckBox=findViewById(R.id.checkBox_gotoHome);

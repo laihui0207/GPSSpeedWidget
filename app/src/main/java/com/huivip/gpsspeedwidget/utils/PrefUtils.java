@@ -119,6 +119,10 @@ public abstract class PrefUtils {
     static final String ALTITUDE_WINDOWS_ALPHA="com.huivip.altitude.window.alpha";
     static final String FIRST_LAUNCH="com.huivip.firstLaunch";
     static final String AUTO_CLOSE_CONFIGURE_WINDOWS="com.huivip.auto.close.window";
+    static final String ALTER_ALTITUDE_ENABLE ="com.huivip.alter.altitude";
+    static final String ALTER_ALTITUDE_ENABLE_START ="com.huivip.alter.altitude.start";
+    static final String ALTER_ALTITUDE_ENABLE_FREQUENCY ="com.huivip.alter.altitude.frequency";
+    static final String TTS_PLAY_LIMIT_SPEED="com.huivip.tts.play.speedLimit";
 
 
     private static SharedPreferences.Editor edit(Context context) {
@@ -245,6 +249,30 @@ public abstract class PrefUtils {
     }
     public static boolean getEnableAltitudeWindow(Context context){
         return getSharedPreferences(context).getBoolean(Enable_ALTITUDE_WINDOWS,false);
+    }
+    public static void setEnablePlaySpeedLimit(Context context,boolean value){
+        edit(context).putBoolean(TTS_PLAY_LIMIT_SPEED,value).apply();
+    }
+    public static boolean isEnableTTSPlaySpeedLimit(Context context){
+        return getSharedPreferences(context).getBoolean(TTS_PLAY_LIMIT_SPEED,false);
+    }
+    public static void setEnableAlterAltitude(Context context,boolean value){
+        edit(context).putBoolean(ALTER_ALTITUDE_ENABLE,value).apply();
+    }
+    public static boolean getEnableAlterAltitude(Context context){
+        return getSharedPreferences(context).getBoolean(ALTER_ALTITUDE_ENABLE,false);
+    }
+    public static void setEnableAlterAltitudeStart(Context context,int value){
+        edit(context).putInt(ALTER_ALTITUDE_ENABLE_START,value).apply();
+    }
+    public static int getEnableAlterAltitudeStart(Context context){
+        return getSharedPreferences(context).getInt(ALTER_ALTITUDE_ENABLE_START,2000);
+    }
+    public static void setEnableAlterAltitudeFrequency(Context context,int value){
+        edit(context).putInt(ALTER_ALTITUDE_ENABLE_FREQUENCY,value).apply();
+    }
+    public static int getEnableAlterAltitudeFrequency(Context context){
+        return getSharedPreferences(context).getInt(ALTER_ALTITUDE_ENABLE_FREQUENCY,100);
     }
     public static void setHideFloatingWidowOnNaviApp(Context context, boolean value){
         edit(context).putBoolean(ENABLE_HIDE_FLOATING_WINDOW_ON_NAVI, value).apply();

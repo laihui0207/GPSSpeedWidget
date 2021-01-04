@@ -21,7 +21,7 @@
             android:gravity="end|bottom"
             android:drawableLeft="@drawable/ic_direction2"
             android:id="@+id/textView_altitude_direction"
-            android:textSize="40sp"
+            android:textSize="40dp"
             android:textColor="@color/cardview_light_background" />
         <TextView
             android:id="@+id/textView_altitude"

@@ -22,6 +22,7 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -95,7 +96,7 @@ public class AltitudeFloatingService extends Service{
     }
     private void setStyle(){
         int fontSizeAdjust=PrefUtils.getAltitudeFontSize(getApplicationContext());
-        textViewAltitude.setTextSize(40f+fontSizeAdjust);
+        textViewAltitude.setTextSize(TypedValue.COMPLEX_UNIT_DIP,40f+fontSizeAdjust);
         //textViewAltitude.setTextColor(AppSettings.get().getAltitudeFontColor());
         textViewAltitudeUnit.setTextSize(35f+fontSizeAdjust);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -107,7 +108,7 @@ public class AltitudeFloatingService extends Service{
             directionDrawable.setBounds(0,0,40+fontSizeAdjust,40+fontSizeAdjust);
             textViewDirection.setCompoundDrawables(directionDrawable,null,null,null);
         }
-        textViewDirection.setTextSize(40f+fontSizeAdjust);
+        textViewDirection.setTextSize(TypedValue.COMPLEX_UNIT_DIP,40f+fontSizeAdjust);
         //textViewDirection.setTextColor(AppSettings.get().getAltitudeFontColor());
         Drawable backgroundDrawable=background.getBackground();
         backgroundDrawable.setAlpha(PrefUtils.getAltitudeAlpha(getApplicationContext()));
