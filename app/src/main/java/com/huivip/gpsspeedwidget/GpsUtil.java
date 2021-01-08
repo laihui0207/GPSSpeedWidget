@@ -443,10 +443,13 @@ public class GpsUtil {
             playAltitude(altitudeAlterStart, altitudeAlterFrequency);
         }
     }
+    private double pre_altitude=0;
     private void playAltitude(double alter_altitude,int frequency){
         double i_altitude = altitude - alter_altitude;
-        if(i_altitude%frequency==0){
+        if((int)i_altitude%frequency==0 && (int)altitude!=(int)pre_altitude){
+            Toast.makeText(context,"当前海拔高度"+getAltitude(0)+"米",Toast.LENGTH_SHORT).show();
             EventBus.getDefault().post(new PlayAudioEvent("当前海拔高度"+getAltitude(0)+"米",true));
+            pre_altitude=altitude;
         }
     }
     public CycleQueue<Location> getLocationVOCycleQueue() {
