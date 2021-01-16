@@ -211,7 +211,18 @@ public class WeatherService extends Service implements AMapLocationListener {
                                     !aMapLocation.getStreet().equalsIgnoreCase(gpsUtil.getCurrentRoadName()))){
                         gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
                     }
-                    address=aMapLocation.getAddress();
+                  //  address=aMapLocation.getAddress();
+                    String t_address="";
+                    if(!TextUtils.isEmpty(aMapLocation.getDistrict())){
+                        t_address+=aMapLocation.getDistrict();
+                    }
+                    if(!TextUtils.isEmpty(aMapLocation.getStreet())){
+                        t_address+=aMapLocation.getStreet();
+                    }
+                    if(!TextUtils.isEmpty(aMapLocation.getStreetNum())){
+                        t_address+=aMapLocation.getStreetNum();
+                    }
+                    address=t_address;
                 }
                 if (gpsUtil.getSpeed() == 0 && running) {
                     running = false;

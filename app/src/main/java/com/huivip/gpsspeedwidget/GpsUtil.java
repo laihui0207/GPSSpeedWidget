@@ -84,6 +84,9 @@ public class GpsUtil {
     String latedDirectionName="";
     int naviFloatingStatus=0; // 0 disabled 1 visible
     int autoNaviStatus=0; // 0 no started  1 started
+    boolean isAlterAltitude=false;
+    int alterAltitudeStart=0;
+    int alterAltitudeFrequency=0;
     NumberFormat localNumberFormat = NumberFormat.getNumberInstance();
     LocationListener locationListener = new LocationListener() {
         @Override
@@ -150,6 +153,9 @@ public class GpsUtil {
         };
         Toast.makeText(context,"GPS服务开启",Toast.LENGTH_SHORT).show();
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
+        isAlterAltitude=PrefUtils.getEnableAlterAltitude(context);
+        alterAltitudeStart=PrefUtils.getEnableAlterAltitudeStart(context);
+        alterAltitudeFrequency=PrefUtils.getEnableAlterAltitudeFrequency(context);
         /*Intent recordService = new Intent(context, RecordGpsHistoryService.class);
         context.startService(recordService);*/
         serviceStarted = true;
@@ -244,7 +250,7 @@ public class GpsUtil {
             if (preLocation != null) {
                 distance += preLocation.distanceTo(paramLocation);
             }
-            if(PrefUtils.getEnableAlterAltitude(context)) {
+            if(isAlterAltitude) {
                 altitudeAlert();
             }
             preLocation = paramLocation;
@@ -317,13 +323,13 @@ public class GpsUtil {
     }
     private double pre_altitude;
     public void altitudeAlert(){
-        if(altitude>=PrefUtils.getEnableAlterAltitudeStart(context)) {
-            playAltitude(PrefUtils.getEnableAlterAltitudeStart(context), PrefUtils.getEnableAlterAltitudeFrequency(context));
+        if(altitude>=alterAltitudeStart) {
+            playAltitude(alterAltitudeStart, alterAltitudeFrequency);
         }
     }
     private void playAltitude(double alter_altitude,int frequency){
         double i_altitude = altitude - alter_altitude;
-        if(i_altitude%frequency==0 && pre_altitude!=altitude){
+        if((int)i_altitude%frequency==0 && (int)pre_altitude!=(int)altitude){
             SpeechFactory.getInstance(context)
                     .getTTSEngine(SpeechFactory.TEXTTTS)
                     .speak("当前海拔高度"+getAltitude()+"米",true);
