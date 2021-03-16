@@ -12,7 +12,6 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
-import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.GpsSpeedMeterService;
 import com.huivip.gpsspeedwidget.service.GpsSpeedNumberService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
@@ -36,15 +35,7 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         /*        Intent mapFloatingService=new Intent(context, MapFloatingService.class);*/
         PendingIntent launchMapFloatingService=sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_MAPFLOATING,302);//PendingIntent.getService(context,1,mapFloatingService,PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.number_limit, launchMapFloatingService);
-        if(PrefUtils.isSpeedNumberHWidgetEnable(context) && !Utils.isServiceRunning(context, GpsSpeedNumberService.class.getName())){
-            Intent widgetService=new Intent(context, GpsSpeedNumberService.class);
-            Utils.startForegroundService(context,widgetService);
-        }
-        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
-            Intent bootService=new Intent(context,BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
-            context.startService(bootService);
-        }
+
         Intent configureActivity=new Intent(context, MainActivity.class);
         PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,configureActivity,0);
         views.setOnClickPendingIntent(R.id.image_config,mainActivityPendingIntent);
@@ -66,7 +57,15 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-
+       /* if (PrefUtils.isSpeedNumberHWidgetEnable(context) && !Utils.isServiceRunning(context, GpsSpeedNumberService.class.getName())) {
+            Intent widgetService = new Intent(context, GpsSpeedNumberService.class);
+            Utils.startForegroundService(context, widgetService);
+        }*/
+       /* if (!Utils.isServiceRunning(context, WeatherService.class.getName())) {
+            Intent bootService = new Intent(context, BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT, true);
+            context.startService(bootService);
+        }*/
     }
 
     @Override

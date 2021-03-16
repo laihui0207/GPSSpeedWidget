@@ -131,7 +131,7 @@ public class SettingsMiscellaneousFragment extends SettingsBaseFragment {
                 public void run() {
                     FTPUtils ftp = FTPUtils.getInstance();
                     ftp.initFTPSetting("home.huivip.com.cn", 21, "laihui", "pass");
-                    ftp.uploadDirectory("/sda1/gps/" + deviceId.substring(0, deviceId.indexOf("-")), logDir);
+                    ftp.uploadDirectory("/gps/" + deviceId.substring(0, deviceId.indexOf("-")), logDir);
                     File dir = new File(logDir);
                     if (dir.exists()) {
                         FileFilter filter = new FileFilter() {

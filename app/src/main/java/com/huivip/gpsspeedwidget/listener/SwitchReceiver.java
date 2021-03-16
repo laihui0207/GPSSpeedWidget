@@ -9,14 +9,12 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
-import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.AutoXunHangService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.MapFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;
-
-import org.greenrobot.eventbus.EventBus;
 
 public class SwitchReceiver extends BroadcastReceiver {
     private String TAG="huivip";
@@ -40,12 +38,20 @@ public class SwitchReceiver extends BroadcastReceiver {
             context.startService(xunHangService);
         }
         if(SWITCH_TARGET_MAPFLOATING.equalsIgnoreCase(target)){
-            Intent floatingMapIntent = new Intent(context, MapFloatingService.class);
-            if(!Utils.isServiceRunning(context, MapFloatingService.class.getName())) {
-                context.startService(floatingMapIntent);
+            GpsUtil gpsUtil = GpsUtil.getInstance(context);
+            Intent floatingMapIntent;
+            if(gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started) {
+                floatingMapIntent = new Intent(context, MapFloatingService.class);
+                if (Utils.isServiceRunning(context, MapFloatingService.class.getName())) {
+                    floatingMapIntent.putExtra(MapFloatingService.EXTRA_CLOSE, true);
+                }
             } else {
-                floatingMapIntent.putExtra(MapFloatingService.EXTRA_CLOSE,true);
-                EventBus.getDefault().post(new AimlessStatusUpdateEvent(false));
+                floatingMapIntent = new Intent(context, AutoWidgetFloatingService.class);
+                if (Utils.isServiceRunning(context, AutoWidgetFloatingService.class.getName())) {
+                    floatingMapIntent.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
+                }
+            }
+            if(floatingMapIntent != null) {
                 context.startService(floatingMapIntent);
             }
         }

@@ -1,16 +1,12 @@
 package com.huivip.gpsspeedwidget.service;
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.Build;
@@ -18,20 +14,20 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.activity.MainActivity;
 import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.AutoMapBoardReceiver;
+import com.huivip.gpsspeedwidget.listener.BootStartReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
 import com.huivip.gpsspeedwidget.listener.MediaNotificationReceiver;
 import com.huivip.gpsspeedwidget.listener.NetWorkConnectChangedReceiver;
+import com.huivip.gpsspeedwidget.listener.ScreenOnReceiver;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
 import com.huivip.gpsspeedwidget.speech.AudioService;
@@ -47,12 +43,15 @@ import org.xutils.x;
 
 public class BootStartService extends Service {
     public static String START_BOOT = "FromSTARTBOOT";
+    public static String START_RESUME = "FromHomeResume";
     boolean started = false;
     AlarmManager alarm;
     String deviceId;
     private static final String NOTIFICATION_CHANNEL_NAME = "BackgroundLocation";
     private NotificationManager notificationManager = null;
     boolean isCreateChannel = false;
+    NetWorkConnectChangedReceiver netWorkConnectChangedReceiver;
+    ScreenOnReceiver screenOnReceiver;
 
     @Nullable
     @Override
@@ -69,9 +68,8 @@ public class BootStartService extends Service {
         DeviceUuidFactory deviceUuidFactory = new DeviceUuidFactory(getApplicationContext());
         deviceId = deviceUuidFactory.getDeviceUuid().toString();
         boolean start = AppSettings.get().getAutoStart();
-        Log.d("huivip", "Auto Start: " + start);
+
         if (start) {
-            startForeground(1, buildNotification());
             String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
             if (AppSettings.get().isEnableLaunchOtherApp() && !TextUtils.isEmpty(apps)) {
                 String[] autoApps = apps.split(",");
@@ -113,14 +111,6 @@ public class BootStartService extends Service {
                     new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
 
-            if (AppSettings.get().isPlayTime() || AppSettings.get().isPlayWeather() || AppSettings.get().isPlayAddressOnStop()) {
-                Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
-                Utils.startService(getApplicationContext(), weatherService, false);
-
-                PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
-                        new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 60000L, weatherServiceIntent);
-            }
             if (AppSettings.get().isEnablePlayWarnAudio()) {
                 mPlayer = MediaPlayer.create(this, R.raw.warn);
                 if (mPlayer != null) {
@@ -147,25 +137,37 @@ public class BootStartService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        int NOTIFICATION_ID = (int) (System.currentTimeMillis() % 10000);
+        startForeground(NOTIFICATION_ID, Utils.buildNotification(getApplicationContext()));
         boolean start = AppSettings.get().getAutoStart();
         if (intent != null) {
-            if (start && !started) {
+            boolean boot_from_resume = intent.getBooleanExtra(START_RESUME, false);
+            boolean boot_from_start = intent.getBooleanExtra(START_BOOT, false);
+            if (start && (!started || boot_from_resume || boot_from_start)) {
                 started = true;
+                //Toast.makeText(getApplicationContext(), "Boot Start Service launched", Toast.LENGTH_SHORT).show();
                 //buildNotification();
+                if (netWorkConnectChangedReceiver == null) {
+                    IntentFilter intentFilter = new IntentFilter();
+                    intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+                    netWorkConnectChangedReceiver = new NetWorkConnectChangedReceiver();
+                    getApplicationContext().registerReceiver(netWorkConnectChangedReceiver, intentFilter);
+                }
+                if (screenOnReceiver == null) {
+                    IntentFilter intentFilter = new IntentFilter();
+                    intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+                    screenOnReceiver = new ScreenOnReceiver();
+                    getApplicationContext().registerReceiver(screenOnReceiver, intentFilter);
+                }
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                 if (AppSettings.get().isEnableTimeWindow()) {
-                    if (!Utils.isServiceRunning(getApplicationContext(), RealTimeFloatingService.class.getName())) {
-                        Intent timeFloating = new Intent(getApplicationContext(), RealTimeFloatingService.class);
-                        Utils.startService(getApplicationContext(), timeFloating, false);
-                    }
+                    Intent timeFloating = new Intent(getApplicationContext(), RealTimeFloatingService.class);
+                    Utils.startService(getApplicationContext(), timeFloating, false);
                 }
                 if (AppSettings.get().isEnableRoadLine()) {
-                    if (!Utils.isServiceRunning(getApplicationContext(), RoadLineService.class.getName())) {
-                        Intent roadLineService = new Intent(getApplicationContext(), RoadLineService.class);
-                        Utils.startService(getApplicationContext(), roadLineService, false);
-                    }
-                    if (AppSettings.get().isEnableRoadLineFloatingWindow() &&
-                            !Utils.isServiceRunning(getApplicationContext(), RoadLineFloatingService.class.getName())) {
+                    Intent roadLineService = new Intent(getApplicationContext(), RoadLineService.class);
+                    Utils.startService(getApplicationContext(), roadLineService, false);
+                    if (AppSettings.get().isEnableRoadLineFloatingWindow()) {
                         Intent roadLineFloatingService = new Intent(getApplicationContext(), RoadLineFloatingService.class);
                         Utils.startService(getApplicationContext(), roadLineFloatingService, false);
                     }
@@ -173,122 +175,108 @@ public class BootStartService extends Service {
                 if (AppSettings.get().isEnableSpeed()) {
                     Utils.startFloatingWindows(getApplicationContext(), true);
                 }
-                if (AppSettings.get().isEnableAudio() && !Utils.isServiceRunning(getApplicationContext(), AudioService.class.getName())) {
+                if (AppSettings.get().isEnableAudio()) {
                     Intent audioService = new Intent(getApplicationContext(), AudioService.class);
                     Utils.startService(getApplicationContext(), audioService, false);
                 }
-                if (AppSettings.get().isEnableXunHang() && !Utils.isServiceRunning(getApplicationContext(), AutoXunHangService.class.getName())) {
-                    Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
-                    Utils.startService(getApplicationContext(), xunHangService, false);
-                }
-                if(AppSettings.get().isEnableAltitudeWindow()){
-                    Intent altitudeWindowService= new Intent(getApplicationContext(), AltitudeFloatingService.class);
+
+                if (AppSettings.get().isEnableAltitudeWindow()) {
+                    Intent altitudeWindowService = new Intent(getApplicationContext(), AltitudeFloatingService.class);
                     Utils.startService(getApplicationContext(), altitudeWindowService, false);
                 }
+                if (!Utils.isServiceRunning(getApplicationContext(), WeatherService.class.getName())) {
+                    Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
+                    Utils.startService(getApplicationContext(), weatherService, false);
+
+                    if (AppSettings.get().isPlayTime() || AppSettings.get().isPlayWeather() || AppSettings.get().isPlayAddressOnStop()) {
+                        PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                                new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                        alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 60000L, weatherServiceIntent);
+                    }
+                }
                 if (Utils.isNetworkConnected(getApplicationContext())) {
-                    if (AppSettings.get().isEnableTracker() && !Utils.isServiceRunning(getApplicationContext(), NaviTrackService.class.getName())) {
+                    if (AppSettings.get().isEnableXunHang()){
+                        Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
+                        Utils.startService(getApplicationContext(), xunHangService, false);
+                    }
+                    if (AppSettings.get().isEnableTracker()){
                         Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
                         Utils.startService(getApplicationContext(), trackService, false);
                     }
-                    if(AppSettings.get().isEnableRecord()){
+                    if (AppSettings.get().isEnableRecord()) {
                         Intent trackService = new Intent(getApplicationContext(), RecordGpsHistoryService.class);
                         Utils.startService(getApplicationContext(), trackService, false);
                     }
                     new Thread(() -> Utils.registerSelf(getApplicationContext())).start();
-                    if(AppSettings.get().isAutoCheckUpdate()) {
+                    if (AppSettings.get().isAutoCheckUpdate()) {
                         x.task().postDelayed(() -> {
                             EventBus.getDefault().post(new AutoCheckUpdateEvent().setAutoCheck(true));
                         }, 1000 * 60);
                     }
-                } else {
-                    IntentFilter intentFilter = new IntentFilter();
-                    intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-                    NetWorkConnectChangedReceiver broadcastReceiver = new NetWorkConnectChangedReceiver();
-                    getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
+                }
+                if (PrefUtils.isSpeedNumberVWidgetEnable(getApplicationContext())) {
+                    Intent widgetService = new Intent(getApplicationContext(), SpeedNumberVerticalService.class);
+                    Utils.startService(getApplicationContext(), widgetService);
+                }
+                if (PrefUtils.isTimeHWidgetEnable(getApplicationContext())) {
+                    Intent widgetService = new Intent(getApplicationContext(), TimeWidgetService.class);
+                    Utils.startService(getApplicationContext(), widgetService);
+                }
+                if (PrefUtils.isTimeVWidgetEnable(getApplicationContext())){
+                    Intent widgetService = new Intent(getApplicationContext(), TimeWidgetVerticalService.class);
+                    Utils.startService(getApplicationContext(), widgetService);
+                }
+                if (PrefUtils.isSpeedMeterWidgetEnable(getApplicationContext())){
+                    Intent bootService = new Intent(getApplicationContext(), GpsSpeedMeterService.class);
+                    Utils.startService(getApplicationContext(), bootService);
+                }
+                if (PrefUtils.isMusicWidgetEnable(getApplicationContext())){
+                    Intent widgetService = new Intent(getApplicationContext(), MusicControllerService.class);
+                    Utils.startService(getApplicationContext(), widgetService);
                 }
             }
+            x.task().postDelayed(this::getDistrictFromAuto, 10000);
         }
-       /* new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                stopSelf();
-            }
-        }, 1000 * 60 * 5);*/
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(EventBus.getDefault().isRegistered(this)){
+        if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
+        if (netWorkConnectChangedReceiver != null) {
+            getApplicationContext().unregisterReceiver(netWorkConnectChangedReceiver);
+        }
+        if (screenOnReceiver != null) {
+            getApplicationContext().unregisterReceiver(screenOnReceiver);
+        }
+        stopForeground(true);
     }
 
-    private Notification buildNotification() {
-
-        Notification.Builder builder = null;
-        Notification notification = null;
-        if (android.os.Build.VERSION.SDK_INT >= 26) {
-            //Android O上对Notification进行了修改，如果设置的targetSDKVersion>=26建议使用此种方式创建通知栏
-            if (null == notificationManager) {
-                notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            }
-            String channelId = getApplicationContext().getPackageName();
-            if (!isCreateChannel) {
-                NotificationChannel notificationChannel = new NotificationChannel(channelId,
-                        NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
-                notificationChannel.enableLights(true);//是否在桌面icon右上角展示小圆点
-                notificationChannel.setLightColor(Color.BLUE); //小圆点颜色
-                notificationChannel.setShowBadge(true); //是否在久按桌面图标时显示此渠道的通知
-                notificationManager.createNotificationChannel(notificationChannel);
-                isCreateChannel = true;
-            }
-            builder = new Notification.Builder(getApplicationContext(), channelId);
-        } else {
-            builder = new Notification.Builder(getApplicationContext());
-        }
-        Intent resultIntent = new Intent(this, MainActivity.class);
-        // Create the TaskStackBuilder and add the intent, which inflates the back stack
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addNextIntentWithParentStack(resultIntent);
-// Get the PendingIntent containing the entire back stack
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle("GPS速度插件")
-                .setSmallIcon(R.drawable.ic_speedometer_notif)
-                .setContentText("正在后台运行,点击打开主界面").setContentIntent(resultPendingIntent)
-                .setWhen(System.currentTimeMillis());
-
-        if (android.os.Build.VERSION.SDK_INT >= 16) {
-            notification = builder.build();
-        } else {
-            return builder.getNotification();
-        }
-        return notification;
-    }
     @Subscribe
-    public void launchService(LaunchEvent event){
-        Intent mService=new Intent(AppObject.getContext(),event.getServiceClass());
-        if(event.getDelaySeconds()>0){
-            new Handler().postDelayed(()->{
-                if(event.isToClose()){
+    public void launchService(LaunchEvent event) {
+        Intent mService = new Intent(AppObject.getContext(), event.getServiceClass());
+        if (event.getDelaySeconds() > 0) {
+            new Handler().postDelayed(() -> {
+                if (event.isToClose()) {
                     AppObject.getContext().stopService(mService);
                 } else {
                     AppObject.getContext().startService(mService);
                 }
-            },event.getDelaySeconds()*1000);
+            }, event.getDelaySeconds() * 1000);
         } else {
-            if(event.isToClose()){
+            if (event.isToClose()) {
                 AppObject.getContext().stopService(mService);
             } else {
                 AppObject.getContext().startService(mService);
             }
         }
     }
+
     @Subscribe
-    public void launchAutoWidgetFloattingWindow(AutoMapStatusUpdateEvent event) {
+    public void launchAutoWidgetFloatingWindow(AutoMapStatusUpdateEvent event) {
         if (AppSettings.get().isShowAmapWidgetContent()) {
             if (event.isXunHangStarted()) {
                 Intent autoWidgetFloatingService = new Intent(AppObject.getContext(), AutoWidgetFloatingService.class);
@@ -300,6 +288,16 @@ public class BootStartService extends Service {
             AppObject.getContext().startService(autoWidgetFloatingService);
         }
     }
+
+    private void getDistrictFromAuto() {
+        x.task().postDelayed(() -> {
+            Intent intent = new Intent();
+            intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+            intent.putExtra("KEY_TYPE", 10029);
+            sendBroadcast(intent);
+        }, 1000 * 10);
+    }
+
     private void registerBoardCast(Context context) {
         String[] actions = new String[]{"com.android.music.metachanged",
                 "com.android.music.statuschanged",
@@ -335,5 +333,13 @@ public class BootStartService extends Service {
         IntentFilter autoMapFiliter = new IntentFilter();
         autoMapFiliter.addAction("AUTONAVI_STANDARD_BROADCAST_SEND");
         context.registerReceiver(new AutoMapBoardReceiver(), autoMapFiliter);
+        IntentFilter bootstrapFiliter = new IntentFilter();
+        bootstrapFiliter.addAction("android.intent.action.USER_PRESENT");
+        bootstrapFiliter.addAction("android.intent.action.BOOT_COMPLETED");
+        bootstrapFiliter.addAction("autochips.intent.action.QB_POWERON");
+        bootstrapFiliter.addAction("xy.android.acc.on");
+        bootstrapFiliter.addAction("com.nwd.action.ACTION_MCU_STATE_CHANGE");
+        bootstrapFiliter.addAction("com.unisound.intent.action.DO_SLEEP");
+        context.registerReceiver(new BootStartReceiver(), bootstrapFiliter);
     }
 }

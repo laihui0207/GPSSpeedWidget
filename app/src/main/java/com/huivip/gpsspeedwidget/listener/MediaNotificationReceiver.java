@@ -14,7 +14,9 @@ import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.beans.MusicStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.PlayerStatusEvent;
 import com.huivip.gpsspeedwidget.lyrics.LyricService;
+import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.TextFloatingService;
+import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -141,5 +143,11 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
             }
         }
         EventBus.getDefault().post(new MusicEvent(songName,artistName));
+
+        if(!Utils.isServiceRunning(context, WeatherService.class.getName())){
+            Intent bootService=new Intent(context, BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            Utils.startService(context,bootService,true);
+        }
     }
 }

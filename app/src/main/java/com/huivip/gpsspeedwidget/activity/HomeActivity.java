@@ -47,6 +47,7 @@ import com.huivip.gpsspeedwidget.model.Item.Type;
 import com.huivip.gpsspeedwidget.receivers.AppUpdateReceiver;
 import com.huivip.gpsspeedwidget.receivers.ShortcutReceiver;
 import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.util.AppManager;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.DatabaseHelper;
@@ -187,7 +188,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         initPermission();
-        //startBootService(true);
+        startBootService(false);
         Companion.setLauncher(this);
         AppSettings appSettings = AppSettings.get();
 
@@ -390,7 +391,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         // register all receivers
         registerReceiver(_appUpdateReceiver, _appUpdateIntentFilter);
         registerReceiver(_shortcutReceiver, _shortcutIntentFilter);
-        //registerReceiver(_timeChangedReceiver, _timeChangedIntentFilter);
+        registerReceiver(_timeChangedReceiver, _timeChangedIntentFilter);
     }
 
     public void onRemovePage() {
@@ -636,121 +637,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             Tool.toast(this, R.string.toast_not_enough_space);
         }
     }
-   /* @Subscribe(threadMode = ThreadMode.MAIN)
-    public void checkUpdate(AutoCheckUpdateEvent event){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                String updateInfo= HttpUtils.getData(Constant.LBSURL+"/updateInfo?type=full");
-                Log.d("huivip","check update:"+updateInfo);
-                try {
-                    if(!TextUtils.isEmpty(updateInfo) && !updateInfo.equalsIgnoreCase("-1")) {
-                        String currentVersion= com.huivip.gpsspeedwidget.utils.Utils.getLocalVersion(getApplicationContext());
-                        int currentVersionCode=com.huivip.gpsspeedwidget.utils.Utils.getLocalVersionCode(getApplicationContext());
-                        JSONObject infoObj = new JSONObject(updateInfo);
-                        JSONObject data= (JSONObject) infoObj.get("data");
-                        String updateVersion=data.getString("serverVersion");
-                        int updateVersionCode=data.getInt("serverVersionCode");
-                        Message message = Message.obtain();
-                        event.setUpdateIfo(updateInfo);
-                        if(event.getHostActivity()==null){
-                            event.setHostActivity(HomeActivity._launcher);
-                        }
-                        message.obj = event;
-                        if(currentVersionCode!=0 && updateVersionCode!=0){
-                            if(updateVersionCode>currentVersionCode){
-                                message.arg1 = 1;
-                                AlterHandler.handleMessage(message);
-                            } else if(!event.isAutoCheck()) {
-                                message.arg1 = 0;
-                                AlterHandler.handleMessage(message);
-                            }
-                        } else {
-                            if (currentVersion.equalsIgnoreCase(updateVersion)) {
-                                if(!event.isAutoCheck()) {
-                                    message.arg1 = 0;
-                                    AlterHandler.handleMessage(message);
-                                }
-                            } else {
-                                message.arg1 = 1;
-                                AlterHandler.handleMessage(message);
-                            }
-                        }
 
-                    }
-                   *//* else {
-                        Message message = Message.obtain();
-                        message.obj ="";
-                        message.arg1 = 0;
-                        AlterHandler.handleMessage(message);
-                    }*//*
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Looper.loop();
-            }
-        }).start();
-    }
-    @SuppressLint("HandlerLeak")
-    final Handler AlterHandler=new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            Log.d("huivip","check update:"+msg.arg1);
-            if(msg.arg1==0) {
-                AlertDialog.Builder  mDialog = new AlertDialog.Builder(new ContextThemeWrapper(((AutoCheckUpdateEvent)(msg.obj)).getHostActivity(),R.style.Theme_AppCompat_DayNight));
-                mDialog.setTitle("版本检查");
-                mDialog.setMessage("已是最新版本，无需更新！");
-                mDialog.setPositiveButton("关闭",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
-                        dialog.dismiss();
-                    }
-                }).setNegativeButton("重装", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        JSONObject updateInfo= null;
-                        try {
-                            updateInfo = new JSONObject(((AutoCheckUpdateEvent)msg.obj).getUpdateIfo());
-                            JSONObject data= (JSONObject) updateInfo.get("data");
-                            String updateUrl=data.getString("updateurl");
-                            String appName=data.getString("appname");
-                            HttpUtils.downLoadApk(((AutoCheckUpdateEvent)(msg.obj)).getHostActivity(),updateUrl,appName);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                mDialog.create().show();
-                Log.d("huivip","check update to show dialog:"+msg.arg1);
-            }
-            else if (msg.arg1==1){
-                AlertDialog.Builder  mDialog = new AlertDialog.Builder(new ContextThemeWrapper(((AutoCheckUpdateEvent)(msg.obj)).getHostActivity(),R.style.Theme_AppCompat_DayNight));
-                try {
-                    JSONObject updateInfo = new JSONObject(((AutoCheckUpdateEvent)msg.obj).getUpdateIfo());
-                    JSONObject data= (JSONObject) updateInfo.get("data");
-                    mDialog.setTitle("版本升级");
-                    mDialog.setMessage(data.getString("upgradeinfo")).setCancelable(true);
-                    String updateUrl=data.getString("updateurl");
-                    String appName=data.getString("appname");
-                    mDialog.setPositiveButton("更新", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            HttpUtils.downLoadApk(((AutoCheckUpdateEvent)(msg.obj)).getHostActivity(),updateUrl,appName);
-                        }
-                    }).setNegativeButton("不用了", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                mDialog.create().show();
-            }
-        }
-    };*/
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == RESULT_OK) {
@@ -800,14 +687,16 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        if(!Utils.isServiceRunning(getApplicationContext(),BootStartService.class.getName())){
-            Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);
-            bootStartService.putExtra(BootStartService.START_BOOT,true);
-            Utils.startService(getApplicationContext(),bootStartService, false);
-        }
+        startBootService(true);
         handleLauncherResume();
     }
-
+    private void startBootService(boolean fromResume){
+        if(!Utils.isServiceRunning(getApplicationContext(), WeatherService.class.getName())){
+            Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);
+            bootStartService.putExtra(BootStartService.START_RESUME,fromResume);
+            Utils.startService(getApplicationContext(),bootStartService, true);
+        }
+    }
     @Override
     protected void onDestroy() {
         _appWidgetHost.stopListening();
@@ -815,7 +704,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
         unregisterReceiver(_appUpdateReceiver);
         unregisterReceiver(_shortcutReceiver);
-        //unregisterReceiver(_timeChangedReceiver);
+        unregisterReceiver(_timeChangedReceiver);
         EventBus.getDefault().unregister(this);
         started=false;
         super.onDestroy();

@@ -220,7 +220,7 @@ public class AutoNaviFloatingService extends Service {
         }
     }
 
-    @OnClick(value = {R.id.image_home_navi,R.id.image_company_navi,R.id.image_main_navi,R.id.image_close_navi})
+    @OnClick(value = {R.id.image_home_navi,R.id.image_company_navi,R.id.image_main_navi,R.id.image_close_navi,R.id.SpeedRelativeLayout})
     public void goHomeClick(View view){
         switch (view.getId()){
             case R.id.image_home_navi:
@@ -238,20 +238,25 @@ public class AutoNaviFloatingService extends Service {
                 onStop();
                 stopSelf();
                 break;
+            case R.id.SpeedRelativeLayout:
+                Intent floatingMapIntent;
+                Toast.makeText(getApplicationContext(), "click event",Toast.LENGTH_SHORT).show();
+                if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
+                    floatingMapIntent = new Intent(getApplicationContext(), AutoWidgetFloatingService.class);
+                    if(Utils.isServiceRunning(getApplicationContext(),AutoWidgetFloatingService.class.getName())){
+                        floatingMapIntent.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
+                    }
+                } else {
+                    floatingMapIntent = new Intent(getApplicationContext(), MapFloatingService.class);
+                    if(Utils.isServiceRunning(getApplicationContext(),MapFloatingService.class.getName())){
+                        floatingMapIntent.putExtra(MapFloatingService.EXTRA_CLOSE, true);
+                    }
+                }
+                startService(floatingMapIntent);
+                break;
         }
     }
- /*   private void showRoadLine() {
 
-       if(roadLineBinder!=null){
-           View vv=roadLineBinder.getRoadLineView();
-           if(vv!=null){
-               roadLineView.setImageDrawable(((ImageView)vv).getDrawable());
-               roadLineView.setVisibility(View.VISIBLE);
-           } else {
-               roadLineView.setVisibility(View.INVISIBLE);
-           }
-       }
-    }*/
     @Subscribe(threadMode= ThreadMode.MAIN)
     public void showRoadLine(RoadLineEvent event) {
         if (AppSettings.get().isShowRoadLineOnSpeed() && event.isShowed()) {

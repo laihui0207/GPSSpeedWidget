@@ -10,11 +10,7 @@ import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
-import com.huivip.gpsspeedwidget.service.BootStartService;
-import com.huivip.gpsspeedwidget.service.RoadLineService;
-import com.huivip.gpsspeedwidget.service.SpeedNumberVerticalService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 
 /**
@@ -29,19 +25,7 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.v_speed_base_v, null);
         PendingIntent launchMapFloatingService=sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_MAPFLOATING,302);//PendingIntent.getService(context,1,mapFloatingService,PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.v_speed_edog, launchMapFloatingService);
-        if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, SpeedNumberVerticalService.class.getName())){
-            Intent widgetService=new Intent(context, SpeedNumberVerticalService.class);
-            Utils.startForegroundService(context,widgetService);
-        }
-        if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, RoadLineService.class.getName())){
-            Intent roadLineService=new Intent(context, RoadLineService.class);
-            Utils.startForegroundService(context,roadLineService);
-        }
-        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
-            Intent bootService=new Intent(context,BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
-            context.startService(bootService);
-        }
+
         /*Intent configureActivity=new Intent(context, MainActivity.class);
         PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,configureActivity,0);
         views.setOnClickPendingIntent(R.id.image_config,mainActivityPendingIntent);*/
@@ -66,6 +50,19 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+         /* if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, SpeedNumberVerticalService.class.getName())){
+            Intent widgetService=new Intent(context, SpeedNumberVerticalService.class);
+            Utils.startForegroundService(context,widgetService);
+        }
+        if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, RoadLineService.class.getName())){
+            Intent roadLineService=new Intent(context, RoadLineService.class);
+            Utils.startForegroundService(context,roadLineService);
+        }
+        if(!Utils.isServiceRunning(context, WeatherService.class.getName())){
+            Intent bootService=new Intent(context,BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            context.startService(bootService);
+        }*/
     }
 
     @Override
@@ -81,11 +78,11 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
 
     @Override
     public void onDisabled(Context context) {
-        if(Utils.isServiceRunning(context, SpeedNumberVerticalService.class.getName())){
+       /* if(Utils.isServiceRunning(context, SpeedNumberVerticalService.class.getName())){
             Intent widgetService=new Intent(context, SpeedNumberVerticalService.class);
             widgetService.putExtra(SpeedNumberVerticalService.EXTRA_CLOSE,true);
             context.startService(widgetService);
-        }
+        }*/
         PrefUtils.setSpeedNumberVWidgetEnable(context,false);
         super.onDisabled(context);
     }

@@ -89,6 +89,12 @@
         android:layout_gravity="center|bottom"
         android:layout_height="wrap_content" android:orientation="vertical">
         <TextView
+            android:id="@+id/textView_currentDistrict"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="北京市"
+            android:textColor="#fff" />
+        <TextView
             android:id="@+id/textView_currentRoadName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

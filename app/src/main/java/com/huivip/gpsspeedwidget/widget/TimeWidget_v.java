@@ -9,7 +9,6 @@ import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
-import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.TimeWidgetVerticalService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -25,16 +24,8 @@ public class TimeWidget_v extends AppWidgetProvider {
     public void onReceive(Context context, Intent paramIntent) {
         super.onReceive(context, paramIntent);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.time_weather_v_widget);
-        if(PrefUtils.isTimeVWidgetEnable(context) && !Utils.isServiceRunning(context, TimeWidgetVerticalService.class.getName())){
-            Intent widgetService=new Intent(context, TimeWidgetVerticalService.class);
-            Utils.startForegroundService(context,widgetService);
-        }
-        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
-            Intent bootService=new Intent(context,BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
-            context.startService(bootService);
-        }
-        views.setOnClickPendingIntent(R.id.v_time_base_v,null);
+
+      //  views.setOnClickPendingIntent(R.id.v_time_base_v,null);
 
         ComponentName localComponentName = new ComponentName(context, TimeWidget_v.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
@@ -43,6 +34,15 @@ public class TimeWidget_v extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+       /* if(PrefUtils.isTimeVWidgetEnable(context) && !Utils.isServiceRunning(context, TimeWidgetVerticalService.class.getName())){
+            Intent widgetService=new Intent(context, TimeWidgetVerticalService.class);
+            Utils.startForegroundService(context,widgetService);
+        }*/
+       /* if(!Utils.isServiceRunning(context, WeatherService.class.getName())){
+            Intent bootService=new Intent(context,BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            context.startService(bootService);
+        }*/
 
     }
 

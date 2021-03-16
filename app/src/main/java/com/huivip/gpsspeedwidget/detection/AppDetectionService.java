@@ -2,10 +2,13 @@ package com.huivip.gpsspeedwidget.detection;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
 
+import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -76,6 +79,11 @@ public class AppDetectionService extends AccessibilityService {
         boolean onDesktop = enabledApps.contains(componentName.getPackageName());
         PrefUtils.setOnDesktop(getApplicationContext(),onDesktop);
         Utils.startFloatingWindows(getApplicationContext(),true);
+        if(!Utils.isServiceRunning(getApplicationContext(), WeatherService.class.getName())) {
+            Intent bootStartService = new Intent(getApplicationContext(), BootStartService.class);
+            bootStartService.putExtra(BootStartService.START_RESUME, true);
+            Utils.startService(getApplicationContext(), bootStartService, true);
+        }
     }
 
    private ActivityInfo tryGetActivity(ComponentName componentName) {

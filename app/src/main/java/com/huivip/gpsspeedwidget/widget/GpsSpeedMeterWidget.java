@@ -10,7 +10,6 @@ import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
-import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.GpsSpeedMeterService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -29,15 +28,7 @@ public class GpsSpeedMeterWidget extends AppWidgetProvider {
         Intent service = new Intent(context, GpsSpeedMeterService.class);
         views.setOnClickPendingIntent(R.id.ifreccia_all, PendingIntent.getService(context, 0,
                 service, 0));
-        if(PrefUtils.isSpeedMeterWidgetEnable(context) && !Utils.isServiceRunning(context, GpsSpeedMeterService.class.getName())){
-            Intent bootService=new Intent(context, GpsSpeedMeterService.class);
-            Utils.startForegroundService(context,bootService);
-        }
-        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
-            Intent bootService=new Intent(context,BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
-            context.startService(bootService);
-        }
+
         ComponentName localComponentName = new ComponentName(context, GpsSpeedMeterWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
@@ -45,6 +36,15 @@ public class GpsSpeedMeterWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+       /* if (PrefUtils.isSpeedMeterWidgetEnable(context) && !Utils.isServiceRunning(context, GpsSpeedMeterService.class.getName())) {
+            Intent bootService = new Intent(context, GpsSpeedMeterService.class);
+            Utils.startForegroundService(context, bootService);
+        }*/
+        /*if (!Utils.isServiceRunning(context, WeatherService.class.getName())) {
+            Intent bootService = new Intent(context, BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT, true);
+            context.startService(bootService);
+        }*/
 
     }
 

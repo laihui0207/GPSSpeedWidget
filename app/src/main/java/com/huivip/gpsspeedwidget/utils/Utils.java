@@ -9,6 +9,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -372,7 +373,55 @@ public abstract class Utils {
         // the distance is the cost for transforming all letters in both strings
         return cost[len0 - 1];
     }
+    private static final String NOTIFICATION_CHANNEL_NAME = "BackgroundLocation";
+    private static NotificationManager notificationManager = null;
+   static boolean isCreateChannel = false;
 
+    public static  Notification buildNotification(Context context) {
+
+        Notification.Builder builder = null;
+        Notification notification = null;
+        String channelId = context.getPackageName();
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            //Android O上对Notification进行了修改，如果设置的targetSDKVersion>=26建议使用此种方式创建通知栏
+            if (null == notificationManager) {
+                notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            }
+            if (!isCreateChannel) {
+                NotificationChannel notificationChannel = new NotificationChannel(channelId,
+                        NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel.enableLights(true);//是否在桌面icon右上角展示小圆点
+                notificationChannel.setLightColor(Color.BLUE); //小圆点颜色
+                notificationChannel.enableVibration(true);
+                notificationChannel.setShowBadge(true); //是否在久按桌面图标时显示此渠道的通知
+                notificationManager.createNotificationChannel(notificationChannel);
+                isCreateChannel = true;
+            }
+            builder = new Notification.Builder(context, channelId);
+        } else {
+            builder = new Notification.Builder(context);
+        }
+        Intent resultIntent = new Intent(context, MainActivity.class);
+        // Create the TaskStackBuilder and add the intent, which inflates the back stack
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+// Get the PendingIntent containing the entire back stack
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentTitle("GPS速度插件")
+                .setSmallIcon(R.drawable.ic_speedometer_notif)
+                .setChannelId(channelId)
+                .setContentText("正在后台运行,点击打开主界面")
+                .setContentIntent(resultPendingIntent)
+                .setWhen(System.currentTimeMillis());
+
+       /* if (android.os.Build.VERSION.SDK_INT >= 16) {*/
+            notification = builder.build();
+       /* } else {
+            return builder.getNotification();
+        }*/
+        return notification;
+    }
     public static boolean isNetworkConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -487,11 +536,11 @@ public abstract class Utils {
             }
         }
     }
-
+    public static void startService(Context context, Intent intent) {
+        startService(context, intent,false);
+    }
     public static void startService(Context context, Intent intent, boolean frontService) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && frontService
-                /*&& !(Utils.isServiceRunning(context, HomeActivity.class.getName()) || Utils.isServiceRunning(context,MainActivity.class.getName()))
-                && !getDefaultDesktop(context).equalsIgnoreCase(context.getPackageName())*/) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && frontService){
             context.startForegroundService(intent);
         } else {
             context.startService(intent);

@@ -5,22 +5,23 @@ var moment = require('moment');
 var bodyParser = require('body-parser');
 var gpsCache = new NodeCache();
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('GPSHistory.db');
+var db = new sqlite3.Database('./data/GPSHistory.db');
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 db.serialize(function () {
-    db.run("CREATE TABLE IF NOT EXISTS  GPS (id integer primary key autoincrement,deviceId varchar(50), deviceId_short varchar(50),lng varchar(20), " +
+    db.run("CREATE TABLE IF NOT EXISTS  GPS (id integer primary key autoincrement,deviceId varchar(50),deviceId_short varchar(50),lng varchar(20), " +
         "lat varchar(20),speed varchar(10), speedValue REAL,bearingValue REAL,createTime integer,lineId integer)");
+    db.run("CREATE TABLE IF NOT EXISTS feedback (id integer primary key autoincrement,name varchar(50),content varchar(500),createTime integer)");
     db.run("create index IF NOT EXISTS deviceId on GPS(deviceId)");
     db.run("create index IF NOT EXISTS deviceId_short on GPS(deviceId_short)");
     db.run("create index IF NOT EXISTS deviceId_short_date on GPS(deviceId_short,createtime)");
     db.run("create index IF NOT EXISTS deviceId_short_date_lineId on GPS(deviceId_short,createtime,lineId)");
     db.run("CREATE TABLE IF NOT EXISTS feedback (id integer primary key autoincrement,name varchar(50),content varchar(500),createTime integer)");
-    db.run("CREATE TABLE IF NOT EXISTS devices(id integer primary key autoincrement,deviceId varchar(50),registerTime integer,updateTime integer,lat varchar(20),lng varchar(20)),versionName varchar(50),buildNumber varchar(50))");
+    db.run("CREATE TABLE IF NOT EXISTS devices(id integer primary key autoincrement,deviceId varchar(50),registerTime integer,updateTime integer,lat varchar(20),lng varchar(20),versionName varchar(50),buildNumber varchar(50))");
     db.run("create index IF NOT EXISTS deviceId on devices(deviceId)");
 });
 
-var PORT = 8090;
+var PORT = 8095;
 
 var app = express();
 app.use(express.static('.'));
@@ -121,8 +122,7 @@ app.get("/data", function (req, res) {
 });
 app.get("/lasted", function (req, res) {
     var deviceId = req.query.deviceId;
-    var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue," +
-        "strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime,lineId from GPS where deviceId_short = ? ";
+    var sql = "select deviceId,lng,lat,speed,speedValue,bearingValue,strftime('%Y-%m-%d %H:%M:%S', createTime / 1000,'unixepoch', 'localtime') as createTime,lineId from GPS where deviceId_short = ? ";
     sql += " order by createTime DESC limit 1";
     db.serialize(function () {
         db.all(sql, [deviceId], function (err, rows) {
@@ -150,8 +150,7 @@ app.get("/lasted", function (req, res) {
 
 app.get("/dates", function (req, res) {
     var deviceId = req.query.deviceId;
-    var sql = "select strftime('%Y-%m-%d', createTime / 1000,'unixepoch', 'localtime') as createTime" +
-        " from GPS where deviceId_short = ? group by strftime('%Y-%m-%d', createTime / 1000,'unixepoch', 'localtime');";
+    var sql = "select strftime('%Y-%m-%d', createTime / 1000,'unixepoch', 'localtime') as createTime from GPS where deviceId_short = ? group by strftime('%Y-%m-%d', createTime / 1000,'unixepoch', 'localtime');";
     sql += " order by createTime";
     db.serialize(function () {
         db.all(sql, [deviceId], function (err, rows) {
@@ -185,8 +184,34 @@ app.get("/devices", function (req, res) {
         })
     })
 });
+
+app.get("/feedback",function(req,res){
+  res.sendFile( __dirname + "/" + "feedback.html" );
+})
+app.post("/feedback",urlencodedParser,function(req,res){
+  var feedbacker=req.body.feedbacker_name;
+  var content=req.body.feedback_content;
+            db.serialize(function () {
+                db.run("insert into feedback(name,content) values(?,?)",
+                    [feedbacker,content]);
+            })
+  res.write("feedback saveed");
+  res.end();
+})
+app.get("/updateInfo",function(req,res){
+    var type=req.query.type;
+    if(type==="full"){
+        res.sendFile(__dirname+"/release/"+"update-full.json");
+    } else if(type === "mini"){
+        res.sendFile(__dirname+"/release/"+"update-mini.json");
+    }
+    else {
+        res.sendFile(__dirname+"/release/"+"update-"+type+".json");
+  }
+})
+
 app.get("/reg-devices", function (req, res) {
-    var sql = "select deviceId,versionName,buildNumber from devices where deviceId is not null  group by deviceId ";
+    var sql = "select deviceId from devices where deviceId is not null  group by deviceId ";
     sql += " order by deviceId";
     db.serialize(function () {
         db.all(sql, [], function (err, rows) {
@@ -195,7 +220,7 @@ app.get("/reg-devices", function (req, res) {
             } else {
                 res.writeHead(200, {'Content-Type': 'application/json'});
                 res.write(JSON.stringify(rows.map(function (row) {
-                    return {deviceId: row.deviceId,versionName: row.versionName,buildNumber:row.buildNumber};
+                    return {deviceId: row.deviceId};
                 })));
                 res.end();
             }
@@ -207,33 +232,12 @@ app.get("/register",function(req,res){
     var lat=req.query.lat;
     var lng=req.query.lng;
     var updateTime=req.query.regTime;
+    var versionName=req.query.versionName;
+    var buildNumber=req.query.buildNumber;
     db.serialize(function () {
-        db.run("insert into devices(deviceId,registerTime,updateTime,lat,lng) values(?,?,?,?,?)",
-            [deviceId,updateTime,updateTime,lat,lng]);
+        db.run("insert into devices(deviceId,registerTime,updateTime,lat,lng,versionName,buildNumber) values(?,?,?,?,?,?,?)",
+            [deviceId,updateTime,updateTime,lat,lng,versionName,buildNumber]);
     });
     res.write("{\"result\":\"ok\"}");
     res.end();
 })
-app.get("/feedback",function(req,res){
-  res.sendFile( __dirname + "/" + "feedback.html" );
-})
-app.post("/feedback",urlencodedParser,function(req,res){
-  var feedbacker=req.body.feedbacker_name;
-  var content=req.body.feedback_content;
-            db.serialize(function () {
-                db.run("insert into feedback(name,content) values(?,?)",
-                    [feedbacker,content]);
-            });
-  res.write("feedback saveed");
-  res.end();
-})
-app.get("/updateInfo",function(req,res){
-    var type=req.query.type;
-    if(type==="full"){
-        res.sendFile(__dirname+"/"+"update-full.json");
-    } else if(type === "mini"){
-        res.sendFile(__dirname+"/"+"update-mini.json");
-    }
-})
-
-

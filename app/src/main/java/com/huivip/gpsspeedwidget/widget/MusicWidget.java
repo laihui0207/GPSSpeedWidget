@@ -15,7 +15,6 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.service.MusicControllerService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 import java.util.Set;
 
@@ -29,10 +28,7 @@ public class MusicWidget extends AppWidgetProvider {
         super.onReceive(context, paramIntent);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.music_vertical_widget);
         ComponentName localComponentName = new ComponentName(context, MusicWidget.class);
-        if(PrefUtils.isMusicWidgetEnable(context) && !Utils.isServiceRunning(context, MusicControllerService.class.getName())){
-            Intent widgetService=new Intent(context,MusicControllerService.class);
-            Utils.startForegroundService(context,widgetService);
-        }
+
         views.setOnClickPendingIntent(R.id.v_music_base_v,null);
         views.setOnClickPendingIntent(R.id.v_button_next,sendControllerBroadCast(context, KeyEvent.KEYCODE_MEDIA_NEXT,1));
         views.setOnClickPendingIntent(R.id.v_button_play,sendControllerBroadCast(context, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE,2));
@@ -44,6 +40,10 @@ public class MusicWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+        /* if(PrefUtils.isMusicWidgetEnable(context) && !Utils.isServiceRunning(context, MusicControllerService.class.getName())){
+            Intent widgetService=new Intent(context,MusicControllerService.class);
+            Utils.startForegroundService(context,widgetService);
+        }*/
     }
 
     @Override

@@ -258,6 +258,9 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         } else if(SpeechFactory.SDKTTS.equalsIgnoreCase(audioEngine)){
             pre_audio_engine.setSummary("高德内置语音");
             baiDuSpeaker.setVisible(false);
+        } else if (SpeechFactory.TEXTTTS.equalsIgnoreCase(audioEngine)){
+            pre_audio_engine.setSummary("系统内置TTS");
+            baiDuSpeaker.setVisible(false);
         }
         Preference audioStream=findPreference(getString(R.string.pref_key__Audio_stream_type));
         audioStream.setSummary("音频通道："+AppSettings.get().getAudioStreamType());

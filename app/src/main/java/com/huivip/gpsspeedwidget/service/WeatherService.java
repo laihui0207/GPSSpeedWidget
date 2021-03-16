@@ -22,6 +22,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.NightNowEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
@@ -235,23 +236,45 @@ public class WeatherService extends Service implements AMapLocationListener {
                     }
                     lastedLocation=aMapLocation;
                 }
-
+                LocationEvent locationEvent=new LocationEvent();
+                locationEvent.setAddress(aMapLocation.getAddress());
+                locationEvent.setCity(aMapLocation.getCity());
+                locationEvent.setProvince(aMapLocation.getProvince());
+                locationEvent.setDistrict(aMapLocation.getDistrict());
+                locationEvent.setStreet(aMapLocation.getStreet());
+                locationEvent.setStreetNum(aMapLocation.getStreetNum());
+                locationEvent.setAdCode(aMapLocation.getAdCode());
+                locationEvent.setCityCode(aMapLocation.getCityCode());
+                locationEvent.setAltitude(aMapLocation.getAltitude());
+                locationEvent.setLongitude(aMapLocation.getLongitude());
+                locationEvent.setAltitude(aMapLocation.getAltitude());
+                if(!TextUtils.isEmpty(locationEvent.getCity())){
+                    EventBus.getDefault().post(locationEvent);
+                    gpsUtil.setCityName(locationEvent.getCity()+locationEvent.getDistrict());
+                }
                 //Toast.makeText(getApplicationContext(),aMapLocation.toString(),Toast.LENGTH_SHORT).show();
                 if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getLocationType() == 1){
-                    if(!gpsUtil.isAutoMapBackendProcessStarted() && !gpsUtil.isCatchRoadServiceStarted() &&
+                    /*if(!gpsUtil.isAutoMapBackendProcessStarted() && !gpsUtil.isCatchRoadServiceStarted() &&
                             (TextUtils.isEmpty(gpsUtil.getCurrentRoadName()) ||
                                     !aMapLocation.getStreet().equalsIgnoreCase(gpsUtil.getCurrentRoadName()))){
                         gpsUtil.setCurrentRoadName(aMapLocation.getStreet());
+                    }*/
+                    String t_address="";
+                    if(!TextUtils.isEmpty(aMapLocation.getCity())){
+                        t_address+=aMapLocation.getCity();
                     }
                     if(!TextUtils.isEmpty(aMapLocation.getDistrict())){
-                        address+=aMapLocation.getDistrict();
+                        t_address+=aMapLocation.getDistrict();
                     }
                     if(!TextUtils.isEmpty(aMapLocation.getStreet())){
-                        address+=aMapLocation.getStreet();
+                        t_address+=aMapLocation.getStreet();
                     }
                     if(!TextUtils.isEmpty(aMapLocation.getStreetNum())){
-                        address+=aMapLocation.getStreetNum();
+                        t_address+=aMapLocation.getStreetNum();
                     }
+                    address=t_address;
+
+
                     //address=aMapLocation.getAddress();
                 }
                 if (gpsUtil.getSpeed() == 0 && running) {
@@ -272,7 +295,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                                 @Override
                                 public void run() {
                                     if(gpsUtil.getSpeed()==0) {
-                                        resultText ="当前地址："+address;
+                                        EventBus.getDefault().post(new PlayAudioEvent("当前地址："+address,true));
                                         handler.post(runnableUi);
                                     }
                                 }

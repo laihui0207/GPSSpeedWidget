@@ -428,7 +428,7 @@ public class GpsUtil {
             if (!limitSpeaked || limitCounter > 300) {
                 limitSpeaked = true;
                 limitCounter = 0;
-                EventBus.getDefault().post(new PlayAudioEvent("您已超速",true));
+                EventBus.getDefault().post(new PlayAudioEvent(PrefUtils.getPrefOverSpeedTts(context),true));
                 //tts.speak("您已超速");
             }
             limitCounter++;

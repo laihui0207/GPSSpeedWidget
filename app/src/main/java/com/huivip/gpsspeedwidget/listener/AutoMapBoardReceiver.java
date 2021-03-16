@@ -11,6 +11,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
@@ -39,10 +40,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     switch (status) {
                         case 0: // auto Map Started
                             boolean start =AppSettings.get().getAutoStart();
-                            if (start && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
+                            if (start) {
                                 Intent service = new Intent(context, BootStartService.class);
                                 service.putExtra(BootStartService.START_BOOT, true);
-                                context.startService(service);
+                                Utils.startService(context,service,true);
                                 gpsUtil.setAutoMapBackendProcessStarted(true);
                             }
                             break;
@@ -69,7 +70,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
                                 startBackendNaviFloatingService(context);
                                 if (!AppSettings.get().isOnlyCrossShowWidgetContent()) {
-                                    startDriveWayFloatingService(context);
+                                    startAutoWidgetFloatingService(context);
                                 }
                                // EventBus.getDefault().post(new AutoMapStatusUpdateEvent(false));
                                 gpsUtil.setNaviFloatingStatus(Constant.Navi_Floating_Enabled);
@@ -97,7 +98,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             gpsUtil.setNaviFloatingStatus(-1);
                             startBackendNaviFloatingService(context);
                             //gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
-                            startDriveWayFloatingService(context);
+                            startAutoWidgetFloatingService(context);
                             launchSpeedFloatingWindows(context, true);
                             break;
                         case 2: // auto map have closed
@@ -202,7 +203,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             if ( AppSettings.get().isOnlyCrossShowWidgetContent()
                                     && AppSettings.get().isShowAmapWidgetContent()
                                     && !gpsUtil.isAutoNavi_on_Frontend()) {
-                                startDriveWayFloatingService(context);
+                                startAutoWidgetFloatingService(context);
                             }
                             //EventBus.getDefault().post(new DriveWayEvent(true));
                         } else {
@@ -232,13 +233,18 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     String cityName=intent.getStringExtra("CITY_NAME");
                     String provinceName=intent.getStringExtra("PROVINCE_NAME");
                     String areaName=intent.getStringExtra("AREA_NAME");
+                    LocationEvent locationEvent=new LocationEvent();
+                    locationEvent.setProvince(provinceName);
+                    locationEvent.setCityCode(cityName);
+                    locationEvent.setDistrict(areaName);
+                    EventBus.getDefault().post(locationEvent);
                     if(StringUtils.isNotBlank(provinceName)){
                         cityName=provinceName+cityName;
                     }
                     if(StringUtils.isNotBlank(areaName)){
                         cityName+=areaName;
                     }
-                    if(!cityName.equalsIgnoreCase(gpsUtil.getCityName())){
+                    if(cityName!=null && !cityName.equalsIgnoreCase(gpsUtil.getCityName())){
                         Toast.makeText(context,"当前城市:"+cityName,Toast.LENGTH_SHORT).show();
                         gpsUtil.setCityName(cityName);
                     }
@@ -274,11 +280,11 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     //FileUtil.saveLogToFile(iformationJsonString);
                     break;
             }
-            if (!gpsUtil.serviceStarted && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
+           /* if (!gpsUtil.serviceStarted && !Utils.isServiceRunning(context, WeatherService.class.getName())) {
                 Intent service = new Intent(context, BootStartService.class);
                 service.putExtra(BootStartService.START_BOOT, true);
                 context.startService(service);
-            }
+            }*/
         }
 
     }
@@ -298,7 +304,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
         }
     }
 
-    private void startDriveWayFloatingService(Context context) {
+    private void startAutoWidgetFloatingService(Context context) {
         if(AppSettings.get().isShowAmapWidgetContent()) {
             Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
             context.startService(autoWidgetFloatingService);

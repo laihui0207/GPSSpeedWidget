@@ -37,6 +37,7 @@ import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -93,6 +94,8 @@ public class DefaultFloatingService extends Service {
     TextView textViewAltitude;
     @BindView(R.id.textView_currentRoadName)
     TextView textViewCurrentRoadName;
+    @BindView(R.id.textView_currentDistrict)
+    TextView textViewCurrentDistrict;
     @BindView(R.id.imageView_default_xunhang_roadLIne)
     ImageView xunHang_roadLine;
     @BindView(R.id.imageView_default_daohang_roadLIne)
@@ -249,10 +252,19 @@ public class DefaultFloatingService extends Service {
                 stopSelf();
                 break;
             case R.id.speed:
-                if(!Utils.isServiceRunning(getApplicationContext(), MapFloatingService.class.getName())) {
-                    Intent floatingMapIntent = new Intent(getApplicationContext(), MapFloatingService.class);
-                    startService(floatingMapIntent);
+                Intent floatingMapIntent;
+                if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
+                    floatingMapIntent = new Intent(getApplicationContext(), AutoWidgetFloatingService.class);
+                    if(Utils.isServiceRunning(getApplicationContext(),AutoWidgetFloatingService.class.getName())){
+                        floatingMapIntent.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
+                    }
+                } else {
+                    floatingMapIntent = new Intent(getApplicationContext(), MapFloatingService.class);
+                    if(Utils.isServiceRunning(getApplicationContext(),MapFloatingService.class.getName())){
+                        floatingMapIntent.putExtra(MapFloatingService.EXTRA_CLOSE, true);
+                    }
                 }
+                startService(floatingMapIntent);
                 break;
         }
     }
@@ -287,12 +299,20 @@ public class DefaultFloatingService extends Service {
         } else {
             mSpeedometerText.setText("--");
         }
+        textViewCurrentDistrict.setText(gpsUtil.getCityName());
+
     }
     @Subscribe
     public void updateNaviStatus(AutoMapStatusUpdateEvent event){
         this.naviStarted=event.isDaoHangStarted();
         if(!naviStarted){
             setLimit(0,0);
+        }
+    }
+    @Subscribe
+    public void getLocationEvent(LocationEvent event) {
+        if(event.getCity()!=null) {
+            textViewCurrentDistrict.setText(event.getCity()+event.getDistrict());
         }
     }
     @Subscribe

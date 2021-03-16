@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -344,7 +345,9 @@ public class NaviFloatingService extends Service {
 
 
     private int getWindowType() {
-        return WindowManager.LayoutParams.TYPE_SYSTEM_ALERT | WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                WindowManager.LayoutParams.TYPE_PHONE;
     }
 
     private void openSettings(String settingsAction, String packageName) {

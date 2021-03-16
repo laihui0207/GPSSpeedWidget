@@ -33,7 +33,6 @@ import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
@@ -77,7 +76,7 @@ public class AutoWidgetFloatingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            if (intent.getBooleanExtra(EXTRA_CLOSE, false) || !AppSettings.get().isShowAmapWidgetContent()
+            if (intent.getBooleanExtra(EXTRA_CLOSE, false) /*|| !AppSettings.get().isShowAmapWidgetContent()*/
                 /*|| gpsUtil.getAutoNaviStatus()!=Constant.Navi_Status_Started*/) {
                 onStop();
                 stopSelf();
@@ -139,6 +138,10 @@ public class AutoWidgetFloatingService extends Service {
         ButterKnife.bind(this, mFloatingView);
         mWindowManager.addView(mFloatingView, params);
         driveWayView.setOnTouchListener(new FloatingOnTouchListener());
+       /* if(driveWayView!=null) {
+            Drawable backgroundDrawable = driveWayView.getBackground();
+            backgroundDrawable.setAlpha(50);
+        }*/
         initMonitorPosition();
         mServiceConnection=new ServiceConnection() {
             @Override
@@ -285,7 +288,7 @@ public class AutoWidgetFloatingService extends Service {
                 }
             });
             fadeIn = fadeOut.clone();
-            fadeIn.setFloatValues(0.1F, params.alpha);
+            fadeIn.setFloatValues(0.5F, params.alpha);
             fadeIn.setStartDelay(5000);
         }
 
@@ -325,6 +328,20 @@ public class AutoWidgetFloatingService extends Service {
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (mIsClick && System.currentTimeMillis() - mStartClickTime <= ViewConfiguration.getLongPressTimeout()) {
+                        if (fadeAnimator != null && fadeAnimator.isStarted()) {
+                            fadeAnimator.cancel();
+                            params.alpha = initialAlpha;
+                            try {
+                                mWindowManager.updateViewLayout(mFloatingView, params);
+                            } catch (IllegalArgumentException ignore) {
+                            }
+                        } else {
+                            initialAlpha = params.alpha;
+
+                            fadeAnimator = new AnimatorSet();
+                            fadeAnimator.play(fadeOut).before(fadeIn);
+                            fadeAnimator.start();
+                        }
                     } else {
                         PrefUtils.setDriveWayFloatingSolidLocation(getApplicationContext(), params.x, params.y);
                     }

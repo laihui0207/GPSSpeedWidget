@@ -9,7 +9,6 @@ import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
-import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.TimeWidgetService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -24,15 +23,7 @@ public class TimeWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent paramIntent) {
         super.onReceive(context, paramIntent);
-        if(PrefUtils.isTimeHWidgetEnable(context) && !Utils.isServiceRunning(context, TimeWidgetService.class.getName())){
-            Intent widgetService=new Intent(context,TimeWidgetService.class);
-            Utils.startForegroundService(context,widgetService);
-        }
-        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
-            Intent bootService=new Intent(context,BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
-            context.startService(bootService);
-        }
+
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.time_weather_widget);
 
         views.setOnClickPendingIntent(R.id.v_time_base,null);
@@ -43,8 +34,16 @@ public class TimeWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+       /* if(PrefUtils.isTimeHWidgetEnable(context) && !Utils.isServiceRunning(context, TimeWidgetService.class.getName())){
+            Intent widgetService=new Intent(context,TimeWidgetService.class);
+            Utils.startForegroundService(context,widgetService);
+        }*/
+        /*if(!Utils.isServiceRunning(context, WeatherService.class.getName())){
+            Intent bootService=new Intent(context,BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT,true);
+            context.startService(bootService);
+        }*/
     }
 
     @Override

@@ -22,6 +22,7 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
@@ -147,7 +148,14 @@ public class SpeedNumberVerticalService extends Service {
     public void updateAimessStatus(AimlessStatusUpdateEvent event) {
         aimlessNaviStarted = event.isStarted();
     }
-
+    @Subscribe
+    public void getLocationEvent(LocationEvent event) {
+        if(event.getCity()!=null) {
+            this.numberRemoteViews = new RemoteViews(getPackageName(), R.layout.speed_number_vertical_widget);
+            this.numberRemoteViews.setTextViewText(R.id.v_address, event.getCity() + event.getDistrict());
+            this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
+        }
+    }
     @Subscribe
     public void setTempMute(AudioTempMuteEvent event) {
         this.tempMute = event.isMute();
@@ -243,6 +251,7 @@ public class SpeedNumberVerticalService extends Service {
         } else {
             this.numberRemoteViews.setImageViewResource(R.id.v_edog_mute, R.drawable.ic_xunhang_disable);
         }
+        this.numberRemoteViews.setTextViewText(R.id.v_address, gpsUtil.getCityName());
         this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
     }
     @Subscribe

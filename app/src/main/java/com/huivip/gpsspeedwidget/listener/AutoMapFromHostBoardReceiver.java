@@ -30,7 +30,7 @@ public class AutoMapFromHostBoardReceiver extends BootStartReceiver {
                 if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
                     Intent bootService=new Intent(context,BootStartService.class);
                     bootService.putExtra(BootStartService.START_BOOT,true);
-                    Utils.startService(context,bootService, true);
+                    Utils.startService(context,bootService, false);
                     Toast.makeText(context,"Acc On",Toast.LENGTH_LONG).show();
                 }
             }
