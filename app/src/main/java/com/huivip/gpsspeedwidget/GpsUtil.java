@@ -438,6 +438,13 @@ public class GpsUtil {
             limitCounter = 0;
         }
     }
+    public void resetData(){
+        if(driveTime>1000*3600*8) {
+            this.startTime = System.currentTimeMillis();
+            this.distance = 0;
+            hasLimited = false;
+        }
+    }
     public void altitudeAlert(){
         if(altitude>=altitudeAlterStart) {
             playAltitude(altitudeAlterStart, altitudeAlterFrequency);

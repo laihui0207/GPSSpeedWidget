@@ -17,6 +17,7 @@ import android.text.TextUtils;
 
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
@@ -137,8 +138,10 @@ public class BootStartService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int NOTIFICATION_ID = (int) (System.currentTimeMillis() % 10000);
-        startForeground(NOTIFICATION_ID, Utils.buildNotification(getApplicationContext()));
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int NOTIFICATION_ID = (int) (System.currentTimeMillis() % 10000);
+            startForeground(NOTIFICATION_ID, Utils.buildNotification(getApplicationContext()));
+        }
         boolean start = AppSettings.get().getAutoStart();
         if (intent != null) {
             boolean boot_from_resume = intent.getBooleanExtra(START_RESUME, false);
@@ -158,6 +161,11 @@ public class BootStartService extends Service {
                     intentFilter.addAction(Intent.ACTION_SCREEN_ON);
                     screenOnReceiver = new ScreenOnReceiver();
                     getApplicationContext().registerReceiver(screenOnReceiver, intentFilter);
+                }
+                if(boot_from_start){
+                    GpsUtil gpsUtil = GpsUtil.getInstance(getApplicationContext());
+                    gpsUtil.resetData();
+
                 }
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                 if (AppSettings.get().isEnableTimeWindow()) {

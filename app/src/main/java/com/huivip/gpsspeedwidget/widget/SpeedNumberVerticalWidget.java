@@ -34,14 +34,14 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
         PendingIntent goAutoIntent = sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_AUTOAMAP,400);
         PendingIntent switchGPSService= sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_GPS,500);
         // PendingIntent goGasStationIntent= sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_LYRIC,500); //sendAutoBroadCast(context,10036,201);
-        //PendingIntent switchXunHang=sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_XUNHANG,600);
+        PendingIntent switchXunHang=sendSwitchBroadCast(context,SwitchReceiver.SWITCH_TARGET_XUNHANG,600);
         //views.setOnClickPendingIntent(R.id.image_gas_station,goGasStationIntent);
         views.setOnClickPendingIntent(R.id.v_gohome,goHomeIntent);
         views.setOnClickPendingIntent(R.id.v_gocompany,goCompanyIntent);
         views.setOnClickPendingIntent(R.id.v_gomap,goAutoIntent);
         views.setOnClickPendingIntent(R.id.v_navi_layout,goAutoIntent);
         views.setOnClickPendingIntent(R.id.v_speed_layout,switchGPSService);
-        //views.setOnClickPendingIntent(R.id.image_xunhang_switch,switchXunHang);
+        views.setOnClickPendingIntent(R.id.v_edog,switchXunHang);
 
         ComponentName localComponentName = new ComponentName(context, SpeedNumberVerticalWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
@@ -50,19 +50,6 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-         /* if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, SpeedNumberVerticalService.class.getName())){
-            Intent widgetService=new Intent(context, SpeedNumberVerticalService.class);
-            Utils.startForegroundService(context,widgetService);
-        }
-        if(PrefUtils.isSpeedNumberVWidgetEnable(context) && !Utils.isServiceRunning(context, RoadLineService.class.getName())){
-            Intent roadLineService=new Intent(context, RoadLineService.class);
-            Utils.startForegroundService(context,roadLineService);
-        }
-        if(!Utils.isServiceRunning(context, WeatherService.class.getName())){
-            Intent bootService=new Intent(context,BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
-            context.startService(bootService);
-        }*/
     }
 
     @Override
@@ -78,11 +65,6 @@ public class SpeedNumberVerticalWidget extends AppWidgetProvider {
 
     @Override
     public void onDisabled(Context context) {
-       /* if(Utils.isServiceRunning(context, SpeedNumberVerticalService.class.getName())){
-            Intent widgetService=new Intent(context, SpeedNumberVerticalService.class);
-            widgetService.putExtra(SpeedNumberVerticalService.EXTRA_CLOSE,true);
-            context.startService(widgetService);
-        }*/
         PrefUtils.setSpeedNumberVWidgetEnable(context,false);
         super.onDisabled(context);
     }
