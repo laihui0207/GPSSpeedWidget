@@ -10,8 +10,10 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -21,10 +23,16 @@ import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
+import com.huivip.gpsspeedwidget.listener.AutoMapBoardReceiver;
+import com.huivip.gpsspeedwidget.listener.BootStartReceiver;
 import com.huivip.gpsspeedwidget.listener.GoToHomeReceiver;
+import com.huivip.gpsspeedwidget.listener.MediaNotificationReceiver;
+import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.listener.WeatherServiceReceiver;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.xutils.x;
 
 public class BootStartService extends Service {
     public static String START_BOOT="FromSTARTBOOT";
@@ -74,7 +82,9 @@ public class BootStartService extends Service {
                 if (intent.getBooleanExtra(START_BOOT, false)) {
                     Log.d(START_BOOT,"Auto Boot Start Service Launched");
                     autoStarted = true;
-                    startForeground(100,buildNotification());
+                    if(Build.VERSION.SDK_INT >= 26) {
+                        startForeground(100, buildNotification());
+                    }
                     String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
                     if(!TextUtils.isEmpty(apps)) {
                         String[] autoApps = apps.split(",");
@@ -154,25 +164,8 @@ public class BootStartService extends Service {
                 }
             }
         }
-        if(uploadGpsThread == null){
-            uploadGpsThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    //这里用死循环就是模拟一直执行的操作
-                    while (isrun){
-
-                        //你需要执行的任务
-
-                        try {
-                            Thread.sleep(10000L);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-        }
-
+        registerBoardCast(getApplicationContext());
+        x.task().postDelayed(this::getDistrictFromAuto,10*1000);
         return super.onStartCommand(intent, flags, startId);
     }
     @SuppressLint("NewApi")
@@ -211,7 +204,6 @@ public class BootStartService extends Service {
                 .setOngoing(true)
                 .setContentText("正在后台运行,点击打开主界面").setContentIntent(resultPendingIntent)
                 .setPriority(Notification.PRIORITY_MAX)
-                .setSmallIcon(R.drawable.ic_launcher)
                 .setWhen(System.currentTimeMillis());
 
         if (android.os.Build.VERSION.SDK_INT >= 16) {
@@ -220,5 +212,58 @@ public class BootStartService extends Service {
             return builder.getNotification();
         }
         return notification;
+    }
+    private void getDistrictFromAuto() {
+        x.task().postDelayed(() -> {
+            Intent intent = new Intent();
+            intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+            intent.putExtra("KEY_TYPE", 10029);
+            sendBroadcast(intent);
+        }, 1000 * 10);
+    }
+
+    private void registerBoardCast(Context context) {
+        String[] actions = new String[]{"com.android.music.metachanged",
+                "com.android.music.statuschanged",
+                "com.android.music.musicservicecommand",
+                "com.android.music.updateprogress",
+                "com.kugou.android.music.metachanged",
+                "com.tencent.qqmusic.widgetupdate",
+                "cn.flyaudio.media.action.TRACK_DETAILS",
+                "cn.kuwo.kwmusicauto.action.PLAYER_STATUS",
+                "cn.kuwo.kwmusicauto.action.OPEN_DESKLYRIC",
+                "com.miui.player.metachanged",
+                "com.android.music.playstatechanged",
+                "com.android.music.playbackcomplete",
+                "com.android.music.queuechanged",
+                "fm.last.android.metachanged",
+                "com.nullsoft.winamp.playstatechanged",
+                "update.widget.update_proBar",
+                "update.widget.playbtnstate",
+                "com.ijidou.card.music",
+                "com.ijidou.action.UPDATE_PROGRESS",
+                "com.tencent.qqmusiccar.action.PLAY_COMMAND_SEND_FOR_THIRD"
+        };
+        IntentFilter intentFilter = new IntentFilter();
+        for (String action : actions) {
+            intentFilter.addAction(action);
+        }
+        context.registerReceiver(new MediaNotificationReceiver(), intentFilter);
+
+        IntentFilter switchFiliter = new IntentFilter();
+        switchFiliter.addAction(SwitchReceiver.SWITCH_EVENT);
+        context.registerReceiver(new SwitchReceiver(), switchFiliter);
+
+        IntentFilter autoMapFiliter = new IntentFilter();
+        autoMapFiliter.addAction("AUTONAVI_STANDARD_BROADCAST_SEND");
+        context.registerReceiver(new AutoMapBoardReceiver(), autoMapFiliter);
+        IntentFilter bootstrapFiliter = new IntentFilter();
+        bootstrapFiliter.addAction("android.intent.action.USER_PRESENT");
+        bootstrapFiliter.addAction("android.intent.action.BOOT_COMPLETED");
+        bootstrapFiliter.addAction("autochips.intent.action.QB_POWERON");
+        bootstrapFiliter.addAction("xy.android.acc.on");
+        bootstrapFiliter.addAction("com.nwd.action.ACTION_MCU_STATE_CHANGE");
+        bootstrapFiliter.addAction("com.unisound.intent.action.DO_SLEEP");
+        context.registerReceiver(new BootStartReceiver(), bootstrapFiliter);
     }
 }

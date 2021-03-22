@@ -33,7 +33,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         if(start) {
                             Intent service = new Intent(context, BootStartService.class);
                             service.putExtra(BootStartService.START_BOOT,true);
-                            context.startService(service);
+                            Utils.startService(context, service,true);
                             gpsUtil.setAutoMapBackendProcessStarted(true);
                             //Toast.makeText(context,"AutoMap started",Toast.LENGTH_SHORT).show();
                         }
