@@ -36,16 +36,6 @@ public class GpsSpeedMeterWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-       /* if (PrefUtils.isSpeedMeterWidgetEnable(context) && !Utils.isServiceRunning(context, GpsSpeedMeterService.class.getName())) {
-            Intent bootService = new Intent(context, GpsSpeedMeterService.class);
-            Utils.startForegroundService(context, bootService);
-        }*/
-        /*if (!Utils.isServiceRunning(context, WeatherService.class.getName())) {
-            Intent bootService = new Intent(context, BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT, true);
-            context.startService(bootService);
-        }*/
-
     }
 
     @Override

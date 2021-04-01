@@ -37,7 +37,7 @@ import com.huivip.gpsspeedwidget.activity.homeparts.HpAppDrawer;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpDesktopPickAction;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpDragOption;
 import com.huivip.gpsspeedwidget.activity.homeparts.HpInitSetup;
-import com.huivip.gpsspeedwidget.activity.homeparts.HpSearchBar;
+import com.huivip.gpsspeedwidget.beans.BootEvent;
 import com.huivip.gpsspeedwidget.interfaces.AppDeleteListener;
 import com.huivip.gpsspeedwidget.interfaces.AppUpdateListener;
 import com.huivip.gpsspeedwidget.manager.Setup;
@@ -46,8 +46,6 @@ import com.huivip.gpsspeedwidget.model.Item;
 import com.huivip.gpsspeedwidget.model.Item.Type;
 import com.huivip.gpsspeedwidget.receivers.AppUpdateReceiver;
 import com.huivip.gpsspeedwidget.receivers.ShortcutReceiver;
-import com.huivip.gpsspeedwidget.service.BootStartService;
-import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.util.AppManager;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.DatabaseHelper;
@@ -78,6 +76,7 @@ import com.huivip.gpsspeedwidget.widget.SearchBar;
 import net.gsantner.opoc.util.ContextUtils;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -188,10 +187,9 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         initPermission();
-        startBootService(false);
         Companion.setLauncher(this);
         AppSettings appSettings = AppSettings.get();
-
+        EventBus.getDefault().register(this);
         ContextUtils contextUtils = new ContextUtils(getApplicationContext());
         contextUtils.setAppLanguage(appSettings.getLanguage());
         super.onCreate(savedInstanceState);
@@ -212,7 +210,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
         init();
         started =true;
-        //EventBus.getDefault().register(this);
     }
 
     private void init() {
@@ -309,9 +306,15 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         });
         AppManager.getInstance(this).init();
     }
-
+    @Subscribe
+    public void listenBootEvent(BootEvent bootEvent){
+        if(bootEvent.isReCreate()) {
+            recreate();
+        }
+        //Toast.makeText(getApplicationContext(),"Boot start",Toast.LENGTH_SHORT).show();
+    }
     protected void initViews() {
-        new HpSearchBar(this, getSearchBar()).initSearchBar();
+        //new HpSearchBar(this, getSearchBar()).initSearchBar();
         getAppDrawerController().init();
         getDock().setHome(this);
 
@@ -687,16 +690,9 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        startBootService(true);
         handleLauncherResume();
     }
-    private void startBootService(boolean fromResume){
-        if(!Utils.isServiceRunning(getApplicationContext(), WeatherService.class.getName())){
-            Intent bootStartService=new Intent(getApplicationContext(),BootStartService.class);
-            bootStartService.putExtra(BootStartService.START_RESUME,fromResume);
-            Utils.startService(getApplicationContext(),bootStartService, true);
-        }
-    }
+
     @Override
     protected void onDestroy() {
         _appWidgetHost.stopListening();
@@ -707,6 +703,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         unregisterReceiver(_timeChangedReceiver);
         EventBus.getDefault().unregister(this);
         started=false;
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 

@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
+import com.huivip.gpsspeedwidget.utils.Utils;
 
 import agency.tango.materialintroscreen.MaterialIntroActivity;
 import agency.tango.materialintroscreen.SlideFragment;
@@ -86,8 +89,15 @@ public class OnBoardActivity extends MaterialIntroActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
         }
+        startBootService(true);
     }
-
+    private void startBootService(boolean fromResume){
+        if(!Utils.isServiceRunning(getApplicationContext(), WeatherService.class.getName())){
+            Intent bootStartService=new Intent(getApplicationContext(), BootStartService.class);
+            bootStartService.putExtra(BootStartService.START_RESUME,fromResume);
+            Utils.startService(getApplicationContext(),bootStartService, true);
+        }
+    }
     public static class CustomSlide extends SlideFragment {
         public CustomSlide() {
         }

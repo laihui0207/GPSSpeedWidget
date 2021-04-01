@@ -94,23 +94,28 @@ public class RoadLineService extends Service {
         super.onDestroy();
     }
 
-    private View getRoadLineView(){
-        int id =AppSettings.get().getAmapPluginId();// PrefUtils.getSelectAMAPPLUGIN(getApplicationContext());
+    private View getRoadLineView() {
+        int id = AppSettings.get().getAmapPluginId();
         if (id != -1) {
-                AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+            AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+            try {
                 final View amapView = appWidgetHost.createView(this, id, appWidgetInfo);
                 widgetView = amapView;
-                View roladLineImage=null;
+                View roladLineImage = null;
                 if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
-                    roladLineImage = Utils.findlayoutViewById(amapView, "widget_daohang_road_line");
+                    roladLineImage = Utils.findlayoutViewById(widgetView, "widget_daohang_road_line");
                 } else {
-                    roladLineImage = Utils.findlayoutViewById(amapView, "road_line");
+                    roladLineImage = Utils.findlayoutViewById(widgetView, "road_line");
                 }
                 if (roladLineImage != null && roladLineImage instanceof ImageView) {
                     return roladLineImage;
                 } else {
                     return null;
                 }
+            }catch(Exception e){
+               e.printStackTrace();
+               return null;
+            }
         }
         return null;
     }

@@ -40,10 +40,6 @@ public class MusicWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-        /* if(PrefUtils.isMusicWidgetEnable(context) && !Utils.isServiceRunning(context, MusicControllerService.class.getName())){
-            Intent widgetService=new Intent(context,MusicControllerService.class);
-            Utils.startForegroundService(context,widgetService);
-        }*/
     }
 
     @Override

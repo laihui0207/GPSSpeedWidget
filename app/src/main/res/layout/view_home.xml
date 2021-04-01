@@ -30,6 +30,7 @@
         <com.huivip.gpsspeedwidget.widget.SearchBar
             android:id="@+id/searchBar"
             android:layout_width="0dp"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
             app:layout_constraintLeft_toLeftOf="parent"

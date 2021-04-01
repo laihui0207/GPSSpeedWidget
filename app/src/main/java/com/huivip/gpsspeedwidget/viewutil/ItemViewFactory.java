@@ -1,5 +1,6 @@
 package com.huivip.gpsspeedwidget.viewutil;
 
+import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
 import android.graphics.Color;
@@ -75,12 +76,12 @@ public class ItemViewFactory {
         final WidgetView widgetView = (WidgetView) HomeActivity._appWidgetHost.createView(context, item.getWidgetValue(), appWidgetInfo);
 
         widgetView.setAppWidget(item.getWidgetValue(), appWidgetInfo);
-        /*widgetView.post(new Runnable() {
+        widgetView.post(new Runnable() {
             @Override
-            public void run() {*/
+            public void run() {
                 updateWidgetOption(item);
-          /*  }
-        });*/
+            }
+        });
 
         final FrameLayout widgetContainer = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.view_widget_container, null);
         widgetContainer.addView(widgetView);
@@ -125,7 +126,7 @@ public class ItemViewFactory {
                 return true;
             }
         });
-       /* ve.setOnTouchListener(new View.OnTouchListener() {
+        /*ve.setOnTouchListener(new OnTouchListener() {
             private float mInitialTouchX;
             private float mInitialTouchY;
             private int mInitialX;
@@ -149,21 +150,41 @@ public class ItemViewFactory {
                     case MotionEvent.ACTION_MOVE:
                         float dX = event.getRawX() - mInitialTouchX;
                         float dY = event.getRawY() - mInitialTouchY;
-                       *//* if ((mIsClick && (Math.abs(dX) > 10 || Math.abs(dY) > 10))
+                        if ((mIsClick && (Math.abs(dX) > 10 || Math.abs(dY) > 10))
                                 || System.currentTimeMillis() - mStartClickTime > ViewConfiguration.getLongPressTimeout()) {
                             mIsClick = false;
-                        }*//*
+                        }
 
                         //if (!mIsClick) {
                             movedX= (int) (dX + mInitialX);
                             movedY = (int) (dY + mInitialY);
                        // }
+                        item.setSpanY(item.getSpanY()+movedY);
+                        CellContainer.LayoutParams newWidgetLayoutParams = new CellContainer.LayoutParams(CellContainer.LayoutParams.WRAP_CONTENT, CellContainer.LayoutParams.WRAP_CONTENT, item.getX(), item.getY(), item.getSpanX(), item.getSpanY());
+
+                        // update occupied array
+                        HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().setOccupied(true, newWidgetLayoutParams);
+
+                        // update the view
+                        widgetContainer.setLayoutParams(newWidgetLayoutParams);
+                        updateWidgetOption(item);
                         return true;
                     case MotionEvent.ACTION_UP:
                        //item.setSpanX(item.getSpanX()+movedX);
-                       item.setSpanY(item.getSpanY()+movedY);
+                       //item.setSpanY(item.getSpanY()+movedY);
                         Log.d("huivip","move x:"+movedX+",y:"+movedY);
-                       scaleWidget(widgetContainer,item);
+                       //scaleWidget(widgetContainer,item);
+                        item.setSpanY(item.getSpanY()+movedY);
+                        CellContainer.LayoutParams newWidgetLayoutParams2 = new CellContainer.LayoutParams(CellContainer.LayoutParams.WRAP_CONTENT, CellContainer.LayoutParams.WRAP_CONTENT, item.getX(), item.getY(), item.getSpanX(), item.getSpanY());
+
+                        // update occupied array
+                        HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().setOccupied(true, newWidgetLayoutParams2);
+
+                        // update the view
+                        widgetContainer.setLayoutParams(newWidgetLayoutParams2);
+                        updateWidgetOption(item);
+                        HomeActivity._db.saveItem(item);
+
                         return true;
                 }
                 return true;
@@ -176,7 +197,7 @@ public class ItemViewFactory {
                 item.setSpanY(item.getSpanY() + 1);
                 scaleWidget(widgetContainer, item);
                 widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 5000);
+                widgetContainer.postDelayed(action, 2000);
             }
         });
         /*he.setOnTouchListener(new View.OnTouchListener() {
@@ -225,7 +246,7 @@ public class ItemViewFactory {
                 item.setSpanX(item.getSpanX() + 1);
                 scaleWidget(widgetContainer, item);
                 widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 5000);
+                widgetContainer.postDelayed(action, 2000);
             }
         });
       /* vl.setOnTouchListener(new View.OnTouchListener() {
@@ -274,7 +295,7 @@ public class ItemViewFactory {
                 item.setSpanY(item.getSpanY() - 1);
                 scaleWidget(widgetContainer, item);
                 widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 5000);
+                widgetContainer.postDelayed(action, 2000);
             }
         });
        /* hl.setOnTouchListener(new View.OnTouchListener() {
@@ -325,7 +346,7 @@ public class ItemViewFactory {
                 item.setSpanX(item.getSpanX() - 1);
                 scaleWidget(widgetContainer, item);
                 widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 5000);
+                widgetContainer.postDelayed(action, 2000);
             }
         });
         return widgetContainer;
@@ -354,16 +375,16 @@ public class ItemViewFactory {
             Toast.makeText(HomeActivity.Companion.getLauncher().getDesktop().getContext(), R.string.toast_not_enough_space, Toast.LENGTH_SHORT).show();
 
             // add the old layout params to the occupied array
-            //HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().setOccupied(true, (CellContainer.LayoutParams) view.getLayoutParams());
+            HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().setOccupied(true, (CellContainer.LayoutParams) view.getLayoutParams());
         }
     }
 
     private static void updateWidgetOption(Item item) {
         Bundle newOps = new Bundle();
-       /* newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, item.getSpanX() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellWidth());
+        newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, item.getSpanX() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellWidth());
         newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, item.getSpanX() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellWidth());
         newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, item.getSpanY() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellHeight());
-        newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, item.getSpanY() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellHeight());*/
+        newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, item.getSpanY() * HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellHeight());
         HomeActivity._appWidgetManager.updateAppWidgetOptions(item.getWidgetValue(), newOps);
     }
 }

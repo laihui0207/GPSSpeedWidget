@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 public class BootStartReceiver extends BroadcastReceiver {
@@ -14,6 +15,7 @@ public class BootStartReceiver extends BroadcastReceiver {
             Intent bootService=new Intent(context,BootStartService.class);
             bootService.putExtra(BootStartService.START_BOOT,true);
             Utils.startService(context,bootService, true);
+            AppSettings.get().setAppRestartRequired(true);
         }
     }
 }

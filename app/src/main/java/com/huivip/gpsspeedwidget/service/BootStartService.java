@@ -21,6 +21,7 @@ import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.BootEvent;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.AutoMapBoardReceiver;
@@ -68,8 +69,11 @@ public class BootStartService extends Service {
         CrashHandler.getInstance().init(getApplicationContext());
         DeviceUuidFactory deviceUuidFactory = new DeviceUuidFactory(getApplicationContext());
         deviceId = deviceUuidFactory.getDeviceUuid().toString();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int NOTIFICATION_ID = (int) (System.currentTimeMillis() % 10000);
+            startForeground(NOTIFICATION_ID, Utils.buildNotification(getApplicationContext()));
+        }
         boolean start = AppSettings.get().getAutoStart();
-
         if (start) {
             String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
             if (AppSettings.get().isEnableLaunchOtherApp() && !TextUtils.isEmpty(apps)) {
@@ -138,10 +142,7 @@ public class BootStartService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int NOTIFICATION_ID = (int) (System.currentTimeMillis() % 10000);
-            startForeground(NOTIFICATION_ID, Utils.buildNotification(getApplicationContext()));
-        }
+
         boolean start = AppSettings.get().getAutoStart();
         if (intent != null) {
             boolean boot_from_resume = intent.getBooleanExtra(START_RESUME, false);
@@ -243,6 +244,7 @@ public class BootStartService extends Service {
                     Utils.startService(getApplicationContext(), widgetService);
                 }
             }
+            EventBus.getDefault().post(new BootEvent(true));
             x.task().postDelayed(this::getDistrictFromAuto, 10000);
         }
         return super.onStartCommand(intent, flags, startId);

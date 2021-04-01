@@ -35,15 +35,6 @@ public class TimeWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-       /* if(PrefUtils.isTimeHWidgetEnable(context) && !Utils.isServiceRunning(context, TimeWidgetService.class.getName())){
-            Intent widgetService=new Intent(context,TimeWidgetService.class);
-            Utils.startForegroundService(context,widgetService);
-        }*/
-        /*if(!Utils.isServiceRunning(context, WeatherService.class.getName())){
-            Intent bootService=new Intent(context,BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
-            context.startService(bootService);
-        }*/
     }
 
     @Override
