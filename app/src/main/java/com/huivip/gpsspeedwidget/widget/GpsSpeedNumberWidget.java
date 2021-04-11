@@ -11,10 +11,8 @@ import android.widget.RemoteViews;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
-import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.GpsSpeedService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 
 /**
@@ -28,11 +26,6 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         Intent service = new Intent(context, GpsSpeedService.class);
         views.setOnClickPendingIntent(R.id.number_speed, PendingIntent.getService(context, 0,
                 service, 0));
-        if(!Utils.isServiceRunning(context, BootStartService.class.getName())){
-            Intent bootService=new Intent(context,BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
-            context.startService(bootService);
-        }
         Intent configActivity=new Intent(context, ConfigurationActivity.class);
         PendingIntent mainActivityPendingIntent=PendingIntent.getActivity(context,3,configActivity,0);
         views.setOnClickPendingIntent(R.id.image_config,mainActivityPendingIntent);

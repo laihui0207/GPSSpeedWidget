@@ -56,6 +56,7 @@ public class BootStartService extends Service {
     public void onCreate() {
         alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
         super.onCreate();
+
         if (PrefUtils.isPlayWaring(getApplicationContext())) {
             mPlayer = MediaPlayer.create(this, R.raw.warn);
             if (mPlayer != null) {
@@ -78,13 +79,14 @@ public class BootStartService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         boolean start = PrefUtils.isEnableAutoStart(getApplicationContext());
         if(intent!=null && !autoStarted){
+            if(Build.VERSION.SDK_INT >= 26) {
+                startForeground(100, buildNotification());
+            }
             if(start) {
                 if (intent.getBooleanExtra(START_BOOT, false)) {
                     Log.d(START_BOOT,"Auto Boot Start Service Launched");
                     autoStarted = true;
-                    if(Build.VERSION.SDK_INT >= 26) {
-                        startForeground(100, buildNotification());
-                    }
+
                     String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
                     if(!TextUtils.isEmpty(apps)) {
                         String[] autoApps = apps.split(",");
@@ -134,7 +136,7 @@ public class BootStartService extends Service {
                 }
             }
         }
-        if(intent!=null && !started){
+        if(intent!=null){
             Log.d(START_BOOT,"Boot Start Service Launched");
             if(start) {
                 started=true;
