@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.service.BootStartService;
-import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -91,12 +90,12 @@ public class OnBoardActivity extends MaterialIntroActivity {
         }
         startBootService(true);
     }
-    private void startBootService(boolean fromResume){
-        if(!Utils.isServiceRunning(getApplicationContext(), WeatherService.class.getName())){
+    private void startBootService(boolean fromResum){
+        //if(!Utils.isServiceRunning(getApplicationContext(), WeatherService.class.getName())){
             Intent bootStartService=new Intent(getApplicationContext(), BootStartService.class);
-            bootStartService.putExtra(BootStartService.START_RESUME,fromResume);
+            bootStartService.putExtra(BootStartService.START_RESUME,fromResum);
             Utils.startService(getApplicationContext(),bootStartService, true);
-        }
+        //}
     }
     public static class CustomSlide extends SlideFragment {
         public CustomSlide() {

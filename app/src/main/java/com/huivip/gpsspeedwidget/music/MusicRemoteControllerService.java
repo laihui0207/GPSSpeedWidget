@@ -19,6 +19,7 @@ import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.view.KeyEvent;
 
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.beans.MusicStatusUpdateEvent;
@@ -27,7 +28,6 @@ import com.huivip.gpsspeedwidget.lyrics.LyricService;
 import com.huivip.gpsspeedwidget.lyrics.utils.StringUtils;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -348,12 +348,16 @@ public class MusicRemoteControllerService extends NotificationListenerService im
                 @Override
                 public void run() {
                     if (state == RemoteControlClient.PLAYSTATE_PLAYING) {
-                        Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
-                        Utils.startService(getApplicationContext(), lyricService, false);
+                       /* Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
+                        Utils.startService(getApplicationContext(), lyricService, false);*/
+                        EventBus.getDefault().post((new LaunchEvent( LyricService.class)).setToClose(false));
+
                     } else if (state == RemoteControlClient.PLAYSTATE_PAUSED || state == RemoteControlClient.PLAYSTATE_STOPPED) {
-                        Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
+                        /*Intent lyricService = new Intent(getApplicationContext(), LyricService.class);
                         lyricService.putExtra(LyricService.EXTRA_CLOSE, true);
-                        Utils.startService(getApplicationContext(), lyricService, false);
+                        Utils.startService(getApplicationContext(), lyricService, false);*/
+                        EventBus.getDefault().post((new LaunchEvent( LyricService.class)).setToClose(true));
+
                     }
                 }
             }, 1000);

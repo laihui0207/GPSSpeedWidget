@@ -13,6 +13,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LrcBean;
 import com.huivip.gpsspeedwidget.beans.LyricContentEvent;
 import com.huivip.gpsspeedwidget.beans.MusicAlbumUpdateEvent;
@@ -29,7 +30,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LyricService extends Service {
     public static final String EXTRA_CLOSE = "com.huivip.gpsspeedwidget.EXTRA_CLOSE";
@@ -146,9 +149,10 @@ public class LyricService extends Service {
     };
     private void stopLyric(String songName) {
         if (AppSettings.get().isLyricFloattingWidownEnable()) {
-            Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
+            /*Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
             lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
-            Utils.startService(getApplicationContext(),lycFloatingService, false);
+            Utils.startService(getApplicationContext(),lycFloatingService, false);*/
+            EventBus.getDefault().post((new LaunchEvent( LyricFloatingService.class)).setToClose(true));
         }
         EventBus.getDefault().post(new LyricContentEvent(songName));
     }
@@ -156,20 +160,31 @@ public class LyricService extends Service {
     private void launchLrcFloatingWindows(String songName, String artistName, String lyricContent, long currentPosition) {
         if (AppSettings.get().isLyricFloattingWidownEnable()) {
             Intent lycFloatingService = new Intent(getApplicationContext(), LyricFloatingService.class);
+            LaunchEvent launchEvent=new LaunchEvent(LyricFloatingService.class);
+            Map<String,String> params = new HashMap<String,String>();
             lycFloatingService.putExtra(LyricFloatingService.SONGNAME, songName);
             lycFloatingService.putExtra(LyricFloatingService.ARTIST, artistName);
+            params.put(LyricFloatingService.SONGNAME, songName);
+            params.put(LyricFloatingService.ARTIST, artistName);
             if (currentPosition > 0) {
                 lycFloatingService.putExtra(LyricFloatingService.POSITION, currentPosition);
+                params.put(LyricFloatingService.POSITION, Long.toString(currentPosition));
             }
             lycFloatingService.putExtra(LyricFloatingService.LYRIC_CONTENT, lyricContent);
+            params.put(LyricFloatingService.LYRIC_CONTENT, lyricContent);
             lycFloatingService.putExtra(LyricFloatingService.DURATION, duration);
-            Utils.startService(getApplicationContext(),lycFloatingService, false);
+            params.put(LyricFloatingService.DURATION, Long.toString(duration));
+            launchEvent.setExtentParameters(params);
+            EventBus.getDefault().post(launchEvent);
+            //Utils.startService(getApplicationContext(),lycFloatingService, false);
+
         }
         if (PrefUtils.isLyricWidgetEnable(getApplicationContext())) {
             if (!Utils.isServiceRunning(getApplicationContext(), LyricWidgetService.class.getName()))
             {
-                Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
-                Utils.startService(getApplicationContext(),widgetService, false);
+                //Intent widgetService = new Intent(getApplicationContext(), LyricWidgetService.class);
+                //Utils.startService(getApplicationContext(),widgetService, false);
+                EventBus.getDefault().post(new LaunchEvent( LyricWidgetService.class));
             }
             EventBus.getDefault().post(new LyricContentEvent(songName, artistName,lyricContent, currentPosition));
         }

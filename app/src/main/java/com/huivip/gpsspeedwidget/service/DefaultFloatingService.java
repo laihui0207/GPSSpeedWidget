@@ -37,6 +37,7 @@ import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
@@ -257,14 +258,20 @@ public class DefaultFloatingService extends Service {
                     floatingMapIntent = new Intent(getApplicationContext(), AutoWidgetFloatingService.class);
                     if(Utils.isServiceRunning(getApplicationContext(),AutoWidgetFloatingService.class.getName())){
                         floatingMapIntent.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
+                        EventBus.getDefault().post((new LaunchEvent(AutoWidgetFloatingService.class)).setToClose(true));
+                    } else {
+                        EventBus.getDefault().post((new LaunchEvent(AutoWidgetFloatingService.class)).setToClose(false));
                     }
                 } else {
                     floatingMapIntent = new Intent(getApplicationContext(), MapFloatingService.class);
                     if(Utils.isServiceRunning(getApplicationContext(),MapFloatingService.class.getName())){
                         floatingMapIntent.putExtra(MapFloatingService.EXTRA_CLOSE, true);
+                        EventBus.getDefault().post((new LaunchEvent(MapFloatingService.class)).setToClose(true));
+                    } else {
+                        EventBus.getDefault().post((new LaunchEvent(MapFloatingService.class)).setToClose(false));
                     }
+
                 }
-                startService(floatingMapIntent);
                 break;
         }
     }

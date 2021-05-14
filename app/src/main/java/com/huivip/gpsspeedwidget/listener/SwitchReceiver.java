@@ -9,12 +9,15 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.AutoXunHangService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.MapFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class SwitchReceiver extends BroadcastReceiver {
     private String TAG="huivip";
@@ -32,10 +35,12 @@ public class SwitchReceiver extends BroadcastReceiver {
             if (Utils.isServiceRunning(context,AutoXunHangService.class.getName())) {
                 xunHangService.putExtra(AutoXunHangService.EXTRA_CLOSE,true);
                 Toast.makeText(context, " 关闭智能巡航", Toast.LENGTH_SHORT).show();
+                EventBus.getDefault().post((new LaunchEvent(AutoXunHangService.class).setToClose(true)));
             } else {
                 Toast.makeText(context, "开启智能巡航", Toast.LENGTH_SHORT).show();
+                EventBus.getDefault().post(new LaunchEvent(AutoXunHangService.class));
             }
-            context.startService(xunHangService);
+            //context.startService(xunHangService);
         }
         if(SWITCH_TARGET_MAPFLOATING.equalsIgnoreCase(target)){
             GpsUtil gpsUtil = GpsUtil.getInstance(context);
@@ -44,16 +49,22 @@ public class SwitchReceiver extends BroadcastReceiver {
                 floatingMapIntent = new Intent(context, MapFloatingService.class);
                 if (Utils.isServiceRunning(context, MapFloatingService.class.getName())) {
                     floatingMapIntent.putExtra(MapFloatingService.EXTRA_CLOSE, true);
+                    EventBus.getDefault().post((new LaunchEvent(MapFloatingService.class).setToClose(true)));
+                } else {
+                    EventBus.getDefault().post((new LaunchEvent(MapFloatingService.class).setToClose(false)));
                 }
             } else {
                 floatingMapIntent = new Intent(context, AutoWidgetFloatingService.class);
                 if (Utils.isServiceRunning(context, AutoWidgetFloatingService.class.getName())) {
                     floatingMapIntent.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
+                    EventBus.getDefault().post((new LaunchEvent(MapFloatingService.class).setToClose(true)));
+                } else {
+                    EventBus.getDefault().post((new LaunchEvent(MapFloatingService.class).setToClose(false)));
                 }
             }
-            if(floatingMapIntent != null) {
+            /*if(floatingMapIntent != null) {
                 context.startService(floatingMapIntent);
-            }
+            }*/
         }
         if(SWITCH_TARGET_AUTOAMAP.equalsIgnoreCase(target)){
             Intent appIntent = context.getPackageManager().getLaunchIntentForPackage(Constant.AMAPAUTOPACKAGENAME);
@@ -71,7 +82,11 @@ public class SwitchReceiver extends BroadcastReceiver {
                 if(Utils.isServiceRunning(context, LyricFloatingService.class.getName())){
                     Intent lycFloatingService = new Intent(context, LyricFloatingService.class);
                     lycFloatingService.putExtra(LyricFloatingService.EXTRA_CLOSE,true);
-                    context.startService(lycFloatingService);
+                    //context.startService(lycFloatingService);
+                    EventBus.getDefault().post((new LaunchEvent(LyricFloatingService.class).setToClose(true)));
+
+                } else {
+                    EventBus.getDefault().post((new LaunchEvent(LyricFloatingService.class).setToClose(false)));
                 }
                 Toast.makeText(context, "歌词功能关闭", Toast.LENGTH_SHORT).show();
             }

@@ -1,9 +1,13 @@
 package com.huivip.gpsspeedwidget.beans;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class LaunchEvent {
     private int delaySeconds=0;
     private Class<?> serviceClass;
     private boolean toClose=false;
+    private Map<String,String> extentParameters=new HashMap<>();
 
     public LaunchEvent(Class<?> serviceClass) {
         this.serviceClass = serviceClass;
@@ -21,15 +25,26 @@ public class LaunchEvent {
         return delaySeconds;
     }
 
-    public void setDelaySeconds(int delaySeconds) {
+    public LaunchEvent setDelaySeconds(int delaySeconds) {
         this.delaySeconds = delaySeconds;
+        return this;
     }
 
     public boolean isToClose() {
         return toClose;
     }
 
-    public void setToClose(boolean toClose) {
+    public LaunchEvent setToClose(boolean toClose) {
         this.toClose = toClose;
+        return this;
+    }
+
+    public Map<String, String> getExtentParameters() {
+        return extentParameters;
+    }
+
+    public LaunchEvent setExtentParameters(Map<String, String> extentParameters) {
+        this.extentParameters = extentParameters;
+        return this;
     }
 }

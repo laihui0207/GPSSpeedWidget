@@ -22,6 +22,7 @@ import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.BootEvent;
+import com.huivip.gpsspeedwidget.beans.FloatWindowsLaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.AutoMapBoardReceiver;
@@ -264,10 +265,18 @@ public class BootStartService extends Service {
         }
         stopForeground(true);
     }
-
+    @Subscribe
+    public void launchFloatWindow(FloatWindowsLaunchEvent event){
+        Utils.startFloatingWindows(getApplicationContext(),event.isEnable());
+    }
     @Subscribe
     public void launchService(LaunchEvent event) {
         Intent mService = new Intent(AppObject.getContext(), event.getServiceClass());
+        if(event.getExtentParameters()!=null && event.getExtentParameters().size()>0){
+            for(String key:event.getExtentParameters().keySet()){
+                mService.putExtra(key,event.getExtentParameters().get(key));
+            }
+        }
         if (event.getDelaySeconds() > 0) {
             new Handler().postDelayed(() -> {
                 if (event.isToClose()) {

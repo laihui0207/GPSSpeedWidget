@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<appwidget-provider android:minWidth="50.0dip" android:minHeight="60.0dip" android:updatePeriodMillis="14400000"
+<appwidget-provider android:minWidth="50.0dip" android:minHeight="60.0dip" android:updatePeriodMillis="144000000"
     android:minResizeHeight="5dip" android:minResizeWidth="5dip"
                     android:initialLayout="@layout/music_vertical_widget"
                     android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"

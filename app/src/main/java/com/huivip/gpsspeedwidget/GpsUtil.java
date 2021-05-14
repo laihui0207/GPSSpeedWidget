@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LocationEnabledEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.listener.CatchRoadReceiver;
@@ -173,8 +174,9 @@ public class GpsUtil {
         Toast.makeText(context, "GPS服务开启", Toast.LENGTH_SHORT).show();
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
        if(!Utils.isServiceRunning(context,AutoXunHangService.class.getName())) {
-           Intent xunhangService = new Intent(context, AutoXunHangService.class);
-           context.startService(xunhangService);
+           /*Intent xunhangService = new Intent(context, AutoXunHangService.class);
+           context.startService(xunhangService);*/
+           EventBus.getDefault().post(new LaunchEvent(AutoXunHangService.class));
        }
        /* Intent recordService = new Intent(context, RecordGpsHistoryService.class);
         context.startService(recordService);*/
@@ -186,9 +188,14 @@ public class GpsUtil {
                 this.locationTimer.cancel();
                 this.locationTimer.purge();
             }
-            Intent xunhangService=new Intent(context, AutoXunHangService.class);
+            LaunchEvent launchEvent = new LaunchEvent(AutoXunHangService.class);
+            launchEvent.setToClose(true);
+            EventBus.getDefault().post(launchEvent);
+
+           /* Intent xunhangService=new Intent(context, AutoXunHangService.class);
             xunhangService.putExtra(AutoXunHangService.EXTRA_CLOSE,true);
-            context.startService(xunhangService);
+            context.startService(xunhangService);*/
+
           /*  Intent recordService = new Intent(context, RecordGpsHistoryService.class);
             recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
             context.startService(recordService);*/

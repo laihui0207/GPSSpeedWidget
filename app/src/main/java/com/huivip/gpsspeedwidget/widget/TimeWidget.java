@@ -23,11 +23,8 @@ public class TimeWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent paramIntent) {
         super.onReceive(context, paramIntent);
-
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.time_weather_widget);
-
         views.setOnClickPendingIntent(R.id.v_time_base,null);
-
         ComponentName localComponentName = new ComponentName(context, TimeWidget.class);
         AppWidgetManager.getInstance(context).updateAppWidget(localComponentName, views);
     }
@@ -52,9 +49,6 @@ public class TimeWidget extends AppWidgetProvider {
     public void onDisabled(Context context) {
         PrefUtils.setTimeHWidgetEnable(context,false);
         if(Utils.isServiceRunning(context, TimeWidgetService.class.getName())){
-            /*Intent widgetService=new Intent(context,TimeWidgetService.class);
-            widgetService.putExtra(TimeWidgetService.EXTRA_CLOSE,true);
-            Utils.startService(context,widgetService);*/
             LaunchEvent event=new LaunchEvent(TimeWidgetService.class);
             event.setToClose(true);
             event.setDelaySeconds(3);

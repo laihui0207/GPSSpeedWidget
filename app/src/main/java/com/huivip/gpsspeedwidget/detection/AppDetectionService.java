@@ -7,11 +7,13 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
 
+import com.huivip.gpsspeedwidget.beans.FloatWindowsLaunchEvent;
 import com.huivip.gpsspeedwidget.service.BootStartService;
-import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Set;
 
@@ -46,11 +48,6 @@ public class AppDetectionService extends AccessibilityService {
         if (enabledApps == null) {
             updateDesktopApps();
         }
-       /* if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())){
-            Intent bootService=new Intent(getApplicationContext(),BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
-            startService(bootService);
-        }*/
         if(!AppSettings.get().isEnableSpeed()){
             return ;
         }
@@ -70,16 +67,12 @@ public class AppDetectionService extends AccessibilityService {
         if (!isActivity) {
             return;
         }
-       /* if (componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOLITEPACKAGENAME)
-                || componentName.getPackageName().equalsIgnoreCase(Constant.AMAPAUTOPACKAGENAME)) {
-            gpsUtil=GpsUtil.getInstance(getApplicationContext());
-            gpsUtil.setAutoNavi_on_Frontend(true);
-        }*/
 
         boolean onDesktop = enabledApps.contains(componentName.getPackageName());
         PrefUtils.setOnDesktop(getApplicationContext(),onDesktop);
-        Utils.startFloatingWindows(getApplicationContext(),true);
-        if(!Utils.isServiceRunning(getApplicationContext(), WeatherService.class.getName())) {
+        //Utils.startFloatingWindows(getApplicationContext(),true);
+        EventBus.getDefault().post(new FloatWindowsLaunchEvent(true));
+        if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())) {
             Intent bootStartService = new Intent(getApplicationContext(), BootStartService.class);
             bootStartService.putExtra(BootStartService.START_RESUME, true);
             Utils.startService(getApplicationContext(), bootStartService, true);

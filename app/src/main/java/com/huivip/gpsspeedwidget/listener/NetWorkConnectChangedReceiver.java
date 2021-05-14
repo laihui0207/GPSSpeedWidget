@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.service.AutoXunHangService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.NaviTrackService;
@@ -20,12 +21,14 @@ public class NetWorkConnectChangedReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if(Utils.isNetworkConnected(context)) {
             if(AppSettings.get().isEnableXunHang() && !Utils.isServiceRunning(context, AutoXunHangService.class.getName())) {
-                Intent xunHangService=new Intent(context, AutoXunHangService.class);
-                context.startService(xunHangService);
+                /*Intent xunHangService=new Intent(context, AutoXunHangService.class);
+                context.startService(xunHangService);*/
+                EventBus.getDefault().post(new LaunchEvent(AutoXunHangService.class));
             }
             if(AppSettings.get().isEnableTracker() && !Utils.isServiceRunning(context,NaviTrackService.class.getName())) {
-                Intent trackService=new Intent(context, NaviTrackService.class);
-                context.startService(trackService);
+              /*  Intent trackService=new Intent(context, NaviTrackService.class);
+                context.startService(trackService);*/
+                EventBus.getDefault().post(new LaunchEvent(NaviTrackService.class));
             }
             new Thread(() -> Utils.registerSelf(context)).start();
             if(AppSettings.get().isAutoCheckUpdate()) {

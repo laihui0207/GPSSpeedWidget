@@ -1,18 +1,18 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
-        targetSdkVersion 29
-        versionCode 291
+        targetSdkVersion 30
+        versionCode 293
         versionName "3.1.2"
         flavorDimensions "versionCode"
         ndk {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
-            abiFilters "armeabi-v7a","x86"
+            abiFilters "armeabi-v7a"
         }
         multiDexEnabled true
         /*javaCompileOptions {

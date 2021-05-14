@@ -15,10 +15,10 @@ import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.AimlessStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
+import com.huivip.gpsspeedwidget.beans.FloatWindowsLaunchEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.widget.GpsSpeedNumberWidget;
 
 import org.greenrobot.eventbus.EventBus;
@@ -87,7 +87,8 @@ public class GpsSpeedNumberService extends Service {
                     gpsUtil.startLocationService();
                     PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                     if(PrefUtils.isUserManualClosedService(getApplicationContext())) {
-                        Utils.startFloatingWindows(getApplicationContext(),true);
+                       // Utils.startFloatingWindows(getApplicationContext(),true);
+                        EventBus.getDefault().post(new FloatWindowsLaunchEvent(true));
                         PrefUtils.setUserManualClosedServer(getApplicationContext(), false);
                     }
                 }
@@ -104,7 +105,9 @@ public class GpsSpeedNumberService extends Service {
                     this.locationTimer.purge();
                     this.locationTimer = null;
                 }
-                Utils.startFloatingWindows(getApplicationContext(),false);
+                //Utils.startFloatingWindows(getApplicationContext(),false);
+                EventBus.getDefault().post(new FloatWindowsLaunchEvent(false));
+
                 PrefUtils.setUserManualClosedServer(getApplicationContext(), true);
                 stopSelf();
             }

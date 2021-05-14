@@ -263,7 +263,11 @@ public final class Desktop extends ViewPager implements DesktopCallback {
     }
 
     public final CellContainer getCurrentPage() {
-        return _pages.get(getCurrentItem());
+        if(_pages.size()>0) {
+            return _pages.get(getCurrentItem());
+        } else {
+            return null;
+        }
     }
 
     public final void setPageIndicator(PagerIndicator pageIndicator) {

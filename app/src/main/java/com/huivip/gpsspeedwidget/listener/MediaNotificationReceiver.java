@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.beans.MusicEvent;
 import com.huivip.gpsspeedwidget.beans.MusicStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.PlayerStatusEvent;
@@ -18,26 +19,33 @@ import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.TextFloatingService;
 import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MediaNotificationReceiver extends BroadcastReceiver {
     private String preSongName;
     private static boolean spotifyPlaying = false;
     private static final String KW_PLAYER_STATUS = "cn.kuwo.kwmusicauto.action.PLAYER_STATUS";
     AudioManager audioManager;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
         if (extras != null)
             try {
                 extras.getInt("state");
+                FileUtil.saveLogToFile(extras.toString());
             } catch (BadParcelableException e) {
                 return;
             }
+
         if (extras == null || (extras.getString("artist") == null && extras.getString("track") == null &&
-                extras.getString("play_music_name") ==null && extras.getString("play_music_artist") ==null )
+                extras.getString("play_music_name") == null && extras.getString("play_music_artist") == null)
         ) {
             return;
         }
@@ -53,43 +61,43 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
                                 durationObject instanceof Integer ? (((Integer) durationObject).longValue() * 1000) :
                                         durationObject instanceof String ? (Double.valueOf((String) durationObject)).longValue() : -1;
         String player = extras.getString("player");
-        String songName=intent.getStringExtra("track");
-        String artistName=intent.getStringExtra("artist");
-        String album=intent.getStringExtra("album");
-        if(intent.getAction().equalsIgnoreCase(KW_PLAYER_STATUS)){
-            songName=intent.getStringExtra("play_music_name");
-            artistName=intent.getStringExtra("play_music_artist");
-            album=intent.getStringExtra("play_music_album");
-            EventBus.getDefault().post(new PlayerStatusEvent(PlayerStatusEvent.KW,true));
+        String songName = intent.getStringExtra("track");
+        String artistName = intent.getStringExtra("artist");
+        String album = intent.getStringExtra("album");
+        if (intent.getAction().equalsIgnoreCase(KW_PLAYER_STATUS)) {
+            songName = intent.getStringExtra("play_music_name");
+            artistName = intent.getStringExtra("play_music_artist");
+            album = intent.getStringExtra("play_music_album");
+            EventBus.getDefault().post(new PlayerStatusEvent(PlayerStatusEvent.KW, true));
         }
         // zx music
-        if(intent.getAction().equalsIgnoreCase("update.widget.update_proBar")){
+        if (intent.getAction().equalsIgnoreCase("update.widget.update_proBar")) {
             songName = intent.getStringExtra("curplaysong");
             position = intent.getIntExtra("proBarvalue", 0);
-            EventBus.getDefault().post(new PlayerStatusEvent(PlayerStatusEvent.ZX,true));
+            EventBus.getDefault().post(new PlayerStatusEvent(PlayerStatusEvent.ZX, true));
 
         }
-        if("com.ijidou.card.music".equalsIgnoreCase(intent.getAction())){
+        if ("com.ijidou.card.music".equalsIgnoreCase(intent.getAction())) {
             artistName = intent.getStringExtra("music_artist");
             songName = intent.getStringExtra("music_title");
-            EventBus.getDefault().post(new PlayerStatusEvent(PlayerStatusEvent.JD,true));
+            EventBus.getDefault().post(new PlayerStatusEvent(PlayerStatusEvent.JD, true));
 
         }
-        if("com.ijidou.action.UPDATE_PROGRESS".equalsIgnoreCase(intent.getAction())){
-            position=intent.getIntExtra("elapse", 0);
+        if ("com.ijidou.action.UPDATE_PROGRESS".equalsIgnoreCase(intent.getAction())) {
+            position = intent.getIntExtra("elapse", 0);
         }
         if (artistName != null && artistName.trim().startsWith("<") && artistName.trim().endsWith(">") && artistName.contains("unknown"))
             artistName = "";
 
-        StringBuffer showString=new StringBuffer();
+        StringBuffer showString = new StringBuffer();
         if (artistName != null && artistName.trim().startsWith("<") && artistName.trim().endsWith(">") && artistName.contains("unknown")) {
             artistName = "";
         }
-        if(!TextUtils.isEmpty(songName)){
-            showString.append("歌名:"+songName).append("\n");
+        if (!TextUtils.isEmpty(songName)) {
+            showString.append("歌名:" + songName).append("\n");
         }
-        if(!TextUtils.isEmpty(artistName)){
-            showString.append("歌手:"+artistName).append("\n");
+        if (!TextUtils.isEmpty(artistName)) {
+            showString.append("歌手:" + artistName).append("\n");
         }
         /*if(!TextUtils.isEmpty(album)){
             showString.append("唱片:"+album).append("\n");
@@ -107,14 +115,14 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         String currentArtist = current.getString("artist", "");
         String currentTrack = current.getString("track", "");
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        if(currentArtist!=null && currentArtist.equalsIgnoreCase(artistName) && audioManager.isMusicActive() ){
+        if (currentArtist != null && currentArtist.equalsIgnoreCase(artistName) && audioManager.isMusicActive()) {
             return;
         }
         SharedPreferences.Editor editor = current.edit();
         editor.putString("artist", artistName);
         editor.putString("track", songName);
         editor.putString("player", player);
-        if (!(currentArtist.equals(artistName) && currentTrack.equals(songName) && position == -1)){
+        if (!(currentArtist.equals(artistName) && currentTrack.equals(songName) && position == -1)) {
             editor.putLong("position", position);
         }
         editor.putBoolean("playing", isPlaying);
@@ -127,27 +135,36 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         else
             editor.apply();
 
-        MusicStatusUpdateEvent event=new MusicStatusUpdateEvent(isPlaying, (int) position);
+        MusicStatusUpdateEvent event = new MusicStatusUpdateEvent(isPlaying, (int) position);
         event.setDuration(duration.intValue());
         EventBus.getDefault().post(event);
         if (AppSettings.get().isLyricEnable()) {
             if (!TextUtils.isEmpty(showString.toString())) {
-                Intent textFloat = new Intent(context, TextFloatingService.class);
+               /* Intent textFloat = new Intent(context, TextFloatingService.class);
                 textFloat.putExtra(TextFloatingService.SHOW_TEXT, showString.toString());
                 textFloat.putExtra(TextFloatingService.SHOW_TIME, 10);
-                context.startService(textFloat);
+                context.startService(textFloat);*/
+                LaunchEvent launchEvent = new LaunchEvent(TextFloatingService.class);
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(TextFloatingService.SHOW_TEXT, showString.toString());
+                params.put(TextFloatingService.SHOW_TIME, "10");
+                launchEvent.setExtentParameters(params);
+                EventBus.getDefault().post(launchEvent);
+
             }
-            if(!Utils.isServiceRunning(context,LyricService.class.getName())) {
-                Intent lycService = new Intent(context, LyricService.class);
-                context.startService(lycService);
+            if (!Utils.isServiceRunning(context, LyricService.class.getName())) {
+                // Intent lycService = new Intent(context, LyricService.class);
+                // context.startService(lycService);
+                EventBus.getDefault().post(new LaunchEvent(LyricService.class));
+
             }
         }
-        EventBus.getDefault().post(new MusicEvent(songName,artistName));
+        EventBus.getDefault().post(new MusicEvent(songName, artistName));
 
-        if(!Utils.isServiceRunning(context, WeatherService.class.getName())){
-            Intent bootService=new Intent(context, BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT,true);
-            Utils.startService(context,bootService,true);
+        if (!Utils.isServiceRunning(context, WeatherService.class.getName())) {
+            Intent bootService = new Intent(context, BootStartService.class);
+            bootService.putExtra(BootStartService.START_BOOT, true);
+            Utils.startService(context, bootService, true);
         }
     }
 }

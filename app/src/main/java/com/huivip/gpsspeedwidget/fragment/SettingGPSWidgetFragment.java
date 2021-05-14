@@ -23,6 +23,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.FloatWindowsLaunchEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
@@ -173,9 +174,12 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         }
         if(key.equalsIgnoreCase(getString(R.string.pref_key__speed_enable))) {
             if (AppSettings.get().isEnableSpeed()) {
-                Utils.startFloatingWindows(getContext(), true);
+                //Utils.startFloatingWindows(getContext(), true);
+                EventBus.getDefault().post(new FloatWindowsLaunchEvent(true));
             } else {
-                Utils.startFloatingWindows(getContext(), false);
+                //Utils.startFloatingWindows(getContext(), false);
+                EventBus.getDefault().post(new FloatWindowsLaunchEvent(false));
+
             }
         }
         if (key.equals(getString(R.string.pref_key__Road_line_enable))) {

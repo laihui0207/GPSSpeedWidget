@@ -10,14 +10,9 @@ import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.MainActivity;
-import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
-import com.huivip.gpsspeedwidget.service.GpsSpeedMeterService;
 import com.huivip.gpsspeedwidget.service.GpsSpeedNumberService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
-
-import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -72,7 +67,6 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         PrefUtils.setWidgetActived(context,false);
         PrefUtils.setEnabledNumberWidget(context,false);
-        context.stopService(new Intent(context, GpsSpeedMeterService.class));
         super.onDeleted(context, appWidgetIds);
     }
 
@@ -91,15 +85,6 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
         PrefUtils.setUserManualClosedServer(context,false);
         PrefUtils.setEnabledNumberWidget(context,false);
         PrefUtils.setWidgetActived(context,false);
-        if(Utils.isServiceRunning(context, GpsSpeedNumberService.class.getName())){
-           /* Intent widgetService=new Intent(context, GpsSpeedNumberService.class);
-            widgetService.putExtra(GpsSpeedNumberService.EXTRA_CLOSE,true);
-            context.startService(widgetService);*/
-            LaunchEvent event=new LaunchEvent(GpsSpeedNumberService.class);
-            event.setToClose(true);
-            event.setDelaySeconds(3);
-            EventBus.getDefault().post(event);
-        }
         super.onDisabled(context);
     }
     private PendingIntent sendAutoBroadCast(Context context, int key, int type){

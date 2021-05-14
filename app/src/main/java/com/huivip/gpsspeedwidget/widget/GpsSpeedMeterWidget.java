@@ -9,12 +9,8 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.service.GpsSpeedMeterService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
-
-import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -42,7 +38,6 @@ public class GpsSpeedMeterWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         PrefUtils.setWidgetActived(context,false);
         PrefUtils.setEnabledWatchWidget(context,false);
-        context.stopService(new Intent(context, GpsSpeedMeterService.class));
         super.onDeleted(context, appWidgetIds);
     }
 
@@ -61,12 +56,6 @@ public class GpsSpeedMeterWidget extends AppWidgetProvider {
         PrefUtils.setUserManualClosedServer(context,false);
         PrefUtils.setEnabledWatchWidget(context,false);
         PrefUtils.setWidgetActived(context,false);
-        if(Utils.isServiceRunning(context, GpsSpeedMeterService.class.getName())){
-            LaunchEvent event=new LaunchEvent(GpsSpeedMeterService.class);
-            event.setToClose(true);
-            event.setDelaySeconds(3);
-            EventBus.getDefault().post(event);
-        }
         super.onDisabled(context);
     }
 

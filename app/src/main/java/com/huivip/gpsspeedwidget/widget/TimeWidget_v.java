@@ -8,12 +8,7 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
-import com.huivip.gpsspeedwidget.beans.LaunchEvent;
-import com.huivip.gpsspeedwidget.service.TimeWidgetVerticalService;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
-
-import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -49,15 +44,6 @@ public class TimeWidget_v extends AppWidgetProvider {
 
     @Override
     public void onDisabled(Context context) {
-        if(Utils.isServiceRunning(context, TimeWidgetVerticalService.class.getName())){
-           /* Intent widgetService=new Intent(context, TimeWidgetVerticalService.class);
-            widgetService.putExtra(TimeWidgetVerticalService.EXTRA_CLOSE,true);
-            Utils.startService(context,widgetService);*/
-           LaunchEvent event=new LaunchEvent(TimeWidgetVerticalService.class);
-           event.setDelaySeconds(3);
-           event.setToClose(true);
-           EventBus.getDefault().post(event);
-        }
         PrefUtils.setTimeVWidgetEnable(context,false);
         super.onDisabled(context);
     }

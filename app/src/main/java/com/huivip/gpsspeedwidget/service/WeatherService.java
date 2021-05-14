@@ -22,6 +22,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.FloatWindowsLaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.NightNowEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
@@ -31,7 +32,6 @@ import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.DateUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
-import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -228,7 +228,9 @@ public class WeatherService extends Service implements AMapLocationListener {
                     }
                 }
                 if(!running && gpsUtil.getKmhSpeed()>0){
-                    Utils.startFloatingWindows(getApplicationContext().getApplicationContext(),true);
+                    //Utils.startFloatingWindows(getApplicationContext().getApplicationContext(),true);
+                    EventBus.getDefault().post(new FloatWindowsLaunchEvent(true));
+
                 }
                 if(lastedLocation==null || aMapLocation.distanceTo(lastedLocation)>50){
                     if(lastedLocation!=null && lastedLocation!=aMapLocation) {
@@ -280,7 +282,9 @@ public class WeatherService extends Service implements AMapLocationListener {
                 if (gpsUtil.getSpeed() == 0 && running) {
                     running = false;
                     if (AppSettings.get().isCloseFlattingOnStop()) {
-                        Utils.startFloatingWindows(getApplicationContext().getApplicationContext(), false);
+                        //Utils.startFloatingWindows(getApplicationContext().getApplicationContext(), false);
+                        EventBus.getDefault().post(new FloatWindowsLaunchEvent(false));
+
                     }
                     boolean tempNight= DateUtil.isNight(lastedLocation.getLongitude(),lastedLocation.getLatitude(),new Date());
                     if(tempNight!= isNight){

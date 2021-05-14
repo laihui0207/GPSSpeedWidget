@@ -628,14 +628,17 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
         item._spanX = (appWidgetInfo.minWidth - 1) / pages.get(desktop.getCurrentItem()).getCellWidth() + 1;
         item._spanY = (appWidgetInfo.minHeight - 1) / pages.get(desktop.getCurrentItem()).getCellHeight() + 1;
-        Point point = desktop.getCurrentPage().findFreeSpace(item._spanX, item._spanY);
-        if (point != null) {
-            item._x = point.x;
-            item._y = point.y;
+        CellContainer cellContainer=desktop.getCurrentPage();
+        if(cellContainer!=null){
+            Point point = cellContainer.findFreeSpace(item._spanX, item._spanY);
+            if (point != null) {
+                item._x = point.x;
+                item._y = point.y;
 
-            // add item to database
-            _db.saveItem(item, desktop.getCurrentItem(), ItemPosition.Desktop);
-            desktop.addItemToPage(item, desktop.getCurrentItem());
+                // add item to database
+                _db.saveItem(item, desktop.getCurrentItem(), ItemPosition.Desktop);
+                desktop.addItemToPage(item, desktop.getCurrentItem());
+        }
         } else {
             Tool.toast(this, R.string.toast_not_enough_space);
         }
@@ -703,7 +706,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         unregisterReceiver(_timeChangedReceiver);
         EventBus.getDefault().unregister(this);
         started=false;
-        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
