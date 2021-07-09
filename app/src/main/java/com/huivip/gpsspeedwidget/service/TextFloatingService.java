@@ -11,15 +11,23 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.view.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -52,8 +60,9 @@ public class TextFloatingService extends Service{
                 stopSelf();
                 return super.onStartCommand(intent, flags, startId);
             }
-            if(intent.getIntExtra(SHOW_TIME,0)>0){
-                int delayTimeStop=intent.getIntExtra(SHOW_TIME,0);
+            String showTime=intent.getStringExtra(SHOW_TIME);
+            if(showTime!=null && Integer.parseInt(showTime)>0){
+                int delayTimeStop=Integer.parseInt(showTime);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

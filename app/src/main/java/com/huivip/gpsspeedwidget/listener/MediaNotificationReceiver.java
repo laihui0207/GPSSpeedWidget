@@ -17,7 +17,6 @@ import com.huivip.gpsspeedwidget.beans.PlayerStatusEvent;
 import com.huivip.gpsspeedwidget.lyrics.LyricService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.TextFloatingService;
-import com.huivip.gpsspeedwidget.service.WeatherService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.Utils;
@@ -38,8 +37,10 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         Bundle extras = intent.getExtras();
         if (extras != null)
             try {
-                extras.getInt("state");
-                FileUtil.saveLogToFile(extras.toString());
+                for (String key : extras.keySet()) {
+                    FileUtil.saveLogToFile(key + " : " + (extras.get(key) != null ? extras.get(key) : "NULL"));
+                }
+
             } catch (BadParcelableException e) {
                 return;
             }
@@ -152,16 +153,18 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
                 EventBus.getDefault().post(launchEvent);
 
             }
-            if (!Utils.isServiceRunning(context, LyricService.class.getName())) {
+           // if (!Utils.isServiceRunning(context, LyricService.class.getName())) {
                 // Intent lycService = new Intent(context, LyricService.class);
                 // context.startService(lycService);
                 EventBus.getDefault().post(new LaunchEvent(LyricService.class));
 
-            }
+           // }
         }
-        EventBus.getDefault().post(new MusicEvent(songName, artistName));
+        if(!TextUtils.isEmpty(songName) && !songName.equalsIgnoreCase("null")){
+            EventBus.getDefault().post(new MusicEvent(songName, artistName));
+        }
 
-        if (!Utils.isServiceRunning(context, WeatherService.class.getName())) {
+        if (!Utils.isServiceRunning(context, BootStartService.class.getName())) {
             Intent bootService = new Intent(context, BootStartService.class);
             bootService.putExtra(BootStartService.START_BOOT, true);
             Utils.startService(context, bootService, true);

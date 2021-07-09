@@ -222,7 +222,7 @@ public class MapFloatingService extends Service {
                 });
             }
         };
-        this.locationTimer.schedule(this.locationScanTask, 0L, 500L);
+        this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         EventBus.getDefault().register(this);
         updateTime();
         broadcastReceiver=new BroadcastReceiver() {

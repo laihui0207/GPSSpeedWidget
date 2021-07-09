@@ -52,15 +52,6 @@ public class GpsSpeedNumberWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-       /* if (PrefUtils.isSpeedNumberHWidgetEnable(context) && !Utils.isServiceRunning(context, GpsSpeedNumberService.class.getName())) {
-            Intent widgetService = new Intent(context, GpsSpeedNumberService.class);
-            Utils.startForegroundService(context, widgetService);
-        }*/
-       /* if (!Utils.isServiceRunning(context, WeatherService.class.getName())) {
-            Intent bootService = new Intent(context, BootStartService.class);
-            bootService.putExtra(BootStartService.START_BOOT, true);
-            context.startService(bootService);
-        }*/
     }
 
     @Override

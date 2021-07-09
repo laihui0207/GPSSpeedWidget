@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
 import com.huivip.gpsspeedwidget.beans.WeatherEvent;
 import com.huivip.gpsspeedwidget.model.WeatherItem;
@@ -60,8 +61,9 @@ public class TimeWidgetService extends Service {
         this.timeWidget_h = new ComponentName(this, TimeWidget.class);
         EventBus.getDefault().register(this);
         if (!Utils.isServiceRunning(getApplicationContext(), WeatherService.class.getName())) {
-            Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
-            startService(weatherService);
+           /* Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
+            startService(weatherService);*/
+            EventBus.getDefault().post(new LaunchEvent(WeatherService.class));
             EventBus.getDefault().post(new SearchWeatherEvent(false));
         }
         if(!AppSettings.get().isShow24TimeFormat()){

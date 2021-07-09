@@ -173,7 +173,7 @@ public class LyricService extends Service {
             lycFloatingService.putExtra(LyricFloatingService.LYRIC_CONTENT, lyricContent);
             params.put(LyricFloatingService.LYRIC_CONTENT, lyricContent);
             lycFloatingService.putExtra(LyricFloatingService.DURATION, duration);
-            params.put(LyricFloatingService.DURATION, Long.toString(duration));
+            params.put(LyricFloatingService.DURATION, duration!=null ? Long.toString(duration): null);
             launchEvent.setExtentParameters(params);
             EventBus.getDefault().post(launchEvent);
             //Utils.startService(getApplicationContext(),lycFloatingService, false);

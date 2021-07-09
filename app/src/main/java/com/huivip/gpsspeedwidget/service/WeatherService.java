@@ -23,6 +23,7 @@ import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.beans.FloatWindowsLaunchEvent;
+import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.NightNowEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
@@ -42,6 +43,8 @@ import org.json.JSONObject;
 
 import java.text.NumberFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WeatherService extends Service implements AMapLocationListener {
     String cityName;
@@ -188,10 +191,16 @@ public class WeatherService extends Service implements AMapLocationListener {
                 EventBus.getDefault().post(new PlayAudioEvent(resultText,true));
             }
             if(!TextUtils.isEmpty(showStr)) {
-                Intent textFloat=new Intent(getApplicationContext(),TextFloatingService.class);
+                /*Intent textFloat=new Intent(getApplicationContext(),TextFloatingService.class);
                 textFloat.putExtra(TextFloatingService.SHOW_TEXT,showStr);
                 textFloat.putExtra(TextFloatingService.SHOW_TIME,10);
-                getApplicationContext().startService(textFloat);
+                getApplicationContext().startService(textFloat);*/
+                LaunchEvent launchEvent = new LaunchEvent(TextFloatingService.class);
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(TextFloatingService.SHOW_TEXT, showStr);
+                params.put(TextFloatingService.SHOW_TIME, "10");
+                launchEvent.setExtentParameters(params);
+                EventBus.getDefault().post(launchEvent);
             }
             resultText =null;
         }

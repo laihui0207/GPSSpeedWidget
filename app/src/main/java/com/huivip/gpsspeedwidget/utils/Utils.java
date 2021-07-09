@@ -377,11 +377,11 @@ public abstract class Utils {
     private static NotificationManager notificationManager = null;
    static boolean isCreateChannel = false;
 
-    public static  Notification buildNotification(Context context) {
+    public static  Notification buildNotification(Context context,String channelId) {
 
         Notification.Builder builder = null;
         Notification notification = null;
-        String channelId = context.getPackageName();
+       // String channelId = context.getPackageName();
         if (android.os.Build.VERSION.SDK_INT >= 26) {
             //Android O上对Notification进行了修改，如果设置的targetSDKVersion>=26建议使用此种方式创建通知栏
             if (null == notificationManager) {

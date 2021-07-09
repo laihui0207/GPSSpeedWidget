@@ -112,7 +112,11 @@ public class LyricFloatingService extends Service{
             lyrcContent=intent.getStringExtra(LYRIC_CONTENT);//FileUtil.loadLyric(getApplicationContext(),inputSongName,inputArtistName);
             songName=intent.getStringExtra(SONGNAME);
             artistName=intent.getStringExtra(ARTIST);
-            long position=intent.getLongExtra(POSITION,0L);
+            long position=0L;
+            String positionString=intent.getStringExtra(POSITION);
+            if(positionString!=null) {
+               position=Long.parseLong(positionString);
+            }
           /*  startTime=System.currentTimeMillis()-position;//-1000;
             lrcView.setLrc(lyrcContent);
             lrcView.setHighLineColor(AppSettings.get().getLyricFontColor());

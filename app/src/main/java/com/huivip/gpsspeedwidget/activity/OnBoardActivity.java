@@ -15,16 +15,12 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 
 import agency.tango.materialintroscreen.MaterialIntroActivity;
 import agency.tango.materialintroscreen.SlideFragment;
-import agency.tango.materialintroscreen.SlideFragmentBuilder;
-import agency.tango.materialintroscreen.widgets.OverScrollViewPager;
-import agency.tango.materialintroscreen.widgets.SwipeableViewPager;
 
 public class OnBoardActivity extends MaterialIntroActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // TODO remove after sufficient time has passed
         if (!getSharedPreferences("quickSettings", Context.MODE_PRIVATE).getBoolean("firstStart", true)) {
             getSharedPreferences("app", Context.MODE_PRIVATE).edit().putBoolean(getResources().getString(R.string.pref_key__show_intro), false).commit();
@@ -34,7 +30,7 @@ public class OnBoardActivity extends MaterialIntroActivity {
             return;
         }
 
-        OverScrollViewPager overScrollLayout = findViewById(agency.tango.materialintroscreen.R.id.view_pager_slides);
+       /* OverScrollViewPager overScrollLayout = findViewById(agency.tango.materialintroscreen.R.id.view_pager_slides);
         SwipeableViewPager viewPager = overScrollLayout.getOverScrollView();
         viewPager.setOverScrollMode(View.OVER_SCROLL_NEVER);
 
@@ -62,7 +58,7 @@ public class OnBoardActivity extends MaterialIntroActivity {
                 .image(R.drawable.intro_4)
                 .title(getString(R.string.pref_title__search_bar))
                 .description(getString(R.string.intro4_text))
-                .build());
+                .build());*/
     }
 
     @Override
@@ -91,11 +87,11 @@ public class OnBoardActivity extends MaterialIntroActivity {
         startBootService(true);
     }
     private void startBootService(boolean fromResum){
-        //if(!Utils.isServiceRunning(getApplicationContext(), WeatherService.class.getName())){
+        if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())){
             Intent bootStartService=new Intent(getApplicationContext(), BootStartService.class);
             bootStartService.putExtra(BootStartService.START_RESUME,fromResum);
             Utils.startService(getApplicationContext(),bootStartService, true);
-        //}
+        }
     }
     public static class CustomSlide extends SlideFragment {
         public CustomSlide() {
