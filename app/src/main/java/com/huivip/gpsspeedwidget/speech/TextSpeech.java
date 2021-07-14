@@ -20,8 +20,10 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
     private static TextSpeech instance;
     private TextSpeech(Context context){
         this.context=context;
-        if(mts==null){
-            mts=new TextToSpeech(context,this);
+        try {
+            mts = new TextToSpeech(context, this);
+        } catch (Exception e){
+            mts = null;
         }
     }
     public static TextSpeech getInstance(Context context){
@@ -37,7 +39,7 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
 
     @Override
     public void speak(String text, boolean force) {
-        if(inited) {
+        if(inited && mts!=null) {
             if (PrefUtils.isEnableAudioService(context) && (force || PrefUtils.isEnableTempAudioService(context))) {
                 beforeSpeak();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

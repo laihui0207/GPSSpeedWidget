@@ -22,9 +22,6 @@ public class SpeechFactory {
 
     public TTS getTTSEngine(String type){
         if(type==null) return null;
-        if(TEXTTTS.equalsIgnoreCase(type)){
-            return TextSpeech.getInstance(context);
-        }
         return TextSpeech.getInstance(context);
     }
 }
