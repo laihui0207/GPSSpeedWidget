@@ -56,6 +56,7 @@ import com.huivip.gpsspeedwidget.view.ImageWheelView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.xutils.x;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -138,6 +139,7 @@ public class MapFloatingService extends Service {
         } else {
             aMap.setMapType(AMap.MAP_TYPE_NAVI);
         }
+        getDistrictFromAuto();
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
@@ -305,6 +307,14 @@ public class MapFloatingService extends Service {
         } else {
             daoHang_roadLine.setVisibility(View.INVISIBLE);
         }
+    }
+    private void getDistrictFromAuto() {
+        x.task().postDelayed(() -> {
+            Intent intent = new Intent();
+            intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+            intent.putExtra("KEY_TYPE", 10029);
+            sendBroadcast(intent);
+        }, 1000 * 10);
     }
     private Bitmap getBitmap(float bearing) {
         Bitmap bitmap = null;
