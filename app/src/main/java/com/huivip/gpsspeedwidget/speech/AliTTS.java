@@ -69,4 +69,9 @@ public class AliTTS extends TTSService {
     public void auth() {
 
     }
+
+    @Override
+    public String createAudio(String text) {
+        return null;
+    }
 }

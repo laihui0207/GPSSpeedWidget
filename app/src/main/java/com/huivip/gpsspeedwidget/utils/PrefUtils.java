@@ -139,6 +139,7 @@ public abstract class PrefUtils {
     static final String ALTITUDE_WINDOWS_FONTSIZE="com.huivip.altitude.window.fontSize";
     static final String ALTITUDE_ALTER_START="com.huivip.altitude.alter.start";
     static final String ALTITUDE_ALTER_FREQUENCY="com.huivip.altitude.alter.frequency";
+    static final String CURRENT_CITY_NAME="com.huivip.cityName";
 
     private static SharedPreferences.Editor edit(Context context) {
         return getSharedPreferences(context).edit();
@@ -154,6 +155,12 @@ public abstract class PrefUtils {
             url="http://"+url;
         }
         return url;
+    }
+    public static String getCityName(Context context){
+        return getSharedPreferences(context).getString(CURRENT_CITY_NAME,"");
+    }
+    public static void setCityName(Context context,String cityName){
+        edit(context).putString(CURRENT_CITY_NAME,cityName).apply();
     }
     public static void setGpsRemoteUrl(Context context,String url){
         edit(context).putString(GPS_REMOTE_URL,url).apply();

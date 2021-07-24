@@ -11,4 +11,5 @@ public interface TTS {
     void release();
     void initTTS();
     void auth();
+    String createAudio(String text);
 }

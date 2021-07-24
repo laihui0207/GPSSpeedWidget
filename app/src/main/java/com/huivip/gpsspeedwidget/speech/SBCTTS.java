@@ -134,6 +134,11 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         DUILiteSDK.init(context,liteConfig , this);
     }
 
+    @Override
+    public String createAudio(String text) {
+        return null;
+    }
+
 
     @Override
     public void speak(String text) {

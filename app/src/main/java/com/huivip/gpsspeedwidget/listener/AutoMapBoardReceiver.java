@@ -252,9 +252,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     if(StringUtils.isNotBlank(areaName)){
                         cityName+=areaName;
                     }
-                    if(cityName!=null && !cityName.equalsIgnoreCase(gpsUtil.getCityName())){
+                    if(cityName!=null && !cityName.equalsIgnoreCase(PrefUtils.getCityName(context))){
                         Toast.makeText(context,"当前城市:"+cityName,Toast.LENGTH_SHORT).show();
                         gpsUtil.setCityName(cityName);
+                        PrefUtils.setCityName(context,cityName);
                     }
                    /* Bundle bundle = intent.getExtras();
                     StringBuilder extras= new StringBuilder();

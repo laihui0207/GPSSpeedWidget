@@ -24,6 +24,7 @@ import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.BootEvent;
 import com.huivip.gpsspeedwidget.beans.FloatWindowsLaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
+import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.AutoMapBoardReceiver;
 import com.huivip.gpsspeedwidget.listener.BootStartReceiver;
@@ -117,9 +118,15 @@ public class BootStartService extends Service {
             PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                     new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
+            if (AppSettings.get().isEnableAudio()) {
+                Intent audioService = new Intent(getApplicationContext(), AudioService.class);
+                Utils.startService(getApplicationContext(), audioService);
+            }
 
+            EventBus.getDefault().register(this);
             if (AppSettings.get().isEnablePlayWarnAudio()) {
-                mPlayer = MediaPlayer.create(this, R.raw.warn);
+                EventBus.getDefault().post(new PlayAudioEvent("测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音",true));
+                /*mPlayer = MediaPlayer.create(this, R.raw.warn);
                 if (mPlayer != null) {
                     mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         @Override
@@ -132,13 +139,12 @@ public class BootStartService extends Service {
                         }
                     });
                     mPlayer.start();
-                }
+                }*/
             }
            // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 registerBoardCast(getApplicationContext());
             //}
         }
-        EventBus.getDefault().register(this);
         super.onCreate();
     }
 
@@ -185,10 +191,6 @@ public class BootStartService extends Service {
                 }
                 if (AppSettings.get().isEnableSpeed()) {
                     Utils.startFloatingWindows(getApplicationContext(), true);
-                }
-                if (AppSettings.get().isEnableAudio()) {
-                    Intent audioService = new Intent(getApplicationContext(), AudioService.class);
-                    Utils.startService(getApplicationContext(), audioService);
                 }
 
                 if (AppSettings.get().isEnableAltitudeWindow()) {

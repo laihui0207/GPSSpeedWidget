@@ -37,7 +37,7 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
 
     @Override
     public void speak(String text, boolean force) {
-        if(inited) {
+        if(inited && mts!=null) {
             if (AppSettings.get().isEnableAudio() && (force || PrefUtils.isEnableTempAudioService(context))) {
                 //beforeSpeak();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

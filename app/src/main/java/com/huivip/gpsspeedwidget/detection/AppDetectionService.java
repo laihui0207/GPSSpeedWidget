@@ -72,11 +72,11 @@ public class AppDetectionService extends AccessibilityService {
         PrefUtils.setOnDesktop(getApplicationContext(),onDesktop);
         //Utils.startFloatingWindows(getApplicationContext(),true);
         EventBus.getDefault().post(new FloatWindowsLaunchEvent(true));
-        if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())) {
+       /* if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())) {
             Intent bootStartService = new Intent(getApplicationContext(), BootStartService.class);
             bootStartService.putExtra(BootStartService.START_RESUME, true);
             Utils.startService(getApplicationContext(), bootStartService, true);
-        }
+        }*/
     }
 
    private ActivityInfo tryGetActivity(ComponentName componentName) {
