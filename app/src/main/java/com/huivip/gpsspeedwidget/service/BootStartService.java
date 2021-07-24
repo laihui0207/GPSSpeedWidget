@@ -157,24 +157,15 @@ public class BootStartService extends Service {
             boolean boot_from_start = intent.getBooleanExtra(START_BOOT, false);
             if (start && (!started || boot_from_resume || boot_from_start)) {
                 started = true;
-                //Toast.makeText(getApplicationContext(), "Boot Start Service launched", Toast.LENGTH_SHORT).show();
-                //buildNotification();
                 if (netWorkConnectChangedReceiver == null) {
                     IntentFilter intentFilter = new IntentFilter();
                     intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
                     netWorkConnectChangedReceiver = new NetWorkConnectChangedReceiver();
                     getApplicationContext().registerReceiver(netWorkConnectChangedReceiver, intentFilter);
                 }
-               /* if (screenOnReceiver == null) {
-                    IntentFilter intentFilter = new IntentFilter();
-                    intentFilter.addAction(Intent.ACTION_SCREEN_ON);
-                    screenOnReceiver = new ScreenOnReceiver();
-                    getApplicationContext().registerReceiver(screenOnReceiver, intentFilter);
-                }*/
-                if(boot_from_start){
+                if(boot_from_start || boot_from_resume){
                     GpsUtil gpsUtil = GpsUtil.getInstance(getApplicationContext());
                     gpsUtil.resetData();
-
                 }
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                 if (AppSettings.get().isEnableTimeWindow()) {

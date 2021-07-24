@@ -93,9 +93,9 @@
     void *(**On*Event);
 }
 #----------------------------------------------------------------------------
--libraryjars libs/AMap3DMap_7.9.1_AMapNavi_7.9.1_AMapTrack_1.4.0_AMapLocation_5.3.1_20210414.jar
+-libraryjars libs/AMap3DMap_8.0.0_AMapNavi_8.0.0_AMapSearch_7.9.0_AMapTrack_1.4.0_AMapLocation_5.3.1_20210713.jar
 -libraryjars libs/com.baidu.tts_2.6.2.2.20200629_44818d4.jar
--libraryjars libs/DUI-lite-SDK-for-Android-2.7.1.jar
+-libraryjars libs/DUI-lite-SDK-for-Android-2.16.1.jar
 -libraryjars libs/kwmusic-autosdk-v2.0.2.jar
 #---------------------------------webview------------------------------------
 -keepclassmembers class fqcn.of.javascript.interface.for.Webview {

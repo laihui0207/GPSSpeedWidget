@@ -5,9 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -90,7 +92,7 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         if (mEngine != null) {
             mEngine.destroy();
         }
-        mEngine = AILocalTTSEngine.getInstance();//创建实例
+        mEngine = AILocalTTSEngine.createInstance();//创建实例
         AILocalTTSConfig config=new AILocalTTSConfig();
         config.setFrontBinResource(Constant.TTS_FRONT_RES, Constant.TTS_FRONT_RES_MD5);
         config.setDictResource(Constant.TTS_DICT_RES, Constant.TTS_DICT_MD5);
@@ -151,9 +153,17 @@ public class SBCTTS extends TTSService implements DUILiteSDK.InitListener {
         aILocalTTSIntent.setSpeed(1.0f);
         aILocalTTSIntent.setUseSSML(false); // 设置是否使用ssml合成语法，默认为false
            if (AppSettings.get().isAudioMix()) {
-               aILocalTTSIntent.setStreamType(AudioManager.STREAM_MUSIC);//设置audioTrack的播放流，默认为music
+               if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                   aILocalTTSIntent.setAudioAttributes(AudioAttributes.USAGE_MEDIA,AudioAttributes.CONTENT_TYPE_MUSIC);
+               } else {
+                   aILocalTTSIntent.setStreamType(AudioManager.STREAM_MUSIC);//设置audioTrack的播放流，默认为music
+               }
         } else {
-               aILocalTTSIntent.setStreamType(AudioManager.STREAM_VOICE_CALL);
+               if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                   aILocalTTSIntent.setAudioAttributes(AudioAttributes.USAGE_VOICE_COMMUNICATION,AudioAttributes.CONTENT_TYPE_SPEECH);
+               } else {
+                   aILocalTTSIntent.setStreamType(AudioManager.STREAM_VOICE_CALL);
+               }
         }
         int volume = AppSettings.get().getAudioVolume();
         aILocalTTSIntent.setVolume((int) (volume * 1.0f / 100 * 500));    // 设置合成音频的音量，范围为1～500

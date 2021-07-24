@@ -7,8 +7,8 @@ android {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
         targetSdkVersion 30
-        versionCode 295
-        versionName "3.1.2"
+        versionCode 296
+        versionName "3.2.0"
         flavorDimensions "versionCode"
         ndk {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
