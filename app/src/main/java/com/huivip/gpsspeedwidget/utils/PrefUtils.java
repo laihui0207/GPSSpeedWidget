@@ -44,6 +44,7 @@ public abstract class PrefUtils {
     public static final String PREF_AUTO_LAUNCH_WIFI_HOTSPOT_NAME="AutoStart.Wifi.hotspot.name";
     public static final String PREF_AUTO_LAUNCH_WIFI_HOTSPOT_PASSWORD="AutoStart.Wifi.hotspot.password";
     public static final String PREF_OVER_SPEED_TTS="huivip.overSpeed.tts";
+    public static final String PREF_LAUNCH_ALTER_TTS="huivip.launch.alter.tts";
     public static final String RECORD_GPS_HISTORY_PREFS_NAME="recordGpsHistory";
     public static final String GPS_SPEED_TYPE_MPH_PREFS_NAME="com.huivip.use.mph";
     public static final String UPLOAD_GPS_HISTORY_PREFS_NAME="uploadGpsHistory";
@@ -445,6 +446,12 @@ public abstract class PrefUtils {
     }
     public static void setPrefOverSpeedTts(Context context,String value){
         edit(context).putString(PREF_OVER_SPEED_TTS,value).apply();
+    }
+    public static String getPrefLaunchAlterTts(Context context){
+        return getSharedPreferences(context).getString(PREF_LAUNCH_ALTER_TTS, Constant.LAUNCH_ALTER_TTS);
+    }
+    public static void setPreLaunchAlterTts(Context context,String value){
+        edit(context).putString(PREF_LAUNCH_ALTER_TTS,value).apply();
     }
     public static String getAutoLauchHotSpotName(Context context){
         return getSharedPreferences(context).getString(PREF_AUTO_LAUNCH_WIFI_HOTSPOT_NAME, Constant.WIFI_USERNAME);

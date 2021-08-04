@@ -241,7 +241,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     String cityName=intent.getStringExtra("CITY_NAME");
                     String provinceName=intent.getStringExtra("PROVINCE_NAME");
                     String areaName=intent.getStringExtra("AREA_NAME");
-                    LocationEvent locationEvent=new LocationEvent();
+                    LocationEvent locationEvent=new LocationEvent("AutoMap");
                     locationEvent.setProvince(provinceName);
                     locationEvent.setCityCode(cityName);
                     locationEvent.setDistrict(areaName);
@@ -253,19 +253,10 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         cityName+=areaName;
                     }
                     if(cityName!=null && !cityName.equalsIgnoreCase(PrefUtils.getCityName(context))){
-                        Toast.makeText(context,"当前城市:"+cityName,Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context,"当前城市:"+cityName,Toast.LENGTH_SHORT).show();
                         gpsUtil.setCityName(cityName);
                         PrefUtils.setCityName(context,cityName);
                     }
-                   /* Bundle bundle = intent.getExtras();
-                    StringBuilder extras= new StringBuilder();
-                    if (bundle != null) {
-                        for (String eKey : bundle.keySet()) {
-                            extras.append("key:").append(eKey).append("~").append(bundle.get(eKey)).append(".");
-                            //Log.e(TAG, key + " : " + (bundle.get(key) != null ? bundle.get(key) : "NULL"));
-                        }
-                    }*/
-                    //FileUtil.saveLogToFile(extras.toString());
                     break;
                 case 10056:
                     // 增加目地播报

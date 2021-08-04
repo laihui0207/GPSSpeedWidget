@@ -422,6 +422,8 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         alertDialogBuilder.setView(promptView);
         final EditText ttsValueEditText = (EditText) promptView.findViewById(R.id.input_overSpeedTTSName);
         ttsValueEditText.setText(PrefUtils.getPrefOverSpeedTts(getContext()));
+        final EditText launcherAlterEditText = (EditText)promptView.findViewById(R.id.input_launchAlterTTSName);
+        launcherAlterEditText.setText(PrefUtils.getPrefLaunchAlterTts(getContext()));
         alertDialogBuilder.setCancelable(false)
                 .setPositiveButton("保存", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -430,6 +432,11 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                             ttsValue = Constant.OVER_SPEED_TTS;
                         }
                         PrefUtils.setPrefOverSpeedTts(getContext(),ttsValue);
+                        String launchAlterTTSValue = launcherAlterEditText.getText().toString();
+                        if (TextUtils.isEmpty(launchAlterTTSValue)) {
+                            launchAlterTTSValue = Constant.LAUNCH_ALTER_TTS;
+                        }
+                        PrefUtils.setPreLaunchAlterTts(getContext(),launchAlterTTSValue);
                         dialog.cancel();
                     }
                 })

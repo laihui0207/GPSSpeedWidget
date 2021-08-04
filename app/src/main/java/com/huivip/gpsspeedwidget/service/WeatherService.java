@@ -247,7 +247,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                     }
                     lastedLocation=aMapLocation;
                 }
-                LocationEvent locationEvent=new LocationEvent();
+                LocationEvent locationEvent=new LocationEvent("Weather");
                 locationEvent.setAddress(aMapLocation.getAddress());
                 locationEvent.setCity(aMapLocation.getCity());
                 locationEvent.setProvince(aMapLocation.getProvince());

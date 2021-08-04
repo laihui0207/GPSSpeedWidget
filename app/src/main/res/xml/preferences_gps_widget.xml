@@ -185,10 +185,7 @@
             android:key="@string/pref_key__speed_not_on_desktop_show"
             android:summary="当使用桌面部件的时候，可以选择不在桌面显示速度悬浮窗"
             android:title="不在桌面显示" />
-        <Preference
-            android:defaultValue="0"
-            android:key="@string/pref_key__over_speed_tts_setting"
-            android:title="设置超速提示语音" />
+
     </PreferenceCategory>
     <PreferenceCategory android:title="高德服务">
         <SwitchPreference
@@ -384,6 +381,10 @@
             android:defaultValue="0"
             android:key="@string/pref_key__Altitude_alter_config"
             android:title="播报海拔高度设置" />
+        <Preference
+            android:defaultValue="0"
+            android:key="@string/pref_key__over_speed_tts_setting"
+            android:title="设置安全提示语音" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="歌词">

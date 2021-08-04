@@ -91,6 +91,11 @@ public class TextSpeech extends TTSService implements TextToSpeech.OnInitListene
     }
 
     @Override
+    public String createAudio(String text) {
+        return null;
+    }
+
+    @Override
     public void onInit(int status) {
         if(status==TextToSpeech.SUCCESS) {
             int result = mts.setLanguage(Locale.CHINA);

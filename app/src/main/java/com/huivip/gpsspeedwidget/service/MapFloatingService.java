@@ -47,6 +47,7 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.GetDistrictEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
@@ -139,7 +140,7 @@ public class MapFloatingService extends Service {
         } else {
             aMap.setMapType(AMap.MAP_TYPE_NAVI);
         }
-        getDistrictFromAuto();
+        EventBus.getDefault().post(new GetDistrictEvent());
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
@@ -308,14 +309,16 @@ public class MapFloatingService extends Service {
             daoHang_roadLine.setVisibility(View.INVISIBLE);
         }
     }
-    private void getDistrictFromAuto() {
+    /*private void getDistrictFromAuto() {
         x.task().postDelayed(() -> {
             Intent intent = new Intent();
+            intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            intent.setPackage("com.autonavi.amapauto");
             intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
             intent.putExtra("KEY_TYPE", 10029);
             sendBroadcast(intent);
         }, 1000 * 10);
-    }
+    }*/
     private Bitmap getBitmap(float bearing) {
         Bitmap bitmap = null;
         View view = View.inflate(this,R.layout.floating_map_navi_icon, null);

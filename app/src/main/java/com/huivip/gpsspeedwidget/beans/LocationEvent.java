@@ -1,6 +1,7 @@
 package com.huivip.gpsspeedwidget.beans;
 
 public class LocationEvent {
+    String eventFrom;
     String province;
     String city;
     String district;
@@ -12,6 +13,18 @@ public class LocationEvent {
     double latitude;
     double longitude;
     double altitude;
+
+    public LocationEvent(String eventFrom) {
+        this.eventFrom = eventFrom;
+    }
+
+    public String getEventFrom() {
+        return eventFrom;
+    }
+
+    public void setEventFrom(String eventFrom) {
+        this.eventFrom = eventFrom;
+    }
 
     public String getProvince() {
         return province;

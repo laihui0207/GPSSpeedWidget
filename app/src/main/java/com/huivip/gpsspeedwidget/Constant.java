@@ -39,6 +39,7 @@ public class Constant {
     public static String AUTONAVI_WEB_KEY2="fa74250f4a56fe716a6de1a5d6ec68c3";
     public static String WIFI_USERNAME="车载Wi-Fi";
     public static String OVER_SPEED_TTS="您已超速！";
+    public static String LAUNCH_ALTER_TTS="GPS插件提醒您:道路千万条,安全第一条，开车请注意安全！";
     public static String WIFI_PASSWORD="88888888";
     public static String ALTITUDE_ALTER_START="1000";
     public static String ALTITUDE_ALTER_FREQUENCY="100";

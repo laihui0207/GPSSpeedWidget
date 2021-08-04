@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -23,7 +24,9 @@ import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.BootEvent;
 import com.huivip.gpsspeedwidget.beans.FloatWindowsLaunchEvent;
+import com.huivip.gpsspeedwidget.beans.GetDistrictEvent;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
+import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.AutoMapBoardReceiver;
@@ -55,6 +58,7 @@ public class BootStartService extends Service {
     private static final String NOTIFICATION_CHANNEL_NAME = "BackgroundLocation";
     private NotificationManager notificationManager = null;
     boolean isCreateChannel = false;
+    boolean autoMapLaunched=false;
     NetWorkConnectChangedReceiver netWorkConnectChangedReceiver;
     ScreenOnReceiver screenOnReceiver;
 
@@ -118,14 +122,13 @@ public class BootStartService extends Service {
             PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                     new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
-            if (AppSettings.get().isEnableAudio()) {
-                Intent audioService = new Intent(getApplicationContext(), AudioService.class);
-                Utils.startService(getApplicationContext(), audioService);
-            }
+
 
             EventBus.getDefault().register(this);
-            if (AppSettings.get().isEnablePlayWarnAudio()) {
-                EventBus.getDefault().post(new PlayAudioEvent("测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音",true));
+          /*  if (AppSettings.get().isEnablePlayWarnAudio()) {
+                x.task().postDelayed(()->{
+                    EventBus.getDefault().post(new PlayAudioEvent("测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音",true));
+                },5000);*/
                 /*mPlayer = MediaPlayer.create(this, R.raw.warn);
                 if (mPlayer != null) {
                     mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -140,7 +143,7 @@ public class BootStartService extends Service {
                     });
                     mPlayer.start();
                 }*/
-            }
+           /* }*/
            // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 registerBoardCast(getApplicationContext());
             //}
@@ -152,6 +155,7 @@ public class BootStartService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         boolean start = AppSettings.get().getAutoStart();
+        autoMapLaunched=false;
         if (intent != null) {
             boolean boot_from_resume = intent.getBooleanExtra(START_RESUME, false);
             boolean boot_from_start = intent.getBooleanExtra(START_BOOT, false);
@@ -166,6 +170,10 @@ public class BootStartService extends Service {
                 if(boot_from_start || boot_from_resume){
                     GpsUtil gpsUtil = GpsUtil.getInstance(getApplicationContext());
                     gpsUtil.resetData();
+                }
+                if (AppSettings.get().isEnableAudio()) {
+                    Intent audioService = new Intent(getApplicationContext(), AudioService.class);
+                    Utils.startService(getApplicationContext(), audioService);
                 }
                 PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
                 if (AppSettings.get().isEnableTimeWindow()) {
@@ -239,6 +247,16 @@ public class BootStartService extends Service {
             }
             EventBus.getDefault().post(new BootEvent(true));
             x.task().postDelayed(this::getDistrictFromAuto, 10000);
+            x.task().postDelayed(()->{
+                if(!autoMapLaunched){
+                    launchAutoMap();
+                }
+            },120000);
+            if (AppSettings.get().isEnablePlayWarnAudio()) {
+                x.task().postDelayed(() -> {
+                    EventBus.getDefault().post(new PlayAudioEvent(PrefUtils.getPrefLaunchAlterTts(getApplicationContext()), true));
+                }, 5000);
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -256,6 +274,12 @@ public class BootStartService extends Service {
             getApplicationContext().unregisterReceiver(screenOnReceiver);
         }
         stopForeground(true);
+    }
+    @Subscribe
+    public void locationStatus(LocationEvent event){
+        if(event.getDistrict()!=null && event.getEventFrom().equals("AutoMap")){
+            autoMapLaunched=true;
+        }
     }
     @Subscribe
     public void launchFloatWindow(FloatWindowsLaunchEvent event){
@@ -299,16 +323,28 @@ public class BootStartService extends Service {
             AppObject.getContext().startService(autoWidgetFloatingService);
         }
     }
-
+    @Subscribe
+    public void getDistrict(GetDistrictEvent event){
+        getDistrictFromAuto();
+    }
     private void getDistrictFromAuto() {
         x.task().postDelayed(() -> {
             Intent intent = new Intent();
+            intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            intent.setPackage("com.autonavi.amapauto");
             intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
             intent.putExtra("KEY_TYPE", 10029);
             sendBroadcast(intent);
         }, 1000 * 10);
     }
-
+    private void launchAutoMap(){
+        String pkgName = "com.autonavi.amapauto";
+        Intent launchIntent = new Intent();
+        launchIntent.setComponent(
+                new ComponentName(pkgName,
+                        "com.autonavi.auto.remote.fill.UsbFillActivity"));
+        startActivity(launchIntent);
+    }
     private void registerBoardCast(Context context) {
         String[] actions = new String[]{"com.android.music.metachanged",
                 "com.android.music.statuschanged",

@@ -209,6 +209,11 @@ public class BDTTS extends TTSService implements SpeechSynthesizerListener {
 
     }
 
+    @Override
+    public String createAudio(String text) {
+        return null;
+    }
+
     /**
      * 检查appId ak sk 是否填写正确，另外检查官网应用内设置的包名是否与运行时的包名一致。本demo的包名定义在build.gradle文件中
      *
