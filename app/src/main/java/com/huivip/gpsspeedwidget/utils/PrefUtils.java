@@ -199,7 +199,7 @@ public abstract class PrefUtils {
         edit(context).putString(TTS_ENGINE, style).apply();
     }
     public static String getTtsEngine(Context context){
-        return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.BAIDUTTS);
+        return getSharedPreferences(context).getString(TTS_ENGINE, SpeechFactory.SDKTTS);
     }
     public static void setNaviDestAddress(Context context,String address){
         edit(context).putString(NAVI_DEST_ADDRESS,address).apply();

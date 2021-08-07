@@ -59,17 +59,6 @@ public class Constant {
     //local asr module res
     public static final String EBNFC_RES = "ebnfc.aicar.1.2.0.bin";
     public static final String EBNFR_RES = "ebnfr.aicar.1.3.0.bin";
-    //local tts module res
-    public static final String TTS_DICT_RES = "aitts_sent_dict_idx_2.0.4_20180806.db";
-    public static final String TTS_DICT_MD5 = "aitts_sent_dict_idx_2.0.4_20180806.db.md5sum";
-    public static final String TTS_FRONT_RES = "local_front.bin";
-    public static final String TTS_FRONT_RES_MD5 = "local_front.bin.md5sum";
-    public static final String TTS_BACK_RES_LUCY = "lucyf_common_param_ce_local.v2.004.bin";
-    public static final String TTS_BACK_RES_LUCY_MD5 = "lucyf_common_param_ce_local.v2.004.bin.md5sum";
-    public static final String TTS_BACK_RES_ZHILING = "zhilingf_common_back_ce_local.v2.1.0.bin";
-    public static final String TTS_BACK_RES_ZHILING_MD5 = "zhilingf_common_back_ce_local.v2.1.0.bin.md5sum";
-    public static final String TTS_BACK_RES_XIJUN = "xijunm_common_back_ce_local.v2.1.0.bin";
-    public static final String TTS_BACK_RES_XIJUN_MD5 = "xijunm_common_back_ce_local.v2.1.0.bin.md5sum";
     public static final String MUSICPLAYER = "huivip.select.musicplayer";
 
     public static class NaviInfoConstant {

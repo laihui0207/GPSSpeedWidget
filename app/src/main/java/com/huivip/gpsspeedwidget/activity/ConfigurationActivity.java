@@ -167,7 +167,7 @@ public class ConfigurationActivity extends Activity {
         audidMixCheckBox.setChecked(PrefUtils.isEnableAudioMixService(getApplicationContext()));
         audidMixCheckBox.setEnabled(enableAudioCheckBox.isChecked());
         CheckBox XFEngineCheckBox=findViewById(R.id.checkBox_xftts);
-        XFEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.SIBICHITTS));
+        XFEngineCheckBox.setChecked(PrefUtils.getTtsEngine(getApplicationContext()).equalsIgnoreCase(SpeechFactory.SDKTTS));
         XFEngineCheckBox.setEnabled(enableAudioCheckBox.isChecked());
         CheckBox natviAudioCheckBox=findViewById(R.id.checkBox_natviAudio);
         natviAudioCheckBox.setChecked(SpeechFactory.SDKTTS.equalsIgnoreCase(PrefUtils.getTtsEngine(getApplicationContext())));
@@ -334,7 +334,7 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String speakText="";
-                if(buttonView.isChecked()){
+               /* if(buttonView.isChecked()){
                     PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.SIBICHITTS);
                     speakText="使用思必驰语音";
                     natviAudioCheckBox.setChecked(false);
@@ -342,7 +342,7 @@ public class ConfigurationActivity extends Activity {
                 else {
                     PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.BAIDUTTS);
                     speakText="使用百度语音";
-                }
+                }*/
                 SeekBar seekBarVolume=findViewById(R.id.seekBar_audioVolume);
                 int volume=seekBarVolume.getProgress();
                 PrefUtils.setAudioVolume(getApplicationContext(),volume);
@@ -360,9 +360,9 @@ public class ConfigurationActivity extends Activity {
                     PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.SDKTTS);
                     XFEngineCheckBox.setChecked(false);
                 }
-                else {
+               /* else {
                     PrefUtils.setTTSEngineType(getApplicationContext(),SpeechFactory.BAIDUTTS);
-                }
+                }*/
             }
         });
         Button testAudoButton=findViewById(R.id.button_testAudio);

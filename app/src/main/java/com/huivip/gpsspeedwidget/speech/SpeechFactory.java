@@ -4,8 +4,6 @@ import android.content.Context;
 
 public class SpeechFactory {
     public static String TAG="GPS";
-    public static String BAIDUTTS="baiduTTS";
-    public static String SIBICHITTS="SBCTTS";
     public static String TEXTTTS="textTTS";
     public static String SDKTTS="aliTTS";
     static SpeechFactory factory;
@@ -25,13 +23,7 @@ public class SpeechFactory {
         if(type==null) return null;
         if(TEXTTTS.equalsIgnoreCase(type)){
             return TextSpeech.getInstance(context);
-        } else if(SIBICHITTS.equalsIgnoreCase(type)){
-            return SBCTTS.getInstance(context);
-        } else if(BAIDUTTS.equalsIgnoreCase(type)) {
-            return BDTTS.getInstance(context);
-        }else if(SDKTTS.equalsIgnoreCase(type)){
-            return AliTTS.getInstance(context);
         }
-        return null;
+        return AliTTS.getInstance(context);
     }
 }

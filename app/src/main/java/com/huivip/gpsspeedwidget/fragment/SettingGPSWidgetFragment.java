@@ -223,7 +223,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         Preference pre_audio_engine=findPreference(getString(R.string.pref_key__Audio_engine));
         Preference baiDuSpeaker=findPreference(getString(R.string.pref_key__Audio_engine_baidu_speaker));
         String audioEngine=AppSettings.get().getAudioEngine();
-        if(SpeechFactory.BAIDUTTS.equalsIgnoreCase(audioEngine)){
+      /*  if(SpeechFactory.BAIDUTTS.equalsIgnoreCase(audioEngine)){
             pre_audio_engine.setSummary("百度语音");
             baiDuSpeaker.setVisible(true);
             String speaker=AppSettings.get().getAudioBaiDuSpeaker();
@@ -243,7 +243,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                 case "5":
                     baiDuSpeaker.setSummary("度小娇（情感女声）");
                     break;
-               /* case "103":
+               *//* case "103":
                     baiDuSpeaker.setSummary("度米朵（情感儿童声）");
                     break;
                 case "106":
@@ -254,12 +254,12 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                     break;
                 case "111":
                     baiDuSpeaker.setSummary("度小萌（情感女声");
-                    break;*/
+                    break;*//*
             }
         } else if(SpeechFactory.SIBICHITTS.equalsIgnoreCase(audioEngine)){
             pre_audio_engine.setSummary("思必驰语音");
             baiDuSpeaker.setVisible(false);
-        } else if(SpeechFactory.SDKTTS.equalsIgnoreCase(audioEngine)){
+        } else*/ if(SpeechFactory.SDKTTS.equalsIgnoreCase(audioEngine)){
             pre_audio_engine.setSummary("高德内置语音");
             baiDuSpeaker.setVisible(false);
         } else if (SpeechFactory.TEXTTTS.equalsIgnoreCase(audioEngine)){
