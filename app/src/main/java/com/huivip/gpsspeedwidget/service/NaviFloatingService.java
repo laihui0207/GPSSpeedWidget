@@ -100,12 +100,16 @@ public class NaviFloatingService extends Service{
         return Service.START_REDELIVER_INTENT;
     }
     private void onStop(){
-        if(mFloatingView!=null && mWindowManager!=null){
-            mWindowManager.removeView(mFloatingView);
-        }
-        if(locationTimer!=null){
-            locationTimer.cancel();
-            locationTimer.purge();
+        try {
+            if (mFloatingView != null && mWindowManager != null) {
+                mWindowManager.removeView(mFloatingView);
+            }
+            if (locationTimer != null) {
+                locationTimer.cancel();
+                locationTimer.purge();
+            }
+        }catch (Exception e){
+
         }
     }
 

@@ -284,25 +284,33 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
     }
 
     private void startBackendNaviFloatingService(Context context) {
-        Intent floatService = new Intent(context, NaviFloatingService.class);
-        context.startService(floatService);
+        if(PrefUtils.isEnableNaviFloating(context)){
+            Intent floatService = new Intent(context, NaviFloatingService.class);
+            context.startService(floatService);
+        }
     }
 
     private void stopBackendNaviFloatingService(Context context) {
-        Intent floatService = new Intent(context, NaviFloatingService.class);
-        floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
-        context.startService(floatService);
+        if(PrefUtils.isEnableNaviFloating(context) && Utils.isServiceRunning(context,NaviFloatingService.class.getName())) {
+            Intent floatService = new Intent(context, NaviFloatingService.class);
+            floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
+            context.startService(floatService);
+        }
     }
 
     private void startDriveWayFloatingService(Context context) {
-        Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
-        context.startService(autoWidgetFloatingService);
+        if(PrefUtils.isEnableAutoWidgetFloatingWidow(context)){
+            Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
+            context.startService(autoWidgetFloatingService);
+        }
     }
 
     private void stopDriveWayFloatingService(Context context) {
-        Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
-        autoWidgetFloatingService.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
-        context.startService(autoWidgetFloatingService);
+        if(PrefUtils.isEnableAutoWidgetFloatingWidow(context)) {
+            Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
+            autoWidgetFloatingService.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
+            context.startService(autoWidgetFloatingService);
+        }
     }
 
     private void launchSpeedFloatingWindows(Context context, boolean enabled) {
