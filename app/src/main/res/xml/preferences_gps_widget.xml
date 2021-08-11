@@ -300,19 +300,20 @@
             android:key="@string/pref_key__Audio_enable"
             android:title="启用语音" />
         <ListPreference
-            android:defaultValue="SBCTTS"
+            android:defaultValue="aliTTS"
             android:entries="@array/items__audio_engine"
             android:entryValues="@array/values__audio_engine"
             android:key="@string/pref_key__Audio_engine"
             android:summary="选择使用的语音引擎"
             android:title="语音引擎" />
-        <ListPreference
+      <!--  <ListPreference
             android:defaultValue="0"
             android:entries="@array/items__audio_engine_baidu_speaker"
             android:entryValues="@array/values__audio_engine_baidu_speaker"
             android:key="@string/pref_key__Audio_engine_baidu_speaker"
             android:summary="选择百度语音发音人"
-            android:title="百度语音发音人" />
+            android:visibility="gone"
+            android:title="百度语音发音人" />-->
         <SeekBarPreference
             android:defaultValue="50"
             android:key="@string/pref_key__Audio_volume"

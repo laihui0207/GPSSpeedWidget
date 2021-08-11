@@ -762,9 +762,11 @@ public abstract class PrefUtils {
     }
 
     public static int getOpacity(Context context) {
+        return getSharedPreferences(context).getInt(PREF_OPACITY,100);
+    }
+    public static int getAltitudeAlpha(Context context) {
         return AppSettings.get().getAltutudeAlpha();
     }
-
     public static boolean getShowSpeedometer(Context context) {
         return getSharedPreferences(context).getBoolean(PREF_SPEEDOMETER, true);
     }

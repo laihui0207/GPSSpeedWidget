@@ -4,7 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../../layout/custom_preview.xml" value="0.23958333333333334" />
+        <entry key="app/src/main/res/layout-v17/floating_altitude_window.xml" value="0.33061594202898553" />
+        <entry key="app/src/main/res/layout-v17/floating_default_limit.xml" value="0.1" />
+        <entry key="app/src/main/res/layout-v18/floating_altitude_window.xml" value="0.33061594202898553" />
         <entry key="app/src/main/res/layout/configuration_activity.xml" value="0.30480072463768115" />
+        <entry key="app/src/main/res/layout/floating_auto_widget.xml" value="0.33061594202898553" />
+        <entry key="app/src/main/res/xml/preferences_gps_widget.xml" value="0.33061594202898553" />
       </map>
     </option>
   </component>

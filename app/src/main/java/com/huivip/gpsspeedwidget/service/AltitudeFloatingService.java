@@ -116,6 +116,8 @@ public class AltitudeFloatingService extends Service{
         }
         textViewDirection.setTextSize(TypedValue.COMPLEX_UNIT_DIP,40f+fontSizeAdjust);
         textViewDirection.setTextColor(AppSettings.get().getAltitudeFontColor());
+        Drawable backgroundDrawable=background.getBackground();
+        backgroundDrawable.setAlpha(PrefUtils.getAltitudeAlpha(getApplicationContext()));
     }
     private void onStop(){
         if(mFloatingView!=null && mWindowManager!=null){
@@ -169,11 +171,11 @@ public class AltitudeFloatingService extends Service{
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.START;
-        //params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
+        params.alpha = PrefUtils.getOpacity(getApplicationContext()) / 100.0F;
         ButterKnife.bind(this, mFloatingView);
         if(background!=null) {
             Drawable backgroundDrawable = background.getBackground();
-            backgroundDrawable.setAlpha(PrefUtils.getOpacity(getApplicationContext()));
+            backgroundDrawable.setAlpha(PrefUtils.getAltitudeAlpha(getApplicationContext()));
         }
 
         mWindowManager.addView(mFloatingView, params);

@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
@@ -68,7 +69,6 @@ public class BootStartService extends Service {
         return null;
     }
 
-    MediaPlayer mPlayer;
 
     @Override
     public void onCreate() {
@@ -338,12 +338,37 @@ public class BootStartService extends Service {
         }, 1000 * 10);
     }
     private void launchAutoMap(){
-        String pkgName = "com.autonavi.amapauto";
-        Intent launchIntent = new Intent();
-        launchIntent.setComponent(
-                new ComponentName(pkgName,
-                        "com.autonavi.auto.remote.fill.UsbFillActivity"));
-        startActivity(launchIntent);
+        String pkgName_auto = "com.autonavi.amapauto";
+        String pkgName_lite="com.autonavi.amapautolite";
+        String pkgName=pkgName_auto;
+        boolean autoInstalled=false;
+        if(Utils.checkApplicationIfExists(getApplicationContext(),pkgName)) {
+           autoInstalled=true;
+        } else if(Utils.checkApplicationIfExists(getApplicationContext(),pkgName_lite)) {
+            autoInstalled=true;
+            pkgName=pkgName_lite;
+        } else {
+            Toast.makeText(getApplicationContext(),"没有找到高德地图",Toast.LENGTH_SHORT).show();
+        }
+        if(autoInstalled) {
+            Intent launchIntent = new Intent();
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            launchIntent.setComponent(
+                    new ComponentName(pkgName,
+                            "com.autonavi.auto.remote.fill.UsbFillActivity"));
+            startActivity(launchIntent);
+            String finalPkgName = pkgName;
+            x.task().postDelayed(() -> {
+                Intent intent = new Intent();
+                intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+                intent.setPackage(finalPkgName);
+                intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+                intent.putExtra("KEY_TYPE", 10031);
+                sendBroadcast(intent);
+            },10000);
+
+        }
+
     }
     private void registerBoardCast(Context context) {
         String[] actions = new String[]{"com.android.music.metachanged",

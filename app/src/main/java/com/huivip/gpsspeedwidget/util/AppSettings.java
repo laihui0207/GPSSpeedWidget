@@ -232,7 +232,7 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
         return getString(R.string.pref_key__lyric_music_font_size,"0");
     }
     public String getAltitudeFontSize(){
-        return getString(R.string.pref_key__altitude_font_size,"0");
+        return getString(R.string.pref_key__altitude_font_size,"-15");
     }
     public boolean isEnableLaunchOtherApp(){
         return getBool(R.string.pref_key__auto_start_launch_other_app_enable,false);

@@ -29,6 +29,7 @@ import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
 import com.huivip.gpsspeedwidget.detection.AppDetectionService;
 import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.service.AltitudeFloatingService;
+import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.LyricFloatingService;
 import com.huivip.gpsspeedwidget.service.RealTimeFloatingService;
 import com.huivip.gpsspeedwidget.service.RoadLineFloatingService;
@@ -172,6 +173,13 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             GpsUtil gpsUtil=GpsUtil.getInstance(getContext());
             gpsUtil.setPlayAltitudeAlter(AppSettings.get().isPlayAltitudeAlter());
         }
+        if(key.equalsIgnoreCase(getString(R.string.pref_key__auto_start))){
+            if(AppSettings.get().getAutoStart()){
+                Intent bootService=new Intent(getContext(), BootStartService.class);
+                bootService.putExtra(BootStartService.START_BOOT,true);
+                Utils.startService(getContext(),bootService, true);
+            }
+        }
         if(key.equalsIgnoreCase(getString(R.string.pref_key__speed_enable))) {
             if (AppSettings.get().isEnableSpeed()) {
                 //Utils.startFloatingWindows(getContext(), true);
@@ -221,7 +229,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             pre_selectApps.setSummary(selectApps);
         }
         Preference pre_audio_engine=findPreference(getString(R.string.pref_key__Audio_engine));
-        Preference baiDuSpeaker=findPreference(getString(R.string.pref_key__Audio_engine_baidu_speaker));
+        //Preference baiDuSpeaker=findPreference(getString(R.string.pref_key__Audio_engine_baidu_speaker));
         String audioEngine=AppSettings.get().getAudioEngine();
       /*  if(SpeechFactory.BAIDUTTS.equalsIgnoreCase(audioEngine)){
             pre_audio_engine.setSummary("百度语音");
@@ -261,10 +269,10 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             baiDuSpeaker.setVisible(false);
         } else*/ if(SpeechFactory.SDKTTS.equalsIgnoreCase(audioEngine)){
             pre_audio_engine.setSummary("高德内置语音");
-            baiDuSpeaker.setVisible(false);
+            //baiDuSpeaker.setVisible(false);
         } else if (SpeechFactory.TEXTTTS.equalsIgnoreCase(audioEngine)){
             pre_audio_engine.setSummary("系统内置TTS");
-            baiDuSpeaker.setVisible(false);
+            //baiDuSpeaker.setVisible(false);
         }
         Preference audioStream=findPreference(getString(R.string.pref_key__Audio_stream_type));
         audioStream.setSummary("音频通道："+AppSettings.get().getAudioStreamType());
