@@ -341,8 +341,8 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
         floatLyricFontSize.setSummary("字体调整:"+AppSettings.get().getMusicLyricFontSize());
         Preference floatAltitudeFontSize=findPreference(getString(R.string.pref_key__altitude_font_size));
         floatAltitudeFontSize.setSummary("字体调整:"+AppSettings.get().getAltitudeFontSize());
-        Preference overSpeedTTS=findPreference(getString(R.string.pref_key__over_speed_tts_setting));
-        overSpeedTTS.setSummary("当前语音："+PrefUtils.getPrefOverSpeedTts(getContext()));
+      /*  Preference overSpeedTTS=findPreference(getString(R.string.pref_key__over_speed_tts_setting));
+        overSpeedTTS.setSummary("当前语音："+PrefUtils.getPrefOverSpeedTts(getContext()));*/
         Preference alterAltitudeConfig=findPreference(getString(R.string.pref_key__Altitude_alter_config));
         alterAltitudeConfig.setSummary("播报起始高度:"+PrefUtils.getAltitudeAlterStart(getContext())+"米,频率每"+PrefUtils.getAltitudeAlterFrequency(getContext())+"米播报一次");
         super.updateSummaries();

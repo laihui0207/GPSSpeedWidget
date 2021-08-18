@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.amap.api.navi.AMapNavi;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 
 public class AliTTS extends TTSService {
     @SuppressLint("StaticFieldLeak")

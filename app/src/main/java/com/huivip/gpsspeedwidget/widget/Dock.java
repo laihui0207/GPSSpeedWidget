@@ -1,6 +1,7 @@
 package com.huivip.gpsspeedwidget.widget;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
@@ -33,6 +34,11 @@ public final class Dock extends CellContainer implements DesktopCallback {
 
     public Dock(Context context, AttributeSet attr) {
         super(context, attr);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
     }
 
     public final void initDock() {
