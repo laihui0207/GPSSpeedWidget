@@ -299,7 +299,6 @@ public class MainActivity extends Activity implements TraceListener {
                 startActivity(new Intent(MainActivity.this, BackupGPSHistoryActivity.class));
             }
         });
-        PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
         AutoCompleteTextView textUid=findViewById(R.id.editText_UID);
         String deviceId_shortString=PrefUtils.getShortDeviceId(getApplicationContext());
         //String deviceId_shortString=deviceId.substring(0,deviceId.indexOf("-"));

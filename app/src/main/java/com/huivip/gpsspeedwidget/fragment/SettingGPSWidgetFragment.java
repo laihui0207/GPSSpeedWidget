@@ -174,7 +174,7 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
             gpsUtil.setPlayAltitudeAlter(AppSettings.get().isPlayAltitudeAlter());
         }
         if(key.equalsIgnoreCase(getString(R.string.pref_key__auto_start))){
-            if(AppSettings.get().getAutoStart()){
+            if(AppSettings.get().getAutoStart() && !Utils.isServiceRunning(getContext(),BootStartService.class.getName())){
                 Intent bootService=new Intent(getContext(), BootStartService.class);
                 bootService.putExtra(BootStartService.START_BOOT,true);
                 Utils.startService(getContext(),bootService, true);

@@ -80,7 +80,7 @@ public class GpsSpeedMeterService extends Service {
                     this.manager.updateAppWidget(this.thisWidget, this.remoteViews);
                     this.remoteViews = null;
                     gpsUtil.startLocationService();
-                    PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
+                    PrefUtils.setTempMuteAudioService(getApplicationContext(), false);
                     if(PrefUtils.isUserManualClosedService(getApplicationContext())) {
                        // Utils.startFloatingWindows(getApplicationContext(),true);
                         EventBus.getDefault().post(new FloatWindowsLaunchEvent(true));

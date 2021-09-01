@@ -18,7 +18,12 @@
         <entry key="app/src/main/res/layout/floating_auto_widget.xml" value="0.33061594202898553" />
         <entry key="app/src/main/res/layout/floating_backend_navi.xml" value="0.25769927536231885" />
         <entry key="app/src/main/res/layout/floatting_meter.xml" value="0.25769927536231885" />
+        <entry key="app/src/main/res/layout/request.xml" value="0.30480072463768115" />
+        <entry key="app/src/main/res/layout/speed_number_vertical_widget.xml" value="0.30027173913043476" />
+        <entry key="app/src/main/res/layout/speedmeterwidget.xml" value="0.30480072463768115" />
+        <entry key="app/src/main/res/layout/speednumberwidget.xml" value="0.30480072463768115" />
         <entry key="app/src/main/res/layout/time_weather_v_widget.xml" value="0.32971014492753625" />
+        <entry key="app/src/main/res/layout/time_weather_widget.xml" value="0.30480072463768115" />
         <entry key="app/src/main/res/layout/view_home.xml" value="0.3038949275362319" />
         <entry key="app/src/main/res/layout/view_intro.xml" value="0.32971014492753625" />
         <entry key="app/src/main/res/layout/view_search_clock.xml" value="0.32971014492753625" />

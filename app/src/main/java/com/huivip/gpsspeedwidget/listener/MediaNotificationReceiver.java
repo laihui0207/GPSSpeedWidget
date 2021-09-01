@@ -27,8 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MediaNotificationReceiver extends BroadcastReceiver {
-    private String preSongName;
-    private static boolean spotifyPlaying = false;
     private static final String KW_PLAYER_STATUS = "cn.kuwo.kwmusicauto.action.PLAYER_STATUS";
     AudioManager audioManager;
 
@@ -45,9 +43,13 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
                 return;
             }
 
-        if (extras == null || (extras.getString("artist") == null && extras.getString("track") == null &&
-                extras.getString("play_music_name") == null && extras.getString("play_music_artist") == null) ||
-                extras.getString("artist").equalsIgnoreCase("null") || extras.getString("track").equalsIgnoreCase("null")
+        if (extras == null
+                || extras.getString("artist") == null
+                || extras.getString("track") == null
+                || extras.getString("play_music_name") == null
+                || extras.getString("play_music_artist") == null
+                || "null".equalsIgnoreCase(extras.getString("artist"))
+                || "null".equalsIgnoreCase(extras.getString("track"))
         ) {
             return;
         }
@@ -142,10 +144,6 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
         EventBus.getDefault().post(event);
         if (AppSettings.get().isLyricEnable()) {
             if (!TextUtils.isEmpty(showString.toString())) {
-               /* Intent textFloat = new Intent(context, TextFloatingService.class);
-                textFloat.putExtra(TextFloatingService.SHOW_TEXT, showString.toString());
-                textFloat.putExtra(TextFloatingService.SHOW_TIME, 10);
-                context.startService(textFloat);*/
                 LaunchEvent launchEvent = new LaunchEvent(TextFloatingService.class);
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(TextFloatingService.SHOW_TEXT, showString.toString());
@@ -154,14 +152,10 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
                 EventBus.getDefault().post(launchEvent);
 
             }
-           // if (!Utils.isServiceRunning(context, LyricService.class.getName())) {
-                // Intent lycService = new Intent(context, LyricService.class);
-                // context.startService(lycService);
-                EventBus.getDefault().post(new LaunchEvent(LyricService.class));
+            EventBus.getDefault().post(new LaunchEvent(LyricService.class));
 
-           // }
         }
-        if(!TextUtils.isEmpty(songName) && !songName.equalsIgnoreCase("null")){
+        if (!TextUtils.isEmpty(songName) && !songName.equalsIgnoreCase("null")) {
             EventBus.getDefault().post(new MusicEvent(songName, artistName));
         }
 

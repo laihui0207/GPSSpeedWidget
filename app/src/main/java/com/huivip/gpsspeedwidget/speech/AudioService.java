@@ -10,6 +10,7 @@ import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.TTSEngineChangeEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
+import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,7 +48,6 @@ public class AudioService extends Service {
             if(preContent!=null && preContent.equalsIgnoreCase(event.getText())){
                 return;
             }
-            preContent=event.getText();
             if(event.getDelaySeconds()==0) {
                 tts.speak(event.getText(), event.isForce());
             } else if(event.getDelaySeconds()>0){
@@ -62,11 +62,9 @@ public class AudioService extends Service {
     }
     @Subscribe
     public void changeTTSEngine(TTSEngineChangeEvent engineChangeEvent){
-       // if(!SpeechFactory.SDKTTS.equalsIgnoreCase(AppSettings.get().getAudioEngine())) {
             tts.release();
             tts = SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(AppSettings.get().getAudioEngine());
             tts.initTTS();
-        //}
     }
     @Override
     public void onDestroy() {

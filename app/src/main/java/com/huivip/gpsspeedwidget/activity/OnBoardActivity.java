@@ -86,10 +86,10 @@ public class OnBoardActivity extends MaterialIntroActivity {
         }
         startBootService(true);
     }
-    private void startBootService(boolean fromResum){
+    private void startBootService(boolean fromResume){
         if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())){
             Intent bootStartService=new Intent(getApplicationContext(), BootStartService.class);
-            bootStartService.putExtra(BootStartService.START_RESUME,fromResum);
+            bootStartService.putExtra(BootStartService.START_RESUME,fromResume);
             Utils.startService(getApplicationContext(),bootStartService, true);
         }
     }

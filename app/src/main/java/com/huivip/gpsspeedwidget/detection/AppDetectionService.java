@@ -45,8 +45,15 @@ public class AppDetectionService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
+
         if (enabledApps == null) {
             updateDesktopApps();
+        }
+        if (AppSettings.get().getAutoStart()
+                && !Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())) {
+            Intent service = new Intent(getApplicationContext(), BootStartService.class);
+            service.putExtra(BootStartService.START_BOOT, true);
+            getApplicationContext().startService(service);
         }
         if(!AppSettings.get().isEnableSpeed()){
             return ;
@@ -70,13 +77,8 @@ public class AppDetectionService extends AccessibilityService {
 
         boolean onDesktop = enabledApps.contains(componentName.getPackageName());
         PrefUtils.setOnDesktop(getApplicationContext(),onDesktop);
-        //Utils.startFloatingWindows(getApplicationContext(),true);
         EventBus.getDefault().post(new FloatWindowsLaunchEvent(true));
-       /* if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())) {
-            Intent bootStartService = new Intent(getApplicationContext(), BootStartService.class);
-            bootStartService.putExtra(BootStartService.START_RESUME, true);
-            Utils.startService(getApplicationContext(), bootStartService, true);
-        }*/
+
     }
 
    private ActivityInfo tryGetActivity(ComponentName componentName) {

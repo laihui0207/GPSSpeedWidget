@@ -8,7 +8,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Handler;
@@ -20,7 +19,7 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.GpsUtil;
-import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
 import com.huivip.gpsspeedwidget.beans.AutoCheckUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.BootEvent;
@@ -175,7 +174,8 @@ public class BootStartService extends Service {
                     Intent audioService = new Intent(getApplicationContext(), AudioService.class);
                     Utils.startService(getApplicationContext(), audioService);
                 }
-                PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
+                PrefUtils.setTempMuteAudioService(getApplicationContext(), false);
+
                 if (AppSettings.get().isEnableTimeWindow()) {
                     Intent timeFloating = new Intent(getApplicationContext(), RealTimeFloatingService.class);
                     Utils.startService(getApplicationContext(), timeFloating);
@@ -224,6 +224,7 @@ public class BootStartService extends Service {
                         }, 1000 * 60);
                     }
                 }
+                EventBus.getDefault().post(new AudioTempMuteEvent(false));
                 if (PrefUtils.isSpeedNumberVWidgetEnable(getApplicationContext())) {
                     Intent widgetService = new Intent(getApplicationContext(), SpeedNumberVerticalService.class);
                     Utils.startService(getApplicationContext(), widgetService);
@@ -252,7 +253,7 @@ public class BootStartService extends Service {
                     launchAutoMap();
                 }
             },120000);
-            if (AppSettings.get().isEnablePlayWarnAudio()) {
+            if (AppSettings.get().isEnablePlayWarnAudio() && !started) {
                 x.task().postDelayed(() -> {
                     EventBus.getDefault().post(new PlayAudioEvent(PrefUtils.getPrefLaunchAlterTts(getApplicationContext()), true));
                 }, 5000);

@@ -164,14 +164,14 @@ public class AutoXunHangService extends Service implements AMapNaviListener, Aim
         this.autoToMute = event.isMute();
     }
     @Override
-    public void onGetNavigationText(String s) {
+    public void onGetNavigationText(String content) {
         EventBus.getDefault().post(new AimlessStatusUpdateEvent(true));
         if(AppSettings.get().isAutoMute()){
             if(!autoToMute) {
-                EventBus.getDefault().post(new PlayAudioEvent(s, true));
+                EventBus.getDefault().post(new PlayAudioEvent(content, true));
             }
         } else {
-            EventBus.getDefault().post(new PlayAudioEvent(s,true));
+            EventBus.getDefault().post(new PlayAudioEvent(content,true));
         }
 
     }

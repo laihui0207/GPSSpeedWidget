@@ -85,7 +85,7 @@ public class GpsSpeedNumberService extends Service {
                     this.manager.updateAppWidget(this.numberWidget, this.numberRemoteViews);
                     this.numberRemoteViews = null;
                     gpsUtil.startLocationService();
-                    PrefUtils.setEnableTempAudioService(getApplicationContext(), true);
+                    PrefUtils.setTempMuteAudioService(getApplicationContext(), false);
                     if(PrefUtils.isUserManualClosedService(getApplicationContext())) {
                        // Utils.startFloatingWindows(getApplicationContext(),true);
                         EventBus.getDefault().post(new FloatWindowsLaunchEvent(true));

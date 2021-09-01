@@ -12,7 +12,7 @@ public class ScreenOnReceiver extends BroadcastReceiver {
     String SCREEN_OFF = "android.intent.action.SCREEN_OFF";
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (SCREEN_ON.equals(intent.getAction())) {
+        if (SCREEN_ON.equals(intent.getAction()) && !Utils.isServiceRunning(context,BootStartService.class.getName())) {
             Intent bootStartService = new Intent(context, BootStartService.class);
             bootStartService.putExtra(BootStartService.START_BOOT, true);
             Utils.startService(context, bootStartService, true);

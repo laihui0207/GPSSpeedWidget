@@ -13,6 +13,7 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ import com.huivip.gpsspeedwidget.model.Item;
 import com.huivip.gpsspeedwidget.model.Item.Type;
 import com.huivip.gpsspeedwidget.receivers.AppUpdateReceiver;
 import com.huivip.gpsspeedwidget.receivers.ShortcutReceiver;
+import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.util.AppManager;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.DatabaseHelper;
@@ -102,9 +104,11 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     private static final IntentFilter _appUpdateIntentFilter = new IntentFilter();
     private static final IntentFilter _shortcutIntentFilter = new IntentFilter();
     private static final IntentFilter _timeChangedIntentFilter = new IntentFilter();
+    private static final IntentFilter _networkConnectedIntentFilter = new IntentFilter();
     private AppUpdateReceiver _appUpdateReceiver;
     private ShortcutReceiver _shortcutReceiver;
     private BroadcastReceiver _timeChangedReceiver;
+    private BroadcastReceiver _networkConnectedReceiver;
 
     private int cx;
     private int cy;
@@ -131,6 +135,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         _appUpdateIntentFilter.addAction("android.intent.action.PACKAGE_CHANGED");
         _appUpdateIntentFilter.addDataScheme("package");
         _shortcutIntentFilter.addAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        _networkConnectedIntentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
     }
 
     public final DrawerLayout getDrawerLayout() {
@@ -256,22 +261,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         if (!toApplyList.isEmpty()) {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(!Settings.System.canWrite(this)){
-                Intent intentWriteSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
-                        Uri.parse("package:" + getPackageName()));
-                intentWriteSetting.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivityForResult(intentWriteSetting, 124);
-             }
-        }
-        new PermissionChecker(this).doIfBasePermissionGranted();
-        if (!PrefUtils.isEnableDrawOverFeature(getApplicationContext())) {
-            Toast.makeText(getApplicationContext(), "需要打开GPS插件的悬浮窗口权限", Toast.LENGTH_LONG).show();
-            try {
-                openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID);
-            } catch (ActivityNotFoundException ignored) {
-            }
-        }*/
     }
 
     private void openSettings(String settingsAction, String packageName) {
@@ -390,11 +379,22 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                 }
             }
         };
-
+        _networkConnectedReceiver= new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(!Utils.isServiceRunning(context,BootStartService.class.getName())) {
+                    Intent bootStartService = new Intent(context, BootStartService.class);
+                    bootStartService.putExtra(BootStartService.START_RESUME, true);
+                    Utils.startService(context, bootStartService, true);
+                }
+            }
+        };
         // register all receivers
         registerReceiver(_appUpdateReceiver, _appUpdateIntentFilter);
         registerReceiver(_shortcutReceiver, _shortcutIntentFilter);
         registerReceiver(_timeChangedReceiver, _timeChangedIntentFilter);
+        registerReceiver(_networkConnectedReceiver,_networkConnectedIntentFilter);
+
     }
 
     public void onRemovePage() {

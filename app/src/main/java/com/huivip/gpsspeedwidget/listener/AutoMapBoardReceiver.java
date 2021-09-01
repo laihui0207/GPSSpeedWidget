@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
@@ -42,7 +41,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     switch (status) {
                         case 0: // auto Map Started
                             boolean start =AppSettings.get().getAutoStart();
-                            if (start) {
+                            if (start && !Utils.isServiceRunning(context,BootStartService.class.getName())) {
                                 Intent service = new Intent(context, BootStartService.class);
                                 service.putExtra(BootStartService.START_BOOT, true);
                                 Utils.startService(context,service,true);
@@ -63,9 +62,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 EventBus.getDefault().post(new FloatWindowsLaunchEvent(false));
 
                             }
-                            /*if (PrefUtils.isEnableAutoMute(context)) {
-                                PrefUtils.setEnableTempAudioService(context, false);
-                            }*/
                             EventBus.getDefault().post(new AudioTempMuteEvent(true));
                             gpsUtil.setAutoXunHangStatus(Constant.XunHang_Status_Started);
                             break;
@@ -96,7 +92,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
                             EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setDaoHangStarted(true));
                             EventBus.getDefault().post(new AudioTempMuteEvent(true));
-                            //PrefUtils.setEnableTempAudioService(context, false);
+                            PrefUtils.setTempMuteAudioService(context, true);
                             launchSpeedFloatingWindows(context, true);
                             break;
                         case 10:  // simulate navi
@@ -111,7 +107,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             //gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Ended);
                             gpsUtil.setCurrentRoadName("");
                             gpsUtil.setAutoMapBackendProcessStarted(false);
-                            PrefUtils.setEnableTempAudioService(context, true);
+                            PrefUtils.setTempMuteAudioService(context, false);
                             if (PrefUtils.isHideFloatingWidowOnNaviApp(context)) {
                                 //Utils.startFloatingWindows(context.getApplicationContext(), true);
                                 EventBus.getDefault().post(new FloatWindowsLaunchEvent(true));
@@ -154,6 +150,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             EventBus.getDefault().post(new AudioTempMuteEvent(true));
                             break;
                         case 14:  // TTS Speak End
+                            EventBus.getDefault().post(new AudioTempMuteEvent(false));
                            // Toast.makeText(context,"speaking End",Toast.LENGTH_SHORT).show();
                             break;
                         case 37:
@@ -246,9 +243,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     locationEvent.setCityCode(cityName);
                     locationEvent.setDistrict(areaName);
                     EventBus.getDefault().post(locationEvent);
-                    if(StringUtils.isNotBlank(provinceName)){
+                   /* if(StringUtils.isNotBlank(provinceName)){
                         cityName=provinceName+cityName;
-                    }
+                    }*/
                     if(StringUtils.isNotBlank(areaName)){
                         cityName+=areaName;
                     }
@@ -280,19 +277,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     //FileUtil.saveLogToFile(iformationJsonString);
                     break;
             }
-           /* if (!gpsUtil.serviceStarted && !Utils.isServiceRunning(context, WeatherService.class.getName())) {
-                Intent service = new Intent(context, BootStartService.class);
-                service.putExtra(BootStartService.START_BOOT, true);
-                context.startService(service);
-            }*/
         }
 
     }
 
     private void startBackendNaviFloatingService(Context context) {
         if(AppSettings.get().isEnableDaoHang()) {
-            /*Intent floatService = new Intent(context, NaviFloatingService.class);
-            context.startService(floatService);*/
             EventBus.getDefault().post(new LaunchEvent(NaviFloatingService.class));
 
         }
@@ -300,9 +290,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
 
     private void stopBackendNaviFloatingService(Context context, boolean closeIt) {
         if(Utils.isServiceRunning(context,NaviFloatingService.class.getName())) {
-           /* Intent floatService = new Intent(context, NaviFloatingService.class);
-            floatService.putExtra(NaviFloatingService.EXTRA_CLOSE, true);
-            context.startService(floatService);*/
             EventBus.getDefault().post((new LaunchEvent(NaviFloatingService.class)).setToClose(false));
 
         }
@@ -310,17 +297,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
 
     private void startAutoWidgetFloatingService(Context context) {
         if(AppSettings.get().isShowAmapWidgetContent()) {
-           /* Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
-            context.startService(autoWidgetFloatingService);*/
             EventBus.getDefault().post((new LaunchEvent(AutoWidgetFloatingService.class)));
         }
     }
 
     private void stopDriveWayFloatingService(Context context, boolean closeIt) {
         if(Utils.isServiceRunning(context,AutoWidgetFloatingService.class.getName())) {
-           /* Intent autoWidgetFloatingService = new Intent(context, AutoWidgetFloatingService.class);
-            autoWidgetFloatingService.putExtra(AutoWidgetFloatingService.EXTRA_CLOSE, true);
-            context.startService(autoWidgetFloatingService);*/
             EventBus.getDefault().post((new LaunchEvent(AutoWidgetFloatingService.class)).setToClose(false));
 
         }
@@ -330,7 +312,6 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
         if (!PrefUtils.getShowFlatingOn(context).equalsIgnoreCase(PrefUtils.SHOW_ONLY_AUTONAVI)) {
             return;
         }
-        //Utils.startFloatingWindows(context.getApplicationContext(), enabled);
         EventBus.getDefault().post(new FloatWindowsLaunchEvent(enabled));
 
     }

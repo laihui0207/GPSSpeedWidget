@@ -477,10 +477,10 @@ public abstract class PrefUtils {
     public static void setWidgetActived(Context context,boolean widgetActived){
         edit(context).putBoolean(WIDGET_ACTIVED, widgetActived).apply();
     }
-    public static boolean isEnableTempAudioService(Context context){
+    public static boolean isTempMuteAudioService(Context context){
         return getSharedPreferences(context).getBoolean(ENABLE_TEMP_AUDIO_SERVICE, true);
     }
-    public static void setEnableTempAudioService(Context context,boolean enableService){
+    public static void setTempMuteAudioService(Context context, boolean enableService){
         edit(context).putBoolean(ENABLE_TEMP_AUDIO_SERVICE, enableService).apply();
     }
     public static boolean isUserManualClosedService(Context context){

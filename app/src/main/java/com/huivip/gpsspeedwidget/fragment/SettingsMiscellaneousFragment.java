@@ -15,11 +15,13 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.huivip.gpsspeedwidget.DeviceUuidFactory;
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.activity.HomeActivity;
+import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.DatabaseHelper;
 import com.huivip.gpsspeedwidget.util.Definitions;
 import com.huivip.gpsspeedwidget.utils.FTPUtils;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.utils.Utils;
 import com.huivip.gpsspeedwidget.viewutil.DialogHelper;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
@@ -109,6 +111,10 @@ public class SettingsMiscellaneousFragment extends SettingsBaseFragment {
                 return true;
             case R.string.pref_key__restart:
                 getActivity().finish();
+                Intent bootService=new Intent(getContext(), BootStartService.class);
+                bootService.putExtra(BootStartService.START_BOOT,true);
+                Utils.startService(getContext(),bootService, true);
+                AppSettings.get().setAppRestartRequired(true);
                 return true;
         }
         return false;
