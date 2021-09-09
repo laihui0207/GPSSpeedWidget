@@ -33,7 +33,7 @@ public class NetWorkConnectChangedReceiver extends BroadcastReceiver {
             }
 
          }
-        if(Utils.isNetworkConnected(context) && !Utils.isServiceRunning(context,BootStartService.class.getName())) {
+        if(Utils.isNetworkConnected(context)) {
             Intent bootStartService = new Intent(context, BootStartService.class);
             bootStartService.putExtra(BootStartService.START_RESUME, true);
             Utils.startService(context, bootStartService, true);

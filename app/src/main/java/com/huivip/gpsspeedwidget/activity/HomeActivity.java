@@ -382,7 +382,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         _networkConnectedReceiver= new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(!Utils.isServiceRunning(context,BootStartService.class.getName())) {
+                if(Utils.isNetworkConnected(context) && !Utils.isServiceRunning(context,BootStartService.class.getName())) {
                     Intent bootStartService = new Intent(context, BootStartService.class);
                     bootStartService.putExtra(BootStartService.START_RESUME, true);
                     Utils.startService(context, bootStartService, true);

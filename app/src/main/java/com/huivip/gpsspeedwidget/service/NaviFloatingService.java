@@ -233,7 +233,14 @@ public class NaviFloatingService extends Service {
 
         naviLeftTextView.setText(String.format("%s/%s", event.getRouteRemainDis(), event.getRouteRemainTime()));
         if(event.getIcon()>0) {
-            naveIconImageView.setImageResource(getTurnIcon(event.getIcon()));
+            int iconId=getTurnIcon2(event.getIcon());
+            if(iconId>0){
+                naveIconImageView.setVisibility(View.VISIBLE);
+                naveIconImageView.setImageResource(iconId);
+            } else {
+                //Toast.makeText(getApplicationContext(),"event icon:"+event.getIcon(),Toast.LENGTH_LONG).show();
+                naveIconImageView.setVisibility(View.GONE);
+            }
         }
 
         if(event.getLimitType()!=-1){
@@ -269,7 +276,7 @@ public class NaviFloatingService extends Service {
             currentRoadTextView.setText(String.format("%s", gpsUtil.getCurrentRoadName()));
         }
         speedTextView.setText(gpsUtil.getKmhSpeedStr());
-        int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : R.color.cardview_light_background;
+        int colorRes = gpsUtil.isHasLimited() ? R.color.red500 : AppSettings.get().getSpeedVerticalWidgetSpeedTextColor();
         int color = ContextCompat.getColor(this, colorRes);
         speedTextView.setTextColor(color);
     }
@@ -356,7 +363,13 @@ public class NaviFloatingService extends Service {
         intent.setData(Uri.parse("package:" + packageName));
         startActivity(intent);
     }
-
+    private int getTurnIcon2(int iconValue){
+        if(iconValue==1){
+            iconValue=0;
+        }
+        String imageName="sou"+iconValue+"_night";
+        return getResources().getIdentifier(imageName, "drawable", getApplicationContext().getPackageName());
+    }
     private int getTurnIcon(int iconValue) {
         int returnValue = -1;
         switch (iconValue) {

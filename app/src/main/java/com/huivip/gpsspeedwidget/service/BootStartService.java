@@ -53,11 +53,6 @@ public class BootStartService extends Service {
     public static String START_BOOT = "FromSTARTBOOT";
     public static String START_RESUME = "FromHomeResume";
     boolean started = false;
-    AlarmManager alarm;
-    String deviceId;
-    private static final String NOTIFICATION_CHANNEL_NAME = "BackgroundLocation";
-    private NotificationManager notificationManager = null;
-    boolean isCreateChannel = false;
     boolean autoMapLaunched=false;
     NetWorkConnectChangedReceiver netWorkConnectChangedReceiver;
     ScreenOnReceiver screenOnReceiver;
@@ -76,77 +71,8 @@ public class BootStartService extends Service {
             int NOTIFICATION_ID = (int) (System.currentTimeMillis() % 10000);
             startForeground(NOTIFICATION_ID, Utils.buildNotification(getApplicationContext(),Integer.toString(NOTIFICATION_ID)));
         }
-        DeviceUuidFactory deviceUuidFactory = new DeviceUuidFactory(getApplicationContext());
-        deviceId = deviceUuidFactory.getDeviceUuid().toString();
-        alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
-        boolean start = AppSettings.get().getAutoStart();
-        if (start) {
-            String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
-            if (AppSettings.get().isEnableLaunchOtherApp() && !TextUtils.isEmpty(apps)) {
-                String[] autoApps = apps.split(",");
-                if (autoApps.length > 0) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            int delayTime = AppSettings.get().getDelayTimeBetweenLaunchOtherApp();
-                            for (String packageName : autoApps) {
-                                try {
-                                    Thread.sleep(delayTime * 1000 + 500L);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                Intent launchIntent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(packageName);
-                                if (launchIntent != null && !Utils.isServiceRunning(getApplicationContext(), packageName)) {
-                                    launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    getApplicationContext().startActivity(launchIntent);//null pointer check in case package name was not found
-
-                                }
-                            }
-                            if (AppSettings.get().isReturnHomeAfterLaunchOtherApp()) {
-                                AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
-                                PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
-                                        new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
-                                alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, gotoHomeIntent);
-                            }
-
-                        }
-                    }).start();
-                } else if (AppSettings.get().isReturnHomeAfterLaunchOtherApp()) {
-                    AlarmManager alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
-                    PendingIntent gotoHomeIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
-                            new Intent(getApplicationContext(), GoToHomeReceiver.class), 0);
-                    alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, gotoHomeIntent);
-                }
-            }
-            PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
-                    new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-            alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
-
-
-            EventBus.getDefault().register(this);
-          /*  if (AppSettings.get().isEnablePlayWarnAudio()) {
-                x.task().postDelayed(()->{
-                    EventBus.getDefault().post(new PlayAudioEvent("测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音测试开机语音",true));
-                },5000);*/
-                /*mPlayer = MediaPlayer.create(this, R.raw.warn);
-                if (mPlayer != null) {
-                    mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            if (mPlayer != null) {
-                                mPlayer.reset();
-                                mPlayer.release();
-                            }
-                            mPlayer = null;
-                        }
-                    });
-                    mPlayer.start();
-                }*/
-           /* }*/
-           // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                registerBoardCast(getApplicationContext());
-            //}
-        }
+        EventBus.getDefault().register(this);
+         registerBoardCast(getApplicationContext());
         super.onCreate();
     }
 
@@ -199,11 +125,7 @@ public class BootStartService extends Service {
                 Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
                 Utils.startService(getApplicationContext(), weatherService);
 
-                if (AppSettings.get().isPlayTime() || AppSettings.get().isPlayWeather() || AppSettings.get().isPlayAddressOnStop()) {
-                    PendingIntent weatherServiceIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
-                            new Intent(getApplicationContext(), WeatherServiceReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                    alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 60000L, weatherServiceIntent);
-                }
+
                 if (Utils.isNetworkConnected(getApplicationContext())) {
                     if (AppSettings.get().isEnableXunHang()){
                         Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
@@ -247,16 +169,10 @@ public class BootStartService extends Service {
                 }
             }
             EventBus.getDefault().post(new BootEvent(true));
-            x.task().postDelayed(this::getDistrictFromAuto, 10000);
-            x.task().postDelayed(()->{
-                if(!autoMapLaunched){
-                    launchAutoMap();
-                }
-            },120000);
-            if (AppSettings.get().isEnablePlayWarnAudio() && !started) {
-                x.task().postDelayed(() -> {
-                    EventBus.getDefault().post(new PlayAudioEvent(PrefUtils.getPrefLaunchAlterTts(getApplicationContext()), true));
-                }, 5000);
+            if(!Utils.isServiceRunning(getApplicationContext(),LaunchHandlerService.class.getName()))
+            {
+                Intent launchHandlerService=new Intent(getApplicationContext(), LaunchHandlerService.class);
+                Utils.startService(getApplicationContext(),launchHandlerService);
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -276,12 +192,7 @@ public class BootStartService extends Service {
         }
         stopForeground(true);
     }
-    @Subscribe
-    public void locationStatus(LocationEvent event){
-        if(event.getDistrict()!=null && event.getEventFrom().equals("AutoMap")){
-            autoMapLaunched=true;
-        }
-    }
+
     @Subscribe
     public void launchFloatWindow(FloatWindowsLaunchEvent event){
         Utils.startFloatingWindows(getApplicationContext(),event.isEnable());
@@ -324,53 +235,9 @@ public class BootStartService extends Service {
             AppObject.getContext().startService(autoWidgetFloatingService);
         }
     }
-    @Subscribe
-    public void getDistrict(GetDistrictEvent event){
-        getDistrictFromAuto();
-    }
-    private void getDistrictFromAuto() {
-        x.task().postDelayed(() -> {
-            Intent intent = new Intent();
-            intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-            intent.setPackage("com.autonavi.amapauto");
-            intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
-            intent.putExtra("KEY_TYPE", 10029);
-            sendBroadcast(intent);
-        }, 1000 * 10);
-    }
-    private void launchAutoMap(){
-        String pkgName_auto = "com.autonavi.amapauto";
-        String pkgName_lite="com.autonavi.amapautolite";
-        String pkgName=pkgName_auto;
-        boolean autoInstalled=false;
-        if(Utils.checkApplicationIfExists(getApplicationContext(),pkgName)) {
-           autoInstalled=true;
-        } else if(Utils.checkApplicationIfExists(getApplicationContext(),pkgName_lite)) {
-            autoInstalled=true;
-            pkgName=pkgName_lite;
-        } else {
-            Toast.makeText(getApplicationContext(),"没有找到高德地图",Toast.LENGTH_SHORT).show();
-        }
-        if(autoInstalled) {
-            Intent launchIntent = new Intent();
-            launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            launchIntent.setComponent(
-                    new ComponentName(pkgName,
-                            "com.autonavi.auto.remote.fill.UsbFillActivity"));
-            startActivity(launchIntent);
-            String finalPkgName = pkgName;
-            x.task().postDelayed(() -> {
-                Intent intent = new Intent();
-                intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-                intent.setPackage(finalPkgName);
-                intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
-                intent.putExtra("KEY_TYPE", 10031);
-                sendBroadcast(intent);
-            },10000);
 
-        }
 
-    }
+
     private void registerBoardCast(Context context) {
         String[] actions = new String[]{"com.android.music.metachanged",
                 "com.android.music.statuschanged",

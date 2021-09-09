@@ -203,7 +203,13 @@ public class SpeedNumberVerticalService extends Service {
                 }
             }
             this.numberRemoteViews.setTextViewText(R.id.textView_nextdistance_v,distance);
-            this.numberRemoteViews.setImageViewResource(R.id.imageView_turnicon_v,getTurnIcon(event.getIcon()));
+            int iconId=getTurnIcon(event.getIcon());
+            if(iconId>0) {
+                this.numberRemoteViews.setViewVisibility(R.id.imageView_turnicon_v,View.VISIBLE);
+                this.numberRemoteViews.setImageViewResource(R.id.imageView_turnicon_v,iconId);
+            } else {
+                this.numberRemoteViews.setViewVisibility(R.id.imageView_turnicon_v,View.GONE);
+            }
         } else {
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.GONE);
         }
@@ -337,8 +343,13 @@ public class SpeedNumberVerticalService extends Service {
         return bitmap;
     }
     private int getTurnIcon(int iconValue) {
-        int returnValue = -1;
-        switch (iconValue) {
+        if(iconValue==1){
+            iconValue=0;
+        }
+        String imageName="sou"+iconValue+"_night";
+        return getResources().getIdentifier(imageName, "drawable", getApplicationContext().getPackageName());
+        //int returnValue = -1;
+        /*switch (iconValue) {
             case 1:
                 returnValue = R.drawable.sou0_night;
                 break;
@@ -400,7 +411,7 @@ public class SpeedNumberVerticalService extends Service {
                 returnValue = R.drawable.sou20_night;
                 break;
         }
-        return returnValue;
+        return returnValue;*/
     }
 
 }

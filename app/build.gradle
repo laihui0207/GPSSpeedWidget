@@ -3,12 +3,30 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 30
     buildToolsVersion '29.0.2'
+
+    def versionPropsFile = file('version.properties')
+
+    Properties versionProps = new Properties()
+
+    if (versionPropsFile.canRead()) {
+
+        versionProps.load(new FileInputStream(versionPropsFile))
+
+    }
+
+    def code = versionProps['VERSION_CODE'].toInteger() + 1
+
+    def name = versionProps['VERSION_NAME']
+
+    versionProps['VERSION_CODE'] = code.toString()
+
+    versionProps.store(versionPropsFile.newWriter(), null)
     defaultConfig {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
         targetSdkVersion 30
-        versionCode 303
-        versionName "3.2.3"
+        versionCode code
+        versionName name
         flavorDimensions "versionCode"
         ndk {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）

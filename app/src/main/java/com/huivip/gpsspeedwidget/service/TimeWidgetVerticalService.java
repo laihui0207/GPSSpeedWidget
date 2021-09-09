@@ -57,14 +57,14 @@ public class TimeWidgetVerticalService extends Service {
     @Override
     public void onCreate() {
         this.manager = AppWidgetManager.getInstance(this);
-        registerReceiver(myBroadcastReceiver,new IntentFilter(Intent.ACTION_TIME_TICK));
+        IntentFilter timeFilter=new IntentFilter(Intent.ACTION_TIME_TICK);
+        timeFilter.addAction(Intent.ACTION_TIME_CHANGED);
+        timeFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        registerReceiver(myBroadcastReceiver,timeFilter);
         this.thisWidget = new ComponentName(this, TimeWidget_v.class);
         EventBus.getDefault().register(this);
         if(!Utils.isServiceRunning(getApplicationContext(),WeatherService.class.getName())){
-         /*  Intent weatherService=new Intent(getApplicationContext(),WeatherService.class);
-           startService(weatherService);*/
             EventBus.getDefault().post(new LaunchEvent(WeatherService.class));
-
             EventBus.getDefault().post(new SearchWeatherEvent(false));
         }
         if(!AppSettings.get().isShow24TimeFormat()){
@@ -119,29 +119,30 @@ public class TimeWidgetVerticalService extends Service {
         updateTime = System.currentTimeMillis();
         weatherUpdated = true;
     }
-    private void updateView(){
-        Date date=new Date();
-       RemoteViews timeView = new RemoteViews(getPackageName(), R.layout.time_weather_v_widget);
-       Bitmap timeBitmap=getBitmap(timeFormat.format(date));
-        timeView.setImageViewBitmap(R.id.image_time_v, timeBitmap);
-        int textSize=15+Integer.parseInt(AppSettings.get().getTimeWidgetOtherTextSize());
-        timeView.setTextViewText(R.id.text_day_v,dateFormat.format(date));
-        timeView.setTextColor(R.id.text_day_v,AppSettings.get().getTimeWidgetOtherTextColor());
-        timeView.setTextViewTextSize(R.id.text_day_v,TypedValue.COMPLEX_UNIT_SP,textSize);
 
-        timeView.setTextViewText(R.id.text_week_v,weekFormat.format(date));
-        timeView.setTextColor(R.id.text_week_v,AppSettings.get().getTimeWidgetOtherTextColor());
-        timeView.setTextViewTextSize(R.id.text_week_v,TypedValue.COMPLEX_UNIT_SP,textSize);
+    private void updateView() {
+        Date date = new Date();
+        RemoteViews timeView = new RemoteViews(getPackageName(), R.layout.time_weather_v_widget);
+        Bitmap timeBitmap = getBitmap(timeFormat.format(date));
+        timeView.setImageViewBitmap(R.id.image_time_v, timeBitmap);
+        int textSize = 15 + Integer.parseInt(AppSettings.get().getTimeWidgetOtherTextSize());
+        timeView.setTextViewText(R.id.text_day_v, dateFormat.format(date));
+        timeView.setTextColor(R.id.text_day_v, AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_day_v, TypedValue.COMPLEX_UNIT_SP, textSize);
+
+        timeView.setTextViewText(R.id.text_week_v, weekFormat.format(date));
+        timeView.setTextColor(R.id.text_week_v, AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_week_v, TypedValue.COMPLEX_UNIT_SP, textSize);
 
         timeView.setTextViewText(R.id.text_chinaDate_v, new ChinaDateUtil(Calendar.getInstance()).toString());
-        timeView.setTextColor(R.id.text_chinaDate_v,AppSettings.get().getTimeWidgetOtherTextColor());
-        timeView.setTextViewTextSize(R.id.text_chinaDate_v,TypedValue.COMPLEX_UNIT_SP,textSize);
+        timeView.setTextColor(R.id.text_chinaDate_v, AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_chinaDate_v, TypedValue.COMPLEX_UNIT_SP, textSize);
 
-        timeView.setTextColor(R.id.text_altitude_v,AppSettings.get().getTimeWidgetOtherTextColor());
-        timeView.setTextViewTextSize(R.id.text_altitude_v,TypedValue.COMPLEX_UNIT_SP,textSize);
+        timeView.setTextColor(R.id.text_altitude_v, AppSettings.get().getTimeWidgetOtherTextColor());
+        timeView.setTextViewTextSize(R.id.text_altitude_v, TypedValue.COMPLEX_UNIT_SP, textSize);
 
-        manager.updateAppWidget(thisWidget,timeView);
-        if(!weatherUpdated || System.currentTimeMillis()-updateTime > 10*60*1000 ){
+        manager.updateAppWidget(thisWidget, timeView);
+        if (!weatherUpdated || System.currentTimeMillis() - updateTime > 10 * 60 * 1000) {
             EventBus.getDefault().post(new SearchWeatherEvent(false));
         }
     }
