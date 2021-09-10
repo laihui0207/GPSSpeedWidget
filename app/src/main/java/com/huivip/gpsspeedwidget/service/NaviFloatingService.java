@@ -170,7 +170,13 @@ public class NaviFloatingService extends Service{
         nextRoadDistanceTextView.setText(gpsUtil.getNextRoadDistance());
         naviLeftTextView.setText(gpsUtil.getTotalLeftDistance()+"/"+gpsUtil.getTotalLeftTime());
         if(gpsUtil.getNavi_turn_icon()>0) {
-            naveIconImageView.setImageResource(getTurnIcon(gpsUtil.getNavi_turn_icon()));
+            int iconId=getTurnIcon(gpsUtil.getNavi_turn_icon());
+            if(iconId>0){
+                naveIconImageView.setVisibility(View.VISIBLE);
+                naveIconImageView.setImageResource(iconId);
+            } else {
+               naveIconImageView.setVisibility(View.GONE);
+            }
         }
         if(gpsUtil.getCameraSpeed()>0){
             navicameraSpeedTextView.setText(gpsUtil.getCameraSpeed()+"");
@@ -209,6 +215,13 @@ public class NaviFloatingService extends Service{
         startActivity(intent);
     }
     private int getTurnIcon(int iconValue){
+        if(iconValue==1){
+            iconValue=0;
+        }
+        String imageName="sou"+iconValue+"_night";
+        return getResources().getIdentifier(imageName, "drawable", getApplicationContext().getPackageName());
+    }
+    private int getTurnIcon2(int iconValue){
         int returnValue=-1;
         switch (iconValue) {
             case 1:
