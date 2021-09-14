@@ -4,8 +4,36 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../../layout/custom_preview.xml" value="0.23958333333333334" />
+        <entry key="app/src/main/res/drawable/lyric_floating_border.xml" value="0.3333333333333333" />
+        <entry key="app/src/main/res/drawable/navi_floating_border.xml" value="0.3333333333333333" />
+        <entry key="app/src/main/res/drawable/radius_border.xml" value="0.3333333333333333" />
+        <entry key="app/src/main/res/drawable/real_time_floating_border.xml" value="0.3333333333333333" />
+        <entry key="app/src/main/res/layout-v16/floating_autonavi.xml" value="0.2758152173913043" />
+        <entry key="app/src/main/res/layout-v16/floating_autonavi_small.xml" value="0.2758152173913043" />
+        <entry key="app/src/main/res/layout-v17/floating_altitude_window.xml" value="0.33061594202898553" />
+        <entry key="app/src/main/res/layout-v17/floating_autonavi.xml" value="0.2767210144927536" />
+        <entry key="app/src/main/res/layout-v17/floating_autonavi_small.xml" value="0.2758152173913043" />
+        <entry key="app/src/main/res/layout-v17/floating_default_limit.xml" value="0.1" />
+        <entry key="app/src/main/res/layout-v18/floating_altitude_window.xml" value="0.33061594202898553" />
+        <entry key="app/src/main/res/layout/activity_minibar_edit.xml" value="0.32971014492753625" />
         <entry key="app/src/main/res/layout/configuration_activity.xml" value="0.30480072463768115" />
-        <entry key="app/src/main/res/layout/floating_backend_navi.xml" value="0.21354166666666666" />
+        <entry key="app/src/main/res/layout/dialog_altitude_alter_setting.xml" value="0.32653985507246375" />
+        <entry key="app/src/main/res/layout/dialog_pay.xml" value="0.32971014492753625" />
+        <entry key="app/src/main/res/layout/floating_auto_widget.xml" value="0.33061594202898553" />
+        <entry key="app/src/main/res/layout/floating_backend_navi.xml" value="0.46813379300010827" />
+        <entry key="app/src/main/res/layout/floatting_meter.xml" value="0.25769927536231885" />
+        <entry key="app/src/main/res/layout/request.xml" value="0.30480072463768115" />
+        <entry key="app/src/main/res/layout/speed_number_vertical_widget.xml" value="0.30027173913043476" />
+        <entry key="app/src/main/res/layout/speedmeterwidget.xml" value="0.30480072463768115" />
+        <entry key="app/src/main/res/layout/speednumberwidget.xml" value="0.30480072463768115" />
+        <entry key="app/src/main/res/layout/time_weather_v_widget.xml" value="0.32971014492753625" />
+        <entry key="app/src/main/res/layout/time_weather_widget.xml" value="0.30480072463768115" />
+        <entry key="app/src/main/res/layout/view_home.xml" value="0.3038949275362319" />
+        <entry key="app/src/main/res/layout/view_intro.xml" value="0.32971014492753625" />
+        <entry key="app/src/main/res/layout/view_search_clock.xml" value="0.32971014492753625" />
+        <entry key="app/src/main/res/layout/view_speed.xml" value="0.32971014492753625" />
+        <entry key="app/src/main/res/layout/view_tmc.xml" value="0.32971014492753625" />
+        <entry key="app/src/main/res/xml/preferences_gps_widget.xml" value="0.33061594202898553" />
       </map>
     </option>
   </component>
