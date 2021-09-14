@@ -169,11 +169,11 @@ public class BootStartService extends Service {
                 }
             }
             EventBus.getDefault().post(new BootEvent(true));
-            if(!Utils.isServiceRunning(getApplicationContext(),LaunchHandlerService.class.getName()))
-            {
+           /* if(!Utils.isServiceRunning(getApplicationContext(),LaunchHandlerService.class.getName()))
+            {*/
                 Intent launchHandlerService=new Intent(getApplicationContext(), LaunchHandlerService.class);
                 Utils.startService(getApplicationContext(),launchHandlerService);
-            }
+           // }
         }
         return super.onStartCommand(intent, flags, startId);
     }
