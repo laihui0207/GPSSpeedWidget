@@ -93,7 +93,7 @@
     void *(**On*Event);
 }
 #----------------------------------------------------------------------------
--libraryjars libs/AMap3DMap_8.0.0_AMapNavi_8.0.0_AMapSearch_7.9.0_AMapTrack_1.4.0_AMapLocation_5.3.1_20210713.jar
+-libraryjars libs/AMap3DMap_8.0.1_AMapNavi_8.0.1_AMapSearch_7.9.0_AMapTrack_1.4.0_AMapLocation_5.5.0_20210915.jar
 -libraryjars libs/kwmusic-autosdk-v2.0.2.jar
 #---------------------------------webview------------------------------------
 -keepclassmembers class fqcn.of.javascript.interface.for.Webview {

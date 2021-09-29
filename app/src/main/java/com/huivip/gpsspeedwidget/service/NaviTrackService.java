@@ -61,24 +61,7 @@ public class NaviTrackService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-       // if (Utils.isNetworkConnected(getApplicationContext())) {
-            startTrack();
-       /* } else {
-            broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if (Utils.isNetworkConnected(getApplicationContext())) {
-                        if(!isGatherRunning) {
-                            startTrack();
-                        }
-                        context.getApplicationContext().unregisterReceiver(broadcastReceiver);
-                    }
-                }
-            };
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-            getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
-        }*/
+        startTrack();
         return Service.START_REDELIVER_INTENT;
     }
     @Subscribe
@@ -213,8 +196,8 @@ public class NaviTrackService extends Service {
         nfIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         builder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, nfIntent, 0))
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("猎鹰sdk运行中")
-                .setContentText("猎鹰sdk运行中");
+                .setContentTitle("猎鹰轨迹运行中")
+                .setContentText("猎鹰轨迹正在记录轨迹信息");
         Notification notification = builder.build();
         return notification;
     }

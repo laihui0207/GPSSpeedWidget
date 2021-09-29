@@ -107,6 +107,7 @@ public class RoadLineService extends Service {
                 } else {
                     roladLineImage = Utils.findlayoutViewById(widgetView, "road_line");
                 }
+                
                 if (roladLineImage != null && roladLineImage instanceof ImageView) {
                     return roladLineImage;
                 } else {
@@ -115,6 +116,8 @@ public class RoadLineService extends Service {
             }catch(Exception e){
                e.printStackTrace();
                return null;
+            } finally {
+                widgetView.destroyDrawingCache();
             }
         }
         return null;

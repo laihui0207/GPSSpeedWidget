@@ -44,12 +44,12 @@ public class MediaNotificationReceiver extends BroadcastReceiver {
             }
 
         if (extras == null
-                || extras.getString("artist") == null
-                || extras.getString("track") == null
-                || extras.getString("play_music_name") == null
-                || extras.getString("play_music_artist") == null
-                || "null".equalsIgnoreCase(extras.getString("artist"))
-                || "null".equalsIgnoreCase(extras.getString("track"))
+                || (extras.getString("artist") == null
+                && extras.getString("track") == null
+                && extras.getString("play_music_name") == null
+                && extras.getString("play_music_artist") == null
+                && "null".equalsIgnoreCase(extras.getString("artist"))
+                && "null".equalsIgnoreCase(extras.getString("track")))
         ) {
             return;
         }

@@ -418,7 +418,7 @@ public class MainActivity extends Activity implements TraceListener {
                                     Toast.makeText(MainActivity.this, "Terminal不存在", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
-                                // showNetErrorHint(queryTerminalResponse.getErrorMsg());
+                                Toast.makeText(MainActivity.this, "轨迹查询异常", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
