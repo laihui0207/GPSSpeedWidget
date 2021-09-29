@@ -78,9 +78,11 @@ public abstract class TTSService implements TTS,AudioManager.OnAudioFocusChangeL
     }
 
     protected void afterSpeak() {
-        if (/*vIsActive &&*/ mAudioManager!=null) {
+        if (/*vIsActive &&*/ mAudioManager!=null ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                mAudioManager.abandonAudioFocusRequest(mFocusRequest);
+                if(mFocusRequest!=null){
+                    mAudioManager.abandonAudioFocusRequest(mFocusRequest);
+                }
             } else {
                 mAudioManager.abandonAudioFocus(this);
             }

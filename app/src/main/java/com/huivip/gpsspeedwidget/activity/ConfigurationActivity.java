@@ -1100,7 +1100,7 @@ public class ConfigurationActivity extends Activity {
             @Override
             public void onClick(View v) {
                 TTS tts=SpeechFactory.getInstance(getApplicationContext()).getTTSEngine(SpeechFactory.TEXTTTS);
-                tts.speak("你好，语音测试,有钱的捧个钱场，没钱的也尽量捧个钱场",true);
+                tts.speak("你好语音测试",true);
             }
         });
         CheckBox goToHomeCheckBox=findViewById(R.id.checkBox_gotoHome);
