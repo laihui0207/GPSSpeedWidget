@@ -1,14 +1,33 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion '29.0.2'
+
+    def versionPropsFile = file('version.properties')
+
+    Properties versionProps = new Properties()
+
+    if (versionPropsFile.canRead()) {
+
+        versionProps.load(new FileInputStream(versionPropsFile))
+
+    }
+
+    def code = versionProps['VERSION_CODE'].toInteger() + 1
+
+    def name = versionProps['VERSION_NAME']
+
+    versionProps['VERSION_CODE'] = code.toString()
+
+    versionProps.store(versionPropsFile.newWriter(), null)
     defaultConfig {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 16
-        targetSdkVersion 29
-        versionCode 209
-        versionName "1.7.7"
+        targetSdkVersion 30
+        versionCode code
+        versionName name
+        flavorDimensions "versionCode"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
             annotationProcessorOptions {
@@ -35,6 +54,7 @@ android {
         release {
             signingConfig signingConfigs.release
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 

@@ -201,7 +201,7 @@ public class BootStartService extends Service {
 // Get the PendingIntent containing the entire back stack
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setSmallIcon(R.drawable.ic_launcher)
+        builder.setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle("GPS速度插件")
                 .setOngoing(true)
                 .setContentText("正在后台运行,点击打开主界面").setContentIntent(resultPendingIntent)
