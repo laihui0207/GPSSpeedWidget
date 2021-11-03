@@ -94,6 +94,7 @@ public class LaunchHandlerService extends Service {
             x.task().postDelayed(()->{
                 if(!autoMapLaunched){
                     launchAutoMap();
+                    autoMapLaunched=false;
                 }
             },120000);
             if (AppSettings.get().isEnablePlayWarnAudio() && !started) {
@@ -102,6 +103,10 @@ public class LaunchHandlerService extends Service {
                 }, 5000);
             }
             started=true;
+            x.task().postDelayed(()->{
+                stopSelf();
+            }, 60000*10);
+
         }
         return super.onStartCommand(intent, flags, startId);
     }
