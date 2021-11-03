@@ -81,7 +81,6 @@ public class BootStartService extends Service {
         return null;
     }
 
-
     @Override
     public void onCreate() {
         CrashHandler.getInstance().init(getApplicationContext());
