@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.amap.api.track.AMapTrackClient;
 import com.amap.api.track.ErrorCode;
 import com.amap.api.track.OnTrackLifecycleListener;
@@ -42,7 +43,7 @@ public class NaviTrackService extends Service {
         serviceId = Long.parseLong(PrefUtils.getAmapTrackServiceID(getApplicationContext()));
         TERMINAL_NAME = "Track_" + PrefUtils.getShortDeviceId(getApplicationContext());
         aMapTrackClient = new AMapTrackClient(getApplicationContext());
-        aMapTrackClient.setInterval(1  , 20);
+        aMapTrackClient.setInterval(1, 20);
         super.onCreate();
     }
 
@@ -78,13 +79,10 @@ public class NaviTrackService extends Service {
                 // 已经启动
                 Toast.makeText(getApplicationContext(), "轨迹服务已经启动", Toast.LENGTH_SHORT).show();
                 isServiceRunning = true;
-                /*                updateBtnStatus();*/
 
             } else {
                 Log.w(TAG, "error onStartTrackCallback, status: " + status + ", msg: " + msg);
-                /*Toast.makeText(getApplicationContext(),
-                        "error onStartTrackCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();*/
+                Toast.makeText(getApplicationContext(), "轨迹服务启动失败！", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -98,10 +96,6 @@ public class NaviTrackService extends Service {
                 /*                updateBtnStatus();*/
             } else {
                 Log.w(TAG, "error onStopTrackCallback, status: " + status + ", msg: " + msg);
-              /*  Toast.makeText(getApplicationContext(),
-                        "error onStopTrackCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();*/
-
             }
         }
 
@@ -114,12 +108,9 @@ public class NaviTrackService extends Service {
             } else if (status == ErrorCode.TrackListen.START_GATHER_ALREADY_STARTED) {
                 Toast.makeText(getApplicationContext(), "定位采集已经开启", Toast.LENGTH_SHORT).show();
                 isGatherRunning = true;
-                /*                updateBtnStatus();*/
             } else {
+                Toast.makeText(getApplicationContext(), "定位采集开启失败，"+msg, Toast.LENGTH_SHORT).show();
                 Log.w(TAG, "error onStartGatherCallback, status: " + status + ", msg: " + msg);
-                /*Toast.makeText(getApplicationContext(),
-                        "error onStartGatherCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();*/
             }
         }
 
@@ -128,12 +119,8 @@ public class NaviTrackService extends Service {
             if (status == ErrorCode.TrackListen.STOP_GATHER_SUCCE) {
                 Toast.makeText(getApplicationContext(), "定位采集停止成功", Toast.LENGTH_SHORT).show();
                 isGatherRunning = false;
-                /*                updateBtnStatus();*/
             } else {
                 Log.w(TAG, "error onStopGatherCallback, status: " + status + ", msg: " + msg);
-               /* Toast.makeText(getApplicationContext(),
-                        "error onStopGatherCallback, status: " + status + ", msg: " + msg,
-                        Toast.LENGTH_LONG).show();*/
             }
         }
     };
@@ -160,7 +147,7 @@ public class NaviTrackService extends Service {
                                     }
                                     aMapTrackClient.startTrack(trackParam, onTrackListener);
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "网络请求失败，" + addTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "轨迹服务网络请求失败，" + addTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -177,13 +164,13 @@ public class NaviTrackService extends Service {
                                     }
                                     aMapTrackClient.startTrack(trackParam, onTrackListener);
                                 } else {
-                                    /*                                    Toast.makeText(getApplicationContext(), "网络请求失败，" + addTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();*/
+                                    Toast.makeText(getApplicationContext(), "轨迹服务网络请求失败，" + addTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "网络请求失败，" + queryTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "轨迹服务网络请求失败，" + queryTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -207,7 +194,7 @@ public class NaviTrackService extends Service {
         Intent nfIntent = new Intent(getApplicationContext(), MainActivity.class);
         nfIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         builder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, nfIntent, 0))
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle("猎鹰sdk运行中")
                 .setContentText("猎鹰sdk运行中");
         Notification notification = builder.build();

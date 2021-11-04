@@ -37,13 +37,23 @@ import com.huivip.gpsspeedwidget.activity.ConfigurationActivity;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.x;
 
 /**
  * Created by laisun on 28/02/2018.
@@ -159,7 +169,11 @@ public class NaviFloatingService extends Service{
         CrashHandler.getInstance().init(getApplicationContext());
         super.onCreate();
     }
-
+    @OnClick(value = R.id.imageView_auto_close)
+    public void onClickCloseImage(View view) {
+        onStop();
+        stopSelf();
+    }
     void checkLocationData() {
         if(!TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
             currentRoadTextView.setText(gpsUtil.getCurrentRoadName()+"");

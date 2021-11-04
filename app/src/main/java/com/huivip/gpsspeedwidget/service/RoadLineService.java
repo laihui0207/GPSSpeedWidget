@@ -92,9 +92,6 @@ public class RoadLineService extends Service {
             } else {
                 return null;
             }
-           /* } else {
-                return vv;
-            }*/
         }
         return null;
     }

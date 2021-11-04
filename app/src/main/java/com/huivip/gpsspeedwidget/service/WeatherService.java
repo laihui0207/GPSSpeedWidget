@@ -58,8 +58,16 @@ public class WeatherService extends Service implements AMapLocationListener {
         super.onCreate();
         handler=new Handler();
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
-        mLocationClient = new AMapLocationClient(this);
-        mLocationClient.setLocationListener(this);
+        AMapLocationClient.updatePrivacyShow(getApplicationContext(),true,true);
+        AMapLocationClient.updatePrivacyAgree(getApplicationContext(),true);
+        try {
+            mLocationClient = new AMapLocationClient(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(mLocationClient!=null){
+            mLocationClient.setLocationListener(this);
+        }
         DeviceUuidFactory deviceUuidFactory=new DeviceUuidFactory(this);
         deviceId=deviceUuidFactory.getDeviceUuid().toString();
         EventBus.getDefault().register(this);
@@ -87,15 +95,16 @@ public class WeatherService extends Service implements AMapLocationListener {
         //mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
         mLocationOption.setInterval(5000);
         mLocationOption.setLocationCacheEnable(false);
-        mLocationClient.setLocationOption(mLocationOption);
-        mLocationClient.startLocation();
+        if(mLocationClient!=null){
+            mLocationClient.setLocationOption(mLocationOption);
+            mLocationClient.startLocation();
+        }
         isLocationStarted = true;
-       /* if (PrefUtils.isShowNotification(this)) {
-            mLocationClient.enableBackgroundLocation(2001, buildNotification());
-        }*/
     }
     public void stopLocation(){
-        mLocationClient.stopLocation();
+        if(mLocationClient!=null){
+            mLocationClient.stopLocation();
+        }
         isLocationStarted=false;
       /*  if (android.os.Build.VERSION.SDK_INT >= 27 || PrefUtils.isShowNotification(this)) {
             mLocationClient.disableBackgroundLocation(true);
