@@ -8,9 +8,11 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
+import com.amap.api.maps.AMapException;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.AimlessModeListener;
+import com.amap.api.navi.NaviSetting;
 import com.amap.api.navi.enums.AMapNaviRingType;
 import com.amap.api.navi.enums.AimLessMode;
 import com.amap.api.navi.enums.BroadcastMode;
@@ -47,9 +49,6 @@ public class AutoXunHangService extends Service implements AMapNaviListener, Aim
     boolean aimlessStarted =false;
     GpsUtil gpsUtil;
     boolean autoToMute =false;
-/*
-    BroadcastReceiver broadcastReceiver;
-*/
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -84,17 +83,23 @@ public class AutoXunHangService extends Service implements AMapNaviListener, Aim
     }
 
     public void startAimlessNavi() {
-        //if(aimlessStarted) return;
-        aMapNavi = AMapNavi.getInstance(getApplicationContext());
-       // aMapNavi.setUseInnerVoice(SpeechFactory.SDKTTS.equalsIgnoreCase(AppSettings.get().getAudioEngine()), true);
-        aMapNavi.addAMapNaviListener(this);
-        aMapNavi.addAimlessModeListener(this);
-        if (PrefUtils.isOldDriverMode(getApplicationContext())) {
-            aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
-            aMapNavi.startAimlessMode(AimLessMode.CAMERA_DETECTED);
-        } else {
-            aMapNavi.setBroadcastMode(BroadcastMode.DETAIL);
-            aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
+        NaviSetting.updatePrivacyShow(getApplicationContext(), true, true);
+        NaviSetting.updatePrivacyAgree(getApplicationContext(), true);
+        try {
+            aMapNavi = AMapNavi.getInstance(getApplicationContext());
+        } catch (AMapException e) {
+            e.printStackTrace();
+        }
+        if(aMapNavi!=null) {
+            aMapNavi.addAMapNaviListener(this);
+            aMapNavi.addAimlessModeListener(this);
+            if (PrefUtils.isOldDriverMode(getApplicationContext())) {
+                aMapNavi.setBroadcastMode(BroadcastMode.CONCISE);
+                aMapNavi.startAimlessMode(AimLessMode.CAMERA_DETECTED);
+            } else {
+                aMapNavi.setBroadcastMode(BroadcastMode.DETAIL);
+                aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
+            }
         }
        /* Intent trafficSearchService=new Intent(getApplicationContext(),SearchTrafficService.class);
         startService(trafficSearchService);*/
@@ -107,9 +112,6 @@ public class AutoXunHangService extends Service implements AMapNaviListener, Aim
             aMapNavi = null;
             aimlessStarted = false;
         }
-       /* Intent trafficSearchService=new Intent(getApplicationContext(),SearchTrafficService.class);
-        trafficSearchService.putExtra(SearchTrafficService.EXTRA_CLOSE,true);
-        startService(trafficSearchService);*/
     }
 
     public boolean isAimlessStarted() {

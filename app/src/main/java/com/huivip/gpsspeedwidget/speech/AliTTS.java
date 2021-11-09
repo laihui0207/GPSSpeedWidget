@@ -3,10 +3,13 @@ package com.huivip.gpsspeedwidget.speech;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
+import com.amap.api.maps.AMapException;
 import com.amap.api.navi.AMapNavi;
+import com.amap.api.navi.NaviSetting;
+import com.amap.api.navi.TTSPlayListener;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 
-public class AliTTS extends TTSService {
+public class AliTTS extends TTSService implements TTSPlayListener {
     @SuppressLint("StaticFieldLeak")
     private static AliTTS tts=null;
     AMapNavi aMapNavi;
@@ -31,7 +34,9 @@ public class AliTTS extends TTSService {
 
     @Override
     public void speak(String text, boolean force) {
-        aMapNavi.playTTS(text,force);
+        if(aMapNavi!=null){
+            aMapNavi.playTTS(text,force);
+        }
     }
 
     @Override
@@ -56,14 +61,25 @@ public class AliTTS extends TTSService {
 
     @Override
     public void release() {
-        aMapNavi.destroy();
+        if(aMapNavi!=null){
+            aMapNavi.destroy();
+        }
     }
 
     @Override
     public void initTTS() {
-        aMapNavi=AMapNavi.getInstance(context);
-        aMapNavi.setUseInnerVoice(true,false);
-        aMapNavi.startSpeak();
+        NaviSetting.updatePrivacyShow(context, true, true);
+        NaviSetting.updatePrivacyAgree(context, true);
+        try {
+            aMapNavi=AMapNavi.getInstance(context);
+        } catch (AMapException e) {
+            e.printStackTrace();
+        }
+        if(aMapNavi!=null){
+            aMapNavi.setUseInnerVoice(true,false);
+            aMapNavi.addTTSPlayListener(this);
+            aMapNavi.startSpeak();
+        }
     }
 
     @Override
@@ -75,4 +91,15 @@ public class AliTTS extends TTSService {
     public String createAudio(String text) {
         return null;
     }
+
+    @Override
+    public void onPlayStart(String s) {
+
+    }
+
+    @Override
+    public void onPlayEnd(String s) {
+
+    }
 }
+

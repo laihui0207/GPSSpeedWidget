@@ -93,7 +93,7 @@
     void *(**On*Event);
 }
 #----------------------------------------------------------------------------
--libraryjars libs/AMap3DMap_8.0.1_AMapNavi_8.0.1_AMapSearch_7.9.0_AMapTrack_1.4.0_AMapLocation_5.5.0_20210915.jar
+-libraryjars libs/AMap3DMap_8.1.0_AMapNavi_8.1.0_AMapTrack_1.4.1_AMapLocation_5.6.0_20211029.jar
 -libraryjars libs/kwmusic-autosdk-v2.0.2.jar
 #---------------------------------webview------------------------------------
 -keepclassmembers class fqcn.of.javascript.interface.for.Webview {
@@ -119,13 +119,9 @@
 -keep class com.autonavi.**{*;}
 -keep class com.loc.**{*;}
 -keep class com.alibaba.mit.alitts.*{*;}
+-keep class com.alibaba.**{*;}
 -keep class com.google.**{*;}
-# baidu tts
--keep class com.baidu.speech.**{*;}
--keep class com.baidu.tts.**{*;}
--keep class com.baidu.speechsynthesizer.**{*;}
-# ify
--keep class com.iflytek.**{*;}
+
 #keep Util
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 #---------------------------------------------------------------------------------------------------

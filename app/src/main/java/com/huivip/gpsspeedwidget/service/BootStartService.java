@@ -1,6 +1,7 @@
 package com.huivip.gpsspeedwidget.service;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -16,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.amap.api.location.AMapLocationClient;
 import com.amap.api.track.AMapTrackClient;
 import com.amap.api.track.ErrorCode;
 import com.amap.api.track.OnTrackLifecycleListener;
@@ -75,6 +77,7 @@ public class BootStartService extends Service {
     private long trackId;
     private long serviceId;
     private String TERMINAL_NAME;
+    private Notification notification;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -86,14 +89,11 @@ public class BootStartService extends Service {
         CrashHandler.getInstance().init(getApplicationContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             int NOTIFICATION_ID = (int) (System.currentTimeMillis() % 10000);
-            startForeground(NOTIFICATION_ID, Utils.buildNotification(getApplicationContext(), Integer.toString(NOTIFICATION_ID)));
+            notification =Utils.buildNotification(getApplicationContext(), Integer.toString(NOTIFICATION_ID));
+            startForeground(NOTIFICATION_ID, notification);
         }
         EventBus.getDefault().register(this);
         registerBoardCast(getApplicationContext());
-        serviceId = Long.parseLong(PrefUtils.getAmapTrackServiceID(getApplicationContext()));
-        TERMINAL_NAME = "Track_" + PrefUtils.getShortDeviceId(getApplicationContext());
-        aMapTrackClient = new AMapTrackClient(getApplicationContext());
-        aMapTrackClient.setInterval(5  , 60);
         super.onCreate();
     }
 
@@ -259,8 +259,21 @@ public class BootStartService extends Service {
     }
 
     private void startTrack() {
+        serviceId = Long.parseLong(PrefUtils.getAmapTrackServiceID(getApplicationContext()));
+        TERMINAL_NAME = "Track_" + PrefUtils.getShortDeviceId(getApplicationContext());
+        AMapLocationClient.updatePrivacyShow(getApplicationContext(),true,true);
+        AMapLocationClient.updatePrivacyAgree(getApplicationContext(),true);
+        try {
+            aMapTrackClient = new AMapTrackClient(getApplicationContext());
+        }catch (Exception e) {
+
+        }
+        if(aMapTrackClient!=null){
+            aMapTrackClient.setInterval(5  , 60);
+        }
         // 先根据Terminal名称查询Terminal ID，如果Terminal还不存在，就尝试创建，拿到Terminal ID后，
         // 用Terminal ID开启轨迹服务
+        if(aMapTrackClient==null) return;
         aMapTrackClient.queryTerminal(new QueryTerminalRequest(serviceId, TERMINAL_NAME), new SimpleOnTrackListener() {
             @Override
             public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
@@ -275,9 +288,9 @@ public class BootStartService extends Service {
                                     // trackId需要在启动服务后设置才能生效，因此这里不设置，而是在startGather之前设置了track id
                                     trackId = addTrackResponse.getTrid();
                                     TrackParam trackParam = new TrackParam(serviceId, terminalId);
-                                   /* if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        trackParam.setNotification(createNotification());
-                                    }*/
+                                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        trackParam.setNotification(notification);
+                                    }
                                     aMapTrackClient.startTrack(trackParam, onTrackListener);
                                 } else {
                                     Toast.makeText(getApplicationContext(), "网络请求失败，" + addTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
@@ -292,9 +305,9 @@ public class BootStartService extends Service {
                                 if (addTerminalResponse.isSuccess()) {
                                     terminalId = addTerminalResponse.getTid();
                                     TrackParam trackParam = new TrackParam(serviceId, terminalId);
-                                   /* if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        trackParam.setNotification(createNotification());
-                                    }*/
+                                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        trackParam.setNotification(notification);
+                                    }
                                     aMapTrackClient.startTrack(trackParam, onTrackListener);
                                 } else {
                                     /*                                    Toast.makeText(getApplicationContext(), "网络请求失败，" + addTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();*/
@@ -371,8 +384,10 @@ public class BootStartService extends Service {
                 // 成功启动
                 Toast.makeText(getApplicationContext(), "启动轨迹服务成功", Toast.LENGTH_SHORT).show();
                 isServiceRunning = true;
-                aMapTrackClient.setTrackId(trackId);
-                aMapTrackClient.startGather(onTrackListener);
+                if(aMapTrackClient!=null){
+                    aMapTrackClient.setTrackId(trackId);
+                    aMapTrackClient.startGather(onTrackListener);
+                }
             } else if (status == ErrorCode.TrackListen.START_TRACK_ALREADY_STARTED) {
                 // 已经启动
                 Toast.makeText(getApplicationContext(), "轨迹服务已经启动", Toast.LENGTH_SHORT).show();

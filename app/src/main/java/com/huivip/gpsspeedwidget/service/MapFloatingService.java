@@ -38,6 +38,7 @@ import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.CoordinateConverter;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.MapsInitializer;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
@@ -80,7 +81,7 @@ public class MapFloatingService extends Service {
     private WindowManager mWindowManager;
     private View mFloatingView;
     int windowHeight=0;
-    @BindView(R.id.map_floating)
+    //@BindView(R.id.map_floating)
     MapView mMapView ;
     AMap aMap=null;
     @BindView(R.id.textview_floating_map_title)
@@ -153,6 +154,8 @@ public class MapFloatingService extends Service {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate() {
+        MapsInitializer.updatePrivacyShow(this,true,true);
+        MapsInitializer.updatePrivacyAgree(this,true);
         if(!PrefUtils.isEnableDrawOverFeature(getApplicationContext())){
             Toast.makeText(getApplicationContext(),"需要打开GPS插件的悬浮窗口权限",Toast.LENGTH_LONG).show();
             try {
@@ -161,6 +164,7 @@ public class MapFloatingService extends Service {
             }
             return;
         }
+
         gpsUtil=GpsUtil.getInstance(getApplicationContext());
         mWindowManager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -180,21 +184,23 @@ public class MapFloatingService extends Service {
         initMonitorPosition();
         //timeThread=new TimeThread(timeTextView);
         CrashHandler.getInstance().init(getApplicationContext());
-        //mMapView = (MapView) findViewById(R.id.map);
+        mMapView =  mFloatingView.findViewById(R.id.map_floating);
         Bundle savedInstanceState=new Bundle();
-        mMapView.onCreate(savedInstanceState);
-        aMap = mMapView.getMap();
+        if(mMapView!=null) {
+            mMapView.onCreate(savedInstanceState);
+            aMap = mMapView.getMap();
         /*Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY);*/
-        if(gpsUtil.isNight()) {
-            aMap.setMapType(AMap.MAP_TYPE_NIGHT);
-        } else {
-            aMap.setMapType(AMap.MAP_TYPE_NAVI);
+            if (gpsUtil.isNight()) {
+                aMap.setMapType(AMap.MAP_TYPE_NIGHT);
+            } else {
+                aMap.setMapType(AMap.MAP_TYPE_NAVI);
+            }
+            carMarker = aMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(0f))).setFlat(true));
+            aMap.setTrafficEnabled(true);
+            aMap.showBuildings(true);
         }
-        carMarker = aMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(0f))).setFlat(true));
-        aMap.setTrafficEnabled(true);
-        aMap.showBuildings(true);
         UiSettings mUiSettings=aMap.getUiSettings();
         mUiSettings.setCompassEnabled(false);
         mUiSettings.setZoomControlsEnabled(false);

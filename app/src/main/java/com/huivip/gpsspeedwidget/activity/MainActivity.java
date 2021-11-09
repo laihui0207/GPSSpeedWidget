@@ -31,6 +31,7 @@ import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.CoordinateConverter;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.MapsInitializer;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
@@ -130,10 +131,16 @@ public class MainActivity extends Activity implements TraceListener {
         super.onCreate(savedInstanceState);
         deviceUuidFactory = new DeviceUuidFactory(getApplicationContext());
         setContentView(R.layout.activity_main);
+        MapsInitializer.updatePrivacyShow(getApplicationContext(),true,true);
+        MapsInitializer.updatePrivacyAgree(getApplicationContext(),true);
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         aMap = mMapView.getMap();
-        mTraceClient = LBSTraceClient.getInstance(this.getApplicationContext());
+        try {
+            mTraceClient = LBSTraceClient.getInstance(this.getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         initPermission();
         if (!Setup.wasInitialised()) {
             Setup.init(new HpInitSetup(this));
@@ -837,8 +844,10 @@ public class MainActivity extends Activity implements TraceListener {
        if(lineDatas!=null && lineDatas.size()>0){
            for(String key: lineDatas.keySet()){
                List<TraceLocation> locations=lineDatas.get(key);
-               mTraceClient.queryProcessedTrace(Integer.parseInt(key), locations,
-                       LBSTraceClient.TYPE_GPS, this);
+               if(mTraceClient!=null){
+                   mTraceClient.queryProcessedTrace(Integer.parseInt(key), locations,
+                           LBSTraceClient.TYPE_GPS, this);
+               }
            }
        }
     }

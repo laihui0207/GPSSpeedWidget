@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
+import com.amap.api.location.AMapLocationClient;
 import com.amap.api.track.AMapTrackClient;
 import com.amap.api.track.ErrorCode;
 import com.amap.api.track.OnTrackLifecycleListener;
@@ -53,8 +54,16 @@ public class NaviTrackService extends Service {
     public void onCreate() {
         serviceId = Long.parseLong(PrefUtils.getAmapTrackServiceID(getApplicationContext()));
         TERMINAL_NAME = "Track_" + PrefUtils.getShortDeviceId(getApplicationContext());
-        aMapTrackClient = new AMapTrackClient(getApplicationContext());
-        aMapTrackClient.setInterval(5  , 60);
+        AMapLocationClient.updatePrivacyShow(getApplicationContext(),true,true);
+        AMapLocationClient.updatePrivacyAgree(getApplicationContext(),true);
+        try {
+            aMapTrackClient = new AMapTrackClient(getApplicationContext());
+        }catch (Exception e) {
+
+        }
+        if(aMapTrackClient!=null){
+            aMapTrackClient.setInterval(5  , 60);
+        }
         EventBus.getDefault().register(this);
         super.onCreate();
     }
@@ -87,8 +96,10 @@ public class NaviTrackService extends Service {
                 // 成功启动
                 Toast.makeText(getApplicationContext(), "启动轨迹服务成功", Toast.LENGTH_SHORT).show();
                 isServiceRunning = true;
-                aMapTrackClient.setTrackId(trackId);
-                aMapTrackClient.startGather(onTrackListener);
+                if(aMapTrackClient!=null){
+                    aMapTrackClient.setTrackId(trackId);
+                    aMapTrackClient.startGather(onTrackListener);
+                }
             } else if (status == ErrorCode.TrackListen.START_TRACK_ALREADY_STARTED) {
                 // 已经启动
                 Toast.makeText(getApplicationContext(), "轨迹服务已经启动", Toast.LENGTH_SHORT).show();
@@ -129,6 +140,7 @@ public class NaviTrackService extends Service {
     private void startTrack() {
         // 先根据Terminal名称查询Terminal ID，如果Terminal还不存在，就尝试创建，拿到Terminal ID后，
         // 用Terminal ID开启轨迹服务
+        if(aMapTrackClient==null) return;
         aMapTrackClient.queryTerminal(new QueryTerminalRequest(serviceId, TERMINAL_NAME), new SimpleOnTrackListener() {
             @Override
             public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
