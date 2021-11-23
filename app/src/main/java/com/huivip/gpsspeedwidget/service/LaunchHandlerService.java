@@ -21,6 +21,7 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.x;
 
 public class LaunchHandlerService extends Service {
@@ -91,12 +92,13 @@ public class LaunchHandlerService extends Service {
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
             x.task().postDelayed(this::getDistrictFromAuto, 30000);
             x.task().postDelayed(this::getDistrictFromAuto, 60000);
+            x.task().postDelayed(this::getDistrictFromAuto, 120000);
             x.task().postDelayed(()->{
                 if(!autoMapLaunched){
                     launchAutoMap();
-                    autoMapLaunched=false;
+                    //autoMapLaunched=false;
                 }
-            },120000);
+            },180000);
             if (AppSettings.get().isEnablePlayWarnAudio() && !started) {
                 x.task().postDelayed(() -> {
                     EventBus.getDefault().post(new PlayAudioEvent(PrefUtils.getPrefLaunchAlterTts(getApplicationContext()), true));
@@ -114,7 +116,7 @@ public class LaunchHandlerService extends Service {
     public void getDistrict(GetDistrictEvent event){
         getDistrictFromAuto();
     }
-    @Subscribe
+    @Subscribe(threadMode=ThreadMode.MAIN)
     public void locationStatus(LocationEvent event){
         if(event.getDistrict()!=null && event.getEventFrom().equals("AutoMap")){
             autoMapLaunched=true;

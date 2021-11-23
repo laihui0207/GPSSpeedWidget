@@ -7,6 +7,7 @@ import com.amap.api.maps.AMapException;
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.NaviSetting;
 import com.amap.api.navi.TTSPlayListener;
+import com.amap.api.navi.enums.AMapNaviControlMusicVolumeMode;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 
 public class AliTTS extends TTSService implements TTSPlayListener {
@@ -78,6 +79,12 @@ public class AliTTS extends TTSService implements TTSPlayListener {
         if(aMapNavi!=null){
             aMapNavi.setUseInnerVoice(true,false);
             aMapNavi.addTTSPlayListener(this);
+            aMapNavi.setListenToVoiceDuringCall(false);
+            if(AppSettings.get().isAudioMusicDuck()) {
+                aMapNavi.setControlMusicVolumeMode(AMapNaviControlMusicVolumeMode.MUSIC_VOLUME_MODE_DEPRESS);
+            } else {
+                aMapNavi.setControlMusicVolumeMode(AMapNaviControlMusicVolumeMode.MUSIC_VOLUME_MODE_PAUSE);
+            }
             aMapNavi.startSpeak();
         }
     }

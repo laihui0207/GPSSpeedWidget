@@ -150,7 +150,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             EventBus.getDefault().post(new AudioTempMuteEvent(true));
                             break;
                         case 14:  // TTS Speak End
-                            EventBus.getDefault().post(new AudioTempMuteEvent(false));
+                            //EventBus.getDefault().post(new AudioTempMuteEvent(false));
                            // Toast.makeText(context,"speaking End",Toast.LENGTH_SHORT).show();
                             break;
                         case 37:
