@@ -264,10 +264,12 @@ public class SettingGPSWidgetFragment extends SettingsBaseFragment {
                     baiDuSpeaker.setSummary("度小萌（情感女声");
                     break;*//*
             }
-        } else if(SpeechFactory.SIBICHITTS.equalsIgnoreCase(audioEngine)){
+        } else*/  if(SpeechFactory.SIBICHITTS.equalsIgnoreCase(audioEngine)){
             pre_audio_engine.setSummary("思必驰语音");
+/*
             baiDuSpeaker.setVisible(false);
-        } else*/ if(SpeechFactory.SDKTTS.equalsIgnoreCase(audioEngine)){
+*/
+        } else if(SpeechFactory.SDKTTS.equalsIgnoreCase(audioEngine)){
             pre_audio_engine.setSummary("高德内置语音");
             //baiDuSpeaker.setVisible(false);
         } else if (SpeechFactory.TEXTTTS.equalsIgnoreCase(audioEngine)){

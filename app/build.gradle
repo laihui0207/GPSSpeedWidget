@@ -53,6 +53,12 @@ android {
             keyAlias "huivip_GPSWidgetSignKey"
             keyPassword "huivip"
         }
+        debug {
+            storeFile file("../keystore/debug")
+            storePassword "huivip"
+            keyAlias "debugkey"
+            keyPassword "huivip"
+        }
     }
 
     buildTypes {

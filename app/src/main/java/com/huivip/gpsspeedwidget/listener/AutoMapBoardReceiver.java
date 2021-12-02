@@ -10,6 +10,7 @@ import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
+import com.huivip.gpsspeedwidget.beans.DriveWayEvent;
 import com.huivip.gpsspeedwidget.beans.FloatWindowsLaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LocationEvent;
@@ -87,6 +88,8 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                             break;
                         case 24:  // xun hang started
+                            EventBus.getDefault().post(new AudioTempMuteEvent(true));
+                            EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setXunHangStarted(true));
                             break;
                         case 8: // start navi
                             gpsUtil.setAutoNaviStatus(Constant.Navi_Status_Started);
@@ -210,13 +213,13 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                     && !gpsUtil.isAutoNavi_on_Frontend()) {
                                 startAutoWidgetFloatingService(context);
                             }
-                            //EventBus.getDefault().post(new DriveWayEvent(true));
+                            EventBus.getDefault().post(new DriveWayEvent(true));
                         } else {
                             if (AppSettings.get().isOnlyCrossShowWidgetContent()
                                     && AppSettings.get().isShowAmapWidgetContent()) {
                                 stopDriveWayFloatingService(context, false);
                             }
-                            //EventBus.getDefault().post(new DriveWayEvent(false));
+                            EventBus.getDefault().post(new DriveWayEvent(false));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

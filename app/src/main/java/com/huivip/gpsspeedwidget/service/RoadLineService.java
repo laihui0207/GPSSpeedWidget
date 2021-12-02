@@ -14,11 +14,13 @@ import android.widget.ImageView;
 
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
+import com.huivip.gpsspeedwidget.beans.DriveWayEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,6 +36,7 @@ public class RoadLineService extends Service {
     View roadLineView = null;
     View preRoadLineView=null;
     View widgetView=null;
+    boolean driveWayEnabled=false;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -93,32 +96,37 @@ public class RoadLineService extends Service {
         scanTimer.purge();
         super.onDestroy();
     }
-
+    @Subscribe
+    public void driveWayUpdate(DriveWayEvent driveWayEvent){
+        driveWayEnabled=driveWayEvent.isEnable();
+    }
     private View getRoadLineView() {
         int id = AppSettings.get().getAmapPluginId();
         if (id != -1) {
-            AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
-            try {
-                final View amapView = appWidgetHost.createView(this, id, appWidgetInfo);
-                widgetView = amapView;
-                View roladLineImage = null;
-                if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
-                    roladLineImage = Utils.findlayoutViewById(widgetView, "widget_daohang_road_line");
-                } else {
-                    roladLineImage = Utils.findlayoutViewById(widgetView, "road_line");
-                }
-                
-                if (roladLineImage != null && roladLineImage instanceof ImageView) {
-                    return roladLineImage;
-                } else {
+            //if(driveWayEnabled) {
+                AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(id);
+                try {
+                    final View amapView = appWidgetHost.createView(this, id, appWidgetInfo);
+                    widgetView = amapView;
+                    View roladLineImage = null;
+                    if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
+                        roladLineImage = Utils.findlayoutViewById(widgetView, "widget_daohang_road_line");
+                    } else {
+                        roladLineImage = Utils.findlayoutViewById(widgetView, "road_line");
+                    }
+
+                    if (roladLineImage != null && roladLineImage instanceof ImageView) {
+                        return roladLineImage;
+                    } else {
+                        return null;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                     return null;
+                } finally {
+                    widgetView.destroyDrawingCache();
                 }
-            }catch(Exception e){
-               e.printStackTrace();
-               return null;
-            } finally {
-                widgetView.destroyDrawingCache();
-            }
+           // }
         }
         return null;
     }

@@ -101,8 +101,6 @@ public class AutoXunHangService extends Service implements AMapNaviListener, Aim
                 aMapNavi.startAimlessMode(AimLessMode.CAMERA_AND_SPECIALROAD_DETECTED);
             }
         }
-       /* Intent trafficSearchService=new Intent(getApplicationContext(),SearchTrafficService.class);
-        startService(trafficSearchService);*/
     }
 
     public void stopAimlessNavi() {

@@ -300,7 +300,7 @@
             android:key="@string/pref_key__Audio_enable"
             android:title="启用语音" />
         <ListPreference
-            android:defaultValue="aliTTS"
+            android:defaultValue="SBCTTS"
             android:entries="@array/items__audio_engine"
             android:entryValues="@array/values__audio_engine"
             android:key="@string/pref_key__Audio_engine"

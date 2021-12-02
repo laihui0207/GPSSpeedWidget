@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.beans.GetDistrictEvent;
 import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
@@ -29,6 +30,7 @@ public class LaunchHandlerService extends Service {
     AlarmManager alarm;
     boolean started=false;
     boolean autoMapLaunched=false;
+    GpsUtil gpsUtil;
 
     public LaunchHandlerService() {
     }
@@ -43,7 +45,10 @@ public class LaunchHandlerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         boolean start = AppSettings.get().getAutoStart();
         alarm = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
-
+        Toast.makeText(getApplicationContext(), "GPS Launching...",Toast.LENGTH_SHORT).show();
+        if(gpsUtil==null){
+            gpsUtil=GpsUtil.getInstance(getApplicationContext());
+        }
         if (start && !started) {
             String apps = PrefUtils.getAutoLaunchApps(getApplicationContext());
             if (AppSettings.get().isEnableLaunchOtherApp() && !TextUtils.isEmpty(apps)) {
@@ -93,12 +98,12 @@ public class LaunchHandlerService extends Service {
             x.task().postDelayed(this::getDistrictFromAuto, 30000);
             x.task().postDelayed(this::getDistrictFromAuto, 60000);
             x.task().postDelayed(this::getDistrictFromAuto, 120000);
-            x.task().postDelayed(()->{
+           /* x.task().postDelayed(()->{
                 if(!autoMapLaunched){
                     launchAutoMap();
                     //autoMapLaunched=false;
                 }
-            },180000);
+            },120000);*/
             if (AppSettings.get().isEnablePlayWarnAudio() && !started) {
                 x.task().postDelayed(() -> {
                     EventBus.getDefault().post(new PlayAudioEvent(PrefUtils.getPrefLaunchAlterTts(getApplicationContext()), true));
@@ -107,7 +112,7 @@ public class LaunchHandlerService extends Service {
             started=true;
             x.task().postDelayed(()->{
                 stopSelf();
-            }, 60000*10);
+            }, 60*1000*10);
 
         }
         return super.onStartCommand(intent, flags, startId);
@@ -118,19 +123,21 @@ public class LaunchHandlerService extends Service {
     }
     @Subscribe(threadMode=ThreadMode.MAIN)
     public void locationStatus(LocationEvent event){
-        if(event.getDistrict()!=null && event.getEventFrom().equals("AutoMap")){
+        Toast.makeText(getApplicationContext(),"Get Location event,come from:"+event.getEventFrom(),Toast.LENGTH_LONG).show();
+        if((event.getDistrict()!=null && event.getEventFrom().equalsIgnoreCase("AutoMap"))
+        || gpsUtil.isAutoMapBackendProcessStarted()){
             autoMapLaunched=true;
         }
     }
     private void getDistrictFromAuto() {
-        x.task().postDelayed(() -> {
+        //x.task().postDelayed(() -> {
             Intent intent = new Intent();
-            intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-            intent.setPackage("com.autonavi.amapauto");
+            //intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            //intent.setPackage("com.autonavi.amapauto");
             intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
             intent.putExtra("KEY_TYPE", 10029);
             sendBroadcast(intent);
-        }, 1000 * 10);
+        //}, 1000 * 10);
     }
     private void launchAutoMap(){
         String pkgName_auto = "com.autonavi.amapauto";
