@@ -88,7 +88,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             //Toast.makeText(context,"Auto Map Go to BackEnd",Toast.LENGTH_LONG).show();
                             break;
                         case 24:  // xun hang started
-                            EventBus.getDefault().post(new AudioTempMuteEvent(true));
+                            //EventBus.getDefault().post(new AudioTempMuteEvent(true));
                             EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setXunHangStarted(true));
                             break;
                         case 8: // start navi
