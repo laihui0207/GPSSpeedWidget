@@ -5,6 +5,8 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +16,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -40,6 +43,7 @@ import com.huivip.gpsspeedwidget.beans.GetDistrictEvent;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
+import com.huivip.gpsspeedwidget.jobs.CheckService;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
 import com.huivip.gpsspeedwidget.listener.AutoMapBoardReceiver;
 import com.huivip.gpsspeedwidget.listener.BootStartReceiver;
@@ -61,6 +65,8 @@ import com.huivip.gpsspeedwidget.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.xutils.x;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class BootStartService extends Service {
@@ -94,7 +100,18 @@ public class BootStartService extends Service {
         }
         EventBus.getDefault().register(this);
         registerBoardCast(getApplicationContext());
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            doJobService();
+        }
         super.onCreate();
+    }
+    @RequiresApi(api=Build.VERSION_CODES.LOLLIPOP)
+    private void doJobService(){
+        JobScheduler jobScheduler= (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        JobInfo.Builder builder= new JobInfo.Builder(1,new ComponentName(this, CheckService.class));
+        builder.setBackoffCriteria(TimeUnit.MILLISECONDS.toMillis(10),JobInfo.BACKOFF_POLICY_LINEAR);
+        builder.setPeriodic(60*1000);
+        jobScheduler.schedule(builder.build());
     }
 
     @Override
