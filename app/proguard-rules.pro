@@ -95,6 +95,7 @@
 #----------------------------------------------------------------------------
 -libraryjars libs/AMap3DMap_8.1.0_AMapNavi_8.1.0_AMapTrack_1.4.1_AMapLocation_5.6.0_20211029.jar
 -libraryjars libs/kwmusic-autosdk-v2.0.2.jar
+-libraryjars libs/DUI-lite-SDK-for-Android-2.19.2.jar
 #---------------------------------webview------------------------------------
 -keepclassmembers class fqcn.of.javascript.interface.for.Webview {
    public *;
@@ -124,6 +125,33 @@
 
 #keep Util
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+-keep public class com.aispeech.common.Util{public *;}
+-keep public class com.aispeech.common.WavFileWriter{public *;}
+-keep public class com.aispeech.common.AITimer{public *;}
+-keep public class com.aispeech.common.JSONResultParser{public *;}
+-keep public class com.aispeech.common.AIConstant{public *;}
+-keep public class com.aispeech.common.FileUtil{public *;}
+-keep public class com.aispeech.DUILiteSDK{public *;}
+-keep public class com.aispeech.fdm.**{public *;}
+-keep public class com.aispeech.echo.**{public *;}
+
+-keep class com.aispeech.upload.**{*;}
+
+-keepclassmembers class com.aispeech.kernel.**{
+	public static native <methods>;
+}
+
+-keep interface com.aispeech.kernel.**$*{
+	public *;
+}
+
+-keep class com.aispeech.kernel.**$*{
+	public *;
+}
+
+-keep interface com.aispeech.DUILiteSDK$*{
+    public *;
+}
 #---------------------------------------------------------------------------------------------------
 #glide
 -keep public class * implements com.bumptech.glide.module.GlideModule

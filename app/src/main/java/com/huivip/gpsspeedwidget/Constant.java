@@ -48,10 +48,14 @@ public class Constant {
     public static String AUTONAVI_WEB_KEY2_TRACK_SERVICE_ID="15618";
     public static String AUTONAVI_WEB_KEY2_TRACK_SERVICE_NAME="GPSWidgetService";
 
-    public static final String SBC_API_KEY="e5167536c47acada2a942c9c5c9835b1";
+    /*public static final String SBC_API_KEY="e5167536c47acada2a942c9c5c9835b1";
     public static final String SBC_PRODUCT_ID="278580229";
     public static final String SBC_PRODUCT_KEY="bbe19c74b62e6f2225854b41594adead";
-    public static final String SBC_PRODUCT_SECERT="04afe298a6abf257791da306d6933895";
+    public static final String SBC_PRODUCT_SECERT="04afe298a6abf257791da306d6933895";*/
+    public static final String SBC_API_KEY="f8f0292c29b0413f4d8e0e1461a518c4";
+    public static final String SBC_PRODUCT_ID="279607041";
+    public static final String SBC_PRODUCT_KEY="15a4df3abd27bf329acb1633d73d8531";
+    public static final String SBC_PRODUCT_SECERT="4bd0cf8513c62b82414ccbdff6e14b6f";
     //wakeup res
     public static final String WAKEUP_RES = "wakeup_aifar_comm_20180104.bin";
     //vad module res
@@ -59,6 +63,13 @@ public class Constant {
     //local asr module res
     public static final String EBNFC_RES = "ebnfc.aicar.1.2.0.bin";
     public static final String EBNFR_RES = "ebnfr.aicar.1.3.0.bin";
+    //local tts module res
+    public static final String TTS_DICT_RES = "tts/v2.1.32_aitts_sent_dict_local.db";
+    public static final String TTS_DICT_MD5 = "tts/v2.1.32_aitts_sent_dict_local.db.md5sum";
+    public static final String TTS_FRONT_RES = "tts/v2.1.32_local_front.bin";
+    public static final String TTS_FRONT_RES_MD5 = "tts/v2.1.32_local_front.bin.md5sum";
+    public static final String TTS_BACK_RES_ZHILING = "tts/lzlinf_lstm_210827.bin";
+    public static final String TTS_BACK_RES_ZHILING_MD5 = "tts/lzlinf_lstm_210827.bin.md5sum";
     public static final String MUSICPLAYER = "huivip.select.musicplayer";
 
     public static class NaviInfoConstant {

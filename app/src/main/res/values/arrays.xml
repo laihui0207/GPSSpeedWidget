@@ -105,24 +105,14 @@
         <item>4</item>
     </string-array>
     <string-array name="items__audio_engine" translatable="false">
+        <item>思必驰语音</item>
         <item>高德内置语音</item>
         <item>系统内置TTS</item>
     </string-array>
     <string-array name="values__audio_engine" translatable="false">
+        <item>SBCTTS</item>
         <item>aliTTS</item>
         <item>textTTS</item>
-    </string-array>
-    <string-array name="items__audio_engine_baidu_speaker" translatable="false">
-        <item>度小美（标准女声）</item>
-        <item>度小宇（标准男声）</item>
-        <item>度逍遥（情感男声）</item>
-        <item>度丫丫（情感儿童声）</item>
-    </string-array>
-    <string-array name="values__audio_engine_baidu_speaker" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>3</item>
-        <item>4</item>
     </string-array>
     <string-array name="items__speed_flatting_style" translatable="false">
         <item>双圈样式</item>
