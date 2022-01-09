@@ -164,9 +164,11 @@ public class RoadLineFloatingService extends Service{
             if (vv != null) {
                 roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
                 roadLineView.setVisibility(View.VISIBLE);
+                roadName.setVisibility(View.VISIBLE);
             }
         } else {
             roadLineView.setVisibility(View.INVISIBLE);
+            roadName.setVisibility(View.INVISIBLE);
         }
     }
     @OnClick(value = {R.id.imageView_roadLine_floating_fixed,R.id.imageView_roadLine_floating_close})

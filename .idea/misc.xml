@@ -6,6 +6,7 @@
         <entry key="../../../../../../layout/custom_preview.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/drawable/lyric_floating_border.xml" value="0.3333333333333333" />
         <entry key="app/src/main/res/drawable/navi_floating_border.xml" value="0.3333333333333333" />
+        <entry key="app/src/main/res/drawable/navi_lane_shape_bg_right.xml" value="0.5651041666666666" />
         <entry key="app/src/main/res/drawable/radius_border.xml" value="0.3333333333333333" />
         <entry key="app/src/main/res/drawable/real_time_floating_border.xml" value="0.3333333333333333" />
         <entry key="app/src/main/res/layout-v17/floating_altitude_window.xml" value="0.33061594202898553" />
@@ -18,6 +19,7 @@
         <entry key="app/src/main/res/layout/floating_auto_widget.xml" value="0.33061594202898553" />
         <entry key="app/src/main/res/layout/floating_backend_navi.xml" value="0.46813379300010827" />
         <entry key="app/src/main/res/layout/floating_map_window.xml" value="0.27943840579710144" />
+        <entry key="app/src/main/res/layout/floating_roadline_window.xml" value="0.2269021739130435" />
         <entry key="app/src/main/res/layout/floatting_meter.xml" value="0.25769927536231885" />
         <entry key="app/src/main/res/layout/request.xml" value="0.30480072463768115" />
         <entry key="app/src/main/res/layout/speed_number_vertical_widget.xml" value="0.30027173913043476" />
