@@ -186,9 +186,11 @@ public class RoadLineFloatingService extends Service{
                }
                allView.setVisibility(View.VISIBLE);
            } else {
+               roadName.setVisibility(View.GONE);
                allView.setVisibility(View.GONE);
            }
        } else {
+           roadName.setVisibility(View.GONE);
            allView.setVisibility(View.GONE);
        }
     }
