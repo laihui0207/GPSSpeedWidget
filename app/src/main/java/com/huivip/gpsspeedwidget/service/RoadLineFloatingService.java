@@ -66,6 +66,7 @@ public class RoadLineFloatingService extends Service{
     TextView roadName;
     @BindView(R.id.layout_roadLine)
     LinearLayout roadLineLayout;
+    boolean roadLineViewed=false;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -107,11 +108,13 @@ public class RoadLineFloatingService extends Service{
             @Override
             public void run() {
                 x.task().autoPost(()->{
-                    if(AppSettings.get().isRoadLineShowRoadName() &&  !TextUtils.isEmpty(gpsUtil.getCurrentRoadName())){
+                    if(AppSettings.get().isRoadLineShowRoadName()
+                            &&  !TextUtils.isEmpty(gpsUtil.getCurrentRoadName())
+                    && (roadLineViewed || AppSettings.get().isRoadLineDontShowRoadImage()) ){
                         roadName.setVisibility(View.VISIBLE);
                         roadName.setTextSize(TypedValue.COMPLEX_UNIT_SP,AppSettings.get().getRoadLineRoadNameSize());
                         roadName.setTextColor(AppSettings.get().getRoadLineRoadNameColor());
-                        roadName.setText(gpsUtil.getCurrentRoadName());
+                        roadName.setText(gpsUtil.getCurrentFullRoadName());
                     } else {
                         roadName.setVisibility(View.GONE);
                     }
@@ -165,10 +168,12 @@ public class RoadLineFloatingService extends Service{
                 roadLineView.setImageDrawable(((ImageView) vv).getDrawable());
                 roadLineView.setVisibility(View.VISIBLE);
                 roadName.setVisibility(View.VISIBLE);
+                roadLineViewed=true;
             }
         } else {
             roadLineView.setVisibility(View.INVISIBLE);
             roadName.setVisibility(View.INVISIBLE);
+            roadLineViewed=false;
         }
     }
     @OnClick(value = {R.id.imageView_roadLine_floating_fixed,R.id.imageView_roadLine_floating_close})

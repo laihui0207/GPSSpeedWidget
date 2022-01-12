@@ -753,7 +753,9 @@ public class GpsUtil {
         }
         return currentRoadName;
     }
-
+    public String getCurrentFullRoadName() {
+       return currentRoadName;
+    }
     public void setCurrentRoadName(String currentRoadName) {
         this.currentRoadName = currentRoadName;
       /*  if(!TextUtils.isEmpty(currentRoadName) && !currentRoadName.equalsIgnoreCase(preRoadName) && !TextUtils.isEmpty(cityCode)){

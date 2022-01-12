@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="300dp"
-             android:layout_height="match_parent"
+             android:layout_height="wrap_content"
              android:orientation="vertical">
     <com.amap.api.maps.MapView
             android:id="@+id/map_floating"
             android:layout_width="300dp"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
     </com.amap.api.maps.MapView>
     <LinearLayout
         android:layout_width="wrap_content"
@@ -42,6 +42,12 @@
             <ImageView
                 android:layout_width="wrap_content" android:id="@+id/imageView_daohang_roadLine"
                 android:layout_height="wrap_content" android:visibility="gone" />
+            <com.huivip.gpsspeedwidget.view.DriveWayLinear
+                android:id="@+id/floating_map_driverWay"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
         </LinearLayout>
     </LinearLayout>
    

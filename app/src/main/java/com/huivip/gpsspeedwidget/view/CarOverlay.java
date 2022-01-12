@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.MapView;
 import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.BitmapDescriptor;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
@@ -52,7 +53,7 @@ public class CarOverlay {
     protected Marker carMarker;
     protected Marker directionMarker;
     protected AMap mAmap = null;
-    protected TextureMapView mapView;
+    protected MapView mapView;
     protected boolean isDirectionVisible = true;
     protected LatLng endLatLng = null;
     protected Polyline leaderLine = null;
@@ -64,7 +65,7 @@ public class CarOverlay {
 
     private ScheduledExecutorService executorService;
 
-    public CarOverlay(Context context, TextureMapView mapView) {
+    public CarOverlay(Context context, MapView mapView) {
         this.mapView = mapView;
 
         fourCornersDescriptor = BitmapDescriptorFactory.fromBitmap(BitmapFactory

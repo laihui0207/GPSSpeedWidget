@@ -298,6 +298,7 @@
         <service android:name=".service.BootStartService" />
         <service android:name=".service.AutoWidgetFloatingService" />
         <service android:name=".service.MapFloatingService" />
+        <service android:name=".service.XunHangMapFloatingService" />
         <service android:name=".service.TextFloatingService" />
         <service android:name=".service.LyricFloatingService" />
         <service android:name=".service.NaviTrackService" />

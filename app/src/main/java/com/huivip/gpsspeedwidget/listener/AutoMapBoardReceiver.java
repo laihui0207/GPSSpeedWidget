@@ -22,6 +22,7 @@ import com.huivip.gpsspeedwidget.service.AutoWidgetFloatingService;
 import com.huivip.gpsspeedwidget.service.BootStartService;
 import com.huivip.gpsspeedwidget.service.NaviFloatingService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
+import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -207,6 +208,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     String wayInfo = intent.getStringExtra("EXTRA_DRIVE_WAY");
                     try {
                         JSONObject object = new JSONObject(wayInfo);
+                        FileUtil.saveLogToFile("~~~~~~~~DriveWay~~~~~~~\n"+object.toString()+"~~~~~~~~~~~~~~~\n");
                         if (object.getBoolean("drive_way_enabled")) {
                             if ( AppSettings.get().isOnlyCrossShowWidgetContent()
                                     && AppSettings.get().isShowAmapWidgetContent()
@@ -254,7 +256,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }
                     if(cityName!=null && !cityName.equalsIgnoreCase(PrefUtils.getCityName(context))){
                         //Toast.makeText(context,"当前城市:"+cityName,Toast.LENGTH_SHORT).show();
-                        gpsUtil.setCityName(cityName);
+                        gpsUtil.setCityName("(A)"+cityName);
                         PrefUtils.setCityName(context,cityName);
                     }
                     break;

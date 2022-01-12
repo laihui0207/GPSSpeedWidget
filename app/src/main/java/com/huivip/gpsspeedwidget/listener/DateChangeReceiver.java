@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.huivip.gpsspeedwidget.beans.GetDistrictEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.beans.SearchWeatherEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
@@ -30,6 +31,9 @@ public class DateChangeReceiver extends BroadcastReceiver {
                 EventBus.getDefault().post(new PlayAudioEvent(text, true));
             }
             EventBus.getDefault().post(new SearchWeatherEvent(true));
+        }
+        if(min%5==0){
+            EventBus.getDefault().post(new GetDistrictEvent());
         }
     }
 }

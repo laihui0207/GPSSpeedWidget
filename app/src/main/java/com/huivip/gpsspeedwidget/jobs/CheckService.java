@@ -23,7 +23,7 @@ public class CheckService extends JobService {
         return false;
     }
     private void doCheckService(){
-        Log.i("Schedule check service lanuched","do check service job");
+        Log.i("Check service launched","do check service job");
         if(!Utils.isServiceRunning(getApplicationContext(),BootStartService.class.getName())) {
             Intent bootStartService = new Intent(getApplicationContext(), BootStartService.class);
             bootStartService.putExtra(BootStartService.START_RESUME, true);

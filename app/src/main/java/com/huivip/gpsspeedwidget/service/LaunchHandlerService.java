@@ -124,7 +124,7 @@ public class LaunchHandlerService extends Service {
         x.task().postDelayed(() -> {
             Intent intent = new Intent();
             intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-            intent.setPackage("com.autonavi.amapauto");
+            //intent.setPackage("com.autonavi.amapauto");
             intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
             intent.putExtra("KEY_TYPE", 10029);
             sendBroadcast(intent);

@@ -254,6 +254,7 @@ public class DefaultFloatingService extends Service {
                 break;
             case R.id.speed:
                 Intent floatingMapIntent;
+                Toast.makeText(getApplicationContext(),"click speed",Toast.LENGTH_SHORT).show();
                 if (gpsUtil.getAutoNaviStatus() == Constant.Navi_Status_Started) {
                     floatingMapIntent = new Intent(getApplicationContext(), AutoWidgetFloatingService.class);
                     if(Utils.isServiceRunning(getApplicationContext(),AutoWidgetFloatingService.class.getName())){

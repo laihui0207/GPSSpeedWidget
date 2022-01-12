@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.huivip.gpsspeedwidget.R;
 import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.service.LaunchHandlerService;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
@@ -87,7 +88,7 @@ public class OnBoardActivity extends MaterialIntroActivity {
         startBootService(true);
     }
     private void startBootService(boolean fromResume){
-        if(!Utils.isServiceRunning(getApplicationContext(), BootStartService.class.getName())){
+        if(!Utils.isServiceRunning(getApplicationContext(), LaunchHandlerService.class.getName())){
             Intent bootStartService=new Intent(getApplicationContext(), BootStartService.class);
             bootStartService.putExtra(BootStartService.START_RESUME,fromResume);
             Utils.startService(getApplicationContext(),bootStartService, true);

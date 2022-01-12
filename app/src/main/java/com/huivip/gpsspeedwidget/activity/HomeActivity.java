@@ -704,6 +704,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         unregisterReceiver(_appUpdateReceiver);
         unregisterReceiver(_shortcutReceiver);
         unregisterReceiver(_timeChangedReceiver);
+        unregisterReceiver(_networkConnectedReceiver);
         EventBus.getDefault().unregister(this);
         started=false;
         super.onDestroy();

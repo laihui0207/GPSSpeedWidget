@@ -53,6 +53,7 @@ import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.view.CarOverlay;
 import com.huivip.gpsspeedwidget.view.ImageWheelView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -108,6 +109,7 @@ public class MapFloatingService extends Service {
     private boolean isNeedFollow = true;
     boolean isLocated=false;
     BroadcastReceiver broadcastReceiver;
+    CarOverlay carOverlay;
 
     // 处理静止后跟随的timer
     private Timer needFollowTimer;
@@ -213,6 +215,18 @@ public class MapFloatingService extends Service {
                 stopSelf();
             }
         });
+        aMap.setOnMapLoadedListener(new AMap.OnMapLoadedListener() {
+            @Override
+            public void onMapLoaded() {
+                aMap.setPointToCenter(mMapView.getWidth()/2, mMapView.getHeight()-150);
+
+                aMap.moveCamera(CameraUpdateFactory.zoomTo(16f));
+                aMap.moveCamera(CameraUpdateFactory.changeTilt(60));
+                carOverlay = new CarOverlay(getApplicationContext(), mMapView);
+                carOverlay.draw(mMapView.getMap(), new LatLng(Double.parseDouble(gpsUtil.getLatitude()), Double.parseDouble(gpsUtil.getLongitude())),gpsUtil.getBearing());
+
+            }
+        });
         setMapInteractiveListener();
         converter = new CoordinateConverter(getApplicationContext());
         converter.from(CoordinateConverter.CoordType.GPS);
@@ -276,7 +290,7 @@ public class MapFloatingService extends Service {
             }
             LatLng latLng = new LatLng(Double.parseDouble(gpsUtil.getLatitude()), Double.parseDouble(gpsUtil.getLongitude()));
             // 显示定位小图标，初始化时已经创建过了，这里修改位置即可
-            converter.coord(latLng);
+            /*converter.coord(latLng);
             LatLng lastedLatLng = converter.convert();
             carMarker.setPosition(lastedLatLng);
             float bearing=gpsUtil.getBearing();
@@ -285,7 +299,7 @@ public class MapFloatingService extends Service {
             carMarker.setZIndex(0);
             carMarker.setAnchor(0.5f,0.5f);
             //carMarker.setIcon();
-            windowHeight=mMapView.getHeight();
+            windowHeight=mMapView.getHeight();*/
             if(gpsUtil.getKmhSpeed()>60){
                 mapZoom=14;
                 mapMove=-(windowHeight*4/25);
@@ -294,10 +308,14 @@ public class MapFloatingService extends Service {
                 mapMove=-((windowHeight-10)*4/25);
             }
             if (isNeedFollow) {
+                mMapView.getMap().moveCamera(CameraUpdateFactory.zoomTo(mapZoom));
+                if (carOverlay != null) {
+                    carOverlay.draw(mMapView.getMap(), latLng, gpsUtil.getBearing());
+                }
                 // 跟随
-                CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 60,bearing));
-                aMap.moveCamera(mCameraUpdate);
-                aMap.moveCamera(CameraUpdateFactory.scrollBy(0,mapMove));
+               /* CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 60,bearing));
+                aMap.moveCamera(mCameraUpdate);*/
+                //aMap.moveCamera(CameraUpdateFactory.scrollBy(0,mapMove));
                 isLocated=true;
             }
         }
