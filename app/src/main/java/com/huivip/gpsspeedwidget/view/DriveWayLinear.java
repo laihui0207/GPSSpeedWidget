@@ -3,6 +3,7 @@ package com.huivip.gpsspeedwidget.view;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,14 +24,14 @@ public class DriveWayLinear extends LinearLayout {
     public static final int IMG_HEIGHT = 39;
 
     private final int[] driveWayGrayBgId = {
-            R.drawable.landback_0,
-            R.drawable.landback_1, R.drawable.landback_2,
-            R.drawable.landback_3, R.drawable.landback_4,
-            R.drawable.landback_5, R.drawable.landback_6,
-            R.drawable.landback_7, R.drawable.landback_8,
+            R.drawable.landfront_0,
+            R.drawable.landfront_1, R.drawable.landback_2,
+            R.drawable.landfront_3, R.drawable.landback_4,
+            R.drawable.landfront_5, R.drawable.landback_6,
+            R.drawable.landback_7, R.drawable.landfront_8,
             R.drawable.landback_9, R.drawable.landback_a,
             R.drawable.landback_b, R.drawable.landback_c,
-            R.drawable.landback_d, R.drawable.landback_e,
+            R.drawable.landfront_d, R.drawable.landback_e,
             R.drawable.landback_f, R.drawable.landback_g,
             R.drawable.landback_h, R.drawable.landback_i,
             R.drawable.landback_j, R.drawable.landfront_kk,
@@ -45,7 +46,7 @@ public class DriveWayLinear extends LinearLayout {
             R.drawable.landback_9, R.drawable.landback_a,
             R.drawable.landback_b, R.drawable.landback_c,
             R.drawable.landfront_d, R.drawable.landback_e,
-            R.drawable.landback_f, R.drawable.landback_g,
+            R.drawable.landfront_0, R.drawable.landback_g,
             R.drawable.landback_h, R.drawable.landback_i,
             R.drawable.landback_j, R.drawable.landfront_kk,
             R.drawable.landback_l};
@@ -83,6 +84,7 @@ public class DriveWayLinear extends LinearLayout {
                 break;
             }
         }
+        SparseIntArray array=new SparseIntArray();
 
         for (int i = 0; i < childSize; i++) {
             int guideImg = getGuideImg(laneInfo.backgroundLane[i], laneInfo.frontLane[i]);

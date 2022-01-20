@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion '29.0.2'
+    buildToolsVersion '30.0.2'
 
     def versionPropsFile = file('version.properties')
 
@@ -24,7 +24,8 @@ android {
     defaultConfig {
         applicationId "com.huivip.gpsspeedwidget"
         minSdkVersion 17
-        targetSdkVersion 30
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 25
         versionCode code
         versionName name
         flavorDimensions "versionCode"
@@ -112,21 +113,21 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:support-vector-drawable:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support:cardview-v7:28.0.0'
+    implementation "com.android.support:support-vector-drawable:${version_setup_buildTools}"
+    implementation "com.android.support:design:${version_setup_buildTools}"
+    implementation "com.android.support:cardview-v7:${version_setup_buildTools}"
     /* androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
          exclude group: 'com.android.support', module: 'support-annotations'
      })*/
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.8.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.android.support:multidex:1.0.3'
     //noinspection GradleCompatible
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support:support-v13:28.0.0'
-    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation "com.android.support:appcompat-v7:${version_setup_buildTools}"
+    implementation "com.android.support:support-v4:${version_setup_buildTools}"
+    implementation "com.android.support:support-v13:${version_setup_buildTools}"
+    implementation "com.android.support:support-annotations:${version_setup_buildTools}"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.android.support:cardview-v7:28.0.0'
+    implementation "com.android.support:cardview-v7:${version_setup_buildTools}"
     implementation 'com.jakewharton:butterknife:8.8.1'
     implementation 'io.reactivex:rxandroid:1.2.1'
     implementation 'com.github.bumptech.glide:glide:3.7.0'

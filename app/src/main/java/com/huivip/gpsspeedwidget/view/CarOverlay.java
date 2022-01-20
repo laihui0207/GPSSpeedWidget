@@ -70,7 +70,7 @@ public class CarOverlay {
 
         fourCornersDescriptor = BitmapDescriptorFactory.fromBitmap(BitmapFactory
                 .decodeResource(context.getResources(),
-                        R.drawable.navi_direction));
+                        R.drawable.navi_direction_outside_day));
 
         carDescriptor = BitmapDescriptorFactory.fromBitmap(BitmapFactory
                 .decodeResource(context.getResources(),

@@ -218,7 +218,7 @@ public class MapFloatingService extends Service {
         aMap.setOnMapLoadedListener(new AMap.OnMapLoadedListener() {
             @Override
             public void onMapLoaded() {
-                aMap.setPointToCenter(mMapView.getWidth()/2, mMapView.getHeight()-150);
+                aMap.setPointToCenter(mMapView.getWidth()/2, mMapView.getHeight()-120);
 
                 aMap.moveCamera(CameraUpdateFactory.zoomTo(16f));
                 aMap.moveCamera(CameraUpdateFactory.changeTilt(60));
@@ -289,6 +289,8 @@ public class MapFloatingService extends Service {
                 return;
             }
             LatLng latLng = new LatLng(Double.parseDouble(gpsUtil.getLatitude()), Double.parseDouble(gpsUtil.getLongitude()));
+            converter.coord(latLng);
+            LatLng lastedLatLng = converter.convert();
             // 显示定位小图标，初始化时已经创建过了，这里修改位置即可
             /*converter.coord(latLng);
             LatLng lastedLatLng = converter.convert();
@@ -310,7 +312,7 @@ public class MapFloatingService extends Service {
             if (isNeedFollow) {
                 mMapView.getMap().moveCamera(CameraUpdateFactory.zoomTo(mapZoom));
                 if (carOverlay != null) {
-                    carOverlay.draw(mMapView.getMap(), latLng, gpsUtil.getBearing());
+                    carOverlay.draw(mMapView.getMap(), lastedLatLng, gpsUtil.getBearing());
                 }
                 // 跟随
                /* CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(lastedLatLng, mapZoom, 60,bearing));

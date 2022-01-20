@@ -72,6 +72,7 @@ import java.util.concurrent.TimeUnit;
 public class BootStartService extends Service {
     public static String START_BOOT = "FromSTARTBOOT";
     public static String START_RESUME = "FromHomeResume";
+    public static String START_CHECK= "FromJobCheckService";
     boolean started = false;
     boolean autoMapLaunched=false;
     NetWorkConnectChangedReceiver netWorkConnectChangedReceiver;
@@ -122,7 +123,8 @@ public class BootStartService extends Service {
         if (intent != null) {
             boolean boot_from_resume = intent.getBooleanExtra(START_RESUME, false);
             boolean boot_from_start = intent.getBooleanExtra(START_BOOT, false);
-            if (start && (!started || boot_from_resume || boot_from_start)) {
+            boolean boot_from_check_job= intent.getBooleanExtra(START_CHECK, false);
+            if (start && (!started || boot_from_resume || boot_from_start || boot_from_check_job)) {
                 started = true;
                 if (netWorkConnectChangedReceiver == null) {
                     IntentFilter intentFilter = new IntentFilter();
@@ -133,90 +135,90 @@ public class BootStartService extends Service {
                 if(boot_from_start || boot_from_resume){
                     GpsUtil gpsUtil = GpsUtil.getInstance(getApplicationContext());
                     gpsUtil.resetData();
+                    EventBus.getDefault().post(new AudioTempMuteEvent(false));
+                    PrefUtils.setTempMuteAudioService(getApplicationContext(), false);
+                    EventBus.getDefault().post(new BootEvent(true));
                 }
-                if (AppSettings.get().isEnableAudio()) {
-                    Intent audioService = new Intent(getApplicationContext(), AudioService.class);
-                    Utils.startService(getApplicationContext(), audioService);
-                }
-                PrefUtils.setTempMuteAudioService(getApplicationContext(), false);
+                checkService();
 
-                if (AppSettings.get().isEnableTimeWindow()) {
-                    Intent timeFloating = new Intent(getApplicationContext(), RealTimeFloatingService.class);
-                    Utils.startService(getApplicationContext(), timeFloating);
-                }
-                if (AppSettings.get().isEnableRoadLine()) {
-                    Intent roadLineService = new Intent(getApplicationContext(), RoadLineService.class);
-                    Utils.startService(getApplicationContext(), roadLineService);
-                    if (AppSettings.get().isEnableRoadLineFloatingWindow()) {
-                        Intent roadLineFloatingService = new Intent(getApplicationContext(), RoadLineFloatingService.class);
-                        Utils.startService(getApplicationContext(), roadLineFloatingService);
-                    }
-                }
-                if (AppSettings.get().isEnableSpeed()) {
-                    Utils.startFloatingWindows(getApplicationContext(), true);
-                }
-
-                if (AppSettings.get().isEnableAltitudeWindow()) {
-                    Intent altitudeWindowService = new Intent(getApplicationContext(), AltitudeFloatingService.class);
-                    Utils.startService(getApplicationContext(), altitudeWindowService);
-                }
-                Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
-                Utils.startService(getApplicationContext(), weatherService);
-
-
-                if (Utils.isNetworkConnected(getApplicationContext())) {
-                    if (AppSettings.get().isEnableXunHang()){
-                        Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
-                        Utils.startService(getApplicationContext(), xunHangService);
-                    }
-                    if (AppSettings.get().isEnableTracker()){
-                        Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
-                        Utils.startService(getApplicationContext(), trackService);
-                    }
-                    if (AppSettings.get().isEnableRecord()) {
-                        startTrack();
-                       /* Intent trackService = new Intent(getApplicationContext(), RecordGpsHistoryService.class);
-                        Utils.startService(getApplicationContext(), trackService);*/
-                    }
-                    new Thread(() -> Utils.registerSelf(getApplicationContext())).start();
-                    if (AppSettings.get().isAutoCheckUpdate()) {
-                        x.task().postDelayed(() -> {
-                            EventBus.getDefault().post(new AutoCheckUpdateEvent().setAutoCheck(true));
-                        }, 1000 * 60);
-                    }
-                }
-                EventBus.getDefault().post(new AudioTempMuteEvent(false));
-                if (PrefUtils.isSpeedNumberVWidgetEnable(getApplicationContext())) {
-                    Intent widgetService = new Intent(getApplicationContext(), SpeedNumberVerticalService.class);
-                    Utils.startService(getApplicationContext(), widgetService);
-                }
-                if (PrefUtils.isTimeHWidgetEnable(getApplicationContext())) {
-                    Intent widgetService = new Intent(getApplicationContext(), TimeWidgetService.class);
-                    Utils.startService(getApplicationContext(), widgetService);
-                }
-                if (PrefUtils.isTimeVWidgetEnable(getApplicationContext())){
-                    Intent widgetService = new Intent(getApplicationContext(), TimeWidgetVerticalService.class);
-                    Utils.startService(getApplicationContext(), widgetService);
-                }
-                if (PrefUtils.isSpeedMeterWidgetEnable(getApplicationContext())){
-                    Intent bootService = new Intent(getApplicationContext(), GpsSpeedMeterService.class);
-                    Utils.startService(getApplicationContext(), bootService);
-                }
-                if (PrefUtils.isMusicWidgetEnable(getApplicationContext())){
-                    Intent widgetService = new Intent(getApplicationContext(), MusicControllerService.class);
-                    Utils.startService(getApplicationContext(), widgetService);
-                }
             }
-            EventBus.getDefault().post(new BootEvent(true));
-           /* if(!Utils.isServiceRunning(getApplicationContext(),LaunchHandlerService.class.getName()))
-            {*/
-                Intent launchHandlerService=new Intent(getApplicationContext(), LaunchHandlerService.class);
-                Utils.startService(getApplicationContext(),launchHandlerService);
-           // }
+            if(boot_from_start || boot_from_resume) {
+                Intent launchHandlerService = new Intent(getApplicationContext(), LaunchHandlerService.class);
+                Utils.startService(getApplicationContext(), launchHandlerService);
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }
+    private void checkService(){
+        if (AppSettings.get().isEnableAudio()) {
+            Intent audioService = new Intent(getApplicationContext(), AudioService.class);
+            Utils.startService(getApplicationContext(), audioService);
+        }
 
+        if (AppSettings.get().isEnableTimeWindow()) {
+            Intent timeFloating = new Intent(getApplicationContext(), RealTimeFloatingService.class);
+            Utils.startService(getApplicationContext(), timeFloating);
+        }
+        if (AppSettings.get().isEnableRoadLine()) {
+            Intent roadLineService = new Intent(getApplicationContext(), RoadLineService.class);
+            Utils.startService(getApplicationContext(), roadLineService);
+            if (AppSettings.get().isEnableRoadLineFloatingWindow()) {
+                Intent roadLineFloatingService = new Intent(getApplicationContext(), RoadLineFloatingService.class);
+                Utils.startService(getApplicationContext(), roadLineFloatingService);
+            }
+        }
+        if (AppSettings.get().isEnableSpeed()) {
+            Utils.startFloatingWindows(getApplicationContext(), true);
+        }
+
+        if (AppSettings.get().isEnableAltitudeWindow()) {
+            Intent altitudeWindowService = new Intent(getApplicationContext(), AltitudeFloatingService.class);
+            Utils.startService(getApplicationContext(), altitudeWindowService);
+        }
+        Intent weatherService = new Intent(getApplicationContext(), WeatherService.class);
+        Utils.startService(getApplicationContext(), weatherService);
+        if (Utils.isNetworkConnected(getApplicationContext())) {
+            if (AppSettings.get().isEnableXunHang()){
+                Intent xunHangService = new Intent(getApplicationContext(), AutoXunHangService.class);
+                Utils.startService(getApplicationContext(), xunHangService);
+            }
+            if (AppSettings.get().isEnableTracker()){
+                Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
+                Utils.startService(getApplicationContext(), trackService);
+            }
+            if (AppSettings.get().isEnableRecord()) {
+                startTrack();
+                       /* Intent trackService = new Intent(getApplicationContext(), RecordGpsHistoryService.class);
+                        Utils.startService(getApplicationContext(), trackService);*/
+            }
+            new Thread(() -> Utils.registerSelf(getApplicationContext())).start();
+            if (AppSettings.get().isAutoCheckUpdate()) {
+                x.task().postDelayed(() -> {
+                    EventBus.getDefault().post(new AutoCheckUpdateEvent().setAutoCheck(true));
+                }, 1000 * 60);
+            }
+        }
+        if (PrefUtils.isSpeedNumberVWidgetEnable(getApplicationContext())) {
+            Intent widgetService = new Intent(getApplicationContext(), SpeedNumberVerticalService.class);
+            Utils.startService(getApplicationContext(), widgetService);
+        }
+        if (PrefUtils.isTimeHWidgetEnable(getApplicationContext())) {
+            Intent widgetService = new Intent(getApplicationContext(), TimeWidgetService.class);
+            Utils.startService(getApplicationContext(), widgetService);
+        }
+        if (PrefUtils.isTimeVWidgetEnable(getApplicationContext())){
+            Intent widgetService = new Intent(getApplicationContext(), TimeWidgetVerticalService.class);
+            Utils.startService(getApplicationContext(), widgetService);
+        }
+        if (PrefUtils.isSpeedMeterWidgetEnable(getApplicationContext())){
+            Intent bootService = new Intent(getApplicationContext(), GpsSpeedMeterService.class);
+            Utils.startService(getApplicationContext(), bootService);
+        }
+        if (PrefUtils.isMusicWidgetEnable(getApplicationContext())){
+            Intent widgetService = new Intent(getApplicationContext(), MusicControllerService.class);
+            Utils.startService(getApplicationContext(), widgetService);
+        }
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -326,8 +328,6 @@ public class BootStartService extends Service {
                                         trackParam.setNotification(notification);
                                     }
                                     aMapTrackClient.startTrack(trackParam, onTrackListener);
-                                } else {
-                                    /*                                    Toast.makeText(getApplicationContext(), "网络请求失败，" + addTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();*/
                                 }
                             }
                         });

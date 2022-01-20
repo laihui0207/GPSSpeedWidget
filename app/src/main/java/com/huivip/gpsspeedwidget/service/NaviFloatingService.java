@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.huivip.gpsspeedwidget.BuildConfig;
 import com.huivip.gpsspeedwidget.GpsUtil;
 import com.huivip.gpsspeedwidget.R;
+import com.huivip.gpsspeedwidget.beans.DriveWayEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.RoadLineEvent;
 import com.huivip.gpsspeedwidget.beans.TMCSegmentEvent;
@@ -41,6 +42,7 @@ import com.huivip.gpsspeedwidget.model.SegmentModel;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
+import com.huivip.gpsspeedwidget.view.DriveWayLinear;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -108,6 +110,8 @@ public class NaviFloatingService extends Service {
     ImageView closeButton;
     @BindView(R.id.segmentView)
     TmcSegmentView tmcSegmentView;
+    @BindView(R.id.custom_driveway)
+    DriveWayLinear driveWayLinear;
     DecimalFormat decimalFormat=new DecimalFormat("0.0");
 
     /*
@@ -298,18 +302,18 @@ public class NaviFloatingService extends Service {
             roadLineView.setVisibility(View.INVISIBLE);
         }
     }
-   /* private void showRoadLine() {
-       if(roadLineBinder!=null){
-           View vv=roadLineBinder.getRoadLineView();
-           if(vv!=null){
-               roadLineView.setImageDrawable(((ImageView)vv).getDrawable());
-               roadLineView.setVisibility(View.VISIBLE);
-           } else {
-               roadLineView.setVisibility(View.INVISIBLE);
-           }
-       }
-    }*/
 
+   @Subscribe
+   public void driveWayUpdate(DriveWayEvent driveWayEvent) {
+       if (driveWayEvent.isEnable()) {
+           driveWayLinear.setVisibility(View.VISIBLE);
+           driveWayLinear.buildDriveWay(driveWayEvent.getLaneInfo());
+       } /*else {
+           driveWayLinear.hide();
+           driveWayLinear.setVisibility(View.GONE);
+       }*/
+
+   }
     @Subscribe
     public void onTmcSegmentUpdateEvent(final TMCSegmentEvent event) {
         String info = event.getInfo();

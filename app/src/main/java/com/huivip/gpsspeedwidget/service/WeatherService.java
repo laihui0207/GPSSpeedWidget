@@ -273,7 +273,7 @@ public class WeatherService extends Service implements AMapLocationListener {
                 locationEvent.setAltitude(aMapLocation.getAltitude());
                 if(!TextUtils.isEmpty(locationEvent.getCity())){
                     EventBus.getDefault().post(locationEvent);
-                    gpsUtil.setCityName("(w)"+locationEvent.getCity()+locationEvent.getDistrict());
+                    gpsUtil.setCityName(locationEvent.getCity()+locationEvent.getDistrict());
                 }
                 //Toast.makeText(getApplicationContext(),aMapLocation.toString(),Toast.LENGTH_SHORT).show();
                 if(!TextUtils.isEmpty(aMapLocation.getStreet()) && aMapLocation.getLocationType() == 1){

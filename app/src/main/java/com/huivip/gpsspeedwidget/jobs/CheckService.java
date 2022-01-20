@@ -26,7 +26,7 @@ public class CheckService extends JobService {
         Log.i("Check service launched","do check service job");
         if(!Utils.isServiceRunning(getApplicationContext(),BootStartService.class.getName())) {
             Intent bootStartService = new Intent(getApplicationContext(), BootStartService.class);
-            bootStartService.putExtra(BootStartService.START_RESUME, true);
+            bootStartService.putExtra(BootStartService.START_CHECK, true);
             Utils.startService(getApplicationContext(), bootStartService, true);
         }
     }

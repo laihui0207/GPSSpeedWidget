@@ -4,13 +4,17 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../../layout/custom_preview.xml" value="0.23958333333333334" />
+        <entry key="../../../../.gradle/caches/transforms-3/bb7d5ffeddd5b32b3b9ff89371307c46/transformed/preference-v7-25.4.0/res/layout/preference_widget_seekbar.xml" value="0.19947916666666668" />
         <entry key="app/src/main/res/drawable/lyric_floating_border.xml" value="0.3333333333333333" />
         <entry key="app/src/main/res/drawable/navi_floating_border.xml" value="0.3333333333333333" />
+        <entry key="app/src/main/res/drawable/navi_lane_shape_bg_left.xml" value="0.40520833333333334" />
+        <entry key="app/src/main/res/drawable/navi_lane_shape_bg_over.xml" value="0.40520833333333334" />
         <entry key="app/src/main/res/drawable/navi_lane_shape_bg_right.xml" value="0.5651041666666666" />
         <entry key="app/src/main/res/drawable/radius_border.xml" value="0.3333333333333333" />
         <entry key="app/src/main/res/drawable/real_time_floating_border.xml" value="0.3333333333333333" />
         <entry key="app/src/main/res/layout-v17/floating_altitude_window.xml" value="0.33061594202898553" />
         <entry key="app/src/main/res/layout-v17/floating_default_limit.xml" value="0.1" />
+        <entry key="app/src/main/res/layout-v17/floating_map_navi_icon.xml" value="0.3890625" />
         <entry key="app/src/main/res/layout-v18/floating_altitude_window.xml" value="0.33061594202898553" />
         <entry key="app/src/main/res/layout/activity_minibar_edit.xml" value="0.32971014492753625" />
         <entry key="app/src/main/res/layout/configuration_activity.xml" value="0.30480072463768115" />

@@ -3,8 +3,12 @@ package com.huivip.gpsspeedwidget.listener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.amap.api.navi.model.AMapLaneInfo;
+import com.autonavi.ae.guide.LaneInfo;
 import com.huivip.gpsspeedwidget.AppObject;
 import com.huivip.gpsspeedwidget.Constant;
 import com.huivip.gpsspeedwidget.GpsUtil;
@@ -27,14 +31,19 @@ import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Iterator;
+import java.util.Set;
 
 public class AutoMapBoardReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent != null && !TextUtils.isEmpty(intent.getAction()) && intent.getAction().equalsIgnoreCase(Constant.AMAP_SEND_ACTION)) {
+            outPrintEvent(intent);
             GpsUtil gpsUtil = GpsUtil.getInstance(AppObject.getContext());
             int key = intent.getIntExtra("KEY_TYPE", -1);
             switch (key) {
@@ -137,7 +146,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                             //Toast.makeText(context,"Heated Checked",Toast.LENGTH_SHORT).show();
                             if (AppSettings.get().getAutoStart() && !Utils.isServiceRunning(context, BootStartService.class.getName())) {
                                 Intent service = new Intent(context, BootStartService.class);
-                                service.putExtra(BootStartService.START_BOOT, true);
+                                service.putExtra(BootStartService.START_CHECK, true);
                                 context.startService(service);
                                 gpsUtil.setAutoMapBackendProcessStarted(true);
                             }
@@ -152,9 +161,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         case 13:  // TTS speaking start
                             //Toast.makeText(context,"speaking",Toast.LENGTH_SHORT).show();
                             //EventBus.getDefault().post(new AudioTempMuteEvent(true));
+                            if(gpsUtil.isAutoNavi_on_Frontend()){
+                                EventBus.getDefault().post(new AudioTempMuteEvent(true));
+                            }
                             break;
                         case 14:  // TTS Speak End
-                            EventBus.getDefault().post(new AudioTempMuteEvent(false));
+                            //EventBus.getDefault().post(new AudioTempMuteEvent(false));
                            // Toast.makeText(context,"speaking End",Toast.LENGTH_SHORT).show();
                             break;
                         case 37:
@@ -206,22 +218,23 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     break;
                 case 13012:
                     String wayInfo = intent.getStringExtra("EXTRA_DRIVE_WAY");
+                    parseDriveWayEvent(wayInfo);
                     try {
                         JSONObject object = new JSONObject(wayInfo);
-                        FileUtil.saveLogToFile("~~~~~~~~DriveWay~~~~~~~\n"+object.toString()+"~~~~~~~~~~~~~~~\n");
+                        FileUtil.saveLogToFile("\n~~~~~~~~DriveWay~~~~~~~\n"+object.toString()+"\n~~~~~~~~~~~~~~~\n");
                         if (object.getBoolean("drive_way_enabled")) {
                             if ( AppSettings.get().isOnlyCrossShowWidgetContent()
                                     && AppSettings.get().isShowAmapWidgetContent()
                                     && !gpsUtil.isAutoNavi_on_Frontend()) {
                                 startAutoWidgetFloatingService(context);
                             }
-                            EventBus.getDefault().post(new DriveWayEvent(true));
+                            //EventBus.getDefault().post(new DriveWayEvent(true));
                         } else {
                             if (AppSettings.get().isOnlyCrossShowWidgetContent()
                                     && AppSettings.get().isShowAmapWidgetContent()) {
                                 stopDriveWayFloatingService(context, false);
                             }
-                            EventBus.getDefault().post(new DriveWayEvent(false));
+                            //EventBus.getDefault().post(new DriveWayEvent(false));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -256,7 +269,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     }
                     if(cityName!=null && !cityName.equalsIgnoreCase(PrefUtils.getCityName(context))){
                         //Toast.makeText(context,"当前城市:"+cityName,Toast.LENGTH_SHORT).show();
-                        gpsUtil.setCityName("(A)"+cityName);
+                        gpsUtil.setCityName(cityName);
                         PrefUtils.setCityName(context,cityName);
                     }
                     break;
@@ -285,7 +298,98 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
         }
 
     }
+    /*
+    wayInfo:
+    {
+    "drive_way_enabled": true,
+    "drive_way_size": 5,
+    "drive_way_info": [
+        {
+            "drive_way_number": 0,
+            "drive_way_lane_Back_icon": "16",
+            "drive_way_lane_Extended": "0",
+            "trafficLaneAdvised": false,
+            "trafficLaneExtendedNew": 0
+        },
+        {
+            "drive_way_number": 1,
+            "drive_way_lane_Back_icon": "15",
+            "drive_way_lane_Extended": "0",
+            "trafficLaneAdvised": false,
+            "trafficLaneExtendedNew": 0
+        },
+        {
+            "drive_way_number": 2,
+            "drive_way_lane_Back_icon": "15",
+            "drive_way_lane_Extended": "0",
+            "trafficLaneAdvised": false,
+            "trafficLaneExtendedNew": 0
+        },
+        {
+            "drive_way_number": 3,
+            "drive_way_lane_Back_icon": "15",
+            "drive_way_lane_Extended": "0",
+            "trafficLaneAdvised": false,
+            "trafficLaneExtendedNew": 0
+        },
+        {
+            "drive_way_number": 4,
+            "drive_way_lane_Back_icon": "18",
+            "drive_way_lane_Extended": "0",
+            "trafficLaneAdvised": false,
+            "trafficLaneExtendedNew": 0
+        }
+    ]
+}
+     */
+    private void outPrintEvent(Intent i){
+        Bundle bundle = i.getExtras();
 
+        if (bundle != null) {
+            Set keys = bundle.keySet();
+            Iterator it = keys.iterator();
+            Log.e("HUIVIP", "Dumping Intent start");
+            while (it.hasNext()) {
+                String key = (String) it.next();
+                Log.e("HUIVIP", "[" + key + "=" + bundle.get(key) + "]");
+            }
+            Log.e("HUIVIP", "Dumping Intent end");
+        }
+    }
+    private void parseDriveWayEvent(String wayInfo){
+        if(StringUtils.isBlank(wayInfo)){
+            return;
+        }
+        try {
+            JSONObject driveWay = new JSONObject(wayInfo);
+            if(driveWay.getBoolean("drive_way_enabled")){
+                DriveWayEvent driveWayEvent = new DriveWayEvent(true);
+                int driveWayCount=driveWay.getInt("drive_way_size");
+                int[] backIcon=new int[driveWayCount];
+                int[] fronIcon=new int[driveWayCount];
+                JSONArray ways=driveWay.getJSONArray("drive_way_info");
+                for(int i=0;i<driveWayCount;i++){
+                    JSONObject wayObject= ways.getJSONObject(i);
+                    backIcon[i]=wayObject.getInt("drive_way_lane_Back_icon");
+                    fronIcon[i]=wayObject.getInt("drive_way_lane_Back_icon");
+                }
+                LaneInfo laneInfo=new LaneInfo();
+                laneInfo.laneCount=driveWayCount;
+                laneInfo.backLane=backIcon;
+                laneInfo.frontLane=fronIcon;
+                AMapLaneInfo aMapLaneInfo=new AMapLaneInfo(laneInfo);
+                driveWayEvent.setLaneInfo(aMapLaneInfo);
+                EventBus.getDefault().post(driveWayEvent);
+            }
+            else {
+                DriveWayEvent driveWayEvent = new DriveWayEvent(false);
+                EventBus.getDefault().post(driveWayEvent);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     private void startBackendNaviFloatingService(Context context) {
         if(AppSettings.get().isEnableDaoHang()) {
             EventBus.getDefault().post(new LaunchEvent(NaviFloatingService.class));

@@ -216,12 +216,17 @@
             android:id="@+id/segmentView"
             android:layout_width="match_parent"
             android:layout_height="10dp" />
-
+        <com.huivip.gpsspeedwidget.view.DriveWayLinear
+            android:id="@+id/custom_driveway"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            />
         <ImageView
             android:id="@+id/imageView_backNavi_roadLine"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:visibility="gone" />
+
     </LinearLayout>
 
 
