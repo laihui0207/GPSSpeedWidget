@@ -41,6 +41,7 @@ import com.huivip.gpsspeedwidget.listener.SwitchReceiver;
 import com.huivip.gpsspeedwidget.model.SegmentModel;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
+import com.huivip.gpsspeedwidget.utils.NaviUtil;
 import com.huivip.gpsspeedwidget.utils.PrefUtils;
 import com.huivip.gpsspeedwidget.view.DriveWayLinear;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
@@ -227,15 +228,10 @@ public class NaviFloatingService extends Service {
     @Subscribe
     public void updateNaviInfo(NaviInfoUpdateEvent event){
         nextRoadNameTextView.setText(event.getNextRoadName());
-        String distance=event.getSegRemainDis()+"米 后";
-        if(event.getSegRemainDis()>1000){
-            if(event.getSegRemainDis()>1000){
-                distance= decimalFormat.format((float)event.getSegRemainDis()/1000)+ "公里 后";
-            }
-        }
+        String distance= NaviUtil.formatKM(event.getSegRemainDis())+"后";
         nextRoadDistanceTextView.setText(distance);
 
-        naviLeftTextView.setText(String.format("%s/%s", event.getRouteRemainDis(), event.getRouteRemainTime()));
+        naviLeftTextView.setText(String.format("%s/%s", NaviUtil.formatKM(event.getRouteRemainDis()), NaviUtil.formatKM(event.getRouteRemainTime())));
         if(event.getIcon()>0) {
             int iconId=getTurnIcon2(event.getIcon());
             if(iconId>0){
@@ -308,10 +304,10 @@ public class NaviFloatingService extends Service {
        if (driveWayEvent.isEnable()) {
            driveWayLinear.setVisibility(View.VISIBLE);
            driveWayLinear.buildDriveWay(driveWayEvent.getLaneInfo());
-       } /*else {
+       } else {
            driveWayLinear.hide();
            driveWayLinear.setVisibility(View.GONE);
-       }*/
+       }
 
    }
     @Subscribe

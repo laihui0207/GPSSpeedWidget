@@ -69,13 +69,17 @@ public class AutoXunHangService extends Service implements AMapNaviListener, Aim
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
         }
+        if(!aimlessStarted){
             startAimlessNavi();
+        }
         return Service.START_REDELIVER_INTENT;
     }
 
     @Override
     public void onDestroy() {
-        stopAimlessNavi();
+        if(aimlessStarted){
+            stopAimlessNavi();
+        }
         if(EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().unregister(this);
         }
@@ -134,7 +138,7 @@ public class AutoXunHangService extends Service implements AMapNaviListener, Aim
 
     @Override
     public void onInitNaviSuccess() {
-       // aimlessStarted = true;
+        //aimlessStarted = true;
         aimlessNaviTryCount=0;
         EventBus.getDefault().post(new AimlessStatusUpdateEvent(true));
         Toast.makeText(getApplicationContext(), "智能巡航服务开启成功", Toast.LENGTH_SHORT).show();
@@ -168,10 +172,10 @@ public class AutoXunHangService extends Service implements AMapNaviListener, Aim
         EventBus.getDefault().post(new AimlessStatusUpdateEvent(true));
         if(AppSettings.get().isAutoMute()){
             if(!autoToMute) {
-                EventBus.getDefault().post(new PlayAudioEvent(content, true));
+                EventBus.getDefault().post(new PlayAudioEvent(content, false));
             }
         } else {
-            EventBus.getDefault().post(new PlayAudioEvent(content,true));
+            EventBus.getDefault().post(new PlayAudioEvent(content,false));
         }
 
     }

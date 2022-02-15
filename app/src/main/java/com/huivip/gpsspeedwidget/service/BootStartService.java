@@ -137,6 +137,7 @@ public class BootStartService extends Service {
                     gpsUtil.resetData();
                     EventBus.getDefault().post(new AudioTempMuteEvent(false));
                     PrefUtils.setTempMuteAudioService(getApplicationContext(), false);
+                    EventBus.getDefault().post(new AutoMapStatusUpdateEvent(true).setDaoHangStarted(false));
                     EventBus.getDefault().post(new BootEvent(true));
                 }
                 checkService();
@@ -145,6 +146,7 @@ public class BootStartService extends Service {
             if(boot_from_start || boot_from_resume) {
                 Intent launchHandlerService = new Intent(getApplicationContext(), LaunchHandlerService.class);
                 Utils.startService(getApplicationContext(), launchHandlerService);
+
             }
         }
         return super.onStartCommand(intent, flags, startId);

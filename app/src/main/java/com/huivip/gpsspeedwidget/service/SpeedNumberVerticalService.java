@@ -30,6 +30,7 @@ import com.huivip.gpsspeedwidget.model.SegmentModel;
 import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.util.Tool;
 import com.huivip.gpsspeedwidget.utils.CrashHandler;
+import com.huivip.gpsspeedwidget.utils.NaviUtil;
 import com.huivip.gpsspeedwidget.view.DigitalView;
 import com.huivip.gpsspeedwidget.view.TmcSegmentView;
 import com.huivip.gpsspeedwidget.widget.SpeedNumberVerticalWidget;
@@ -196,12 +197,12 @@ public class SpeedNumberVerticalService extends Service {
         if(gpsUtil.getAutoNaviStatus()==Constant.Navi_Status_Started){
             numberRemoteViews.setViewVisibility(R.id.v_navi_layout,View.VISIBLE);
             this.numberRemoteViews.setTextViewText(R.id.textView_nextRoadName_v,event.getNextRoadName());
-            String distance=event.getSegRemainDis()+"米后";
-            if(event.getSegRemainDis()>1000){
+            String distance= NaviUtil.formatKM(event.getSegRemainDis())+"后";
+            /*if(event.getSegRemainDis()>1000){
                 if(event.getSegRemainDis()>1000){
                     distance= decimalFormat.format((float)event.getSegRemainDis()/1000)+ "公里后";
                 }
-            }
+            }*/
             this.numberRemoteViews.setTextViewText(R.id.textView_nextdistance_v,distance);
             int iconId=getTurnIcon(event.getIcon());
             if(iconId>0) {

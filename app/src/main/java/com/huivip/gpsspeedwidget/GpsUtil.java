@@ -192,9 +192,6 @@ public class GpsUtil {
             launchEvent.setToClose(true);
             EventBus.getDefault().post(launchEvent);
 
-           /* Intent xunhangService=new Intent(context, AutoXunHangService.class);
-            xunhangService.putExtra(AutoXunHangService.EXTRA_CLOSE,true);
-            context.startService(xunhangService);*/
 
           /*  Intent recordService = new Intent(context, RecordGpsHistoryService.class);
             recordService.putExtra(RecordGpsHistoryService.EXTRA_CLOSE, true);
@@ -446,7 +443,7 @@ public class GpsUtil {
         }
     }
     public void resetData(){
-        if(driveTime>1000*3600*8) {
+        if(driveTime>1000*3600*4) {
             this.startTime = System.currentTimeMillis();
             this.distance = 0;
             hasLimited = false;

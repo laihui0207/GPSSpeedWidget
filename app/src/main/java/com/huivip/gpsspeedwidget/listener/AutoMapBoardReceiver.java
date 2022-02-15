@@ -16,6 +16,7 @@ import com.huivip.gpsspeedwidget.beans.AudioTempMuteEvent;
 import com.huivip.gpsspeedwidget.beans.AutoMapStatusUpdateEvent;
 import com.huivip.gpsspeedwidget.beans.DriveWayEvent;
 import com.huivip.gpsspeedwidget.beans.FloatWindowsLaunchEvent;
+import com.huivip.gpsspeedwidget.beans.HeartEvent;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.NaviInfoUpdateEvent;
@@ -150,6 +151,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 context.startService(service);
                                 gpsUtil.setAutoMapBackendProcessStarted(true);
                             }
+                            EventBus.getDefault().post(new HeartEvent(true));
                             break;
                         case 39:
                             stopBackendNaviFloatingService(context, true);

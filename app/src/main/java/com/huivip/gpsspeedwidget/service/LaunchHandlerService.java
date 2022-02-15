@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.huivip.gpsspeedwidget.beans.GetDistrictEvent;
+import com.huivip.gpsspeedwidget.beans.HeartEvent;
 import com.huivip.gpsspeedwidget.beans.LocationEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
 import com.huivip.gpsspeedwidget.listener.AutoLaunchSystemConfigReceiver;
@@ -89,6 +90,7 @@ public class LaunchHandlerService extends Service {
             PendingIntent autoLaunchIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                     new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
+            x.task().postDelayed(this::sendAccOnToAuto, 5000);
             x.task().postDelayed(this::getDistrictFromAuto, 30000);
             x.task().postDelayed(this::getDistrictFromAuto, 60000);
             x.task().postDelayed(()->{
@@ -120,15 +122,29 @@ public class LaunchHandlerService extends Service {
             autoMapLaunched=true;
         }
     }
+    @Subscribe
+    public void listenAutoMapHeartEvent(HeartEvent event){
+         autoMapLaunched=true;
+    }
     private void getDistrictFromAuto() {
         x.task().postDelayed(() -> {
             Intent intent = new Intent();
             intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-            //intent.setPackage("com.autonavi.amapauto");
+            intent.setPackage("com.autonavi.amapauto");
             intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
             intent.putExtra("KEY_TYPE", 10029);
             sendBroadcast(intent);
         }, 1000 * 10);
+    }
+    private void sendAccOnToAuto() {
+        x.task().postDelayed(() -> {
+            Intent intent = new Intent();
+            intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            intent.setPackage("com.autonavi.amapauto");
+            intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
+            intent.putExtra("KEY_TYPE", 10073);
+            sendBroadcast(intent);
+        }, 2000 );
     }
     private void launchAutoMap(){
         String pkgName_auto = "com.autonavi.amapauto";
