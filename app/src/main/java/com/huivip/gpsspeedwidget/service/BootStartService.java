@@ -185,13 +185,13 @@ public class BootStartService extends Service {
                 Utils.startService(getApplicationContext(), xunHangService);
             }
             if (AppSettings.get().isEnableTracker()){
-                Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
-                Utils.startService(getApplicationContext(), trackService);
+                startTrack();
+                /*Intent trackService = new Intent(getApplicationContext(), NaviTrackService.class);
+                Utils.startService(getApplicationContext(), trackService);*/
             }
             if (AppSettings.get().isEnableRecord()) {
-                startTrack();
-                       /* Intent trackService = new Intent(getApplicationContext(), RecordGpsHistoryService.class);
-                        Utils.startService(getApplicationContext(), trackService);*/
+                Intent trackService = new Intent(getApplicationContext(), RecordGpsHistoryService.class);
+                Utils.startService(getApplicationContext(), trackService);
             }
             new Thread(() -> Utils.registerSelf(getApplicationContext())).start();
             if (AppSettings.get().isAutoCheckUpdate()) {

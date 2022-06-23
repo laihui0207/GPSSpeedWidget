@@ -93,6 +93,9 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public boolean isEnableXunHang(){
         return getBool(R.string.pref_key__XunHang_enable,false);
     }
+    public boolean isEnableAutoLaunchAutoMap(){
+        return getBool(R.string.pref_key__auto_start_launch_amap,false);
+    }
     public boolean isAutoMute(){
         return getBool(R.string.pref_key__Audio_auto_mute,true);
     }

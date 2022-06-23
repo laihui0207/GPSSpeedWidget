@@ -45,6 +45,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent != null && !TextUtils.isEmpty(intent.getAction()) && intent.getAction().equalsIgnoreCase(Constant.AMAP_SEND_ACTION)) {
             outPrintEvent(intent);
+            EventBus.getDefault().post(new HeartEvent(true));
             GpsUtil gpsUtil = GpsUtil.getInstance(AppObject.getContext());
             int key = intent.getIntExtra("KEY_TYPE", -1);
             switch (key) {
@@ -59,6 +60,7 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 Utils.startService(context,service,true);
                                 gpsUtil.setAutoMapBackendProcessStarted(true);
                             }
+                            EventBus.getDefault().post(new HeartEvent(true));
                             break;
                         case 3: // auto map in frontend
                             gpsUtil.setAutoNavi_on_Frontend(true);
@@ -93,6 +95,8 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                                 EventBus.getDefault().post(new FloatWindowsLaunchEvent(true));
 
                             }
+                            EventBus.getDefault().post(new HeartEvent(true));
+
                           /*  if (PrefUtils.isEnableAutoMute(context)) {
                                 PrefUtils.setEnableTempAudioService(context, false);
                             }*/
@@ -163,9 +167,9 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                         case 13:  // TTS speaking start
                             //Toast.makeText(context,"speaking",Toast.LENGTH_SHORT).show();
                             //EventBus.getDefault().post(new AudioTempMuteEvent(true));
-                            if(gpsUtil.isAutoNavi_on_Frontend()){
+                           /* if(gpsUtil.isAutoNavi_on_Frontend()){
                                 EventBus.getDefault().post(new AudioTempMuteEvent(true));
-                            }
+                            }*/
                             break;
                         case 14:  // TTS Speak End
                             //EventBus.getDefault().post(new AudioTempMuteEvent(false));

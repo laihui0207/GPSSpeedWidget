@@ -171,8 +171,8 @@ public class WeatherService extends Service implements AMapLocationListener {
                             PrefUtils.setWeatherTemperature(getApplicationContext(),temperature);
                             resultText = "当前:" + cityWeather.getString("city") + ",天气：" + weather+
                                     ",气温:" + temperature+ "°,"
-                                    + cityWeather.getString("winddirection") + "风" + cityWeather.getString("windpower") + "级," +
-                                    "湿度" + cityWeather.getString("humidity") + "%";
+                                    + cityWeather.getString("winddirection") + "风" + cityWeather.getString("windpower") + "级";//," +
+                                    //"湿度" + cityWeather.getString("humidity") + "%";
                             if (AppSettings.get().isPlayWeather() && speak) {
                                 handler.post(runnableUi);
                             }

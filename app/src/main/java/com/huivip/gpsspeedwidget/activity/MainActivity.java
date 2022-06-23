@@ -59,6 +59,7 @@ import com.huivip.gpsspeedwidget.activity.homeparts.HpInitSetup;
 import com.huivip.gpsspeedwidget.beans.LocationVO;
 import com.huivip.gpsspeedwidget.manager.Setup;
 import com.huivip.gpsspeedwidget.service.BootStartService;
+import com.huivip.gpsspeedwidget.util.AppSettings;
 import com.huivip.gpsspeedwidget.utils.DBUtil;
 import com.huivip.gpsspeedwidget.utils.FileUtil;
 import com.huivip.gpsspeedwidget.utils.HttpUtils;
@@ -199,7 +200,7 @@ public class MainActivity extends Activity implements TraceListener {
                             deviceId=inputUid;
                         }
                         saveDeviceIdString(deviceId);
-/*                        if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {*/
+                        if (AppSettings.get().isEnableTracker()) {
                             serviceId = Long.parseLong(PrefUtils.getAmapTrackServiceID(deviceId));
                             TERMINAL_NAME = "Track_" + deviceId;
                             aMapTrackClient.queryTerminal(new QueryTerminalRequest(serviceId, TERMINAL_NAME), new SimpleOnTrackListener() {
@@ -235,9 +236,7 @@ public class MainActivity extends Activity implements TraceListener {
                                 }
                             });
 
-                       /* } else if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext())
-                                && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())
-                                && !PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
+                        } else if (AppSettings.get().isEnableRecord() && AppSettings.get().isEnableSelfUpload()) {
                             String getLastedURL = "";
                             getLastedURL = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETLASTEDPOSTIONURL, deviceId);
                             String dataResult = HttpUtils.getData(getLastedURL);
@@ -246,16 +245,16 @@ public class MainActivity extends Activity implements TraceListener {
                             message.obj = dataResult;
                             message.arg1 = Constant.POINT;
                             lastedPositionHandler.handleMessage(message);
-                        } else if(PrefUtils.isEnableRecordGPSHistory(getApplicationContext())){
-                            DBUtil dbUtil=new DBUtil(getApplicationContext());
-                            List<LocationVO> lastPoint=dbUtil.getLastedData("1");
-                            if(lastPoint!=null && !lastPoint.isEmpty()){
-                                JSONArray datas=new JSONArray();
-                                JSONObject data=new JSONObject();
+                        } else if (AppSettings.get().isEnableRecord()) {
+                            DBUtil dbUtil = new DBUtil(getApplicationContext());
+                            List<LocationVO> lastPoint = dbUtil.getLastedData("1");
+                            if (lastPoint != null && !lastPoint.isEmpty()) {
+                                JSONArray datas = new JSONArray();
+                                JSONObject data = new JSONObject();
                                 try {
-                                    data.put("lng",lastPoint.get(0).getLng());
-                                    data.put("lat",lastPoint.get(0).getLat());
-                                    data.put("createTime",dateFormat.format(new Date(lastPoint.get(0).getCreateTime())));
+                                    data.put("lng", lastPoint.get(0).getLng());
+                                    data.put("lat", lastPoint.get(0).getLat());
+                                    data.put("createTime", dateFormat.format(new Date(lastPoint.get(0).getCreateTime())));
                                     datas.put(data);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -267,12 +266,10 @@ public class MainActivity extends Activity implements TraceListener {
                             }
                         } else {
                             //Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
-                        }*/
-
-                   /* }
-                       */
+                        }
 
                     }
+
                 }).start();
             }
         };
@@ -362,7 +359,7 @@ public class MainActivity extends Activity implements TraceListener {
                 TERMINAL_NAME = "Track_" + deviceId;
                 Date finalStartDate = startDate;
                 Date finalEndDate = endDate;
-                if (PrefUtils.isEnableNAVIUploadGPSHistory(getApplicationContext())) {
+                if (AppSettings.get().isEnableTracker()) {
                     aMapTrackClient.queryTerminal(new QueryTerminalRequest(serviceId, TERMINAL_NAME), new SimpleOnTrackListener() {
                         @Override
                         public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
@@ -440,7 +437,7 @@ public class MainActivity extends Activity implements TraceListener {
                         public void run() {
                             aMap.clear();
 
-                            if (PrefUtils.isEnableRecordGPSHistory(getApplicationContext()) && PrefUtils.isEnableUploadGPSHistory(getApplicationContext())) {
+                            if (AppSettings.get().isEnableRecord() && AppSettings.get().isEnableSelfUpload()) {
                                 String dataUrl = "";
                                 saveDeviceIdString(finalDeviceId);
                                 dataUrl = PrefUtils.getGPSRemoteUrl(getApplicationContext()) + String.format(Constant.LBSGETDATA, finalDeviceId, finalStartTime, finalEndTime);
@@ -450,7 +447,7 @@ public class MainActivity extends Activity implements TraceListener {
                                 message.arg1 = Constant.LINE;
                                 message.obj = dataResult;
                                 lastedPositionHandler.handleMessage(message);
-                            } else if (PrefUtils.isEnableRecordGPSHistory(getApplicationContext())) {
+                            } else if (AppSettings.get().isEnableRecord()) {
                                 DBUtil dbUtil = new DBUtil(getApplicationContext());
                                 List<LocationVO> list = dbUtil.getBetweenDate(finalStartDate1, finalEndDate1);
                                 if (list != null && !list.isEmpty()) {
@@ -476,7 +473,7 @@ public class MainActivity extends Activity implements TraceListener {
                                     lastedPositionHandler.handleMessage(message);
                                 }
                             } else {
-                                //Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(),"没有打开行车轨迹记录开关",Toast.LENGTH_SHORT).show();
                             }
                         }
                     }).start();

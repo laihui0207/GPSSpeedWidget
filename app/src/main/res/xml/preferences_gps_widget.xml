@@ -31,6 +31,11 @@
             android:title="启动wifi" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="@string/pref_key__auto_start_launch_amap"
+            android:summary="开机自动启动高德地图"
+            android:title="启动高德地图" />
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="@string/pref_key__auto_start_play_warn"
             android:summary="开机播放安全提醒语音"
             android:title="安全提醒语音" />

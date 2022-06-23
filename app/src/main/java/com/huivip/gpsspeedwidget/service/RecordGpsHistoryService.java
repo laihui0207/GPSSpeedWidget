@@ -49,8 +49,8 @@ public class RecordGpsHistoryService extends Service{
             stopSelf();
             return super.onStartCommand(intent,flags,startId);
         }
-        boolean recordGPS= AppSettings.get().isEnableRecord();//PrefUtils.isEnableRecordGPSHistory(this);
-        boolean uploadGPS=AppSettings.get().isEnableSelfUpload();//PrefUtils.isEnableUploadGPSHistory(this);
+        boolean recordGPS= AppSettings.get().isEnableRecord();
+        boolean uploadGPS=AppSettings.get().isEnableSelfUpload();
 
         if(recordGPS) {
             if(uploadGPS) {

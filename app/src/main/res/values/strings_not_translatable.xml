@@ -21,6 +21,7 @@
     <string name="pref_key__gps_widget" translatable="false">pref_key__gps_widget</string>
     <string name="pref_key__auto_start" translatable="false">pref_key__auto_start</string>
     <string name="pref_key__auto_start_wifi_hotpot" translatable="false">pref_key__auto_start_wifi_hotpot</string>
+    <string name="pref_key__auto_start_launch_amap" translatable="false">pref_key__auto_start_launch_amap</string>
     <string name="pref_key__auto_start_stop_mobile_data" translatable="false">pref_key__auto_start_stop_mobile_data</string>
     <string name="pref_key__auto_start_enable_wifi" translatable="false">pref_key__auto_start_enable_wifi</string>
     <string name="pref_key__wifi_hotpot_setting" translatable="false">pref_key__wifi_hotpot_setting</string>

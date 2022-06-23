@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WangYiYunMusic {
-    private static final String SEARCH_URL="http://music.163.com/api/search/pc";
+    private static final String SEARCH_URL="https://music.163.com/api/search/pc";
     private static final String SEARCH_PARAM="s=%s&limit=10&offset=0&type=1";
     private static final String LYRC_URL="http://music.163.com/api/song/lyric?os=pc&id=%s&lv=-1&kv=-1&tv=-1";
     private static Bitmap bitmap;

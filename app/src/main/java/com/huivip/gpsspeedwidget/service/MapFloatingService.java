@@ -34,14 +34,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.maps.AMap;
-import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.CoordinateConverter;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.MapsInitializer;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
-import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
@@ -61,7 +59,6 @@ import com.huivip.gpsspeedwidget.view.ImageWheelView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.xutils.x;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -110,7 +107,7 @@ public class MapFloatingService extends Service {
     // 是否需要跟随定位s
     private boolean isNeedFollow = true;
     boolean isLocated=false;
-    BroadcastReceiver broadcastReceiver;
+    BroadcastReceiver timeChangeBroadcastReceiver;
     CarOverlay carOverlay;
     @BindView(R.id.floating_map_driverWay)
     DriveWayLinear driveWayLinear;
@@ -246,21 +243,24 @@ public class MapFloatingService extends Service {
         this.locationTimer.schedule(this.locationScanTask, 0L, 1000L);
         EventBus.getDefault().register(this);
         updateTime();
-        broadcastReceiver=new BroadcastReceiver() {
+        timeChangeBroadcastReceiver =new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 updateTime();
             }
         };
-        getApplicationContext().registerReceiver(broadcastReceiver,new IntentFilter(Intent.ACTION_TIME_TICK));
+        IntentFilter timeFilter=new IntentFilter(Intent.ACTION_TIME_TICK);
+        timeFilter.addAction(Intent.ACTION_TIME_CHANGED);
+        timeFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        getApplicationContext().registerReceiver(timeChangeBroadcastReceiver,timeFilter);
         super.onCreate();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(broadcastReceiver!=null){
-            getApplicationContext().unregisterReceiver(broadcastReceiver);
+        if(timeChangeBroadcastReceiver !=null){
+            getApplicationContext().unregisterReceiver(timeChangeBroadcastReceiver);
         }
         if(EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().unregister(this);
@@ -303,6 +303,7 @@ public class MapFloatingService extends Service {
                 }
                 isLocated=true;
             }
+
         }
     }
     @Subscribe(threadMode=ThreadMode.MAIN)

@@ -7,10 +7,12 @@ import android.appwidget.AppWidgetManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.Preference;
@@ -84,37 +86,44 @@ public class SettingsActivity extends ThemeActivity implements SettingsBaseFragm
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void checkUpdate(AutoCheckUpdateEvent event){
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (!getPackageManager().canRequestPackageInstalls()) {
+                startActivityForResult(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
+                        .setData(Uri.parse(String.format("package:%s", getPackageName()))), 1);
+            }
+        }*/
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Looper.prepare();
-                String updateInfo= HttpUtils.getData(Constant.LBSURL+"/updateInfo?type=full");
-                Log.d("huivip","check update:"+updateInfo);
+                String updateInfo = HttpUtils.getData(Constant.LBSURL + "/updateInfo?type=full");
+                Log.d("huivip", "check update:" + updateInfo);
                 try {
-                    if(!TextUtils.isEmpty(updateInfo) && !updateInfo.equalsIgnoreCase("-1")) {
-                        String currentVersion= com.huivip.gpsspeedwidget.utils.Utils.getLocalVersion(getApplicationContext());
-                        int currentVersionCode=com.huivip.gpsspeedwidget.utils.Utils.getLocalVersionCode(getApplicationContext());
+                    if (!TextUtils.isEmpty(updateInfo) && !updateInfo.equalsIgnoreCase("-1")) {
+                        String currentVersion = com.huivip.gpsspeedwidget.utils.Utils.getLocalVersion(getApplicationContext());
+                        int currentVersionCode = com.huivip.gpsspeedwidget.utils.Utils.getLocalVersionCode(getApplicationContext());
                         JSONObject infoObj = new JSONObject(updateInfo);
-                        JSONObject data= (JSONObject) infoObj.get("data");
-                        String updateVersion=data.getString("serverVersion");
-                        int updateVersionCode=data.getInt("serverVersionCode");
+                        JSONObject data = (JSONObject) infoObj.get("data");
+                        String updateVersion = data.getString("serverVersion");
+                        int updateVersionCode = data.getInt("serverVersionCode");
                         Message message = Message.obtain();
                         event.setUpdateIfo(updateInfo);
-                        if(event.getHostActivity()==null){
+                        if (event.getHostActivity() == null) {
                             event.setHostActivity(HomeActivity._launcher);
                         }
                         message.obj = event;
-                        if(currentVersionCode!=0 && updateVersionCode!=0){
-                            if(updateVersionCode>currentVersionCode){
+                        if (currentVersionCode != 0 && updateVersionCode != 0) {
+                            if (updateVersionCode > currentVersionCode) {
                                 message.arg1 = 1;
                                 AlterHandler.handleMessage(message);
-                            } else if(!event.isAutoCheck()) {
+                            } else if (!event.isAutoCheck()) {
                                 message.arg1 = 0;
                                 AlterHandler.handleMessage(message);
                             }
                         } else {
                             if (currentVersion.equalsIgnoreCase(updateVersion)) {
-                                if(!event.isAutoCheck()) {
+                                if (!event.isAutoCheck()) {
                                     message.arg1 = 0;
                                     AlterHandler.handleMessage(message);
                                 }
