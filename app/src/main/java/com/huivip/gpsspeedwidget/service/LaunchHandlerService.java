@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.huivip.gpsspeedwidget.beans.ACCOnEvent;
 import com.huivip.gpsspeedwidget.beans.GetDistrictEvent;
 import com.huivip.gpsspeedwidget.beans.HeartEvent;
 import com.huivip.gpsspeedwidget.beans.LocationEvent;
@@ -92,16 +93,12 @@ public class LaunchHandlerService extends Service {
                     new Intent(getApplicationContext(), AutoLaunchSystemConfigReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
             alarm.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000L, autoLaunchIntent);
             x.task().postDelayed(this::sendAccOnToAuto, 5000);
-            x.task().postDelayed(this::sendAccOnToAuto, 30000);
-            x.task().postDelayed(this::sendAccOnToAuto, 60000);
             x.task().postDelayed(()->{
-                if(AppSettings.get().isEnableAutoLaunchAutoMap()
-                        && !autoMapLaunched
+                if(AppSettings.get().isEnableAutoLaunchAutoMap() && !autoMapLaunched
                         && !Utils.isServiceRunning(getApplicationContext(),"com.autonavi.amapauto")){
                     launchAutoMap();
-                    //autoMapLaunched=false;
                 }
-            },120000);
+            },30000);
 
             if (AppSettings.get().isEnablePlayWarnAudio() && !started) {
                 x.task().postDelayed(() -> {
@@ -120,12 +117,17 @@ public class LaunchHandlerService extends Service {
     public void getDistrict(GetDistrictEvent event){
         getDistrictFromAuto();
     }
-    @Subscribe
+   /* @Subscribe
     public void locationStatus(LocationEvent event){
         if(event.getDistrict()!=null && event.getEventFrom().equals("AutoMap")){
             autoMapLaunched=true;
         }
+    }*/
+    @Subscribe
+    public void listenAccOnEvent(ACCOnEvent acconEvent){
+            sendAccOnToAuto();
     }
+
     @Subscribe
     public void listenAutoMapHeartEvent(HeartEvent event){
          autoMapLaunched=true;
@@ -141,14 +143,12 @@ public class LaunchHandlerService extends Service {
         }, 1000 * 10);
     }
     private void sendAccOnToAuto() {
-        x.task().postDelayed(() -> {
             Intent intent = new Intent();
             intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
             intent.setPackage("com.autonavi.amapauto");
             intent.setAction("AUTONAVI_STANDARD_BROADCAST_RECV");
             intent.putExtra("KEY_TYPE", 10073);
             sendBroadcast(intent);
-        }, 2000 );
     }
     private void launchAutoMap(){
         String pkgName_auto = "com.autonavi.amapauto";

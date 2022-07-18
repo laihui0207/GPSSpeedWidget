@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.huivip.gpsspeedwidget.beans.ACCOnEvent;
 import com.huivip.gpsspeedwidget.beans.LaunchEvent;
 import com.huivip.gpsspeedwidget.beans.LocationEnabledEvent;
 import com.huivip.gpsspeedwidget.beans.PlayAudioEvent;
@@ -352,6 +353,7 @@ public class GpsUtil {
                     catchRoadLocation = paramLocation;
                     recordLocationDistance = 10;
                     catchRoadDistance = 1000;
+                    EventBus.getDefault().post(new ACCOnEvent().setFrom("GPSChange"));
                 }
             }
             /*if(PrefUtils.isEnableAutoGoHomeAfterNaviStarted(context) && kmhSpeed>0 && autoNavi_on_Frontend && naviFloatingStatus == Constant.Navi_Status_Started ){

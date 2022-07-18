@@ -54,12 +54,12 @@ public class AutoMapBoardReceiver extends BroadcastReceiver {
                     switch (status) {
                         case 0: // auto Map Started
                             boolean start =AppSettings.get().getAutoStart();
-                            if (start && !Utils.isServiceRunning(context,BootStartService.class.getName())) {
+                          /*  if (start && !Utils.isServiceRunning(context,BootStartService.class.getName())) {
                                 Intent service = new Intent(context, BootStartService.class);
                                 service.putExtra(BootStartService.START_BOOT, true);
                                 Utils.startService(context,service,true);
                                 gpsUtil.setAutoMapBackendProcessStarted(true);
-                            }
+                            }*/
                             EventBus.getDefault().post(new HeartEvent(true));
                             break;
                         case 3: // auto map in frontend
